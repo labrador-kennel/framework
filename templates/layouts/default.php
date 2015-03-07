@@ -1,4 +1,9 @@
-<?php /** @var string $_content */ ?>
+<?php
+/** @var Labrador\Http\Renderer\Helpers $this */
+/** @var string $_content */
+/** @var array $css */
+?>
+
 <!DOCTYPE html>
 <html>
     <head>

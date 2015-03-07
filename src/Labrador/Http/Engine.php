@@ -49,6 +49,11 @@ class Engine extends CoreEngine {
         parent::run();
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws InvalidTypeException
+     */
     public function handleRequest(Request $request) {
         $resolved = $this->router->match($request);
         $this->emitter->emit(self::BEFORE_CONTROLLER_EVENT, [new BeforeControllerEvent($request)]);
@@ -62,24 +67,83 @@ class Engine extends CoreEngine {
         return $response;
     }
 
+    /**
+     * @param callable $listener
+     * @return $this
+     */
+    public function onBeforeController(callable $listener) {
+        $this->emitter->on(self::BEFORE_CONTROLLER_EVENT, $listener);
+        return $this;
+    }
+
+    /**
+     * @param callable $listener
+     * @return $this
+     */
+    public function onAfterController(callable $listener) {
+        $this->emitter->on(self::AFTER_CONTROLLER_EVENT, $listener);
+        return $this;
+    }
+
+    /**
+     * @param string $pattern
+     * @param mixed $handler
+     * @return $this
+     */
     public function get($pattern, $handler) {
         $this->router->addRoute('GET', $pattern, $handler);
+        return $this;
     }
 
+    /**
+     * @param string $pattern
+     * @param mixed $handler
+     * @return $this
+     */
     public function post($pattern, $handler) {
         $this->router->addRoute('POST', $pattern, $handler);
+        return $this;
     }
 
+    /**
+     * @param string $pattern
+     * @param mixed $handler
+     * @return $this
+     */
     public function put($pattern, $handler) {
         $this->router->addRoute('PUT', $pattern, $handler);
+        return $this;
     }
 
+    /**
+     * @param string $pattern
+     * @param mixed $handler
+     * @return $this
+     */
+    public function patch($pattern, $handler) {
+        $this->router->addRoute('PATCH', $pattern, $handler);
+        return $this;
+    }
+
+    /**
+     * @param string $pattern
+     * @param mixed $handler
+     * @return $this
+     */
     public function delete($pattern, $handler) {
         $this->router->addRoute('DELETE', $pattern, $handler);
+        return $this;
     }
 
+    /**
+     * @param string $method
+     * @param string $pattern
+     * @param mixed $handler
+     * @return $this
+     */
     public function customMethod($method, $pattern, $handler) {
         $this->router->addRoute($method, $pattern, $handler);
+        return $this;
     }
 
 } 

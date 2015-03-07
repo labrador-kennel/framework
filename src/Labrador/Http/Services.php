@@ -46,7 +46,7 @@ class Services {
         $injector->prepare(ResolverChain::class, function(ResolverChain $chain, Injector $injector) {
             $chain->add($injector->make(ResponseResolver::class));
             $chain->add($injector->make(CallableResolver::class));
-            $chain->add($injector->make(ControllerActionResolver::class, [':injector' => $injector]));
+            $chain->add($injector->make(ControllerActionResolver::class));
         });
         $injector->alias(HandlerResolver::class, ResolverChain::class);
 

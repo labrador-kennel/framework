@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/labrador.git",
-                "reference": "e7a2a40d119118d8254d9abad5f2da9ecdfdc7c5"
+                "reference": "e85c5d61256afa7bd2b90b2466439fae20accbaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/labrador/zipball/e7a2a40d119118d8254d9abad5f2da9ecdfdc7c5",
-                "reference": "e7a2a40d119118d8254d9abad5f2da9ecdfdc7c5",
+                "url": "https://api.github.com/repos/cspray/labrador/zipball/e85c5d61256afa7bd2b90b2466439fae20accbaf",
+                "reference": "e85c5d61256afa7bd2b90b2466439fae20accbaf",
                 "shasum": ""
             },
             "require": {
@@ -51,7 +51,7 @@
                 }
             ],
             "description": "A microframework wiring together high-quality libraries to route an HTTP request to a specific controller",
-            "time": "2015-01-01 18:53:30"
+            "time": "2015-02-28 21:11:34"
         },
         {
             "name": "cspray/platelets",
