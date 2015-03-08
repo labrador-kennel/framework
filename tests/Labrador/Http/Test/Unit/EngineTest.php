@@ -9,6 +9,7 @@
 
 namespace Labrador\Test\Unit;
 
+use Evenement\EventEmitter;
 use Labrador\Plugin\PluginManager;
 use Labrador\Http\Event\BeforeControllerEvent;
 use Labrador\Http\Event\AfterControllerEvent;
@@ -33,8 +34,10 @@ class EngineTest extends UnitTestCase {
         $this->mockPluginManager = $this->getMockBuilder(PluginManager::class)->disableOriginalConstructor()->getMock();
     }
 
-    private function getMockedEngine() {
-        return new Engine($this->mockRouter, $this->mockEmitter, $this->mockPluginManager);
+    private function getMockedEngine(Router $router = null, EventEmitterInterface $emitter = null) {
+        $router = $router ?: $this->mockRouter;
+        $emitter = $emitter ?: $this->mockEmitter;
+        return new Engine($router, $emitter, $this->mockPluginManager);
     }
 
     public function testRequestRouted() {
@@ -92,6 +95,69 @@ class EngineTest extends UnitTestCase {
         $this->setExpectedException(InvalidTypeException::class, $msg);
 
         $this->getMockedEngine()->handleRequest($req);
+    }
+
+    public function testDecoratingControllerInBeforeControllerEvent() {
+        $req = Request::create('http://test.example.com');
+        $resolved = new ResolvedRoute($req, function() { return new Response('From controller'); }, Response::HTTP_OK);
+
+        $this->mockRouter->expects($this->once())
+                         ->method('match')
+                         ->with($req)
+                         ->willReturn($resolved);
+
+        $emitter = new EventEmitter();
+        $emitter->on(Engine::BEFORE_CONTROLLER_EVENT, function(BeforeControllerEvent $event) {
+            $oldController = $event->getController();
+            $newController = function(Request $request) use($oldController) {
+                $response = $oldController($request);
+                return new Response($response->getContent() . ' and the decorator');
+            };
+            $event->setController($newController);
+        });
+
+        $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
+
+        $this->assertSame('From controller and the decorator', $response->getContent());
+    }
+
+    public function testShortCircuitController() {
+        $req = Request::create('http://test.example.com');
+        $resolved = new ResolvedRoute($req, function() { return new Response('From controller'); }, Response::HTTP_OK);
+
+        $this->mockRouter->expects($this->once())
+                         ->method('match')
+                         ->with($req)
+                         ->willReturn($resolved);
+
+        $emitter = new EventEmitter();
+        $emitter->on(Engine::BEFORE_CONTROLLER_EVENT, function(BeforeControllerEvent $event) {
+            $response = new Response('From the event');
+            $event->setResponse($response);
+        });
+
+        $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
+
+        $this->assertSame('From the event', $response->getContent());
+    }
+
+    public function testDecoratingResponseInAfterController() {
+        $req = Request::create('http://test.example.com');
+        $resolved = new ResolvedRoute($req, function() { return new Response('From controller'); }, Response::HTTP_OK);
+
+        $this->mockRouter->expects($this->once())
+                         ->method('match')
+                         ->with($req)
+                         ->willReturn($resolved);
+
+        $emitter = new EventEmitter();
+        $emitter->on(Engine::AFTER_CONTROLLER_EVENT, function(AfterControllerEvent $event) {
+            $response = $event->getResponse();
+            $event->setResponse(new Response($response->getContent() . ' and the decorator'));
+        });
+
+        $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
+        $this->assertSame('From controller and the decorator', $response->getContent());
     }
 
 } 
