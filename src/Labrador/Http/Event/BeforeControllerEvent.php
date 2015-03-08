@@ -9,4 +9,23 @@
 
 namespace Labrador\Http\Event;
 
-class BeforeControllerEvent extends HttpEvent {}
+use Symfony\Component\HttpFoundation\Request;
+
+class BeforeControllerEvent extends HttpEvent {
+
+    private $controller;
+
+    public function __construct(Request $request, callable $controller) {
+        parent::__construct($request);
+        $this->controller = $controller;
+    }
+
+    public function getController() {
+        return $this->controller;
+    }
+
+    public function setController(callable $controller) {
+        $this->controller = $controller;
+    }
+
+}
