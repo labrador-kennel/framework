@@ -9,6 +9,10 @@
 
 namespace Labrador\Http\Renderer;
 
+if (!interface_exists('Platelets\\Renderer')) {
+    throw new \RuntimeException('To utilize the ' . __NAMESPACE__ . ' module you must install cspray/platelets');
+}
+
 use Platelets\Renderer;
 use Zend\Escaper\Escaper;
 

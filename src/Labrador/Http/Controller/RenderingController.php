@@ -9,6 +9,10 @@
 
 namespace Labrador\Http\Controller;
 
+if (!interface_exists('Platelets\\Renderer')) {
+    throw new \RuntimeException('To utilize the ' . __NAMESPACE__ . '\\RenderingController you must install cspray/platelets');
+}
+
 use Platelets\Renderer;
 
 abstract class RenderingController extends Controller {

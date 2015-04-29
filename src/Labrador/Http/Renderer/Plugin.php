@@ -9,6 +9,10 @@
 
 namespace Labrador\Http\Renderer;
 
+if (!interface_exists('Platelets\\Renderer')) {
+    throw new \RuntimeException('To utilize the ' . __NAMESPACE__ . ' module you must install cspray/platelets');
+}
+
 use Auryn\Injector;
 use Labrador\Plugin\ServiceAwarePlugin;
 use Platelets\Renderer;
@@ -41,7 +45,6 @@ class Plugin implements ServiceAwarePlugin {
         $twoStep->setContext($helpers);
         $injector->share($twoStep);
         $injector->alias(Renderer::class, TwoStepRenderer::class);
-
     }
 
 } 
