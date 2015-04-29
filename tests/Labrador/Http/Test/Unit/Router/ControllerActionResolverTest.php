@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Labrador\Http\Resolver\ControllerActionResolver;
+use Labrador\Http\Router\ControllerActionResolver;
 use Labrador\Http\Exception\InvalidHandlerException;
 use Labrador\Http\Test\Stub\HandlerWithOutMethod;
 use Labrador\Http\Test\Stub\HandlerWithMethod;

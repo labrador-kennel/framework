@@ -6,9 +6,7 @@
  * @license See LICENSE in source root
  */
 
-namespace Labrador\Http\Resolver;
-
-use Labrador\Http\HandlerResolver;
+namespace Labrador\Http\Router;
 
 class CallableResolver implements HandlerResolver {
 

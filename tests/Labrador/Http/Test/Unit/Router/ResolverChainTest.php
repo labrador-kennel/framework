@@ -7,10 +7,10 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Labrador\Http\HandlerResolver;
-use Labrador\Http\Resolver\ResolverChain;
+use Labrador\Http\Router\HandlerResolver;
+use Labrador\Http\Router\ResolverChain;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class ResolverChainTest extends UnitTestCase {

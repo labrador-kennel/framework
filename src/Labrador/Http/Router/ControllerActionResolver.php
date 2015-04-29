@@ -7,9 +7,8 @@
  * @license See LICENSE in source root
  */
 
-namespace Labrador\Http\Resolver;
+namespace Labrador\Http\Router;
 
-use Labrador\Http\HandlerResolver;
 use Labrador\Http\Exception\InvalidHandlerException;
 use Auryn\Injector;
 use Auryn\InjectionException;

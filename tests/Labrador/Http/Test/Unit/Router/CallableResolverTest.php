@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Labrador\Http\Resolver\CallableResolver;
+use Labrador\Http\Router\CallableResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class CallableHandlerResolverTest extends UnitTestCase {

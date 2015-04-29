@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Labrador\Http\Resolver\ResponseResolver;
+use Labrador\Http\Router\ResponseResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
