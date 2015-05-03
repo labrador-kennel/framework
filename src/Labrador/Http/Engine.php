@@ -1,7 +1,9 @@
 <?php
 
 /**
- * 
+ * Hooks into the Engine::APP_EXECUTE_EVENT to invoke a controller
+ * that handles a Http\Request and returns a Http\Response.
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -27,6 +29,11 @@ class Engine extends CoreEngine {
     private $emitter;
     private $router;
 
+    /**
+     * @param Router $router
+     * @param EventEmitterInterface $emitter
+     * @param PluginManager $pluginManager
+     */
     public function __construct(Router $router, EventEmitterInterface $emitter, PluginManager $pluginManager) {
         parent::__construct($emitter, $pluginManager);
         $this->emitter = $emitter;
@@ -71,8 +78,7 @@ class Engine extends CoreEngine {
                 throw new InvalidTypeException(sprintf($msg, Response::class, gettype($response)));
             }
 
-            $afterEvent = new AfterControllerEvent($request);
-            $afterEvent->setResponse($response);
+            $afterEvent = new AfterControllerEvent($request, $response, $controller);
             $this->emitter->emit(self::AFTER_CONTROLLER_EVENT, [$afterEvent]);
             $response = $afterEvent->getResponse();
         }

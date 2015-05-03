@@ -9,6 +9,8 @@
 
 namespace Labrador\Http\Controller;
 
+use Labrador\Http\Event;
+
 abstract class Controller {
 
     private $data = [];
@@ -24,6 +26,14 @@ abstract class Controller {
     protected function set($key, $val) {
         $this->data[$key] = $val;
         return $this;
+    }
+
+    public function beforeController(Event\BeforeControllerEvent $event) {
+
+    }
+
+    public function afterController(Event\AfterControllerEvent $event) {
+
     }
 
 } 
