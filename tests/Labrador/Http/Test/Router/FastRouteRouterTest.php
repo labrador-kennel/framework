@@ -7,7 +7,7 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit\Router;
+namespace Labrador\Http\Test\Router;
 
 use Labrador\Http\Router\HandlerResolver;
 use Labrador\Http\Router\ResolvedRoute;

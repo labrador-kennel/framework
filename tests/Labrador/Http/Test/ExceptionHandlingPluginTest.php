@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test;
 
 use Evenement\EventEmitter;
 use Labrador\Engine;
