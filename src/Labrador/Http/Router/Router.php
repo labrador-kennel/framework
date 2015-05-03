@@ -6,7 +6,7 @@
  * @license See LICENSE in source root
  */
 
-namespace Labrador\Http;
+namespace Labrador\Http\Router;
 
 use Symfony\Component\HttpFoundation\Request;
 

@@ -9,7 +9,7 @@
  * @see https://github.com/nikic/FastRoute
  */
 
-namespace Labrador\Http;
+namespace Labrador\Http\Router;
 
 use Labrador\Http\Exception\InvalidHandlerException;
 use Labrador\Http\Exception\InvalidTypeException;

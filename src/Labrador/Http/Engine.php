@@ -1,7 +1,9 @@
 <?php
 
 /**
- * 
+ * Hooks into the Engine::APP_EXECUTE_EVENT to invoke a controller
+ * that handles a Http\Request and returns a Http\Response.
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -11,6 +13,7 @@ namespace Labrador\Http;
 
 use Labrador\CoreEngine;
 use Labrador\Plugin\PluginManager;
+use Labrador\Http\Router\Router;
 use Labrador\Http\Event\AfterControllerEvent;
 use Labrador\Http\Event\BeforeControllerEvent;
 use Labrador\Http\Exception\InvalidTypeException;
@@ -26,6 +29,11 @@ class Engine extends CoreEngine {
     private $emitter;
     private $router;
 
+    /**
+     * @param Router $router
+     * @param EventEmitterInterface $emitter
+     * @param PluginManager $pluginManager
+     */
     public function __construct(Router $router, EventEmitterInterface $emitter, PluginManager $pluginManager) {
         parent::__construct($emitter, $pluginManager);
         $this->emitter = $emitter;
@@ -56,18 +64,21 @@ class Engine extends CoreEngine {
      */
     public function handleRequest(Request $request) {
         $resolved = $this->router->match($request);
+
         $beforeEvent = new BeforeControllerEvent($request, $resolved->getController());
         $this->emitter->emit(self::BEFORE_CONTROLLER_EVENT, [$beforeEvent]);
         $response = $beforeEvent->getResponse();
+
         if (!$response instanceof Response) {
             $controller = $beforeEvent->getController();
             $response = $controller($request);
+
             if (!$response instanceof Response) {
                 $msg = 'Controller MUST return an instance of %s, "%s" was returned.';
                 throw new InvalidTypeException(sprintf($msg, Response::class, gettype($response)));
             }
-            $afterEvent = new AfterControllerEvent($request);
-            $afterEvent->setResponse($response);
+
+            $afterEvent = new AfterControllerEvent($request, $response, $controller);
             $this->emitter->emit(self::AFTER_CONTROLLER_EVENT, [$afterEvent]);
             $response = $afterEvent->getResponse();
         }

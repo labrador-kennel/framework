@@ -7,12 +7,12 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Labrador\Http\HandlerResolver;
-use Labrador\Http\ResolvedRoute;
-use Labrador\Http\FastRouteRouter;
-use Labrador\Http\Route;
+use Labrador\Http\Router\HandlerResolver;
+use Labrador\Http\Router\ResolvedRoute;
+use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\Route;
 use Labrador\Http\Exception\InvalidHandlerException;
 use Labrador\Http\Exception\InvalidTypeException;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;

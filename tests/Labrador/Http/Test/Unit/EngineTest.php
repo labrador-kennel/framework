@@ -10,12 +10,13 @@
 namespace Labrador\Test\Unit;
 
 use Evenement\EventEmitter;
+use Labrador\Http\Test\Stub\ControllerStub;
 use Labrador\Plugin\PluginManager;
 use Labrador\Http\Event\BeforeControllerEvent;
 use Labrador\Http\Event\AfterControllerEvent;
 use Labrador\Http\Engine;
-use Labrador\Http\ResolvedRoute;
-use Labrador\Http\Router;
+use Labrador\Http\Router\ResolvedRoute;
+use Labrador\Http\Router\Router;
 use Labrador\Http\Exception\InvalidTypeException;
 use Evenement\EventEmitterInterface;
 use PHPUnit_Framework_TestCase as UnitTestCase;
@@ -158,6 +159,26 @@ class EngineTest extends UnitTestCase {
 
         $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
         $this->assertSame('From controller and the decorator', $response->getContent());
+    }
+
+    public function testGettingControllerFromAfterControllerEvent() {
+        $req = Request::create('http://test.example.com');
+        $controller = function() { return new Response('something'); };
+        $resolved = new ResolvedRoute($req, $controller, Response::HTTP_OK);
+
+        $this->mockRouter->expects($this->once())
+                         ->method('match')
+                         ->with($req)
+                         ->willReturn($resolved);
+
+        $emitter = new EventEmitter();
+        $check = false;
+        $emitter->on(Engine::AFTER_CONTROLLER_EVENT, function(AfterControllerEvent $event) use($controller, &$check) {
+            $check = $controller === $event->getController();
+        });
+
+        $this->getMockedEngine(null, $emitter)->handleRequest($req);
+        $this->assertTrue($check);
     }
 
 } 

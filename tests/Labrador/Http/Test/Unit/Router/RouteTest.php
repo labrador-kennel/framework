@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Labrador\Test\Unit;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Labrador\Http\Route;
+use Labrador\Http\Router\Route;
 use Labrador\Http\Test\Stub\ToStringHandlerObject;
 use Labrador\Http\Test\Stub\ToStringHandlerObjectWithMethod;
 use PHPUnit_Framework_TestCase as UnitTestCase;

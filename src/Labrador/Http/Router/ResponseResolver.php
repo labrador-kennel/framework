@@ -1,15 +1,14 @@
 <?php
 
 /**
- * Resolver that will take a handler that is an instanceof Response and resolve to
+ * Router that will take a handler that is an instanceof Response and resolve to
  * a closure that will return the Response.
  * 
  * @license See LICENSE in source root
  */
 
-namespace Labrador\Http\Resolver;
+namespace Labrador\Http\Router;
 
-use Labrador\Http\HandlerResolver;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResponseResolver implements HandlerResolver {
