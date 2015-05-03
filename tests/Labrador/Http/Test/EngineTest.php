@@ -7,7 +7,7 @@
  * @since   1.0
  */
 
-namespace Labrador\Test\Unit;
+namespace Labrador\Http\Test;
 
 use Evenement\EventEmitter;
 use Labrador\Http\Test\Stub\ControllerStub;

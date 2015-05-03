@@ -7,7 +7,7 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit\Router;
+namespace Labrador\Http\Test\Router;
 
 use Labrador\Http\Router\ControllerActionResolver;
 use Labrador\Http\Exception\InvalidHandlerException;

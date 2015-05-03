@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Http\Test\Controller;
 
 use Evenement\EventEmitter;
 use Labrador\Http\Controller\EventTriggeringPlugin;
