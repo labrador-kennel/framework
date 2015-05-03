@@ -32,9 +32,6 @@ TEXT;
     exit;
 });
 
-$rendererPlugin = new \Labrador\Http\Renderer\Plugin(__DIR__ . '/templates', 'layouts/default');
-$engine->registerPlugin($rendererPlugin);
-
 $engine->get('/', \Labrador\Http\Controller\WelcomeController::class . '#index');
 
 $engine->run();
