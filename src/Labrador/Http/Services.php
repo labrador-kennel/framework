@@ -11,6 +11,7 @@ namespace Labrador\Http;
 
 use Labrador\Plugin\PluginManager;
 use Labrador\Http\Router;
+use Labrador\Http\Controller\EventTriggeringPlugin;
 use Auryn\Injector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use FastRoute\RouteCollector;
@@ -18,10 +19,17 @@ use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use Evenement\EventEmitter;
 use Evenement\EventEmitterInterface;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 class Services {
 
     public function register(Injector $injector) {
+        $this->wireObjectGraph($injector);
+        $this->registerCorePlugins($injector->make(Engine::class), $injector);
+    }
+
+    private function wireObjectGraph(Injector $injector) {
         $injector->share($injector);
         $injector->alias(Injector::class, get_class($injector));
 
@@ -53,6 +61,22 @@ class Services {
         $injector->share(PluginManager::class);
 
         $injector->share(Engine::class);
+
+        $injector->share(Run::class);
+        $injector->prepare(Run::class, function(Run $run) {
+            $run->pushHandler(new PrettyPageHandler());
+        });
+
+        $injector->share(ExceptionHandlingPlugin::class);
+        $injector->share(EventTriggeringPlugin::class);
+    }
+
+    private function registerCorePlugins(Engine $engine, Injector $injector) {
+        $defaultExceptionHandler = $injector->make(ExceptionHandlingPlugin::class);
+        $controllerEventTrigger = $injector->make(EventTriggeringPlugin::class);
+
+        $engine->registerPlugin($defaultExceptionHandler);
+        $engine->registerPlugin($controllerEventTrigger);
     }
 
 } 
