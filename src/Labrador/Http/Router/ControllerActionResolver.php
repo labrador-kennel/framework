@@ -47,7 +47,7 @@ class ControllerActionResolver implements HandlerResolver {
             $controller = $this->injector->make($controllerName);
         } catch (InjectionException $exc) {
             $msg = $this->errorMsg['controller_create_error'];
-            throw new InvalidHandlerException($exc->getMessage());#sprintf($msg, $handler), 500, $exc);
+            throw new InvalidHandlerException(sprintf($msg, $handler), 500, $exc);
         }
 
         $cb = [$controller, $action];
