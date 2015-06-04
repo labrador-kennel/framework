@@ -31,7 +31,6 @@ class Services {
 
     private function wireObjectGraph(Injector $injector) {
         $injector->share($injector);
-        $injector->alias(Injector::class, get_class($injector));
 
         $injector->share(RouteCollector::class);
         $injector->define(RouteCollector::class, [
