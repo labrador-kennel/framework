@@ -9,6 +9,7 @@
 
 namespace Labrador\Http\Event;
 
+use Labrador\Http\Engine;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +18,7 @@ class AfterControllerEvent extends HttpEvent {
     private $controller;
 
     public function __construct(Request $req, Response $res, callable $controller) {
-        parent::__construct($req);
+        parent::__construct($req, Engine::AFTER_CONTROLLER_EVENT);
         $this->setResponse($res);
         $this->controller = $controller;
     }

@@ -9,15 +9,17 @@
 
 namespace Labrador\Http\Event;
 
+use Labrador\Event\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class HttpEvent {
+abstract class HttpEvent extends Event {
 
     private $request;
     private $response;
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request, $name) {
+        parent::__construct($name);
         $this->request = $request;
     }
 

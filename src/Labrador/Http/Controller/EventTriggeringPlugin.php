@@ -4,6 +4,9 @@
  * A Labrador\Http plugin that ensures the beforeController and afterController
  * methods on Labrador\Http\Controller\Controller instances are properly invoked
  * during the appropriate event.
+ *
+ * This plugin comes registered for the Http\Engine created by the Auryn\Injector
+ * from Http\Services.
  */
 
 namespace Labrador\Http\Controller;
@@ -33,7 +36,6 @@ class EventTriggeringPlugin implements EventAwarePlugin {
             if ($controllerHasCallback($controller)) {
                 $controller[0]->afterController($event);
             }
-
         });
     }
 

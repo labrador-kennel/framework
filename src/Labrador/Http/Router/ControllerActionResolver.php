@@ -11,7 +11,7 @@ namespace Labrador\Http\Router;
 
 use Labrador\Http\Exception\InvalidHandlerException;
 use Auryn\Injector;
-use Auryn\InjectionException;
+use Auryn\InjectorException;
 
 class ControllerActionResolver implements HandlerResolver {
 
@@ -45,7 +45,7 @@ class ControllerActionResolver implements HandlerResolver {
         list($controllerName, $action) = explode('#', $handler);
         try {
             $controller = $this->injector->make($controllerName);
-        } catch (InjectionException $exc) {
+        } catch (InjectorException $exc) {
             $msg = $this->errorMsg['controller_create_error'];
             throw new InvalidHandlerException(sprintf($msg, $handler), 500, $exc);
         }
