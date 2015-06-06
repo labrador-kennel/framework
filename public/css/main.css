@@ -1,0 +1,60 @@
+body {
+    color: rgba(0, 0, 0, .75);
+}
+
+.panel {
+    padding: .5em;
+}
+
+.panel--primary-color { background-color: rgb(137, 89, 77); color: white; }
+.panel--secondary-color { background-color: rgb(243, 229, 211); }
+.panel--shadow { box-shadow: 0 0 2px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.24); }
+
+.padding--1 { padding: 1em; }
+
+.no-margin { margin: 0; }
+.no-margin--top { margin-top: 0; }
+.no-margin--bottom { margin-bottom: 0; }
+.no-margin--left { margin-left: 0; }
+.no-margin--right { margin-right: 0; }
+
+.margin--1 { margin: 1em; }
+.margin--1--top { margin-top: 1em; }
+.margin--1--bottom { margin-bottom: 1em; }
+.margin--1--left { margin-left: 1em; }
+.margin--1--right { margin-right: 1em; }
+
+.margin--1-2 { margin: .5em; }
+.margin--1-2--top { margin-top: .5em; }
+.margin--1-2--bottom { margin-bottom: .5em; }
+.margin--1-2--left { margin-left: .5em; }
+.margin--1-2--right { margin-left: .5em; }
+
+.no-border-radius { border-radius: 0; }
+
+.panel--quote {
+    padding: 2em 0;
+}
+
+.hero-panel {
+    padding: 1.5em 0;
+}
+
+main {
+    font-size: 125%;
+}
+
+.coolness-list {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.coolness-list--card-title {
+    padding-bottom: .1em;
+    border-bottom: 2px solid rgb(137, 89, 77);
+}
+
+.coolness-list--card-description {
+    color: rgba(0, 0, 0, .65);
+}

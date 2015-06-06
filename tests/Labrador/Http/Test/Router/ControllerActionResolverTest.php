@@ -13,7 +13,7 @@ use Labrador\Http\Router\ControllerActionResolver;
 use Labrador\Http\Exception\InvalidHandlerException;
 use Labrador\Http\Test\Stub\HandlerWithOutMethod;
 use Labrador\Http\Test\Stub\HandlerWithMethod;
-use Auryn\Provider;
+use Auryn\Injector;
 use Symfony\Component\HttpFoundation\Request;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
@@ -21,16 +21,16 @@ class ControllerActionResolverTest extends UnitTestCase {
 
     function testNoHashTagInHandlerReturnsFalse() {
         $handler = 'something_no_hashtag';
-        $provider = new Provider();
-        $resolver = new ControllerActionResolver($provider);
+        $Injector = new Injector();
+        $resolver = new ControllerActionResolver($Injector);
 
         $this->assertFalse($resolver->resolve($handler));
     }
 
     function testNoClassThrowsException() {
         $handler = 'Not_Found_Class#action';
-        $provider = new Provider();
-        $resolver = new ControllerActionResolver($provider);
+        $Injector = new Injector();
+        $resolver = new ControllerActionResolver($Injector);
 
         $this->setExpectedException(
             InvalidHandlerException::class,
@@ -41,8 +41,8 @@ class ControllerActionResolverTest extends UnitTestCase {
 
     function testNoMethodOnControllerThrowsException() {
         $handler = HandlerWithOutMethod::class . '#action';
-        $provider = new Provider();
-        $resolver = new ControllerActionResolver($provider);
+        $Injector = new Injector();
+        $resolver = new ControllerActionResolver($Injector);
 
         $this->setExpectedException(
             InvalidHandlerException::class,
@@ -55,9 +55,9 @@ class ControllerActionResolverTest extends UnitTestCase {
         $handler = HandlerWithMethod::class . '#action';
         $val = new \stdClass();
         $val->action = null;
-        $provider = new Provider();
-        $provider->define(HandlerWithMethod::class, [':val' => $val]);
-        $resolver = new ControllerActionResolver($provider);
+        $Injector = new Injector();
+        $Injector->define(HandlerWithMethod::class, [':val' => $val]);
+        $resolver = new ControllerActionResolver($Injector);
 
         $cb = $resolver->resolve($handler);
         $cb($this->getMock(Request::class));

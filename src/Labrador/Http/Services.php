@@ -24,9 +24,12 @@ use Whoops\Run;
 
 class Services {
 
-    public function register(Injector $injector) {
+    public function createInjector() {
+        $injector = new Injector();
         $this->wireObjectGraph($injector);
         $this->registerCorePlugins($injector->make(Engine::class), $injector);
+
+        return $injector;
     }
 
     private function wireObjectGraph(Injector $injector) {

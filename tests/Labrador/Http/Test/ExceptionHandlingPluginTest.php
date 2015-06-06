@@ -20,7 +20,7 @@ class ExceptionHandlingPluginTest extends UnitTestCase {
         $emitter = new EventEmitter();
         (new ExceptionHandlingPlugin($run))->registerEventListeners($emitter);
 
-        $event = new ExceptionThrownEvent($this->getMock(Engine::class), $exception);
+        $event = new ExceptionThrownEvent($exception);
         $emitter->emit(Engine::EXCEPTION_THROWN_EVENT, [$event]);
     }
 
@@ -34,7 +34,7 @@ class ExceptionHandlingPluginTest extends UnitTestCase {
         (new ExceptionHandlingPlugin($run))->registerEventListeners($emitter);
         $emitter->on(Engine::EXCEPTION_THROWN_EVENT, function() {});
 
-        $event = new ExceptionThrownEvent($this->getMock(Engine::class), $exception);
+        $event = new ExceptionThrownEvent($exception);
         $emitter->emit(Engine::EXCEPTION_THROWN_EVENT, [$event]);
     }
 
