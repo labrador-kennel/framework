@@ -9,6 +9,7 @@
 
 namespace Cspray\Labrador\Http\Test;
 
+use Cspray\Labrador\Http\Event\HttpEventFactory;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Cspray\Labrador\Http\Event\AfterControllerEvent;
@@ -37,10 +38,11 @@ class EngineTest extends UnitTestCase {
         $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
     }
 
-    private function getMockedEngine(Router $router = null, EventEmitterInterface $emitter = null) {
+    private function getMockedEngine(Request $request, Router $router = null, EventEmitterInterface $emitter = null) {
         $router = $router ?: $this->mockRouter;
         $emitter = $emitter ?: $this->mockEmitter;
-        return new Engine($router, $this->mockEnvironment, $emitter, $this->mockPluginManager);
+        $factory = new HttpEventFactory($request);
+        return new Engine($router, $this->mockEnvironment, $emitter, $this->mockPluginManager, $factory);
     }
 
     public function testRequestRouted() {
@@ -51,7 +53,7 @@ class EngineTest extends UnitTestCase {
                          ->with($req)
                          ->willReturn($resolved);
 
-        $this->getMockedEngine()->handleRequest($req);
+        $this->getMockedEngine($req)->handleRequest($req);
     }
 
     public function eventEmittingOrderProvider() {
@@ -82,7 +84,7 @@ class EngineTest extends UnitTestCase {
                               })
                           );
 
-        $this->getMockedEngine()->handleRequest($req);
+        $this->getMockedEngine($req)->handleRequest($req);
     }
 
     public function testControllerMustReturnResponse() {
@@ -97,7 +99,7 @@ class EngineTest extends UnitTestCase {
         $msg = 'Controller MUST return an instance of Symfony\\Component\\HttpFoundation\\Response, "string" was returned.';
         $this->setExpectedException(InvalidTypeException::class, $msg);
 
-        $this->getMockedEngine()->handleRequest($req);
+        $this->getMockedEngine($req)->handleRequest($req);
     }
 
     public function testDecoratingControllerInBeforeControllerEvent() {
@@ -119,7 +121,7 @@ class EngineTest extends UnitTestCase {
             $event->setController($newController);
         });
 
-        $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
+        $response = $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
 
         $this->assertSame('From controller and the decorator', $response->getContent());
     }
@@ -139,7 +141,7 @@ class EngineTest extends UnitTestCase {
             $event->setResponse($response);
         });
 
-        $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
+        $response = $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
 
         $this->assertSame('From the event', $response->getContent());
     }
@@ -159,7 +161,7 @@ class EngineTest extends UnitTestCase {
             $event->setResponse(new Response($response->getContent() . ' and the decorator'));
         });
 
-        $response = $this->getMockedEngine(null, $emitter)->handleRequest($req);
+        $response = $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
         $this->assertSame('From controller and the decorator', $response->getContent());
     }
 
@@ -179,7 +181,7 @@ class EngineTest extends UnitTestCase {
             $check = $controller === $event->getController();
         });
 
-        $this->getMockedEngine(null, $emitter)->handleRequest($req);
+        $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
         $this->assertTrue($check);
     }
 
