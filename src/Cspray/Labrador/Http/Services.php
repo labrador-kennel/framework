@@ -21,6 +21,7 @@ use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use Evenement\EventEmitter;
 use Evenement\EventEmitterInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Telluris\Environment;
 use Telluris\Config\Storage;
 use Whoops\Handler\PrettyPageHandler;
@@ -94,6 +95,8 @@ class Services {
 
         $injector->share(ExceptionHandlingPlugin::class);
         $injector->share(EventTriggeringPlugin::class);
+
+        $injector->share(Request::createFromGlobals());
     }
 
     private function registerCorePlugins(Engine $engine, Injector $injector) {
