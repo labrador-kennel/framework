@@ -14,6 +14,7 @@ use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Event\EnvironmentInitializeEvent;
 use Cspray\Labrador\Http\Router;
 use Cspray\Labrador\Http\Controller\EventTriggeringPlugin;
+use Cspray\Labrador\Http\Router\InjectorExecutableResolver;
 use Auryn\Injector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use FastRoute\RouteCollector;
@@ -66,7 +67,10 @@ class Services {
             $chain->add($injector->make(Router\CallableResolver::class));
             $chain->add($injector->make(Router\ControllerActionResolver::class));
         });
-        $injector->alias(Router\HandlerResolver::class, Router\ResolverChain::class);
+
+        $injector->share(InjectorExecutableResolver::class);
+        $injector->define(InjectorExecutableResolver::class, ['resolver' => Router\ResolverChain::class]);
+        $injector->alias(Router\HandlerResolver::class, InjectorExecutableResolver::class);
 
         $injector->share(EventEmitter::class);
         $injector->alias(EventEmitterInterface::class, EventEmitter::class);
