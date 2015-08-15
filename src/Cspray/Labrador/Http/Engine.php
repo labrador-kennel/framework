@@ -12,12 +12,10 @@
 namespace Cspray\Labrador\Http;
 
 use Cspray\Labrador\CoreEngine;
+use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Http\Event\AppExecuteEvent;
 use Cspray\Labrador\Http\Event\HttpEventFactory;
-use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\Http\Event\AfterControllerEvent;
-use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
