@@ -45,6 +45,15 @@ class EngineTest extends UnitTestCase {
         return new Engine($router, $this->mockEnvironment, $emitter, $this->mockPluginManager, $factory);
     }
 
+    private function getHandleRequestExecutable(Engine $engine, Request $request) {
+        return function() use($engine, $request) {
+            $r = new \ReflectionClass($engine);
+            $m = $r->getMethod('handleRequest');
+            $m->setAccessible(true);
+            return $m->invokeArgs($engine, [$request]);
+        };
+    }
+
     public function testRequestRouted() {
         $req = Request::create('http://test.example.com');
         $resolved = new ResolvedRoute($req, function() { return new Response(); }, Response::HTTP_OK);
@@ -53,7 +62,8 @@ class EngineTest extends UnitTestCase {
                          ->with($req)
                          ->willReturn($resolved);
 
-        $this->getMockedEngine($req)->handleRequest($req);
+        $engine = $this->getMockedEngine($req);
+        $this->getHandleRequestExecutable($engine, $req)();
     }
 
     public function eventEmittingOrderProvider() {
@@ -84,7 +94,8 @@ class EngineTest extends UnitTestCase {
                               })
                           );
 
-        $this->getMockedEngine($req)->handleRequest($req);
+        $engine = $this->getMockedEngine($req);
+        $this->getHandleRequestExecutable($engine, $req)();
     }
 
     public function testControllerMustReturnResponse() {
@@ -99,7 +110,8 @@ class EngineTest extends UnitTestCase {
         $msg = 'Controller MUST return an instance of Symfony\\Component\\HttpFoundation\\Response, "string" was returned.';
         $this->setExpectedException(InvalidTypeException::class, $msg);
 
-        $this->getMockedEngine($req)->handleRequest($req);
+        $engine = $this->getMockedEngine($req);
+        $this->getHandleRequestExecutable($engine, $req)();
     }
 
     public function testDecoratingControllerInBeforeControllerEvent() {
@@ -121,7 +133,8 @@ class EngineTest extends UnitTestCase {
             $event->setController($newController);
         });
 
-        $response = $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
+        $engine = $this->getMockedEngine($req, null, $emitter);
+        $response = $this->getHandleRequestExecutable($engine, $req)();
 
         $this->assertSame('From controller and the decorator', $response->getContent());
     }
@@ -141,7 +154,8 @@ class EngineTest extends UnitTestCase {
             $event->setResponse($response);
         });
 
-        $response = $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
+        $engine = $this->getMockedEngine($req, null, $emitter);
+        $response = $this->getHandleRequestExecutable($engine, $req)();
 
         $this->assertSame('From the event', $response->getContent());
     }
@@ -161,7 +175,8 @@ class EngineTest extends UnitTestCase {
             $event->setResponse(new Response($response->getContent() . ' and the decorator'));
         });
 
-        $response = $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
+        $engine = $this->getMockedEngine($req, null, $emitter);
+        $response = $this->getHandleRequestExecutable($engine, $req)();
         $this->assertSame('From controller and the decorator', $response->getContent());
     }
 
@@ -181,7 +196,8 @@ class EngineTest extends UnitTestCase {
             $check = $controller === $event->getController();
         });
 
-        $this->getMockedEngine($req, null, $emitter)->handleRequest($req);
+        $engine = $this->getMockedEngine($req, null, $emitter);
+        $this->getHandleRequestExecutable($engine, $req)();
         $this->assertTrue($check);
     }
 

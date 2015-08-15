@@ -73,7 +73,7 @@ class Engine extends CoreEngine {
      * @return Response
      * @throws InvalidTypeException
      */
-    public function handleRequest(Request $request) : Response {
+    private function handleRequest(Request $request) : Response {
         $resolved = $this->router->match($request);
 
         $beforeEvent = $this->eventFactory->create(Engine::BEFORE_CONTROLLER_EVENT, $resolved->getController());
