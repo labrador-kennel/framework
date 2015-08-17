@@ -19,7 +19,7 @@
          verbose="true">
     <testsuites>
         <testsuite name="All Tests Suite">
-            <directory suffix="Test.php">./tests</directory>
+            <directory suffix="Test.php">./test</directory>
         </testsuite>
     </testsuites>
     <logging>

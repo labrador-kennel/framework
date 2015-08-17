@@ -8,8 +8,8 @@ php:
 
 before_script:
   - composer self-update
-  - composer update --prefer-source
+  - composer update --prefer-source --ignore-platform-reqs
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.clover --configuration travis-phpunit.xml.dist
+  - vendor/bin/phpunit --coverage-clover=coverage.clover
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
