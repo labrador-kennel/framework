@@ -31,10 +31,9 @@ class InjectorExecutableResolver implements HandlerResolver {
         $cb = $this->resolver->resolve($handler);
         if ($cb) {
             $injector = $this->injector;
-            $func = function() use($cb, $injector) {
+            return function() use($cb, $injector) {
                 return $injector->execute($cb);
             };
-            return $func;
         }
 
         return false;
