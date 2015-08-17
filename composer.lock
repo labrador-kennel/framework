@@ -4,24 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e457670cd26a96d58116173b9aabf778",
+    "hash": "29745309f6c6e43e6fb942c07a89ef4e",
     "packages": [
         {
             "name": "cspray/labrador",
-            "version": "0.1.1",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/labrador.git",
-                "reference": "35cd15c271921e3a1abd32c879706d530b6af27a"
+                "reference": "f189f32bc6b58641bef5c2b8a2a87baf3395a4e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/labrador/zipball/35cd15c271921e3a1abd32c879706d530b6af27a",
-                "reference": "35cd15c271921e3a1abd32c879706d530b6af27a",
+                "url": "https://api.github.com/repos/cspray/labrador/zipball/f189f32bc6b58641bef5c2b8a2a87baf3395a4e8",
+                "reference": "f189f32bc6b58641bef5c2b8a2a87baf3395a4e8",
                 "shasum": ""
             },
             "require": {
-                "cspray/telluris": "dev-master",
+                "cspray/telluris": "~0.1",
                 "filp/whoops": "~1.1",
                 "league/event": "~2.1",
                 "morrisonlevi/ardent": "~0.14",
@@ -56,20 +56,20 @@
                 }
             ],
             "description": "A microframework providing a plugin and event system to build PHP powered applications.",
-            "time": "2015-08-17 01:55:33"
+            "time": "2015-08-17 04:16:23"
         },
         {
             "name": "cspray/telluris",
-            "version": "dev-master",
+            "version": "0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/telluris.git",
-                "reference": "9f60de7df07c4525a6762ead45c70ed66b152cab"
+                "reference": "187b60e5c130c8a096f24f228bd98ac043e62e8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/telluris/zipball/9f60de7df07c4525a6762ead45c70ed66b152cab",
-                "reference": "9f60de7df07c4525a6762ead45c70ed66b152cab",
+                "url": "https://api.github.com/repos/cspray/telluris/zipball/187b60e5c130c8a096f24f228bd98ac043e62e8b",
+                "reference": "187b60e5c130c8a096f24f228bd98ac043e62e8b",
                 "shasum": ""
             },
             "require": {
@@ -82,10 +82,7 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
-                    "Telluris\\": [
-                        "src/",
-                        "test/"
-                    ]
+                    "Cspray\\Telluris\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -93,20 +90,20 @@
                 "MIT"
             ],
             "description": "Helps manage your environment specific configuration and code.",
-            "time": "2015-07-26 19:52:30"
+            "time": "2015-08-17 03:55:57"
         },
         {
             "name": "filp/whoops",
-            "version": "1.1.5",
+            "version": "1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "c982fe62c44798c433229cb0425c61b487cc1883"
+                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/c982fe62c44798c433229cb0425c61b487cc1883",
-                "reference": "c982fe62c44798c433229cb0425c61b487cc1883",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/72538eeb70bbfb11964412a3d098d109efd012f7",
+                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7",
                 "shasum": ""
             },
             "require": {
@@ -151,7 +148,7 @@
                 "whoops",
                 "zf2"
             ],
-            "time": "2015-03-30 15:26:59"
+            "time": "2015-06-29 05:42:04"
         },
         {
             "name": "league/event",
@@ -1266,7 +1263,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cspray/telluris": 20,
         "phpunit/phpunit-mock-objects": 20
     },
     "prefer-stable": false,
