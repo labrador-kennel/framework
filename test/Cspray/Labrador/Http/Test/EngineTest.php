@@ -21,7 +21,7 @@ use League\Event\EmitterInterface;
 use League\Event\Emitter as EventEmitter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Telluris\Environment;
+use Cspray\Telluris\Environment;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class EngineTest extends UnitTestCase {
