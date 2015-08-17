@@ -17,8 +17,8 @@ use Cspray\Labrador\Http\Engine;
 use Cspray\Labrador\Http\Router\ResolvedRoute;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
-use Evenement\EventEmitterInterface;
-use Evenement\EventEmitter;
+use League\Event\EmitterInterface;
+use League\Event\Emitter as EventEmitter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Telluris\Environment;
@@ -33,12 +33,12 @@ class EngineTest extends UnitTestCase {
 
     public function setUp() {
         $this->mockRouter = $this->getMock(Router::class);
-        $this->mockEmitter = $this->getMock(EventEmitterInterface::class);
+        $this->mockEmitter = $this->getMock(EmitterInterface::class);
         $this->mockPluginManager = $this->getMockBuilder(PluginManager::class)->disableOriginalConstructor()->getMock();
         $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
     }
 
-    private function getMockedEngine(Request $request, Router $router = null, EventEmitterInterface $emitter = null) {
+    private function getMockedEngine(Request $request, Router $router = null, EmitterInterface $emitter = null) {
         $router = $router ?: $this->mockRouter;
         $emitter = $emitter ?: $this->mockEmitter;
         $factory = new HttpEventFactory($request);
@@ -88,9 +88,8 @@ class EngineTest extends UnitTestCase {
         $this->mockEmitter->expects($this->at($index))
                           ->method('emit')
                           ->with(
-                              $event,
-                              $this->callback(function($args) use($eventType) {
-                                  return $args[0] instanceof $eventType;
+                              $this->callback(function($arg) use($eventType) {
+                                  return $arg instanceof $eventType;
                               })
                           );
 
@@ -124,7 +123,7 @@ class EngineTest extends UnitTestCase {
                          ->willReturn($resolved);
 
         $emitter = new EventEmitter();
-        $emitter->on(Engine::BEFORE_CONTROLLER_EVENT, function(BeforeControllerEvent $event) {
+        $emitter->addListener(Engine::BEFORE_CONTROLLER_EVENT, function(BeforeControllerEvent $event) {
             $oldController = $event->getController();
             $newController = function(Request $request) use($oldController) {
                 $response = $oldController($request);
@@ -149,7 +148,7 @@ class EngineTest extends UnitTestCase {
                          ->willReturn($resolved);
 
         $emitter = new EventEmitter();
-        $emitter->on(Engine::BEFORE_CONTROLLER_EVENT, function(BeforeControllerEvent $event) {
+        $emitter->addListener(Engine::BEFORE_CONTROLLER_EVENT, function(BeforeControllerEvent $event) {
             $response = new Response('From the event');
             $event->setResponse($response);
         });
@@ -170,7 +169,7 @@ class EngineTest extends UnitTestCase {
                          ->willReturn($resolved);
 
         $emitter = new EventEmitter();
-        $emitter->on(Engine::AFTER_CONTROLLER_EVENT, function(AfterControllerEvent $event) {
+        $emitter->addListener(Engine::AFTER_CONTROLLER_EVENT, function(AfterControllerEvent $event) {
             $response = $event->getResponse();
             $event->setResponse(new Response($response->getContent() . ' and the decorator'));
         });
@@ -192,7 +191,7 @@ class EngineTest extends UnitTestCase {
 
         $emitter = new EventEmitter();
         $check = false;
-        $emitter->on(Engine::AFTER_CONTROLLER_EVENT, function(AfterControllerEvent $event) use($controller, &$check) {
+        $emitter->addListener(Engine::AFTER_CONTROLLER_EVENT, function(AfterControllerEvent $event) use($controller, &$check) {
             $check = $controller === $event->getController();
         });
 

@@ -14,15 +14,15 @@ abstract class Controller {
 
     private $data = [];
 
-    protected function getAll() : array {
+    public function getAll() : array {
         return $this->data;
     }
 
-    protected function get(string $key, $default = null) {
+    public function get(string $key, $default = null) {
         return isset($this->data[$key]) ? $this->data[$key] : $default;
     }
 
-    protected function set(string $key, $val) : self {
+    public function set(string $key, $val) : self {
         $this->data[$key] = $val;
         return $this;
     }

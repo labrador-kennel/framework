@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Event;
 
-use Cspray\Labrador\Event\Event;
+use League\Event\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

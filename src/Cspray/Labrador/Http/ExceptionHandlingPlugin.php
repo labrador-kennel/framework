@@ -8,7 +8,7 @@ namespace Cspray\Labrador\Http;
 
 use Cspray\Labrador\Event\ExceptionThrownEvent;
 use Cspray\Labrador\Plugin\EventAwarePlugin;
-use Evenement\EventEmitterInterface;
+use League\Event\EmitterInterface;
 use Whoops\Run;
 
 class ExceptionHandlingPlugin implements EventAwarePlugin {
@@ -23,12 +23,12 @@ class ExceptionHandlingPlugin implements EventAwarePlugin {
     }
 
     /**
-     * @param EventEmitterInterface $emitter
+     * @param EmitterInterface $emitter
      */
-    public function registerEventListeners(EventEmitterInterface $emitter) {
+    public function registerEventListeners(EmitterInterface $emitter) {
         $run = $this->whoopsRun;
-        $emitter->on(Engine::EXCEPTION_THROWN_EVENT, function(ExceptionThrownEvent $event) use($run, $emitter) {
-            if (count($emitter->listeners(Engine::EXCEPTION_THROWN_EVENT)) === 1) {
+        $emitter->addListener(Engine::EXCEPTION_THROWN_EVENT, function(ExceptionThrownEvent $event) use($run, $emitter) {
+            if (count($emitter->getListeners(Engine::EXCEPTION_THROWN_EVENT)) === 1) {
                 $run->handleException($event->getException());
             }
         });

@@ -19,7 +19,7 @@ use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Evenement\EventEmitterInterface;
+use League\Event\EmitterInterface;
 use Telluris\Environment;
 
 class Engine extends CoreEngine {
@@ -33,13 +33,13 @@ class Engine extends CoreEngine {
 
     /**
      * @param Router $router
-     * @param EventEmitterInterface $emitter
+     * @param EmitterInterface $emitter
      * @param PluginManager $pluginManager
      */
     public function __construct(
         Router $router,
         Environment $environment,
-        EventEmitterInterface $emitter,
+        EmitterInterface $emitter,
         PluginManager $pluginManager,
         HttpEventFactory $eventFactory
     ) {
@@ -75,7 +75,7 @@ class Engine extends CoreEngine {
         $resolved = $this->router->match($request);
 
         $beforeEvent = $this->eventFactory->create(Engine::BEFORE_CONTROLLER_EVENT, $resolved->getController());
-        $this->emitter->emit(self::BEFORE_CONTROLLER_EVENT, [$beforeEvent]);
+        $this->emitter->emit($beforeEvent);
         $response = $beforeEvent->getResponse();
 
         if (!$response instanceof Response) {
@@ -88,7 +88,7 @@ class Engine extends CoreEngine {
             }
 
             $afterEvent = $this->eventFactory->create(Engine::AFTER_CONTROLLER_EVENT, $response, $controller);
-            $this->emitter->emit(self::AFTER_CONTROLLER_EVENT, [$afterEvent]);
+            $this->emitter->emit($afterEvent);
             $response = $afterEvent->getResponse();
         }
 
@@ -100,7 +100,7 @@ class Engine extends CoreEngine {
      * @return $this
      */
     public function onBeforeController(callable $listener) : self {
-        $this->emitter->on(self::BEFORE_CONTROLLER_EVENT, $listener);
+        $this->emitter->addListener(self::BEFORE_CONTROLLER_EVENT, $listener);
         return $this;
     }
 
@@ -109,7 +109,7 @@ class Engine extends CoreEngine {
      * @return $this
      */
     public function onAfterController(callable $listener) : self {
-        $this->emitter->on(self::AFTER_CONTROLLER_EVENT, $listener);
+        $this->emitter->addListener(self::AFTER_CONTROLLER_EVENT, $listener);
         return $this;
     }
 

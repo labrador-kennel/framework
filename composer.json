@@ -4,19 +4,14 @@
         {
             "type": "vcs",
             "url": "https://github.com/cspray/phpunit-mock-objects"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/cspray/Ardent"
         }
     ],
     "require": {
         "php": "~7.0",
-        "cspray/labrador": "dev-master",
+        "cspray/labrador": "~0.1.1",
         "nikic/fast-route": "0.3.0",
         "symfony/http-foundation": "2.6.*",
         "filp/whoops": "1.1.5",
-        "morrisonlevi/ardent": "dev-master",
         "cspray/telluris": "dev-master"
     },
     "require-dev": {

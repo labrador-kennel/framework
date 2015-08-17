@@ -4,26 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a11ecefafb53286088ad68abc61228be",
+    "hash": "e457670cd26a96d58116173b9aabf778",
     "packages": [
         {
             "name": "cspray/labrador",
-            "version": "dev-master",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/labrador.git",
-                "reference": "dab91d6753b3f4f484f96f8c16a5de3ffa182e43"
+                "reference": "35cd15c271921e3a1abd32c879706d530b6af27a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/labrador/zipball/dab91d6753b3f4f484f96f8c16a5de3ffa182e43",
-                "reference": "dab91d6753b3f4f484f96f8c16a5de3ffa182e43",
+                "url": "https://api.github.com/repos/cspray/labrador/zipball/35cd15c271921e3a1abd32c879706d530b6af27a",
+                "reference": "35cd15c271921e3a1abd32c879706d530b6af27a",
                 "shasum": ""
             },
             "require": {
                 "cspray/telluris": "dev-master",
-                "evenement/evenement": "~2.0",
-                "morrisonlevi/ardent": "dev-master",
+                "filp/whoops": "~1.1",
+                "league/event": "~2.1",
+                "morrisonlevi/ardent": "~0.14",
                 "php": "~7.0",
                 "rdlowrey/auryn": "~1.0"
             },
@@ -31,16 +32,16 @@
                 "phpunit/phpunit": "~4.7",
                 "phpunit/phpunit-mock-objects": "dev-master"
             },
-            "suggest": {
-                "filp/whoops": "Library to help ensure your error output doesn't suck."
-            },
             "type": "library",
             "autoload": {
                 "psr-0": {
                     "Cspray\\Labrador\\": [
                         "src/"
                     ]
-                }
+                },
+                "files": [
+                    "src/Cspray/Labrador/_functions.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -55,7 +56,7 @@
                 }
             ],
             "description": "A microframework providing a plugin and event system to build PHP powered applications.",
-            "time": "2015-08-07 23:33:25"
+            "time": "2015-08-17 01:55:33"
         },
         {
             "name": "cspray/telluris",
@@ -93,52 +94,6 @@
             ],
             "description": "Helps manage your environment specific configuration and code.",
             "time": "2015-07-26 19:52:30"
-        },
-        {
-            "name": "evenement/evenement",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/igorw/evenement.git",
-                "reference": "f6e843799fd4f4184d54d8fc7b5b3551c9fa803e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/igorw/evenement/zipball/f6e843799fd4f4184d54d8fc7b5b3551c9fa803e",
-                "reference": "f6e843799fd4f4184d54d8fc7b5b3551c9fa803e",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Evenement": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch",
-                    "homepage": "http://wiedler.ch/igor/"
-                }
-            ],
-            "description": "Événement is a very simple event dispatching library for PHP",
-            "keywords": [
-                "event-dispatcher",
-                "event-emitter"
-            ],
-            "time": "2012-11-02 14:49:47"
         },
         {
             "name": "filp/whoops",
@@ -199,21 +154,71 @@
             "time": "2015-03-30 15:26:59"
         },
         {
-            "name": "morrisonlevi/ardent",
-            "version": "dev-master",
+            "name": "league/event",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cspray/Ardent.git",
-                "reference": "fa5e41022218d4cd876e0e79314d21ef8788d6db"
+                "url": "https://github.com/thephpleague/event.git",
+                "reference": "e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/Ardent/zipball/fa5e41022218d4cd876e0e79314d21ef8788d6db",
-                "reference": "fa5e41022218d4cd876e0e79314d21ef8788d6db",
+                "url": "https://api.github.com/repos/thephpleague/event/zipball/e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd",
+                "reference": "e4bfc88dbcb60c8d8a2939a71f9813e141bbe4cd",
                 "shasum": ""
             },
             "require": {
-                "php": "~7.0"
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "henrikbjorn/phpspec-code-coverage": "~1.0.1",
+                "phpspec/phpspec": "~2.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "League\\Event\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frenky.net"
+                }
+            ],
+            "description": "Event package",
+            "keywords": [
+                "emitter",
+                "event",
+                "listener"
+            ],
+            "time": "2015-05-21 12:24:47"
+        },
+        {
+            "name": "morrisonlevi/ardent",
+            "version": "0.14.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/morrisonlevi/Ardent.git",
+                "reference": "0cc32e448436929787683a0aa1fdc45a2cadac9e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/morrisonlevi/Ardent/zipball/0cc32e448436929787683a0aa1fdc45a2cadac9e",
+                "reference": "0cc32e448436929787683a0aa1fdc45a2cadac9e",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~5.4"
             },
             "type": "library",
             "extra": {
@@ -222,10 +227,11 @@
                 }
             },
             "autoload": {
-                "files": [
-                    "autoload.php"
+                "classmap": [
+                    "src/"
                 ]
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -246,10 +252,7 @@
                 "php",
                 "spl"
             ],
-            "support": {
-                "source": "https://github.com/cspray/Ardent/tree/master"
-            },
-            "time": "2015-06-27 13:41:54"
+            "time": "2014-04-10 17:06:39"
         },
         {
             "name": "nikic/fast-route",
@@ -296,16 +299,16 @@
         },
         {
             "name": "rdlowrey/auryn",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rdlowrey/auryn.git",
-                "reference": "cfce81b3a979452364eff22b9bb5c51cfba7ed12"
+                "reference": "70744560af9fea36f5c7f930b8cadc4586ff1944"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rdlowrey/auryn/zipball/cfce81b3a979452364eff22b9bb5c51cfba7ed12",
-                "reference": "cfce81b3a979452364eff22b9bb5c51cfba7ed12",
+                "url": "https://api.github.com/repos/rdlowrey/auryn/zipball/70744560af9fea36f5c7f930b8cadc4586ff1944",
+                "reference": "70744560af9fea36f5c7f930b8cadc4586ff1944",
                 "shasum": ""
             },
             "require": {
@@ -353,7 +356,7 @@
                 "dic",
                 "ioc"
             ],
-            "time": "2015-07-26 16:16:05"
+            "time": "2015-08-12 02:24:20"
         },
         {
             "name": "symfony/http-foundation",
@@ -656,16 +659,16 @@
         },
         {
             "name": "phpunit/php-token-stream",
-            "version": "1.4.3",
+            "version": "1.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-token-stream.git",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9"
+                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
-                "reference": "7a9b0969488c3c54fd62b4d504b3ec758fd005d9",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-token-stream/zipball/3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
+                "reference": "3ab72c62e550370a6cd5dc873e1a04ab57562f5b",
                 "shasum": ""
             },
             "require": {
@@ -701,7 +704,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2015-06-19 03:43:16"
+            "time": "2015-08-16 08:51:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -1263,13 +1266,13 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "cspray/labrador": 20,
-        "morrisonlevi/ardent": 20,
         "cspray/telluris": 20,
         "phpunit/phpunit-mock-objects": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "~7.0"
+    },
     "platform-dev": []
 }

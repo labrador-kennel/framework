@@ -13,15 +13,14 @@ use Cspray\Labrador\EnvironmentIntegrationConfig;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Event\EnvironmentInitializeEvent;
 use Cspray\Labrador\Http\Router;
-use Cspray\Labrador\Http\Controller\EventTriggeringPlugin;
 use Cspray\Labrador\Http\Router\InjectorExecutableResolver;
 use Auryn\Injector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use FastRoute\RouteCollector;
 use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
-use Evenement\EventEmitter;
-use Evenement\EventEmitterInterface;
+use League\Event\EmitterInterface;
+use League\Event\Emitter;
 use Symfony\Component\HttpFoundation\Request;
 use Telluris\Environment;
 use Telluris\Config\Storage;
@@ -72,8 +71,8 @@ class Services {
         $injector->define(InjectorExecutableResolver::class, ['resolver' => Router\ResolverChain::class]);
         $injector->alias(Router\HandlerResolver::class, InjectorExecutableResolver::class);
 
-        $injector->share(EventEmitter::class);
-        $injector->alias(EventEmitterInterface::class, EventEmitter::class);
+        $injector->share(Emitter::class);
+        $injector->alias(EmitterInterface::class, Emitter::class);
 
         $injector->share(PluginManager::class);
 
@@ -98,17 +97,14 @@ class Services {
         });
 
         $injector->share(ExceptionHandlingPlugin::class);
-        $injector->share(EventTriggeringPlugin::class);
 
         $injector->share(Request::createFromGlobals());
     }
 
     private function registerCorePlugins(Engine $engine, Injector $injector) {
         $defaultExceptionHandler = $injector->make(ExceptionHandlingPlugin::class);
-        $controllerEventTrigger = $injector->make(EventTriggeringPlugin::class);
 
         $engine->registerPlugin($defaultExceptionHandler);
-        $engine->registerPlugin($controllerEventTrigger);
     }
 
 } 

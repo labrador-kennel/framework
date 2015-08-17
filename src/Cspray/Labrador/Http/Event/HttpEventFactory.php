@@ -9,8 +9,8 @@ declare(strict_types = 1);
 namespace Cspray\Labrador\Http\Event;
 
 use Cspray\Labrador\Http\Engine;
-use Cspray\Labrador\Event\Event;
 use Cspray\Labrador\Event\EventFactory;
+use League\Event\EventInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class HttpEventFactory implements EventFactory {
@@ -30,7 +30,7 @@ class HttpEventFactory implements EventFactory {
         $this->request = $request;
     }
 
-    public function create(string $eventName, ...$args) : Event {
+    public function create(string $eventName, ...$args) : EventInterface {
         array_unshift($args, $this->request);
 
         $r = new \ReflectionClass($this->eventClassMap[$eventName]);

@@ -5,7 +5,7 @@ namespace Cspray\Labrador\Http\Test;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Event\ExceptionThrownEvent;
 use Cspray\Labrador\Http\ExceptionHandlingPlugin;
-use Evenement\EventEmitter;
+use League\Event\Emitter as EventEmitter;
 use Whoops\Run;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
@@ -21,7 +21,7 @@ class ExceptionHandlingPluginTest extends UnitTestCase {
         (new ExceptionHandlingPlugin($run))->registerEventListeners($emitter);
 
         $event = new ExceptionThrownEvent($exception);
-        $emitter->emit(Engine::EXCEPTION_THROWN_EVENT, [$event]);
+        $emitter->emit($event);
     }
 
     public function testDoesNotRunIfHandlersPresent() {
@@ -32,10 +32,10 @@ class ExceptionHandlingPluginTest extends UnitTestCase {
 
         $emitter = new EventEmitter();
         (new ExceptionHandlingPlugin($run))->registerEventListeners($emitter);
-        $emitter->on(Engine::EXCEPTION_THROWN_EVENT, function() {});
+        $emitter->addListener(Engine::EXCEPTION_THROWN_EVENT, function() {});
 
         $event = new ExceptionThrownEvent($exception);
-        $emitter->emit(Engine::EXCEPTION_THROWN_EVENT, [$event]);
+        $emitter->emit($event);
     }
 
 }
