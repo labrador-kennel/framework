@@ -20,7 +20,7 @@ use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use League\Event\EmitterInterface;
-use Telluris\Environment;
+use Cspray\Telluris\Environment;
 
 class Engine extends CoreEngine {
 
@@ -49,20 +49,12 @@ class Engine extends CoreEngine {
         $this->eventFactory = $eventFactory;
     }
 
-    public function getName() : string {
-        return 'Labrador HTTP';
-    }
-
-    public function getVersion() : string {
-        return '0.1.0-alpha';
-    }
-
     public function run() {
         $cb = function(AppExecuteEvent $event) {
             $this->handleRequest($event->getRequest())->send();
         };
         $cb = $cb->bindTo($this);
-        $this->emitter->on(self::APP_EXECUTE_EVENT, $cb);
+        $this->emitter->addListener(self::APP_EXECUTE_EVENT, $cb);
         parent::run();
     }
 

@@ -10,7 +10,7 @@ namespace Cspray\Labrador\Http\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class WelcomeController {
+class WelcomeController extends Controller {
 
     public function index() : Response {
         return new Response($this->getHtml());

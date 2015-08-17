@@ -9,10 +9,13 @@ declare(strict_types = 1);
 namespace Cspray\Labrador\Http;
 
 use Auryn\Injector;
+use Cspray\Labrador\Http\Controller\Controller;
+use Cspray\Labrador\Http\Event\AfterControllerEvent;
+use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Cspray\Labrador\Plugin\EventAwarePlugin;
 use Cspray\Labrador\Plugin\ServiceAwarePlugin;
 use Cspray\Labrador\Plugin\PluginDependentPlugin;
-use Evenement\EventEmitterInterface;
+use League\Event\EmitterInterface;
 
 class ControllerServicePlugin implements EventAwarePlugin, ServiceAwarePlugin, PluginDependentPlugin {
 
@@ -36,11 +39,25 @@ class ControllerServicePlugin implements EventAwarePlugin, ServiceAwarePlugin, P
     /**
      * Register the event listeners your Plugin responds to.
      *
-     * @param EventEmitterInterface $emitter
+     * @param EmitterInterface $emitter
      * @return void
      */
-    public function registerEventListeners(EventEmitterInterface $emitter) {
-        // TODO: Implement registerEventListeners() method.
+    public function registerEventListeners(EmitterInterface $emitter) {
+        $cb = function(BeforeControllerEvent $event) {
+            if ($this->activeController instanceof Controller) {
+                $this->activeController->beforeController($event);
+            }
+        };
+        $cb = $cb->bindTo($this);
+        $emitter->addListener(Engine::BEFORE_CONTROLLER_EVENT, $cb);
+
+        $cb = function(AfterControllerEvent $event) {
+            if ($this->activeController instanceof Controller) {
+                $this->activeController->afterController($event);
+            }
+        };
+        $cb = $cb->bindTo($this);
+        $emitter->addListener(Engine::AFTER_CONTROLLER_EVENT, $cb);
     }
 
     /**
@@ -59,11 +76,14 @@ class ControllerServicePlugin implements EventAwarePlugin, ServiceAwarePlugin, P
      * @return void
      */
     public function registerServices(Injector $injector) {
-        // TODO: Implement registerServices() method.
-    }
-
-    public function getActiveController() {
-        return $this->activeController;
+        foreach ($this->controllers as $controller) {
+            $injector->share($controller);
+            $cb = function($controller) {
+                $this->activeController = $controller;
+            };
+            $cb = $cb->bindTo($this);
+            $injector->prepare($controller, $cb);
+        }
     }
 
 }

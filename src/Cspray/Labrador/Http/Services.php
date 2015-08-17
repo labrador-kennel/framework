@@ -22,8 +22,8 @@ use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use League\Event\EmitterInterface;
 use League\Event\Emitter;
 use Symfony\Component\HttpFoundation\Request;
-use Telluris\Environment;
-use Telluris\Config\Storage;
+use Cspray\Telluris\Environment;
+use Cspray\Telluris\Config\Storage;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -83,8 +83,8 @@ class Services {
         $injector->alias(Storage::class, get_class($envStorage));
         if ($this->envConfig->runInitializers()) {
             /** @var EventEmitterInterface $emitter */
-            $emitter = $injector->make(EventEmitterInterface::class);
-            $emitter->on(Engine::ENVIRONMENT_INITIALIZE_EVENT, function(EnvironmentInitializeEvent $event) {
+            $emitter = $injector->make(EmitterInterface::class);
+            $emitter->addListener(Engine::ENVIRONMENT_INITIALIZE_EVENT, function(EnvironmentInitializeEvent $event) {
                 $event->getEnvironment()->runInitializers();
             });
         }
