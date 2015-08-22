@@ -10,7 +10,7 @@ namespace Cspray\Labrador\Http\Event;
 
 use Cspray\Labrador\Event\EnvironmentInitializeEvent as LabradorEnvInitEvent;
 use Symfony\Component\HttpFoundation\Request;
-use Telluris\Environment;
+use Cspray\Telluris\Environment;
 
 class EnvironmentInitializeEvent extends LabradorEnvInitEvent {
 
