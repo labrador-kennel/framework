@@ -9,6 +9,8 @@
 
 namespace Cspray\Labrador\Http;
 
+use Cspray\Labrador\Engine;
+use Cspray\Labrador\Http\Engine as HttpEngine;
 use Cspray\Labrador\EnvironmentIntegrationConfig;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Event\EnvironmentInitializeEvent;
@@ -38,14 +40,26 @@ class Services {
     public function createInjector() {
         $injector = new Injector();
         $this->wireObjectGraph($injector);
-        $this->registerCorePlugins($injector->make(Engine::class), $injector);
 
         return $injector;
     }
 
     private function wireObjectGraph(Injector $injector) {
         $injector->share($injector);
+        $this->registerCoreLabradorServices($injector);
+        $this->registerCoreHttpServices($injector);
+        $this->registerCoreHttpPlugins($injector);
+        $this->registerExceptionHandlerServices($injector);
+    }
 
+    private function registerCoreHttpServices(Injector $injector) {
+        $injector->share(Engine::class);
+        $injector->alias(Engine::class, HttpEngine::class);
+        $injector->share(Request::createFromGlobals());
+        $this->registerRouterServices($injector);
+    }
+
+    private function registerRouterServices(Injector $injector) {
         $injector->share(RouteCollector::class);
         $injector->define(RouteCollector::class, [
             'routeParser' => StdRouteParser::class,
@@ -70,7 +84,9 @@ class Services {
         $injector->share(InjectorExecutableResolver::class);
         $injector->define(InjectorExecutableResolver::class, ['resolver' => Router\ResolverChain::class]);
         $injector->alias(Router\HandlerResolver::class, InjectorExecutableResolver::class);
+    }
 
+    private function registerCoreLabradorServices(Injector $injector) {
         $injector->share(Emitter::class);
         $injector->alias(EmitterInterface::class, Emitter::class);
 
@@ -86,22 +102,21 @@ class Services {
             $emitter = $injector->make(EmitterInterface::class);
             $emitter->addListener(Engine::ENVIRONMENT_INITIALIZE_EVENT, function(EnvironmentInitializeEvent $event) {
                 $event->getEnvironment()->runInitializers();
-            });
+            }, EmitterInterface::P_HIGH);
         }
+    }
 
-        $injector->share(Engine::class);
+    private function registerExceptionHandlerServices(Injector $injector) {
 
         $injector->share(Run::class);
         $injector->prepare(Run::class, function(Run $run) {
             $run->pushHandler(new PrettyPageHandler());
         });
-
         $injector->share(ExceptionHandlingPlugin::class);
-
-        $injector->share(Request::createFromGlobals());
     }
 
-    private function registerCorePlugins(Engine $engine, Injector $injector) {
+    private function registerCoreHttpPlugins(Injector $injector) {
+        $engine = $injector->make(Engine::class);
         $defaultExceptionHandler = $injector->make(ExceptionHandlingPlugin::class);
 
         $engine->registerPlugin($defaultExceptionHandler);
