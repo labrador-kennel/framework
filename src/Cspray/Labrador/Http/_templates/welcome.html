@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Labrador HTTP Application</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.0/css/materialize.min.css">
+    <style>
+      body {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      main {
+        flex: 1 0 auto;
+      }
+
+      .u-fullWidth { width: 100%; }
+      .u-marginBottom-1 { margin-bottom: 1em; }
+      .u-fontSize-2 { font-size: 2em; }
+
+      .divider { border-top: 1px solid #bdbdbd; }
+      footer.page-footer { padding-top: 0; }
+
+      @media (max-width: 600px) {
+        .HeroInstall { height: 250px; }
+        .HeroDocs { height: 100px; }
+      }
+
+      @media (min-width: 601px) {
+        .HeroInstall { height: 400px; }
+        .HeroDocs { height: 250px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <div class="row">
+        <section class="col s12 flow-text">
+          <div class="valign-wrapper HeroInstall">
+            <p class="u-fullWidth u-fontSize-2 valign">
+              <code>
+                > INSTALL labrador-http<br />
+                < <span class="green-text">200 OK</span>
+              </code>
+            </p>
+          </div>
+
+          <div class="divider"></div>
+
+          <p>
+            Your next step is to replace the root route with a Response of your choice. If you're
+            using Labrador HTTP unchanged out-of-the-box you can use any of a variety of handlers,
+            as detailed below.
+          </p>
+
+          <div class="u-marginBottom-1">
+            <script src="https://gist.github.com/cspray/143765b968e21082bcb4.js"></script>
+          </div>
+
+
+          <div class="HeroDocs valign-wrapper">
+            <p class="valign center-align u-fullWidth">Want more info? <a href="http://labrador.cspray.net/libs/labrador-http">Check out the docs!</a></p>
+          </div>
+
+
+        </section>
+      </div>
+    </main>
+    <footer class="page-footer brown">
+      <div class="footer-copyright">
+        <div class="container">
+          &copy; 2015 Charles Sprayberry
+          <a href="http://labrador.cspray.net" class="right white-text">http://labrador.cspray.net</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
