@@ -15,7 +15,12 @@ use Cspray\Labrador\EnvironmentIntegrationConfig;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Event\EnvironmentInitializeEvent;
 use Cspray\Labrador\Http\Router;
-use Cspray\Labrador\Http\Router\InjectorExecutableResolver;
+use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
+use Cspray\Labrador\Http\HandlerResolver\ResolverChain;
+use Cspray\Labrador\Http\HandlerResolver\ResponseResolver;
+use Cspray\Labrador\Http\HandlerResolver\CallableResolver;
+use Cspray\Labrador\Http\HandlerResolver\ControllerActionResolver;
+use Cspray\Labrador\Http\HandlerResolver\InjectorExecutableResolver;
 use Auryn\Injector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use FastRoute\RouteCollector;
@@ -74,16 +79,16 @@ class Services {
         ]);
         $injector->alias(Router\Router::class, Router\FastRouteRouter::class);
 
-        $injector->share(Router\ResolverChain::class);
-        $injector->prepare(Router\ResolverChain::class, function(Router\ResolverChain $chain, Injector $injector) {
-            $chain->add($injector->make(Router\ResponseResolver::class));
-            $chain->add($injector->make(Router\CallableResolver::class));
-            $chain->add($injector->make(Router\ControllerActionResolver::class));
+        $injector->share(ResolverChain::class);
+        $injector->prepare(ResolverChain::class, function(ResolverChain $chain, Injector $injector) {
+            $chain->add($injector->make(ResponseResolver::class));
+            $chain->add($injector->make(CallableResolver::class));
+            $chain->add($injector->make(ControllerActionResolver::class));
         });
 
         $injector->share(InjectorExecutableResolver::class);
-        $injector->define(InjectorExecutableResolver::class, ['resolver' => Router\ResolverChain::class]);
-        $injector->alias(Router\HandlerResolver::class, InjectorExecutableResolver::class);
+        $injector->define(InjectorExecutableResolver::class, ['resolver' => ResolverChain::class]);
+        $injector->alias(HandlerResolver::class, InjectorExecutableResolver::class);
     }
 
     private function registerCoreLabradorServices(Injector $injector) {
