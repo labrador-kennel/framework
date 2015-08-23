@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Cspray\Labrador\Http\Test\Router;
+namespace Cspray\Labrador\Http\Test\HandlerResolver;
 
-use Cspray\Labrador\Http\Router\ControllerActionResolver;
+use Cspray\Labrador\Http\HandlerResolver\ControllerActionResolver;
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Cspray\Labrador\Http\Test\Stub\HandlerWithOutMethod;
 use Cspray\Labrador\Http\Test\Stub\HandlerWithMethod;

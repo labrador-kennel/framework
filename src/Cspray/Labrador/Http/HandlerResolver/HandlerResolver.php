@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 /**
- * Should convert a routed handler into an appropriate callable function.
+ * Convert a pice of data, or a handler, into a callable function.
  * 
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Router;
+namespace Cspray\Labrador\Http\HandlerResolver;
 
 interface HandlerResolver {
 

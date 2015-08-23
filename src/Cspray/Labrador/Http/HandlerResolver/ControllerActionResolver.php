@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 /**
- * Creates a callable handler by creating a service from an Auryn\Injector as
- * defined by a specific handler format.
+ * Creates a callable from the name of an object and method to invoke;
+ * the controller class and action should be delimited by a '#'.
  * 
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Router;
+namespace Cspray\Labrador\Http\HandlerResolver;
 
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Auryn\Injector;
@@ -35,6 +35,9 @@ class ControllerActionResolver implements HandlerResolver {
     }
 
     /**
+     * Any handler that has '#' in the name will make the Resolver attempt to
+     * instantiate a class based on the string to the left of the '#'.
+     *
      * @param string $handler
      * @return callable|false
      * @throws InvalidHandlerException

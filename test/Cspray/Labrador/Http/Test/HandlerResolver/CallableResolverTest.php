@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Cspray\Labrador\Http\Test\Router;
+namespace Cspray\Labrador\Http\Test\HandlerResolver;
 
-use Cspray\Labrador\Http\Router\CallableResolver;
+use Cspray\Labrador\Http\HandlerResolver\CallableResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class CallableHandlerResolverTest extends UnitTestCase {

@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Router;
+namespace Cspray\Labrador\Http\HandlerResolver;
 
 class ResolverChain implements HandlerResolver {
 

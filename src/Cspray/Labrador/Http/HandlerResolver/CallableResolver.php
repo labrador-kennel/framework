@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 /**
- * HandlerResolver implementation where if a $handler is a callable return it.
+ * A HandlerResolver that will match a handler that is a callable.
  * 
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Router;
+namespace Cspray\Labrador\Http\HandlerResolver;
+
+
 
 class CallableResolver implements HandlerResolver {
 

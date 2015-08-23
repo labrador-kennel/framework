@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Router;
 
+use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use FastRoute\Dispatcher;

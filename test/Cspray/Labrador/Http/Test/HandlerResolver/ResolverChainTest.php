@@ -7,10 +7,10 @@
  * @since   1.0
  */
 
-namespace Cspray\Labrador\Http\Test\Router;
+namespace Cspray\Labrador\Http\Test\HandlerResolver;
 
-use Cspray\Labrador\Http\Router\HandlerResolver;
-use Cspray\Labrador\Http\Router\ResolverChain;
+use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
+use Cspray\Labrador\Http\HandlerResolver\ResolverChain;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class ResolverChainTest extends UnitTestCase {

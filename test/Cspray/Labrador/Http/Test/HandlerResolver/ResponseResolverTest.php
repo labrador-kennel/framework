@@ -7,9 +7,9 @@
  * @since   1.0
  */
 
-namespace Cspray\Labrador\Http\Test\Router;
+namespace Cspray\Labrador\Http\Test\HandlerResolver;
 
-use Cspray\Labrador\Http\Router\ResponseResolver;
+use Cspray\Labrador\Http\HandlerResolver\ResponseResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 use Symfony\Component\HttpFoundation\Response;
 

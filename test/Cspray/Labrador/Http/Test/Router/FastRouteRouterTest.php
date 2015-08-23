@@ -9,7 +9,7 @@
 
 namespace Cspray\Labrador\Http\Test\Router;
 
-use Cspray\Labrador\Http\Router\HandlerResolver;
+use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
 use Cspray\Labrador\Http\Router\ResolvedRoute;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Route;

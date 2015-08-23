@@ -3,10 +3,14 @@
 declare(strict_types = 1);
 
 /**
+ * A HandlerResolver that will decorate any callable to be invoked by using
+ * Auryn\Injector::execute; this allows your handler callables to declare
+ * necessary dependencies and they will be provisioned for you.
+ *
  * @license See LICENSE file in project root
  */
 
-namespace Cspray\Labrador\Http\Router;
+namespace Cspray\Labrador\Http\HandlerResolver;
 
 use Auryn\Injector;
 
