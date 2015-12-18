@@ -11,10 +11,10 @@
         "phpunit/phpunit": "5.1.3"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "Cspray\\Labrador\\Http\\": "src/"
         },
-        "files": ["src/Cspray/Labrador/Http/_functions.php"]
+        "files": ["src/_functions.php"]
     },
     "autoload-dev": {
         "psr-0": {
