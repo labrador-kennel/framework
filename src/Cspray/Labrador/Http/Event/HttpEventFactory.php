@@ -8,6 +8,7 @@ declare(strict_types = 1);
 
 namespace Cspray\Labrador\Http\Event;
 
+use Cspray\Labrador\Event\EngineBootupEvent;
 use Cspray\Labrador\Http\Engine;
 use Cspray\Labrador\Event\EventFactory;
 use League\Event\EventInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class HttpEventFactory implements EventFactory {
 
     private $eventClassMap = [
-        Engine::ENVIRONMENT_INITIALIZE_EVENT => EnvironmentInitializeEvent::class,
+        Engine::ENGINE_BOOTUP_EVENT => EngineBootupEvent::class,
         Engine::APP_EXECUTE_EVENT => AppExecuteEvent::class,
         Engine::APP_CLEANUP_EVENT => AppCleanupEvent::class,
         Engine::EXCEPTION_THROWN_EVENT => ExceptionThrownEvent::class,

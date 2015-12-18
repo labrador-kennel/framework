@@ -43,7 +43,7 @@ class Engine extends CoreEngine {
         PluginManager $pluginManager,
         HttpEventFactory $eventFactory
     ) {
-        parent::__construct($environment, $pluginManager, $emitter, $eventFactory);
+        parent::__construct($pluginManager, $emitter, $eventFactory);
         $this->emitter = $emitter;
         $this->router = $router;
         $this->eventFactory = $eventFactory;
@@ -166,4 +166,4 @@ class Engine extends CoreEngine {
         return $this;
     }
 
-} 
+}
