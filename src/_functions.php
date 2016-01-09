@@ -15,8 +15,8 @@ use Cspray\Labrador\EnvironmentIntegrationConfig;
 use Auryn\Injector;
 use Whoops\Run;
 
-function bootstrap(EnvironmentIntegrationConfig $config = null) : Injector {
-    $injector = (new HttpServices($config))->createInjector();
+function bootstrap() : Injector {
+    $injector = (new HttpServices())->createInjector();
 
     $run = $injector->make(Run::class);
 

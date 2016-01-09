@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -35,12 +35,6 @@ use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
 class Services {
-
-    private $envConfig;
-
-    public function __construct(EnvironmentIntegrationConfig $envConfig = null) {
-        $this->envConfig = $envConfig ?? new EnvironmentIntegrationConfig();
-    }
 
     public function createInjector() {
         $injector = new Injector();
@@ -96,19 +90,6 @@ class Services {
         $injector->alias(EmitterInterface::class, Emitter::class);
 
         $injector->share(PluginManager::class);
-
-        $injector->share(Environment::class);
-        $injector->define(Environment::class, [':env' => $this->envConfig->getEnv()]);
-        $envStorage = $this->envConfig->getStorage();
-        $injector->share($envStorage);
-        $injector->alias(Storage::class, get_class($envStorage));
-        if ($this->envConfig->runInitializers()) {
-            /** @var EventEmitterInterface $emitter */
-            $emitter = $injector->make(EmitterInterface::class);
-            $emitter->addListener(Engine::ENVIRONMENT_INITIALIZE_EVENT, function(EnvironmentInitializeEvent $event) {
-                $event->getEnvironment()->runInitializers();
-            }, EmitterInterface::P_HIGH);
-        }
     }
 
     private function registerExceptionHandlerServices(Injector $injector) {
@@ -127,4 +108,4 @@ class Services {
         $engine->registerPlugin($defaultExceptionHandler);
     }
 
-} 
+}

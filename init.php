@@ -6,6 +6,9 @@ use Cspray\Labrador\Http\Controller\WelcomeController;
 use Cspray\Labrador\Http\ControllerServicePlugin;
 use Cspray\Labrador\Http\Engine;
 use function Cspray\Labrador\Http\bootstrap;
+use Whoops\Run;
+
+(new Run())->register();
 
 $injector = bootstrap();
 

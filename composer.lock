@@ -4,25 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "799f32b5fbdb007e881756ba6c292a1f",
-    "content-hash": "7991ada975ee84019dda9a8c2da8f4b7",
+    "hash": "30f4f5d9d07323893f546ac3390ea361",
+    "content-hash": "b2b808ee810cde38713974e6df2a9a1c",
     "packages": [
         {
             "name": "cspray/labrador",
-            "version": "0.3.0",
+            "version": "0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/labrador.git",
-                "reference": "edb06cb737805206d1cb70b7c3a04bdedfd26d33"
+                "reference": "9c73c0cb369a5b9772b3d5d97de4355f11873c49"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/labrador/zipball/edb06cb737805206d1cb70b7c3a04bdedfd26d33",
-                "reference": "edb06cb737805206d1cb70b7c3a04bdedfd26d33",
+                "url": "https://api.github.com/repos/cspray/labrador/zipball/9c73c0cb369a5b9772b3d5d97de4355f11873c49",
+                "reference": "9c73c0cb369a5b9772b3d5d97de4355f11873c49",
                 "shasum": ""
             },
             "require": {
-                "filp/whoops": "dev-master",
+                "filp/whoops": "~2.0.0",
                 "league/event": "~2.1",
                 "morrisonlevi/ardent": "~0.14",
                 "php": "~7.0",
@@ -59,20 +59,20 @@
                 }
             ],
             "description": "A microframework providing a plugin and event system to build PHP powered applications.",
-            "time": "2015-12-18 03:26:05"
+            "time": "2016-01-09 02:20:49"
         },
         {
             "name": "filp/whoops",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "eb1ce6439db161a9f00cd57f33a9cfa1355229ec"
+                "reference": "a327942c50cbd62b25c6fbe08f173031ce25fbff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/eb1ce6439db161a9f00cd57f33a9cfa1355229ec",
-                "reference": "eb1ce6439db161a9f00cd57f33a9cfa1355229ec",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/a327942c50cbd62b25c6fbe08f173031ce25fbff",
+                "reference": "a327942c50cbd62b25c6fbe08f173031ce25fbff",
                 "shasum": ""
             },
             "require": {
@@ -95,10 +95,7 @@
             "autoload": {
                 "psr-4": {
                     "Whoops\\": "src/Whoops/"
-                },
-                "files": [
-                    "src/Whoops/functions.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -121,7 +118,7 @@
                 "whoops",
                 "zf2"
             ],
-            "time": "2015-12-15 12:27:17"
+            "time": "2016-01-06 17:51:21"
         },
         {
             "name": "league/event",
@@ -335,16 +332,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "1563f784900958afdb584ca82a072c578ed8a929"
+                "reference": "939c8c28a5b1e4ab7317bc30c1f9aa881c4b06b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/1563f784900958afdb584ca82a072c578ed8a929",
-                "reference": "1563f784900958afdb584ca82a072c578ed8a929",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/939c8c28a5b1e4ab7317bc30c1f9aa881c4b06b5",
+                "reference": "939c8c28a5b1e4ab7317bc30c1f9aa881c4b06b5",
                 "shasum": ""
             },
             "require": {
@@ -383,7 +380,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-11-27 14:30:17"
+            "time": "2015-12-18 15:43:53"
         }
     ],
     "packages-dev": [
@@ -1377,16 +1374,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.0.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "177a015cb0e19ff4a49e0e2e2c5fc1c1bee07002"
+                "reference": "3df409958a646dad2bc5046c3fb671ee24a1a691"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/177a015cb0e19ff4a49e0e2e2c5fc1c1bee07002",
-                "reference": "177a015cb0e19ff4a49e0e2e2c5fc1c1bee07002",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/3df409958a646dad2bc5046c3fb671ee24a1a691",
+                "reference": "3df409958a646dad2bc5046c3fb671ee24a1a691",
                 "shasum": ""
             },
             "require": {
@@ -1422,14 +1419,12 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-11-30 12:36:17"
+            "time": "2015-12-26 13:39:53"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "filp/whoops": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

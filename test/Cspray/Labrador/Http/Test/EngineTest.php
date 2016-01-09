@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -21,7 +21,6 @@ use League\Event\EmitterInterface;
 use League\Event\Emitter as EventEmitter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Cspray\Telluris\Environment;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class EngineTest extends UnitTestCase {
@@ -29,20 +28,18 @@ class EngineTest extends UnitTestCase {
     private $mockRouter;
     private $mockEmitter;
     private $mockPluginManager;
-    private $mockEnvironment;
 
     public function setUp() {
         $this->mockRouter = $this->getMock(Router::class);
         $this->mockEmitter = $this->getMock(EmitterInterface::class);
         $this->mockPluginManager = $this->getMockBuilder(PluginManager::class)->disableOriginalConstructor()->getMock();
-        $this->mockEnvironment = $this->getMockBuilder(Environment::class)->disableOriginalConstructor()->getMock();
     }
 
     private function getMockedEngine(Request $request, Router $router = null, EmitterInterface $emitter = null) {
         $router = $router ?: $this->mockRouter;
         $emitter = $emitter ?: $this->mockEmitter;
         $factory = new HttpEventFactory($request);
-        return new Engine($router, $this->mockEnvironment, $emitter, $this->mockPluginManager, $factory);
+        return new Engine($router, $emitter, $this->mockPluginManager, $factory);
     }
 
     private function getHandleRequestExecutable(Engine $engine, Request $request) {
@@ -200,4 +197,4 @@ class EngineTest extends UnitTestCase {
         $this->assertTrue($check);
     }
 
-} 
+}

@@ -38,7 +38,6 @@ class Engine extends CoreEngine {
      */
     public function __construct(
         Router $router,
-        Environment $environment,
         EmitterInterface $emitter,
         PluginManager $pluginManager,
         HttpEventFactory $eventFactory
