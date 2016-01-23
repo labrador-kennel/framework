@@ -9,28 +9,23 @@
 
 namespace Cspray\Labrador\Http;
 
-use Cspray\Labrador\Engine;
-use Cspray\Labrador\Http\Engine as HttpEngine;
-use Cspray\Labrador\EnvironmentIntegrationConfig;
-use Cspray\Labrador\PluginManager;
-use Cspray\Labrador\Event\EnvironmentInitializeEvent;
-use Cspray\Labrador\Http\Router;
-use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
-use Cspray\Labrador\Http\HandlerResolver\ResolverChain;
-use Cspray\Labrador\Http\HandlerResolver\ResponseResolver;
-use Cspray\Labrador\Http\HandlerResolver\CallableResolver;
-use Cspray\Labrador\Http\HandlerResolver\ControllerActionResolver;
-use Cspray\Labrador\Http\HandlerResolver\InjectorExecutableResolver;
+use Cspray\Labrador\{Engine, PluginManager};
+use Cspray\Labrador\Http\{Engine as HttpEngine, Router};
+use Cspray\Labrador\Http\Event\HttpEventFactory;
+use Cspray\Labrador\Http\HandlerResolver\{
+    CallableResolver,
+    HandlerResolver,
+    ResolverChain,
+    ResponseResolver,
+    ControllerActionResolver,
+    InjectorExecutableResolver
+};
 use Auryn\Injector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use FastRoute\RouteCollector;
 use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
-use League\Event\EmitterInterface;
-use League\Event\Emitter;
-use Symfony\Component\HttpFoundation\Request;
-use Cspray\Telluris\Environment;
-use Cspray\Telluris\Config\Storage;
+use League\Event\{EmitterInterface, Emitter};
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
@@ -54,7 +49,7 @@ class Services {
     private function registerCoreHttpServices(Injector $injector) {
         $injector->share(Engine::class);
         $injector->alias(Engine::class, HttpEngine::class);
-        $injector->share(Request::createFromGlobals());
+        $injector->share(HttpEventFactory::class);
         $this->registerRouterServices($injector);
     }
 
@@ -93,7 +88,6 @@ class Services {
     }
 
     private function registerExceptionHandlerServices(Injector $injector) {
-
         $injector->share(Run::class);
         $injector->prepare(Run::class, function(Run $run) {
             $run->pushHandler(new PrettyPageHandler());
