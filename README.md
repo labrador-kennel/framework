@@ -37,6 +37,20 @@ $injector = bootstrap();
 $engine = $injector->make(Engine::class);
 
 $engine->get('/', new Response('hello world'));
+$engine->get('/closure', function() {
+    return new Response('Because of course you can do this');
+});
+
+// You'd really want to put this in its own file
+class MyController {
+    
+    public function someMethodThatYouName() {
+        return new Response('And, yea, from the controller object too');
+    }
+    
+}
+
+$engine->get('/controller-object', MyController::class . '#someMethodThatYouName');
 
 $engine->run();
 ```

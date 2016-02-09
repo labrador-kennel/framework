@@ -2,7 +2,7 @@
     "name": "cspray/labrador-http",
     "require": {
         "php": "~7.0",
-        "cspray/labrador": "~0.3",
+        "cspray/labrador": "~1.0",
         "nikic/fast-route": "0.6.0",
         "symfony/http-foundation": "~3.0.0"
     },

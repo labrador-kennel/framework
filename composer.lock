@@ -4,27 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "51fd0cb2ec66cf0520b76d8a1811ac84",
-    "content-hash": "2d52d217ed39b2ed9857a7995a6430a7",
+    "hash": "8ea6c14d203e2d10be357df36f8c4e8e",
+    "content-hash": "f955e5025ee81f585fdc12c934d33d08",
     "packages": [
         {
             "name": "cspray/labrador",
-            "version": "0.3.1",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/labrador.git",
-                "reference": "9c73c0cb369a5b9772b3d5d97de4355f11873c49"
+                "reference": "350942fbf9fc6df8b02e10e21148cc39af620f9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/labrador/zipball/9c73c0cb369a5b9772b3d5d97de4355f11873c49",
-                "reference": "9c73c0cb369a5b9772b3d5d97de4355f11873c49",
+                "url": "https://api.github.com/repos/cspray/labrador/zipball/350942fbf9fc6df8b02e10e21148cc39af620f9c",
+                "reference": "350942fbf9fc6df8b02e10e21148cc39af620f9c",
                 "shasum": ""
             },
             "require": {
                 "filp/whoops": "~2.0.0",
                 "league/event": "~2.1",
-                "morrisonlevi/ardent": "~0.14",
+                "morrisonlevi/ardent": "~0.20",
                 "php": "~7.0",
                 "rdlowrey/auryn": "~1.1"
             },
@@ -59,7 +59,7 @@
                 }
             ],
             "description": "A microframework providing a plugin and event system to build PHP powered applications.",
-            "time": "2016-01-09 02:20:49"
+            "time": "2016-01-14 03:12:23"
         },
         {
             "name": "filp/whoops",
@@ -332,16 +332,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "939c8c28a5b1e4ab7317bc30c1f9aa881c4b06b5"
+                "reference": "9344a87ceedfc50354a39653e54257ee9aa6a77d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/939c8c28a5b1e4ab7317bc30c1f9aa881c4b06b5",
-                "reference": "939c8c28a5b1e4ab7317bc30c1f9aa881c4b06b5",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/9344a87ceedfc50354a39653e54257ee9aa6a77d",
+                "reference": "9344a87ceedfc50354a39653e54257ee9aa6a77d",
                 "shasum": ""
             },
             "require": {
@@ -380,7 +380,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-12-18 15:43:53"
+            "time": "2016-02-02 13:44:19"
         }
     ],
     "packages-dev": [
@@ -591,16 +591,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "3.1.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "64d40a593fc31a8abf4ce3d200147ddf8ca64e52"
+                "reference": "92f5c61b5c64159faec5298325ffab0c7e59dcc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/64d40a593fc31a8abf4ce3d200147ddf8ca64e52",
-                "reference": "64d40a593fc31a8abf4ce3d200147ddf8ca64e52",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/92f5c61b5c64159faec5298325ffab0c7e59dcc8",
+                "reference": "92f5c61b5c64159faec5298325ffab0c7e59dcc8",
                 "shasum": ""
             },
             "require": {
@@ -609,7 +609,7 @@
                 "phpunit/php-text-template": "~1.2",
                 "phpunit/php-token-stream": "~1.3",
                 "sebastian/environment": "^1.3.2",
-                "sebastian/version": "~1.0"
+                "sebastian/version": "~1.0|~2.0"
             },
             "require-dev": {
                 "ext-xdebug": ">=2.1.4",
@@ -649,7 +649,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-01-11 10:05:34"
+            "time": "2016-02-04 13:05:19"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1374,16 +1374,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.0.1",
+            "version": "v3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "3df409958a646dad2bc5046c3fb671ee24a1a691"
+                "reference": "3cf0709d7fe936e97bee9e954382e449003f1d9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/3df409958a646dad2bc5046c3fb671ee24a1a691",
-                "reference": "3df409958a646dad2bc5046c3fb671ee24a1a691",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/3cf0709d7fe936e97bee9e954382e449003f1d9a",
+                "reference": "3cf0709d7fe936e97bee9e954382e449003f1d9a",
                 "shasum": ""
             },
             "require": {
@@ -1419,7 +1419,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-12-26 13:39:53"
+            "time": "2016-02-02 13:44:19"
         }
     ],
     "aliases": [],
