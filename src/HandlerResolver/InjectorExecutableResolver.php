@@ -13,6 +13,7 @@ declare(strict_types = 1);
 namespace Cspray\Labrador\Http\HandlerResolver;
 
 use Auryn\Injector;
+use Symfony\Component\HttpFoundation\Request;
 
 class InjectorExecutableResolver implements HandlerResolver {
 
@@ -31,10 +32,8 @@ class InjectorExecutableResolver implements HandlerResolver {
      * @return callable|false
      * @throws \Cspray\Labrador\Http\Exception\InvalidHandlerException
      */
-
-    // TODO figure out best way to get Request in here
-    function resolve($handler) {
-        $cb = $this->resolver->resolve($handler);
+    function resolve(Request $request, $handler) {
+        $cb = $this->resolver->resolve($request, $handler);
         if ($cb) {
             $injector = $this->injector;
             return function() use($cb, $injector) {

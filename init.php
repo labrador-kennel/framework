@@ -16,11 +16,15 @@ $injector = bootstrap();
 $engine = $injector->make(Engine::class);
 
 $engine->get('/', WelcomeController::class . '#index');
+$engine->get('/info', function() {
+    ob_start();
+    phpinfo();
+    $response = ob_get_clean();
+
+    return new \Symfony\Component\HttpFoundation\Response($response);
+});
 
 $controllerPlugin = new ControllerServicePlugin([WelcomeController::class]);
 $engine->registerPlugin($controllerPlugin);
 
 $engine->run();
-
-
-

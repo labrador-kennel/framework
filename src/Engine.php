@@ -47,8 +47,8 @@ class Engine extends CoreEngine {
     }
 
     public function run(Request $req = null) {
-        $cb = function(AppExecuteEvent $event) use($req) {
-            $this->handleRequest($req)->send();
+        $cb = function() use($req) {
+            $this->handleRequest($req ?? Request::createFromGlobals())->send();
         };
         $cb = $cb->bindTo($this);
         $this->emitter->addListener(self::APP_EXECUTE_EVENT, $cb);

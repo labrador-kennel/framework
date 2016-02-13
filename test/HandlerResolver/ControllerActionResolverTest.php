@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -19,12 +19,18 @@ use PHPUnit_Framework_TestCase as UnitTestCase;
 
 class ControllerActionResolverTest extends UnitTestCase {
 
+    private $request;
+
+    public function setUp() {
+        $this->request = Request::create('/');
+    }
+
     function testNoHashTagInHandlerReturnsFalse() {
         $handler = 'something_no_hashtag';
         $Injector = new Injector();
         $resolver = new ControllerActionResolver($Injector);
 
-        $this->assertFalse($resolver->resolve($handler));
+        $this->assertFalse($resolver->resolve($this->request, $handler));
     }
 
     function testNoClassThrowsException() {
@@ -36,7 +42,7 @@ class ControllerActionResolverTest extends UnitTestCase {
             InvalidHandlerException::class,
             'An error was encountered creating the controller for Not_Found_Class#action.'
         );
-        $resolver->resolve($handler);
+        $resolver->resolve($this->request, $handler);
     }
 
     function testNoMethodOnControllerThrowsException() {
@@ -48,7 +54,7 @@ class ControllerActionResolverTest extends UnitTestCase {
             InvalidHandlerException::class,
             'The controller and action, ' . HandlerWithOutMethod::class . '::action, is not callable. Please ensure that a publicly accessible method is available with this name.'
         );
-        $resolver->resolve($handler);
+        $resolver->resolve($this->request, $handler);
     }
 
     function testValidControllerActionResultsInRightCallback() {
@@ -59,7 +65,7 @@ class ControllerActionResolverTest extends UnitTestCase {
         $Injector->define(HandlerWithMethod::class, [':val' => $val]);
         $resolver = new ControllerActionResolver($Injector);
 
-        $cb = $resolver->resolve($handler);
+        $cb = $resolver->resolve($this->request, $handler);
         $cb($this->getMock(Request::class));
 
         $this->assertSame('invoked', $val->action);

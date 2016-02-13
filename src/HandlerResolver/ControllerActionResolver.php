@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Creates a callable from the name of an object and method to invoke;
  * the controller class and action should be delimited by a '#'.
- * 
+ *
  * @license See LICENSE in source root
  */
 
@@ -14,6 +14,7 @@ namespace Cspray\Labrador\Http\HandlerResolver;
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Auryn\Injector;
 use Auryn\InjectorException;
+use Symfony\Component\HttpFoundation\Request;
 
 class ControllerActionResolver implements HandlerResolver {
 
@@ -42,7 +43,7 @@ class ControllerActionResolver implements HandlerResolver {
      * @return callable|false
      * @throws InvalidHandlerException
      */
-    function resolve($handler) {
+    function resolve(Request $request, $handler) {
         if (!$this->verifyFormat($handler)) {
             return false;
         }
@@ -74,4 +75,4 @@ class ControllerActionResolver implements HandlerResolver {
         return true;
     }
 
-} 
+}

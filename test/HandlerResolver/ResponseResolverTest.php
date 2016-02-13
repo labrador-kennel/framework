@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -11,6 +11,7 @@ namespace Cspray\Labrador\Http\Test\HandlerResolver;
 
 use Cspray\Labrador\Http\HandlerResolver\ResponseResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResponseResolverTest extends UnitTestCase {
@@ -33,16 +34,16 @@ class ResponseResolverTest extends UnitTestCase {
      */
     function testHandlerNotResponseReturnsFalse($handler) {
         $resolver = new ResponseResolver();
-        $this->assertFalse($resolver->resolve($handler));
+        $this->assertFalse($resolver->resolve(Request::create('/'), $handler));
     }
 
     function testHandlerResponseReturnsCallback() {
         $resolver = new ResponseResolver();
         $response = new Response();
 
-        $controller = $resolver->resolve($response);
+        $controller = $resolver->resolve(Request::create('/'), $response);
         $this->assertTrue(is_callable($controller));
         $this->assertSame($response, $controller());
     }
 
-} 
+}

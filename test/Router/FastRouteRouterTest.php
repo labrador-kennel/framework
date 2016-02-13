@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -83,7 +83,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $router = $this->getRouter();
         $request = Request::create('http://labrador.dev/foo', 'GET');
         $router->get('/foo', 'handler');
-        $this->mockResolver->expects($this->once())->method('resolve')->with('handler')->willReturn(function() { return 'OK'; });
+        $this->mockResolver->expects($this->once())->method('resolve')->with($request, 'handler')->willReturn(function() { return 'OK'; });
 
         $resolved = $router->match($request);
         $this->assertInstanceOf(ResolvedRoute::class, $resolved);
@@ -96,10 +96,11 @@ class FastRouteRouterTest extends UnitTestCase {
         $router = $this->getRouter();
 
         $router->post('/foo/{name}/{id}', 'attr#action');
-        $this->mockResolver->expects($this->once())->method('resolve')->with('attr#action')->willReturn(function() { return 'OK'; });
 
         /** @var \Symfony\Component\HttpFoundation\Request $request */
         $request = Request::create('http://www.sprog.dev/foo/bar/qux', 'POST');
+        $this->mockResolver->expects($this->once())->method('resolve')->with($request, 'attr#action')->willReturn(function() { return 'OK'; });
+
         $router->match($request);
 
         $this->assertSame('bar', $request->attributes->get('name'));
@@ -110,9 +111,11 @@ class FastRouteRouterTest extends UnitTestCase {
         $router = $this->getRouter();
 
         $router->post('/foo', 'controller#action');
-        $this->mockResolver->expects($this->once())->method('resolve')->with('controller#action')->will($this->returnValue(function() { return 'OK'; }));
 
         $request = Request::create('http://labrador.dev/foo', 'POST');
+        $this->mockResolver->expects($this->once())->method('resolve')->with($request, 'controller#action')->will($this->returnValue(function() { return 'OK'; }));
+
+
         $router->match($request);
 
         $this->assertSame(['handler' => 'controller#action'], $request->attributes->get('_labrador'));
@@ -247,25 +250,27 @@ class FastRouteRouterTest extends UnitTestCase {
         $router->mount('/foo', function($router) {
             $router->get($router->root(), 'something');
         });
+        $request = Request::create('http://example.com/foo');
         $this->mockResolver->expects($this->once())
                            ->method('resolve')
-                           ->with('something')
+                           ->with($request, 'something')
                            ->willReturn(function() { return 'the set controller'; });
 
-        $resolved = $router->match(Request::create('http://example.com/foo'));
+        $resolved = $router->match($request);
         $controller = $resolved->getController();
         $this->assertSame('the set controller', $controller());
     }
 
     function testUsingRouterRootWithoutMount() {
+        $request = Request::create('http://example.com');
         $router = $this->getRouter();
         $router->get($router->root(), 'something');
         $this->mockResolver->expects($this->once())
              ->method('resolve')
-             ->with('something')
+             ->with($request, 'something')
              ->willReturn(function() { return 'the set controller'; });
 
-        $resolved = $router->match(Request::create('http://example.com'));
+        $resolved = $router->match($request);
         $controller = $resolved->getController();
         $this->assertSame('the set controller', $controller());
     }

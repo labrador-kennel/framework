@@ -10,7 +10,6 @@
 namespace Cspray\Labrador\Http\Test;
 
 use Cspray\Labrador\Event\ExceptionThrownEvent;
-use Cspray\Labrador\Http\Event\HttpEventFactory;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Cspray\Labrador\Http\Event\AfterControllerEvent;
