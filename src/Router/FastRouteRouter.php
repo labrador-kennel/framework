@@ -146,7 +146,7 @@ class FastRouteRouter implements Router {
         list($handler, $params) = $route;
         $request->attributes->set('_labrador', ['handler' => $handler]);
         foreach ($params as $k => $v) {
-            $request->attributes->set($k, $v);
+            $request->attributes->set($k, rawurldecode($v));
         }
 
         $controller = $this->resolver->resolve($request, $handler);

@@ -36,7 +36,7 @@ class FastRouteRouterTest extends UnitTestCase {
         );
     }
 
-    function testFastRouteDispatcherCallbackReturnsImproperTypeThrowsException() {
+    public function testFastRouteDispatcherCallbackReturnsImproperTypeThrowsException() {
         $mockResolver = $this->getMock(HandlerResolver::class);
         $router = new FastRouteRouter(
             $mockResolver,
@@ -50,7 +50,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $router->match(new Request());
     }
 
-    function testRouterNotFoundReturnsCorrectResolvedRoute() {
+    public function testRouterNotFoundReturnsCorrectResolvedRoute() {
         $router = $this->getRouter();
         $resolved = $router->match(new Request());
         $this->assertInstanceOf(ResolvedRoute::class, $resolved);
@@ -62,7 +62,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame('Not Found', $response->getContent());
     }
 
-    function testRouterMethodNotAllowedReturnsCorrectResolvedRoute() {
+    public function testRouterMethodNotAllowedReturnsCorrectResolvedRoute() {
         $router = $this->getRouter();
         $request = Request::create('http://labrador.dev/foo', 'POST');
         $router->get('/foo', 'foo#bar');
@@ -79,7 +79,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame('Method Not Allowed', $response->getContent());
     }
 
-    function testRouterIsOkReturnsCorrectResolvedRoute() {
+    public function testRouterIsOkReturnsCorrectResolvedRoute() {
         $router = $this->getRouter();
         $request = Request::create('http://labrador.dev/foo', 'GET');
         $router->get('/foo', 'handler');
@@ -92,7 +92,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame('OK', $handler());
     }
 
-    function testRouteWithParametersSetOnRequestAttributes() {
+    public function testRouteWithParametersSetOnRequestAttributes() {
         $router = $this->getRouter();
 
         $router->post('/foo/{name}/{id}', 'attr#action');
@@ -107,7 +107,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame('qux', $request->attributes->get('id'));
     }
 
-    function testLabradorMetaRequestDataSetOnRequestAttributes() {
+    public function testLabradorMetaRequestDataSetOnRequestAttributes() {
         $router = $this->getRouter();
 
         $router->post('/foo', 'controller#action');
@@ -121,7 +121,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame(['handler' => 'controller#action'], $request->attributes->get('_labrador'));
     }
 
-    function testGetRoutesWithJustOne() {
+    public function testGetRoutesWithJustOne() {
         $router = $this->getRouter();
         $router->get('/foo', 'handler');
 
@@ -133,7 +133,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame('handler', $routes[0]->getHandler());
     }
 
-    function testGetRoutesWithOnePatternSupportingMultipleMethods() {
+    public function testGetRoutesWithOnePatternSupportingMultipleMethods() {
         $router = $this->getRouter();
         $router->get('/foo/bar', 'foo_bar_get');
         $router->post('/foo/bar', 'foo_bar_post');
@@ -154,7 +154,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame($expected, $actual);
     }
 
-    function testGetRoutesWithStaticAndVariable() {
+    public function testGetRoutesWithStaticAndVariable() {
         $router = $this->getRouter();
         $router->get('/foo/bar/{id}', 'foo_bar_id');
         $router->get('/foo/baz/{name}', 'foo_baz_name');
@@ -177,7 +177,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame($expected, $actual);
     }
 
-    function testMountingRouterAddsPrefix() {
+    public function testMountingRouterAddsPrefix() {
         $router = $this->getRouter();
         $router->mount('/prefix', function(FastRouteRouter $router) {
             $router->get('/foo', 'something');
@@ -197,7 +197,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame($expected, $actual);
     }
 
-    function testNestedMountingAddsCorrectPrefixes() {
+    public function testNestedMountingAddsCorrectPrefixes() {
         $router = $this->getRouter();
         $router->mount('/foo', function(FastRouteRouter $router) {
             $router->delete('/foo-get', 'one');
@@ -222,7 +222,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame($expected, $actual);
     }
 
-    function testResolverReturnsFalseThrowsException() {
+    public function testResolverReturnsFalseThrowsException() {
         $router = $this->getRouter();
         $this->mockResolver->expects($this->once())->method('resolve')->willReturn(false);
         $router->get('/foo', 'something');
@@ -231,21 +231,21 @@ class FastRouteRouterTest extends UnitTestCase {
         $router->match(Request::create('http://labrador.dev/foo', 'GET'));
     }
 
-    function testSettingNotFoundController() {
+    public function testSettingNotFoundController() {
         $router = $this->getRouter();
         $router->setNotFoundController(function() { return 'the set controller'; });
         $controller = $router->getNotFoundController();
         $this->assertSame('the set controller', $controller());
     }
 
-    function testSettingMethodNotAllowedController() {
+    public function testSettingMethodNotAllowedController() {
         $router = $this->getRouter();
         $router->setMethodNotAllowedController(function() { return 'the set controller'; });
         $controller = $router->getMethodNotAllowedController();
         $this->assertSame('the set controller', $controller());
     }
 
-    function testSettingMountedRoot() {
+    public function testSettingMountedRoot() {
         $router = $this->getRouter();
         $router->mount('/foo', function($router) {
             $router->get($router->root(), 'something');
@@ -261,7 +261,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->assertSame('the set controller', $controller());
     }
 
-    function testUsingRouterRootWithoutMount() {
+    public function testUsingRouterRootWithoutMount() {
         $request = Request::create('http://example.com');
         $router = $this->getRouter();
         $router->get($router->root(), 'something');
@@ -273,6 +273,21 @@ class FastRouteRouterTest extends UnitTestCase {
         $resolved = $router->match($request);
         $controller = $resolved->getController();
         $this->assertSame('the set controller', $controller());
+    }
+
+    public function testUrlDecodingCustomAttributes() {
+        $request = Request::create('http://www.example.com/foo%20bar');
+        $router = $this->getRouter();
+        $router->get('/{param}', 'something');
+        $this->mockResolver->expects($this->once())
+                           ->method('resolve')
+                           ->with($request, 'something')
+                           ->willReturn(function() { return ''; });
+
+        $resolved = $router->match($request);
+
+        $this->assertTrue($resolved->isOk());
+        $this->assertSame('foo bar', $request->attributes->get('param'));
     }
 
 }
