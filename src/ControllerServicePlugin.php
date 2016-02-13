@@ -75,6 +75,7 @@ class ControllerServicePlugin implements EventAwarePlugin, ServiceAwarePlugin, P
      * @param Injector $injector
      * @return void
      */
+    // TODO make this not be so crappy
     public function registerServices(Injector $injector) {
         foreach ($this->controllers as $controller) {
             $injector->share($controller);

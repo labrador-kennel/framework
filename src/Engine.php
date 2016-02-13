@@ -12,15 +12,15 @@
 namespace Cspray\Labrador\Http;
 
 use Cspray\Labrador\CoreEngine;
+use Cspray\Labrador\Http\Event\AfterControllerEvent;
+use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Cspray\Labrador\PluginManager;
-use Cspray\Labrador\Http\Event\AppExecuteEvent;
-use Cspray\Labrador\Http\Event\HttpEventFactory;
+use Cspray\Labrador\Event\AppExecuteEvent;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use League\Event\EmitterInterface;
-use Cspray\Telluris\Environment;
 
 class Engine extends CoreEngine {
 
@@ -39,18 +39,16 @@ class Engine extends CoreEngine {
     public function __construct(
         Router $router,
         EmitterInterface $emitter,
-        PluginManager $pluginManager,
-        HttpEventFactory $eventFactory
+        PluginManager $pluginManager
     ) {
-        parent::__construct($pluginManager, $emitter, $eventFactory);
+        parent::__construct($pluginManager, $emitter);
         $this->emitter = $emitter;
         $this->router = $router;
-        $this->eventFactory = $eventFactory;
     }
 
-    public function run() {
-        $cb = function(AppExecuteEvent $event) {
-            $this->handleRequest($event->getRequest())->send();
+    public function run(Request $req = null) {
+        $cb = function(AppExecuteEvent $event) use($req) {
+            $this->handleRequest($req)->send();
         };
         $cb = $cb->bindTo($this);
         $this->emitter->addListener(self::APP_EXECUTE_EVENT, $cb);
@@ -65,8 +63,8 @@ class Engine extends CoreEngine {
     private function handleRequest(Request $request) : Response {
         $resolved = $this->router->match($request);
 
-        $beforeEvent = $this->eventFactory->create(Engine::BEFORE_CONTROLLER_EVENT, $resolved->getController());
-        $this->emitter->emit($beforeEvent);
+        $beforeEvent = new BeforeControllerEvent($request, $resolved->getController());
+        $this->emitter->emit($beforeEvent);          // TODO pass $engine and $request
         $response = $beforeEvent->getResponse();
 
         if (!$response instanceof Response) {
@@ -78,8 +76,8 @@ class Engine extends CoreEngine {
                 throw new InvalidTypeException(sprintf($msg, Response::class, gettype($response)));
             }
 
-            $afterEvent = $this->eventFactory->create(Engine::AFTER_CONTROLLER_EVENT, $response, $controller);
-            $this->emitter->emit($afterEvent);
+            $afterEvent = new AfterControllerEvent($request, $response, $controller);
+            $this->emitter->emit($afterEvent);              // TODO pass $engine and $request and $response
             $response = $afterEvent->getResponse();
         }
 

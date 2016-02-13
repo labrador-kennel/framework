@@ -31,12 +31,14 @@ class InjectorExecutableResolver implements HandlerResolver {
      * @return callable|false
      * @throws \Cspray\Labrador\Http\Exception\InvalidHandlerException
      */
+
+    // TODO figure out best way to get Request in here
     function resolve($handler) {
         $cb = $this->resolver->resolve($handler);
         if ($cb) {
             $injector = $this->injector;
             return function() use($cb, $injector) {
-                return $injector->execute($cb);
+                return $injector->execute($cb);  // TODO add args with request to this call
             };
         }
 
