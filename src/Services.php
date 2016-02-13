@@ -50,6 +50,7 @@ class Services {
         $injector->share(Engine::class);
         $injector->alias(Engine::class, HttpEngine::class);
         $injector->share(HttpEventFactory::class);
+        $injector->share(Request::createFromGlobals());
         $this->registerRouterServices($injector);
     }
 
