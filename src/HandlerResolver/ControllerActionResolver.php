@@ -5,15 +5,18 @@ declare(strict_types=1);
 /**
  * Creates a callable from the name of an object and method to invoke;
  * the controller class and action should be delimited by a '#'.
- * 
+ *
  * @license See LICENSE in source root
  */
 
 namespace Cspray\Labrador\Http\HandlerResolver;
 
+use Cspray\Labrador\Http\Engine;
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Auryn\Injector;
 use Auryn\InjectorException;
+use League\Event\EmitterInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class ControllerActionResolver implements HandlerResolver {
 
@@ -21,6 +24,8 @@ class ControllerActionResolver implements HandlerResolver {
      * @property Injector
      */
     private $injector;
+    private $emitter;
+
     private $errorMsg = [
         'invalid_handler_format' => 'The handler, %s, is invalid; all handlers must have 1 hashtag delimiting the controller and action.',
         'controller_create_error' => 'An error was encountered creating the controller for %s.',
@@ -30,8 +35,9 @@ class ControllerActionResolver implements HandlerResolver {
     /**
      * @param Injector $injector
      */
-    function __construct(Injector $injector) {
+    function __construct(Injector $injector, EmitterInterface $emitter) {
         $this->injector = $injector;
+        $this->emitter = $emitter;
     }
 
     /**
@@ -42,7 +48,7 @@ class ControllerActionResolver implements HandlerResolver {
      * @return callable|false
      * @throws InvalidHandlerException
      */
-    function resolve($handler) {
+    function resolve(Request $request, $handler) {
         if (!$this->verifyFormat($handler)) {
             return false;
         }
@@ -55,10 +61,23 @@ class ControllerActionResolver implements HandlerResolver {
             throw new InvalidHandlerException(sprintf($msg, $handler), 500, $exc);
         }
 
+        // TODO make sure that we handle calling beforeController and afterController action
         $cb = [$controller, $action];
         if (!is_callable($cb)) {
             $msg = $this->errorMsg['controller_not_callable'];
             throw new InvalidHandlerException(sprintf($msg, $controllerName, $action), 500);
+        }
+
+        if (method_exists($controller, 'beforeController')) {
+            $this->emitter->addOneTimeListener(Engine::BEFORE_CONTROLLER_EVENT, function(...$args) use($controller) {
+                $controller->beforeController(...$args);
+            });
+        }
+
+        if (method_exists($controller, 'afterController')) {
+            $this->emitter->addOneTimeListener(Engine::AFTER_CONTROLLER_EVENT, function(...$args) use($controller) {
+                $controller->afterController(...$args);
+            });
         }
 
         return $cb;
@@ -74,4 +93,4 @@ class ControllerActionResolver implements HandlerResolver {
         return true;
     }
 
-} 
+}

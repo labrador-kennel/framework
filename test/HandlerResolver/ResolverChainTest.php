@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -12,6 +12,7 @@ namespace Cspray\Labrador\Http\Test\HandlerResolver;
 use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
 use Cspray\Labrador\Http\HandlerResolver\ResolverChain;
 use PHPUnit_Framework_TestCase as UnitTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class ResolverChainTest extends UnitTestCase {
 
@@ -28,7 +29,7 @@ class ResolverChainTest extends UnitTestCase {
 
         $chain->add($foo)->add($bar)->add($qux);
 
-        $this->assertSame($closure, $chain->resolve('handler'));
+        $this->assertSame($closure, $chain->resolve(Request::create('/'), 'handler'));
     }
 
     function testReturnFalseIfAllResolversFail() {
@@ -43,7 +44,7 @@ class ResolverChainTest extends UnitTestCase {
 
         $chain->add($foo)->add($bar)->add($qux);
 
-        $this->assertFalse($chain->resolve('handler'));
+        $this->assertFalse($chain->resolve(Request::create('/'), 'handler'));
     }
 
-} 
+}

@@ -9,29 +9,37 @@ use Cspray\Labrador\Http\Event\AfterControllerEvent;
 use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Symfony\Component\HttpFoundation\Response;
 
-class ControllerStub extends Controller {
+class ControllerStub {
 
-    private $beforeController = false;
-    private $afterController = false;
+    private $beforeController = 0;
+    private $afterController = 0;
 
     public function index() {
         return new Response('foo');
     }
 
     public function beforeController(BeforeControllerEvent $event) {
-        $this->beforeController = true;
+        $this->beforeController++;
     }
 
-    public function wasBeforeControllerInvoked() {
+    public function beforeControllerCount() {
         return $this->beforeController;
     }
 
+    public function wasBeforeControllerInvoked() {
+        return $this->beforeController > 0;
+    }
+
     public function afterController(AfterControllerEvent $event) {
-        $this->afterController = true;
+        $this->afterController++;
+    }
+
+    public function afterControllerCount() {
+        return $this->afterController;
     }
 
     public function wasAfterControllerInvoked() {
-        return $this->afterController;
+        return $this->afterController > 0;
     }
 
 }

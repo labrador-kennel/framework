@@ -42,15 +42,13 @@ class Services {
         $injector->share($injector);
         $this->registerCoreLabradorServices($injector);
         $this->registerCoreHttpServices($injector);
-        $this->registerCoreHttpPlugins($injector);
         $this->registerExceptionHandlerServices($injector);
+        $this->registerCoreHttpPlugins($injector);
     }
 
     private function registerCoreHttpServices(Injector $injector) {
         $injector->share(Engine::class);
         $injector->alias(Engine::class, HttpEngine::class);
-        $injector->share(HttpEventFactory::class);
-        $injector->share(Request::createFromGlobals());
         $this->registerRouterServices($injector);
     }
 

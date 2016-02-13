@@ -1,5 +1,24 @@
 # Changelog
 
+## v0.4.0 - 2016-02-13
+
+- Updates FastRoute to 0.7.0
+- Updates Labrador to 1.1.0
+- Refactors core Labrador events to not use HttpEvents and to use those provided by labrador proper. A result of this 
+  is the removal of the HttpEventFactory
+- Refactors HandlerResolver to accept a Request as the first argument for more flexible and powerful handler resolving.
+- Refactors the InjectorExecutorResolver to not require the Request be shared in the container. A side effect of this is 
+  that all controller parameters that want a Request MUST be named either `$request` or `$req`.
+- Refactors how we invoke a controller object's beforeController and afterController methods. Several improvements were 
+  made, please see the specific commit message for more information.
+- Ensures that custom FastRoute parameters are appropriately URL decoded.
+
+## v0.2.0 - 2016-01-08
+
+- Removes Telluris dependency
+- Updates Labrador to 0.3.1 and Symfony HTTP Foundation to 3.0.1
+- Moves autoloading from PSR-0 to PSR-4
+
 ## v0.1.0 - 2015-08-23
 
 - Initial launch

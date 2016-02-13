@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * A router that is a wrapper around the FastRoute library that adheres to
  * Labrador\Router\Router interface.
- * 
+ *
  * @license See LICENSE in source root
  *
  * @see https://github.com/nikic/FastRoute
@@ -146,10 +146,10 @@ class FastRouteRouter implements Router {
         list($handler, $params) = $route;
         $request->attributes->set('_labrador', ['handler' => $handler]);
         foreach ($params as $k => $v) {
-            $request->attributes->set($k, $v);
+            $request->attributes->set($k, rawurldecode($v));
         }
 
-        $controller = $this->resolver->resolve($handler);
+        $controller = $this->resolver->resolve($request, $handler);
         if (!is_callable($controller)) {
             throw new InvalidHandlerException('Could not resolve matched handler to a callable controller');
         }
@@ -248,4 +248,4 @@ class FastRouteRouter implements Router {
         return $this;
     }
 
-} 
+}
