@@ -36,8 +36,8 @@ class InjectorExecutableResolver implements HandlerResolver {
         $cb = $this->resolver->resolve($request, $handler);
         if ($cb) {
             $injector = $this->injector;
-            return function() use($cb, $injector) {
-                return $injector->execute($cb);  // TODO add args with request to this call
+            return function() use($cb, $injector, $request) {
+                return $injector->execute($cb, [':request' => $request, ':req' => $request]);
             };
         }
 
