@@ -16,6 +16,7 @@ $injector = bootstrap();
 $engine = $injector->make(Engine::class);
 
 $engine->get('/', WelcomeController::class . '#index');
+$engine->get('/echo/{param}', WelcomeController::class . '#echo');
 $engine->get('/info', function() {
     ob_start();
     phpinfo();
@@ -23,8 +24,5 @@ $engine->get('/info', function() {
 
     return new \Symfony\Component\HttpFoundation\Response($response);
 });
-
-$controllerPlugin = new ControllerServicePlugin([WelcomeController::class]);
-$engine->registerPlugin($controllerPlugin);
 
 $engine->run();
