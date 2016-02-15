@@ -37,6 +37,8 @@ class Services {
         $this->registerCoreHttpServices($injector);
         $this->registerExceptionHandlerServices($injector);
         $this->registerCoreHttpPlugins($injector);
+
+        return $injector;
     }
 
     private function registerCoreHttpServices(Injector $injector) {
