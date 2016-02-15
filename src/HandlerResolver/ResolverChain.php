@@ -24,7 +24,7 @@ class ResolverChain implements HandlerResolver {
      * @param mixed $handler
      * @return callable|false
      */
-    function resolve(Request $request, $handler) {
+    public function resolve(Request $request, $handler) {
         /** @var HandlerResolver $resolver */
         foreach ($this->resolvers as $resolver) {
             $cb = $resolver->resolve($request, $handler);
@@ -40,7 +40,7 @@ class ResolverChain implements HandlerResolver {
      * @param HandlerResolver $resolver
      * @return $this
      */
-    function add(HandlerResolver $resolver) : self {
+    public function add(HandlerResolver $resolver) : self {
         $this->resolvers[] = $resolver;
         return $this;
     }

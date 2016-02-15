@@ -8,7 +8,7 @@ declare(strict_types = 1);
 
 namespace Cspray\Labrador\Http;
 
-use Cspray\Labrador\Engine;
+use Cspray\Labrador\Engine as LabradorEngine;
 use Cspray\Labrador\Event\ExceptionThrownEvent;
 use Cspray\Labrador\Http\Services as HttpServices;
 use Auryn\Injector;
@@ -20,7 +20,7 @@ function bootstrap() : Injector {
     $run = $injector->make(Run::class);
 
     $run->register();
-    $engine = $injector->make(Engine::class);
+    $engine = $injector->make(LabradorEngine::class);
 
     $engine->onExceptionThrown(function(ExceptionThrownEvent $event) use($run) {
         $run->handleException($event->getException());

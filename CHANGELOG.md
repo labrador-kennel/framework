@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.5.1 - 2016-02-14
+
+- Add `Engine::onResponseSent` method for adding a listener to the `Engine::RESPONSE_SENT_EVENT`.
+- Adds `public` visibility keyword to appropriate functions, makes use of `Engine` class name unambiguous.
+
 ## v0.5.0 - 2016-02-14
 
 - **BC BREAK** Renames `Services::createInjector` to `Services::wireObjectGraph` and allows an Injector to be passed to 

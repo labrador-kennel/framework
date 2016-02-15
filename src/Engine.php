@@ -107,6 +107,11 @@ class Engine extends CoreEngine {
         return $this;
     }
 
+    public function onResponseSent(callable $listener) : self {
+        $this->emitter->addListener(self::RESPONSE_SENT_EVENT, $listener);
+        return $this;
+    }
+
     /**
      * @param string $pattern
      * @param mixed $handler
