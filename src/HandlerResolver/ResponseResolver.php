@@ -20,7 +20,7 @@ class ResponseResolver implements HandlerResolver {
      * @param mixed $handler
      * @return callable|false
      */
-    function resolve(Request $request, $handler) {
+    public function resolve(Request $request, $handler) {
         if ($handler instanceof Response) {
             return function() use($handler) {
                 return $handler;

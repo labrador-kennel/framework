@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * An object that represents what HTTP Request data should be mapped to which handler.
- * 
+ *
  * @license See LICENSE in source root
  */
 
@@ -21,7 +21,7 @@ class Route {
      * @param string $method
      * @param mixed $handler
      */
-    function __construct(string $pattern, string $method, $handler) {
+    public function __construct(string $pattern, string $method, $handler) {
         $this->pattern = $pattern;
         $this->method = $method;
         $this->handler = $handler;
@@ -30,28 +30,28 @@ class Route {
     /**
      * @return string
      */
-    function getPattern() : string {
+    public function getPattern() : string {
         return $this->pattern;
     }
 
     /**
      * @return string
      */
-    function getMethod() : string {
+    public function getMethod() : string {
         return $this->method;
     }
 
     /**
      * @return mixed
      */
-    function getHandler() {
+    public function getHandler() {
         return $this->handler;
     }
 
     /**
      * @return string
      */
-    function __toString() : string {
+    public function __toString() : string {
         $format = "%s\t%s\t\t%s";
         $handler = $this->getNormalizedHandler($this->handler);
         return sprintf($format, $this->method, $this->pattern, $handler);
@@ -77,4 +77,4 @@ class Route {
         return $handler;
     }
 
-} 
+}

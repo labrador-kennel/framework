@@ -32,7 +32,7 @@ class InjectorExecutableResolver implements HandlerResolver {
      * @return callable|false
      * @throws \Cspray\Labrador\Http\Exception\InvalidHandlerException
      */
-    function resolve(Request $request, $handler) {
+    public function resolve(Request $request, $handler) {
         $cb = $this->resolver->resolve($request, $handler);
         if ($cb) {
             $injector = $this->injector;

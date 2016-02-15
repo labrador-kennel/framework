@@ -9,9 +9,8 @@
 
 namespace Cspray\Labrador\Http;
 
-use Cspray\Labrador\{Engine, PluginManager};
+use Cspray\Labrador\{Engine as LabradorEngine, PluginManager};
 use Cspray\Labrador\Http\{Engine as HttpEngine, Router};
-use Cspray\Labrador\Http\Event\HttpEventFactory;
 use Cspray\Labrador\Http\HandlerResolver\{
     CallableResolver,
     HandlerResolver,
@@ -41,8 +40,8 @@ class Services {
     }
 
     private function registerCoreHttpServices(Injector $injector) {
-        $injector->share(Engine::class);
-        $injector->alias(Engine::class, HttpEngine::class);
+        $injector->share(LabradorEngine::class);
+        $injector->alias(LabradorEngine::class, HttpEngine::class);
         $this->registerRouterServices($injector);
     }
 
@@ -89,7 +88,7 @@ class Services {
     }
 
     private function registerCoreHttpPlugins(Injector $injector) {
-        $engine = $injector->make(Engine::class);
+        $engine = $injector->make(LabradorEngine::class);
         $defaultExceptionHandler = $injector->make(ExceptionHandlingPlugin::class);
 
         $engine->registerPlugin($defaultExceptionHandler);

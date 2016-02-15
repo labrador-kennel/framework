@@ -35,7 +35,7 @@ class ControllerActionResolver implements HandlerResolver {
     /**
      * @param Injector $injector
      */
-    function __construct(Injector $injector, EmitterInterface $emitter) {
+    public function __construct(Injector $injector, EmitterInterface $emitter) {
         $this->injector = $injector;
         $this->emitter = $emitter;
     }
@@ -48,7 +48,7 @@ class ControllerActionResolver implements HandlerResolver {
      * @return callable|false
      * @throws InvalidHandlerException
      */
-    function resolve(Request $request, $handler) {
+    public function resolve(Request $request, $handler) {
         if (!$this->verifyFormat($handler)) {
             return false;
         }

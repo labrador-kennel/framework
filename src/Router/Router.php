@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /**
  * Interface to determine the controller to invoke for a given Request.
- * 
+ *
  * @license See LICENSE in source root
  */
 
@@ -24,7 +24,7 @@ interface Router {
      * @param mixed $handler
      * @return $this
      */
-    function addRoute(string $method, string $pattern, $handler);
+    public function addRoute(string $method, string $pattern, $handler);
 
     /**
      * Should always return a ResolvedRoute that includes the controller that
@@ -33,11 +33,11 @@ interface Router {
      * @param Request $request
      * @return ResolvedRoute
      */
-    function match(Request $request) : ResolvedRoute;
+    public function match(Request $request) : ResolvedRoute;
 
     /**
      * @return Route[]
      */
-    function getRoutes() : array;
+    public function getRoutes() : array;
 
-} 
+}

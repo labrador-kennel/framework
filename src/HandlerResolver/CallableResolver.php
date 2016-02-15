@@ -18,7 +18,7 @@ class CallableResolver implements HandlerResolver {
      * @param mixed $handler
      * @return callable|false
      */
-    function resolve(Request $request, $handler) {
+    public function resolve(Request $request, $handler) {
         if (is_callable($handler)) {
             return $handler;
         }
