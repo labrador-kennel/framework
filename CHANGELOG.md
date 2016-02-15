@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2 - 2016-02-15
+
+- Fixes bug where an Auryn\\Injector was not being returned from `Services::wireObjectGraph` appropriately.
+
 ## v0.5.1 - 2016-02-14
 
 - Add `Engine::onResponseSent` method for adding a listener to the `Engine::RESPONSE_SENT_EVENT`.
