@@ -14,8 +14,8 @@ namespace Cspray\Labrador\Http;
 use Cspray\Labrador\CoreEngine;
 use Cspray\Labrador\Http\Event\AfterControllerEvent;
 use Cspray\Labrador\Http\Event\BeforeControllerEvent;
+use Cspray\Labrador\Http\Event\ResponseSentEvent;
 use Cspray\Labrador\PluginManager;
-use Cspray\Labrador\Event\AppExecuteEvent;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,10 +26,10 @@ class Engine extends CoreEngine {
 
     const BEFORE_CONTROLLER_EVENT = 'labrador.http.before_controller';
     const AFTER_CONTROLLER_EVENT = 'labrador.http.after_controller';
+    const RESPONSE_SENT_EVENT = 'labrador.http.response_sent';
 
     private $emitter;
     private $router;
-    private $eventFactory;
 
     /**
      * @param Router $router
@@ -48,7 +48,12 @@ class Engine extends CoreEngine {
 
     public function run(Request $req = null) {
         $cb = function() use($req) {
-            $this->handleRequest($req ?? Request::createFromGlobals())->send();
+            $request = $req ?? Request::createFromGlobals();
+            $response = $this->handleRequest($request);
+            $response->send();
+
+            $event = new ResponseSentEvent($request, $response);
+            $this->emitter->emit($event);
         };
         $cb = $cb->bindTo($this);
         $this->emitter->addListener(self::APP_EXECUTE_EVENT, $cb);

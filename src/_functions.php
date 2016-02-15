@@ -11,12 +11,11 @@ namespace Cspray\Labrador\Http;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Event\ExceptionThrownEvent;
 use Cspray\Labrador\Http\Services as HttpServices;
-use Cspray\Labrador\EnvironmentIntegrationConfig;
 use Auryn\Injector;
 use Whoops\Run;
 
 function bootstrap() : Injector {
-    $injector = (new HttpServices())->createInjector();
+    $injector = (new HttpServices())->wireObjectGraph();
 
     $run = $injector->make(Run::class);
 

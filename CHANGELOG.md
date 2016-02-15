@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.5.0 - 2016-02-14
+
+- **BC BREAK** Renames `Services::createInjector` to `Services::wireObjectGraph` and allows an Injector to be passed to 
+  add services instead of simply creating a new Injector.
+- Adds a new event `Engine::RESPONSE_SENT_EVENT` that will be triggered *everytime* a Response is sent to the user. Before
+  this change there was no guaranteed mechanism for capturing the Response sent to the user. While the
+  `Engine::AFTER_CONTROLLER_EVENT` does provide the Response it is not guaranteed to be emitted on every Request (e.g. 
+  an Exception is thrown or a Response is set in a `Engine::BEFORE_CONTROLLER_EVENT` listener).
+
 ## v0.4.0 - 2016-02-13
 
 - Updates FastRoute to 0.7.0

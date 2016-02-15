@@ -31,14 +31,8 @@ use Whoops\Run;
 
 class Services {
 
-    public function createInjector() {
-        $injector = new Injector();
-        $this->wireObjectGraph($injector);
-
-        return $injector;
-    }
-
-    private function wireObjectGraph(Injector $injector) {
+    public function wireObjectGraph(Injector $injector = null) : Injector {
+        $injector = $injector ?? new Injector();
         $injector->share($injector);
         $this->registerCoreLabradorServices($injector);
         $this->registerCoreHttpServices($injector);

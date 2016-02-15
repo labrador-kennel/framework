@@ -10,6 +10,7 @@
 namespace Cspray\Labrador\Http\Test;
 
 use Cspray\Labrador\Event\ExceptionThrownEvent;
+use Cspray\Labrador\Http\Event\ResponseSentEvent;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Http\Event\BeforeControllerEvent;
 use Cspray\Labrador\Http\Event\AfterControllerEvent;
@@ -65,6 +66,7 @@ class EngineTest extends UnitTestCase {
         return [
             [0, Engine::BEFORE_CONTROLLER_EVENT, BeforeControllerEvent::class],
             [1, Engine::AFTER_CONTROLLER_EVENT, AfterControllerEvent::class],
+            [2, Engine::RESPONSE_SENT_EVENT, ResponseSentEvent::class]
         ];
     }
 
