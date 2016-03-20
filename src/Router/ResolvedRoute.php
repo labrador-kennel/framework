@@ -12,8 +12,7 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Router;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ResolvedRoute {
 
@@ -23,22 +22,19 @@ class ResolvedRoute {
     private $availableMethods;
 
     /**
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @param callable $controller
      * @param $httpStatus
      * @param array $availableMethods
      */
-    public function __construct(Request $request, callable $controller, $httpStatus, array $availableMethods = []) {
+    public function __construct(ServerRequestInterface $request, callable $controller, $httpStatus, array $availableMethods = []) {
         $this->request = $request;
         $this->controller = $controller;
         $this->httpStatus = $httpStatus;
         $this->availableMethods = $availableMethods;
     }
 
-    /**
-     * @return Request
-     */
-    public function getRequest() : Request {
+    public function getRequest() : ServerRequestInterface {
         return $this->request;
     }
 
@@ -53,21 +49,21 @@ class ResolvedRoute {
      * @return bool
      */
     public function isOk() : bool {
-        return $this->httpStatus === Response::HTTP_OK;
+        return $this->httpStatus === 200;
     }
 
     /**
      * @return bool
      */
     public function isNotFound() : bool {
-        return $this->httpStatus === Response::HTTP_NOT_FOUND;
+        return $this->httpStatus === 404;
     }
 
     /**
      * @return bool
      */
     public function isMethodNotAllowed() : bool {
-        return $this->httpStatus === Response::HTTP_METHOD_NOT_ALLOWED;
+        return $this->httpStatus === 405;
     }
 
     /**

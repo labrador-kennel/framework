@@ -2,27 +2,28 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Cspray\Labrador\Http\Controller\WelcomeController;
-use Cspray\Labrador\Http\ControllerServicePlugin;
 use Cspray\Labrador\Http\Engine;
+use Zend\Diactoros\Response\TextResponse;
 use function Cspray\Labrador\Http\bootstrap;
-use Whoops\Run;
-
-(new Run())->register();
 
 $injector = bootstrap();
 
-/** @var Cspray\Labrador\Http\Engine $engine */
 $engine = $injector->make(Engine::class);
 
-$engine->get('/', WelcomeController::class . '#index');
-$engine->get('/echo/{param}', WelcomeController::class . '#echo');
-$engine->get('/info', function() {
-    ob_start();
-    phpinfo();
-    $response = ob_get_clean();
-
-    return new \Symfony\Component\HttpFoundation\Response($response);
+$engine->get('/', new TextResponse('hello world'));
+$engine->get('/closure', function() {
+    return new TextResponse('Because of course you can do this');
 });
+
+// You'd really want to put this in its own file
+class MyController {
+
+    public function someMethodThatYouName() {
+        return new TextResponse('And, yea, from the controller object too');
+    }
+
+}
+
+$engine->get('/controller-object', MyController::class . '#someMethodThatYouName');
 
 $engine->run();

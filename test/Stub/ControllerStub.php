@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Test\Stub;
 
-use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Event\AfterControllerEvent;
 use Cspray\Labrador\Http\Event\BeforeControllerEvent;
-use Symfony\Component\HttpFoundation\Response;
+use Zend\Diactoros\Response\TextResponse;
 
 class ControllerStub {
 
@@ -15,7 +14,7 @@ class ControllerStub {
     private $afterController = 0;
 
     public function index() {
-        return new Response('foo');
+        return new TextResponse('foo');
     }
 
     public function beforeController(BeforeControllerEvent $event) {

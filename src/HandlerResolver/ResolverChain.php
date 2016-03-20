@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\HandlerResolver;
 
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ResolverChain implements HandlerResolver {
 
@@ -21,10 +21,11 @@ class ResolverChain implements HandlerResolver {
     private $resolvers = [];
 
     /**
+     * @param ServerRequestInterface $request
      * @param mixed $handler
      * @return callable|false
      */
-    public function resolve(Request $request, $handler) {
+    public function resolve(ServerRequestInterface $request, $handler) {
         /** @var HandlerResolver $resolver */
         foreach ($this->resolvers as $resolver) {
             $cb = $resolver->resolve($request, $handler);

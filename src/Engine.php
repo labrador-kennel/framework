@@ -18,9 +18,11 @@ use Cspray\Labrador\Http\Event\ResponseSentEvent;
 use Cspray\Labrador\PluginManager;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use League\Event\EmitterInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Cspray\Labrador\Http\ResponseDeliverer\DiactorosAdapter;
+use Zend\Diactoros\ServerRequestFactory;
 
 class Engine extends CoreEngine {
 
@@ -30,6 +32,7 @@ class Engine extends CoreEngine {
 
     private $emitter;
     private $router;
+    private $responseDeliverer;
 
     /**
      * @param Router $router
@@ -39,18 +42,21 @@ class Engine extends CoreEngine {
     public function __construct(
         Router $router,
         EmitterInterface $emitter,
-        PluginManager $pluginManager
+        PluginManager $pluginManager,
+        ResponseDeliverer $responseDeliverer = null
     ) {
         parent::__construct($pluginManager, $emitter);
         $this->emitter = $emitter;
         $this->router = $router;
+        $this->responseDeliverer = $responseDeliverer ?? new DiactorosAdapter();
     }
 
-    public function run(Request $req = null) {
+    public function run(ServerRequestInterface $req = null) {
         $cb = function() use($req) {
-            $request = $req ?? Request::createFromGlobals();
+            $request = $req ?? ServerRequestFactory::fromGlobals();
             $response = $this->handleRequest($request);
-            $response->send();
+
+            $this->responseDeliverer->deliver($response);
 
             $event = new ResponseSentEvent($request, $response);
             $this->emitter->emit($event);
@@ -61,29 +67,31 @@ class Engine extends CoreEngine {
     }
 
     /**
-     * @param Request $request
-     * @return Response
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
      * @throws InvalidTypeException
      */
-    private function handleRequest(Request $request) : Response {
+    private function handleRequest(ServerRequestInterface $request) : ResponseInterface {
         $resolved = $this->router->match($request);
+        $request = $resolved->getRequest();
 
         $beforeEvent = new BeforeControllerEvent($request, $resolved->getController());
         $this->emitter->emit($beforeEvent);          // TODO pass $engine and $request
         $response = $beforeEvent->getResponse();
 
-        if (!$response instanceof Response) {
+        if (!$response instanceof ResponseInterface) {
             $controller = $beforeEvent->getController();
             $response = $controller($request);
 
-            if (!$response instanceof Response) {
+            if (!$response instanceof ResponseInterface) {
                 $msg = 'Controller MUST return an instance of %s, "%s" was returned.';
-                throw new InvalidTypeException(sprintf($msg, Response::class, gettype($response)));
+                throw new InvalidTypeException(sprintf($msg, ResponseInterface::class, gettype($response)));
             }
 
             $afterEvent = new AfterControllerEvent($request, $response, $controller);
             $this->emitter->emit($afterEvent);              // TODO pass $engine and $request and $response
             $response = $afterEvent->getResponse();
+
         }
 
         return $response;

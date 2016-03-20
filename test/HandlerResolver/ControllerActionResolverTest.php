@@ -17,7 +17,8 @@ use Cspray\Labrador\Http\Test\Stub\HandlerWithOutMethod;
 use Cspray\Labrador\Http\Test\Stub\HandlerWithMethod;
 use Cspray\Labrador\Http\Test\Stub\ControllerStub;
 use Auryn\Injector;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\ServerRequest;
 use League\Event\Emitter;
 use PHPUnit_Framework_TestCase as UnitTestCase;
 
@@ -27,7 +28,7 @@ class ControllerActionResolverTest extends UnitTestCase {
     private $emitter;
 
     public function setUp() {
-        $this->request = Request::create('/');
+        $this->request = (new ServerRequest());
         $this->emitter = new Emitter();
     }
 
@@ -72,7 +73,7 @@ class ControllerActionResolverTest extends UnitTestCase {
         $resolver = new ControllerActionResolver($injector, $this->emitter);
 
         $cb = $resolver->resolve($this->request, $handler);
-        $cb($this->getMock(Request::class));
+        $cb($this->getMock(ServerRequestInterface::class));
 
         $this->assertSame('invoked', $val->action);
     }

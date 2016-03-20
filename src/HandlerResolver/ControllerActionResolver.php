@@ -16,7 +16,7 @@ use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Auryn\Injector;
 use Auryn\InjectorException;
 use League\Event\EmitterInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ControllerActionResolver implements HandlerResolver {
 
@@ -44,11 +44,12 @@ class ControllerActionResolver implements HandlerResolver {
      * Any handler that has '#' in the name will make the Resolver attempt to
      * instantiate a class based on the string to the left of the '#'.
      *
+     * @param ServerRequestInterface $request
      * @param string $handler
      * @return callable|false
      * @throws InvalidHandlerException
      */
-    public function resolve(Request $request, $handler) {
+    public function resolve(ServerRequestInterface $request, $handler) {
         if (!$this->verifyFormat($handler)) {
             return false;
         }

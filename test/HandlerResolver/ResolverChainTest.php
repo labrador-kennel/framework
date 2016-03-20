@@ -12,7 +12,8 @@ namespace Cspray\Labrador\Http\Test\HandlerResolver;
 use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
 use Cspray\Labrador\Http\HandlerResolver\ResolverChain;
 use PHPUnit_Framework_TestCase as UnitTestCase;
-use Symfony\Component\HttpFoundation\Request;
+use Zend\Diactoros\ServerRequest as Request;
+use Zend\Diactoros\Uri;
 
 class ResolverChainTest extends UnitTestCase {
 
@@ -29,7 +30,8 @@ class ResolverChainTest extends UnitTestCase {
 
         $chain->add($foo)->add($bar)->add($qux);
 
-        $this->assertSame($closure, $chain->resolve(Request::create('/'), 'handler'));
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/'));
+        $this->assertSame($closure, $chain->resolve($request, 'handler'));
     }
 
     function testReturnFalseIfAllResolversFail() {
@@ -44,7 +46,8 @@ class ResolverChainTest extends UnitTestCase {
 
         $chain->add($foo)->add($bar)->add($qux);
 
-        $this->assertFalse($chain->resolve(Request::create('/'), 'handler'));
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/'));
+        $this->assertFalse($chain->resolve($request, 'handler'));
     }
 
 }

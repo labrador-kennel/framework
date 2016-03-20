@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\HandlerResolver;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class ResponseResolver implements HandlerResolver {
 
@@ -20,13 +20,12 @@ class ResponseResolver implements HandlerResolver {
      * @param mixed $handler
      * @return callable|false
      */
-    public function resolve(Request $request, $handler) {
-        if ($handler instanceof Response) {
+    public function resolve(ServerRequestInterface $request, $handler) {
+        if ($handler instanceof ResponseInterface) {
             return function() use($handler) {
                 return $handler;
             };
         }
-
         return false;
     }
 

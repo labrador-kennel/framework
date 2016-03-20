@@ -11,8 +11,9 @@ namespace Cspray\Labrador\Http\Test\HandlerResolver;
 
 use Cspray\Labrador\Http\HandlerResolver\ResponseResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Zend\Diactoros\ServerRequest as Request;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Uri;
 
 class ResponseResolverTest extends UnitTestCase {
 
@@ -34,14 +35,16 @@ class ResponseResolverTest extends UnitTestCase {
      */
     function testHandlerNotResponseReturnsFalse($handler) {
         $resolver = new ResponseResolver();
-        $this->assertFalse($resolver->resolve(Request::create('/'), $handler));
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/'));
+        $this->assertFalse($resolver->resolve($request, $handler));
     }
 
     function testHandlerResponseReturnsCallback() {
         $resolver = new ResponseResolver();
         $response = new Response();
 
-        $controller = $resolver->resolve(Request::create('/'), $response);
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/'));
+        $controller = $resolver->resolve($request, $response);
         $this->assertTrue(is_callable($controller));
         $this->assertSame($response, $controller());
     }

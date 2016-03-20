@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Router;
 
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * The $handler set in methods can be an arbitrary value; the value that you set
@@ -30,10 +30,10 @@ interface Router {
      * Should always return a ResolvedRoute that includes the controller that
      * should be invoked
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return ResolvedRoute
      */
-    public function match(Request $request) : ResolvedRoute;
+    public function match(ServerRequestInterface $request) : ResolvedRoute;
 
     /**
      * @return Route[]
