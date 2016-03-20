@@ -10,15 +10,16 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\HandlerResolver;
 
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 class CallableResolver implements HandlerResolver {
 
     /**
+     * @param ServerRequestInterface $request
      * @param mixed $handler
      * @return callable|false
      */
-    public function resolve(Request $request, $handler) {
+    public function resolve(ServerRequestInterface $request, $handler) {
         if (is_callable($handler)) {
             return $handler;
         }

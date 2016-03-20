@@ -12,7 +12,9 @@ use Auryn\Injector;
 use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
 use Cspray\Labrador\Http\HandlerResolver\InjectorExecutableResolver;
 use PHPUnit_Framework_TestCase as UnitTestCase;
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\ServerRequest as Request;
+use Zend\Diactoros\Uri;
 
 class InjectorExecutableResolverTest extends UnitTestCase {
 
@@ -25,7 +27,8 @@ class InjectorExecutableResolverTest extends UnitTestCase {
         $injector = new Injector();
         $injectorResolver = new InjectorExecutableResolver($resolver, $injector);
 
-        $subject = $injectorResolver->resolve(Request::create('/'), 'foo');
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/'));
+        $subject = $injectorResolver->resolve($request, 'foo');
 
         $this->assertSame('called', $subject());
     }
@@ -34,12 +37,13 @@ class InjectorExecutableResolverTest extends UnitTestCase {
         $resolver = $this->getMock(HandlerResolver::class);
         $resolver->expects($this->once())
             ->method('resolve')
-            ->willReturn(function(Request $request) { return $request->getPathInfo(); });
+            ->willReturn(function(ServerRequestInterface $req) { return $req->getUri()->getPath(); });
 
         $injector = new Injector();
         $injectorResolver = new InjectorExecutableResolver($resolver, $injector);
 
-        $subject = $injectorResolver->resolve(Request::create('/foo/bar'), 'foo');
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/foo/bar'));
+        $subject = $injectorResolver->resolve($request, 'foo');
 
         $this->assertSame('/foo/bar', $subject());
     }
@@ -48,12 +52,13 @@ class InjectorExecutableResolverTest extends UnitTestCase {
         $resolver = $this->getMock(HandlerResolver::class);
         $resolver->expects($this->once())
             ->method('resolve')
-            ->willReturn(function(Request $req) { return $req->getPathInfo(); });
+            ->willReturn(function(ServerRequestInterface $req) { return $req->getUri()->getPath(); });
 
         $injector = new Injector();
         $injectorResolver = new InjectorExecutableResolver($resolver, $injector);
 
-        $subject = $injectorResolver->resolve(Request::create('/foo/bar'), 'foo');
+        $request = (new Request())->withMethod('GET')->withUri(new Uri('/foo/bar'));
+        $subject = $injectorResolver->resolve($request, 'foo');
 
         $this->assertSame('/foo/bar', $subject());
     }

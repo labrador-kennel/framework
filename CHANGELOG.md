@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.6.2 - 2016-02-15
+## 0.6.0 - 2016-03-20
+
+- **BC BREAK** Removes the Symfony\HttpFoundation library and transitions to a PSR-7 spec compliant library with 
+  Zend\Diactoros. Please review commit message or PR #?? for more information.
+- Updates Labrador to 2.0 which had a breaking change by removing the Plugin::boot method. Please see Labrador's 
+  CHANGELOG for more information.
+
+## 0.5.2 - 2016-02-15
 
 - Fixes bug where an Auryn\\Injector was not being returned from `Services::wireObjectGraph` appropriately.
 

@@ -9,35 +9,28 @@ declare(strict_types=1);
 namespace Cspray\Labrador\Http\Event;
 
 use League\Event\Event;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 abstract class HttpEvent extends Event {
 
     private $request;
     private $response;
 
-    public function __construct(Request $request, string $name) {
+    public function __construct(ServerRequestInterface $request, string $name) {
         parent::__construct($name);
-        $this->request = $request;
     }
 
-    /**
-     * @return Request
-     */
-    public function getRequest() : Request {
+    public function getRequest() : ServerRequestInterface {
         return $this->request;
     }
 
-    /**
-     * @return Response|null
-     */
+    public function setResponse(ResponseInterface $response) {
+        $this->response = $response;
+    }
+
     public function getResponse() {
         return $this->response;
     }
 
-    public function setResponse(Response $response) {
-        $this->response = $response;
-    }
-
-} 
+}

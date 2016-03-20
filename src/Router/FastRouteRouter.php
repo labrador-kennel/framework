@@ -16,10 +16,12 @@ namespace Cspray\Labrador\Http\Router;
 use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
+use Cspray\Labrador\Http\StatusCodes;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 
 class FastRouteRouter implements Router {
 
@@ -48,6 +50,7 @@ class FastRouteRouter implements Router {
         $this->resolver = $resolver;
         $this->collector = $collector;
         $this->dispatcherCb = $dispatcherCb;
+
     }
 
     /**
@@ -132,21 +135,25 @@ class FastRouteRouter implements Router {
     }
 
     /**
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @return ResolvedRoute
      * @throws InvalidHandlerException
      */
-    public function match(Request $request) : ResolvedRoute {
-        $route = $this->getDispatcher()->dispatch($request->getMethod(), $request->getPathInfo());
+    public function match(ServerRequestInterface $request) : ResolvedRoute {
+        $uri = $request->getUri();
+        $path = empty($uri->getPath()) ? '/' : $uri->getPath();
+        $route = $this->getDispatcher()->dispatch($request->getMethod(), $path);
         $status = array_shift($route);
+
         if ($notOkResolved = $this->guardNotOkMatch($request, $status, $route)) {
             return $notOkResolved;
         }
 
         list($handler, $params) = $route;
-        $request->attributes->set('_labrador', ['handler' => $handler]);
+
+        $request = $request->withAttribute('_labrador', ['handler' => $handler]);
         foreach ($params as $k => $v) {
-            $request->attributes->set($k, rawurldecode($v));
+            $request = $request->withAttribute($k, rawurldecode($v));
         }
 
         $controller = $this->resolver->resolve($request, $handler);
@@ -154,22 +161,22 @@ class FastRouteRouter implements Router {
             throw new InvalidHandlerException('Could not resolve matched handler to a callable controller');
         }
 
-        return new ResolvedRoute($request, $controller, Response::HTTP_OK);
+        return new ResolvedRoute($request, $controller, StatusCodes::OK);
     }
 
     /**
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @param integer $status
      * @param array $route
      * @return ResolvedRoute|null
      */
-    private function guardNotOkMatch(Request $request, int $status, array $route) {
+    private function guardNotOkMatch(ServerRequestInterface $request, int $status, array $route) {
         if (!$route || $status === Dispatcher::NOT_FOUND) {
-            return new ResolvedRoute($request, $this->getNotFoundController(), Response::HTTP_NOT_FOUND);
+            return new ResolvedRoute($request, $this->getNotFoundController(), StatusCodes::NOT_FOUND);
         }
 
         if ($status === Dispatcher::METHOD_NOT_ALLOWED) {
-            return new ResolvedRoute($request, $this->getMethodNotAllowedController(), Response::HTTP_METHOD_NOT_ALLOWED, $route[0]);
+            return new ResolvedRoute($request, $this->getMethodNotAllowedController(), StatusCodes::METHOD_NOT_ALLOWED, $route[0]);
         }
 
         return null;
@@ -201,8 +208,8 @@ class FastRouteRouter implements Router {
      */
     public function getNotFoundController() {
         if (!$this->notFoundController) {
-            return function() {
-                return new Response('Not Found', Response::HTTP_NOT_FOUND);
+            return function() : ResponseInterface {
+                return new Response\TextResponse('Not Found', StatusCodes::NOT_FOUND);
             };
         }
 
@@ -216,11 +223,10 @@ class FastRouteRouter implements Router {
      */
     public function getMethodNotAllowedController() {
         if (!$this->methodNotFoundController) {
-            return function() {
-                return new Response('Method Not Allowed', Response::HTTP_METHOD_NOT_ALLOWED);
+            return function() : ResponseInterface {
+                return new Response\TextResponse('Method Not Allowed', StatusCodes::METHOD_NOT_ALLOWED);
             };
         }
-
         return $this->methodNotFoundController;
     }
 

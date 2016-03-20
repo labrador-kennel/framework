@@ -13,13 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class WelcomeController extends Controller {
 
-    public function index() : Response {
-        return new Response($this->getHtml());
+    public function index() {
+
     }
 
-    public function echo(Request $request) {
-        $input = $request->attributes->get('param');
-        return new Response($input);
+    public function echo() {
+        
     }
 
     private function getHtml() : string {

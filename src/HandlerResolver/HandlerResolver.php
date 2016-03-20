@@ -10,18 +10,18 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\HandlerResolver;
 
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface HandlerResolver {
 
     /**
      * If the implementation cannot turn $handler into a callable type return false.
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      * @param mixed $handler
      * @return callable|false
      * @throws \Cspray\Labrador\Http\Exception\InvalidHandlerException
      */
-    public function resolve(Request $request, $handler);
+    public function resolve(ServerRequestInterface $request, $handler);
 
 }
