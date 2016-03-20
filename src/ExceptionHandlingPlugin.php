@@ -34,20 +34,4 @@ class ExceptionHandlingPlugin implements EventAwarePlugin {
         });
     }
 
-    /**
-     * Return the name of the plugin; this name should match /[A-Za-z0-9\.\-\_]/
-     *
-     * @return string
-     */
-    public function getName() : string {
-        return 'labrador.http.exception-handler';
-    }
-
-    /**
-     * Perform any actions that should be
-     */
-    public function boot() {
-
-    }
-
 }
