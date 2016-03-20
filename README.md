@@ -1,8 +1,8 @@
 # Labrador HTTP
 
-[![Travis](https://img.shields.io/travis/cspray/labrador-http.svg?style=flat-square)](https://travis-ci.org/cspray/labrador-http)
-[![GitHub license](https://img.shields.io/github/license/cspray/labrador-http.svg?style=flat-square)](http://opensource.org/licenses/MIT)
-[![GitHub release](https://img.shields.io/github/release/cspray/labrador-http.svg?style=flat-square)](https://github.com/cspray/labrador-http/releases/latest)
+[![Travis](https://img.shields.io/travis/labrador-kennel/http.svg?style=flat-square)](https://travis-ci.org/labrador-kennel/http)
+[![GitHub license](https://img.shields.io/github/license/labrador-kennel/http.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+[![GitHub release](https://img.shields.io/github/release/labrador-kennel/http.svg?style=flat-square)](https://github.com/labrador-kennel/http/releases/latest)
 
 A microframework for HTTP application built on top of [Labrador](https://github.com/cspray/labrador). We wire 
 together the awesome [FastRoute](https://github.com/nikic/FastRoute) lib and [Symfony's HTTP Foundation](https://github.com/symfony/HttpFoundation) 
