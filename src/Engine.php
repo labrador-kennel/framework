@@ -30,7 +30,6 @@ class Engine extends CoreEngine {
     const AFTER_CONTROLLER_EVENT = 'labrador.http.after_controller';
     const RESPONSE_SENT_EVENT = 'labrador.http.response_sent';
 
-    private $emitter;
     private $router;
     private $responseDeliverer;
 
@@ -46,7 +45,6 @@ class Engine extends CoreEngine {
         ResponseDeliverer $responseDeliverer = null
     ) {
         parent::__construct($pluginManager, $emitter);
-        $this->emitter = $emitter;
         $this->router = $router;
         $this->responseDeliverer = $responseDeliverer ?? new DiactorosAdapter();
     }
@@ -59,10 +57,10 @@ class Engine extends CoreEngine {
             $this->responseDeliverer->deliver($response);
 
             $event = new ResponseSentEvent($request, $response);
-            $this->emitter->emit($event);
+            $this->getEmitter()->emit($event);
         };
         $cb = $cb->bindTo($this);
-        $this->emitter->addListener(self::APP_EXECUTE_EVENT, $cb);
+        $this->getEmitter()->addListener(self::APP_EXECUTE_EVENT, $cb);
         parent::run();
     }
 
@@ -76,7 +74,7 @@ class Engine extends CoreEngine {
         $request = $resolved->getRequest();
 
         $beforeEvent = new BeforeControllerEvent($request, $resolved->getController());
-        $this->emitter->emit($beforeEvent);          // TODO pass $engine and $request
+        $this->getEmitter()->emit($beforeEvent);          // TODO pass $engine and $request
         $response = $beforeEvent->getResponse();
 
         if (!$response instanceof ResponseInterface) {
@@ -89,9 +87,8 @@ class Engine extends CoreEngine {
             }
 
             $afterEvent = new AfterControllerEvent($request, $response, $controller);
-            $this->emitter->emit($afterEvent);              // TODO pass $engine and $request and $response
+            $this->getEmitter()->emit($afterEvent);              // TODO pass $engine and $request and $response
             $response = $afterEvent->getResponse();
-
         }
 
         return $response;
@@ -102,7 +99,7 @@ class Engine extends CoreEngine {
      * @return $this
      */
     public function onBeforeController(callable $listener) : self {
-        $this->emitter->addListener(self::BEFORE_CONTROLLER_EVENT, $listener);
+        $this->getEmitter()->addListener(self::BEFORE_CONTROLLER_EVENT, $listener);
         return $this;
     }
 
@@ -111,12 +108,12 @@ class Engine extends CoreEngine {
      * @return $this
      */
     public function onAfterController(callable $listener) : self {
-        $this->emitter->addListener(self::AFTER_CONTROLLER_EVENT, $listener);
+        $this->getEmitter()->addListener(self::AFTER_CONTROLLER_EVENT, $listener);
         return $this;
     }
 
     public function onResponseSent(callable $listener) : self {
-        $this->emitter->addListener(self::RESPONSE_SENT_EVENT, $listener);
+        $this->getEmitter()->addListener(self::RESPONSE_SENT_EVENT, $listener);
         return $this;
     }
 
