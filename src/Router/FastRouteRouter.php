@@ -171,7 +171,7 @@ class FastRouteRouter implements Router {
      * @return ResolvedRoute|null
      */
     private function guardNotOkMatch(ServerRequestInterface $request, int $status, array $route) {
-        if (!$route || $status === Dispatcher::NOT_FOUND) {
+        if (empty($route) || $status === Dispatcher::NOT_FOUND) {
             return new ResolvedRoute($request, $this->getNotFoundController(), StatusCodes::NOT_FOUND);
         }
 
