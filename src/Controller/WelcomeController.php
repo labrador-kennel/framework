@@ -8,17 +8,12 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Zend\Diactoros\Response\HtmlResponse;
 
 class WelcomeController extends Controller {
 
     public function index() {
-
-    }
-
-    public function echo() {
-        
+        return new HtmlResponse($this->getHtml());
     }
 
     private function getHtml() : string {
