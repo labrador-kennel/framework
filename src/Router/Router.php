@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Router;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Amp\Http\Server\Request;
+use Cspray\Labrador\Http\Controller\Controller;
 
 /**
  * The $handler set in methods can be an arbitrary value; the value that you set
@@ -21,19 +22,16 @@ interface Router {
     /**
      * @param string $method
      * @param string $pattern
-     * @param mixed $handler
-     * @return $this
+     * @param Controller $controller
+     * @return void
      */
-    public function addRoute(string $method, string $pattern, $handler);
+    public function addRoute(string $method, string $pattern, Controller $controller) : void;
 
     /**
-     * Should always return a ResolvedRoute that includes the controller that
-     * should be invoked
-     *
-     * @param ServerRequestInterface $request
-     * @return ResolvedRoute
+     * @param Request $request
+     * @return Controller
      */
-    public function match(ServerRequestInterface $request) : ResolvedRoute;
+    public function match(Request $request) : Controller;
 
     /**
      * @return Route[]

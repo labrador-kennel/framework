@@ -13,24 +13,24 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Router;
 
-use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
+use Amp\Promise;
+use Amp\Success;
+use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 use Cspray\Labrador\Http\StatusCodes;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
 
 class FastRouteRouter implements Router {
 
-    private $resolver;
     private $dispatcherCb;
     private $collector;
     private $routes = [];
     private $notFoundController;
-    private $methodNotFoundController;
+    private $methodNotAllowedController;
     private $mountedPrefix = [];
 
     /**
@@ -42,12 +42,10 @@ class FastRouteRouter implements Router {
      * invoked when Router::match is called and it should expect an array of data
      * in the same format as $collector->getData().
      *
-     * @param HandlerResolver $resolver
      * @param RouteCollector $collector
      * @param callable $dispatcherCb
      */
-    public function __construct(HandlerResolver $resolver, RouteCollector $collector, callable $dispatcherCb) {
-        $this->resolver = $resolver;
+    public function __construct(RouteCollector $collector, callable $dispatcherCb) {
         $this->collector = $collector;
         $this->dispatcherCb = $dispatcherCb;
 
@@ -55,38 +53,42 @@ class FastRouteRouter implements Router {
 
     /**
      * @param string $pattern
-     * @param mixed $handler
+     * @param Controller $controller
      * @return $this
      */
-    public function get(string $pattern, $handler) : self {
-        return $this->addRoute('GET', $pattern, $handler);
+    public function get(string $pattern, Controller $controller) : self {
+        $this->addRoute('GET', $pattern, $controller);
+        return $this;
     }
 
     /**
      * @param string $pattern
-     * @param mixed $handler
+     * @param Controller $controller
      * @return $this
      */
-    public function post(string $pattern, $handler) : self {
-        return $this->addRoute('POST', $pattern, $handler);
+    public function post(string $pattern, Controller $controller) : self {
+        $this->addRoute('POST', $pattern, $controller);
+        return $this;
     }
 
     /**
      * @param string $pattern
-     * @param mixed $handler
+     * @param Controller $controller
      * @return $this
      */
-    public function put(string $pattern, $handler) : self {
-        return $this->addRoute('PUT', $pattern, $handler);
+    public function put(string $pattern, Controller $controller) : self {
+        $this->addRoute('PUT', $pattern, $controller);
+        return $this;
     }
 
     /**
      * @param string $pattern
-     * @param mixed $handler
+     * @param Controller $controller
      * @return $this
      */
-    public function delete(string $pattern, $handler) : self {
-        return $this->addRoute('DELETE', $pattern, $handler);
+    public function delete(string $pattern, Controller $controller) : self {
+        $this->addRoute('DELETE', $pattern, $controller);
+        return $this;
     }
 
     /**
@@ -119,64 +121,57 @@ class FastRouteRouter implements Router {
     }
 
     /**
-     * @param $method
-     * @param $pattern
-     * @param $handler
-     * @return $this
+     * @param string $method
+     * @param string $pattern
+     * @param Controller $controller
+     * @return void
      */
-    public function addRoute(string $method, string $pattern, $handler) : self {
+    public function addRoute(string $method, string $pattern, Controller $controller) : void {
         // @todo implement FastRouterRouteCollector and parse required data from Route objects
         if ($this->isMounted()) {
             $pattern = implode('', $this->mountedPrefix) . $pattern;
         }
-        $this->routes[] = new Route($pattern, $method, $handler);
-        $this->collector->addRoute($method, $pattern, $handler);
-        return $this;
+        $this->routes[] = new Route($pattern, $method, get_class($controller));
+        $this->collector->addRoute($method, $pattern, $controller);
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @return ResolvedRoute
-     * @throws InvalidHandlerException
+     * @param Request $request
+     * @return Controller
+     * @throws InvalidTypeException
      */
-    public function match(ServerRequestInterface $request) : ResolvedRoute {
+    public function match(Request $request) : Controller {
         $uri = $request->getUri();
         $path = empty($uri->getPath()) ? '/' : $uri->getPath();
         $route = $this->getDispatcher()->dispatch($request->getMethod(), $path);
         $status = array_shift($route);
 
-        if ($notOkResolved = $this->guardNotOkMatch($request, $status, $route)) {
+        if ($notOkResolved = $this->guardNotOkMatch($status, $route)) {
             return $notOkResolved;
         }
 
-        list($handler, $params) = $route;
+        list($controller, $params) = $route;
 
-        $request = $request->withAttribute('_labrador', ['handler' => $handler]);
         foreach ($params as $k => $v) {
-            $request = $request->withAttribute($k, rawurldecode($v));
+            $request->setAttribute($k, urldecode($v));
         }
 
-        $controller = $this->resolver->resolve($request, $handler);
-        if (!is_callable($controller)) {
-            throw new InvalidHandlerException('Could not resolve matched handler to a callable controller');
-        }
 
-        return new ResolvedRoute($request, $controller, StatusCodes::OK);
+        return $controller;
     }
 
     /**
-     * @param ServerRequestInterface $request
      * @param integer $status
      * @param array $route
-     * @return ResolvedRoute|null
+     * @return Controller
      */
-    private function guardNotOkMatch(ServerRequestInterface $request, int $status, array $route) {
+    private function guardNotOkMatch(int $status, array $route) : ?Controller {
         if (empty($route) || $status === Dispatcher::NOT_FOUND) {
-            return new ResolvedRoute($request, $this->getNotFoundController(), StatusCodes::NOT_FOUND);
+            return $this->getNotFoundController();
         }
 
         if ($status === Dispatcher::METHOD_NOT_ALLOWED) {
-            return new ResolvedRoute($request, $this->getMethodNotAllowedController(), StatusCodes::METHOD_NOT_ALLOWED, $route[0]);
+            return $this->getMethodNotAllowedController();
         }
 
         return null;
@@ -202,14 +197,36 @@ class FastRouteRouter implements Router {
     }
 
     /**
-     * This function GUARANTEES that a callable will always be returned.
+     * This function GUARANTEES that a Controller will always be returned, even if a Controller has not previously
+     * been set.
      *
-     * @return callable
+     * @return Controller
      */
-    public function getNotFoundController() {
+    public function getNotFoundController() : Controller {
         if (!$this->notFoundController) {
-            return function() : ResponseInterface {
-                return new Response\TextResponse('Not Found', StatusCodes::NOT_FOUND);
+            return new class implements Controller {
+
+                public function beforeAction(): Promise {
+                    return new Success();
+                }
+
+                public function afterAction(): Promise {
+                    return new Success();
+                }
+
+                /**
+                 * @param Request $request
+                 *
+                 * @return Promise<\Amp\Http\Server\Response>
+                 */
+                public function handleRequest(Request $request): Promise {
+                    $response = new Response(
+                        StatusCodes::NOT_FOUND,
+                        [],
+                        'Not Found'
+                    );
+                    return new Success($response);
+                }
             };
         }
 
@@ -221,23 +238,45 @@ class FastRouteRouter implements Router {
      *
      * @return callable
      */
-    public function getMethodNotAllowedController() {
-        if (!$this->methodNotFoundController) {
-            return function() : ResponseInterface {
-                return new Response\TextResponse('Method Not Allowed', StatusCodes::METHOD_NOT_ALLOWED);
+    public function getMethodNotAllowedController() : Controller {
+        if (!$this->methodNotAllowedController) {
+            return new class implements Controller {
+
+                public function beforeAction(): Promise {
+                    return new Success();
+                }
+
+                public function afterAction(): Promise {
+                    return new Success();
+                }
+
+                /**
+                 * @param Request $request
+                 *
+                 * @return Promise<\Amp\Http\Server\Response>
+                 */
+                public function handleRequest(Request $request): Promise {
+                    $response = new Response(
+                        StatusCodes::METHOD_NOT_ALLOWED,
+                        [],
+                        'Method Not Allowed'
+                    );
+                    return new Success($response);
+                }
             };
         }
-        return $this->methodNotFoundController;
+
+        return $this->methodNotAllowedController;
     }
 
     /**
      * Set the $controller that will be passed to the resolved route when a
      * handler could not be found for a given request.
      *
-     * @param callable $controller
+     * @param Controller $controller
      * @return $this
      */
-    public function setNotFoundController(callable $controller) {
+    public function setNotFoundController(Controller $controller) : self {
         $this->notFoundController = $controller;
         return $this;
     }
@@ -246,11 +285,11 @@ class FastRouteRouter implements Router {
      * Set the controller that will be passed to the resolved route when a handler
      * is found for a given request but the HTTP method is not allowed.
      *
-     * @param callable $controller
+     * @param Controller $controller
      * @return $this
      */
-    public function setMethodNotAllowedController(callable $controller) {
-        $this->methodNotFoundController = $controller;
+    public function setMethodNotAllowedController(Controller $controller) : self {
+        $this->methodNotAllowedController = $controller;
         return $this;
     }
 
