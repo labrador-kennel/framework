@@ -9,7 +9,7 @@ use Amp\Http\Status;
 use function Amp\Socket\listen;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
-use Cspray\Labrador\Http\AbstractHttpApplication;
+use Cspray\Labrador\Http\HttpApplication;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Test\Stub\ErrorThrowingController;
@@ -20,49 +20,6 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-
-class HttpApplicationTestSubject extends AbstractHttpApplication {
-
-    private $serverSocket;
-
-    public function __construct(LoggerInterface $logger, Router $router, SocketServer $serverSocket) {
-        parent::__construct($logger, $router);
-        $this->serverSocket = $serverSocket;
-    }
-
-    /**
-     * @return Server[]
-     * @throws SocketException
-     */
-    protected function getSocketServers(): array {
-        return [$this->serverSocket];
-    }
-}
-
-class ErrorRespondingApplicationTestSubject extends AbstractHttpApplication {
-
-    private $serverSocket;
-
-    public function __construct(LoggerInterface $logger, Router $router, SocketServer $serverSocket) {
-        parent::__construct($logger, $router);
-        $this->serverSocket = $serverSocket;
-    }
-
-    /**
-     * @return SocketServer[]
-     */
-    protected function getSocketServers(): array {
-        return [$this->serverSocket];
-    }
-
-    /**
-     * @param \Throwable $throwable
-     * @return Response
-     */
-    protected function exceptionToResponse(\Throwable $throwable): Response {
-        return new Response(Status::SERVICE_UNAVAILABLE);
-    }
-}
 
 class AbstractHttpApplicationTest extends AsyncTestCase {
 
@@ -107,7 +64,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
 
     public function testBasicRouteFound() {
         $router = $this->getRouter();
-        $application = new HttpApplicationTestSubject(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
         $this->registerRoutes($router);
 
         yield $application->execute();
@@ -122,7 +79,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
 
     public function testRouteNotFound() {
         $router = $this->getRouter();
-        $application = new HttpApplicationTestSubject(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
         $this->registerRoutes($router);
         yield $application->execute();
 
@@ -136,7 +93,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
 
     public function testHandlesErrorGracefully() {
         $router = $this->getRouter();
-        $application = new HttpApplicationTestSubject(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
         $this->registerRoutes($router);
         yield $application->execute();
 
@@ -154,13 +111,35 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
 
     public function testErrorResponseReturnedFromApplication() {
         $router = $this->getRouter();
-        $application = new ErrorRespondingApplicationTestSubject(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
+        $application->setExceptionToResponseHandler(function(\Throwable $error) {
+            return new Response(Status::SERVICE_UNAVAILABLE);
+        });
+
         $this->registerRoutes($router);
         yield $application->execute();
 
         $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
 
         $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
+    }
+
+    public function testErrorLogged() {
+        $router = $this->getRouter();
+        $logger = $this->createMock(LoggerInterface::class);
+        $expectedMsg = 'Exception thrown processing GET http://' . $this->socketServer->getAddress() . '/throw-error. Message: Controller thrown exception';
+        $logger->expects($this->once())
+               ->method('critical')
+               ->with($expectedMsg, $this->callback(function($secondArg) {
+                   $exception = $secondArg['exception'] ?? null;
+                   return $exception instanceof \Exception && $exception->getMessage() === 'Controller thrown exception';
+               }));
+        $application = new HttpApplication($logger, $router, $this->socketServer);
+
+        $this->registerRoutes($router);
+        yield $application->execute();
+
+        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
     }
 
 

@@ -1,6 +1,19 @@
 # Changelog
 
-## 1.0.0-beta - 2019-??-??
+## 1.0.0-beta2 - 2019-01-19
+
+### Added
+
+- Ensures that exceptions thrown by Controllers or Middleware are appropriately logged using the Logger implementation 
+passed to the `HttpApplication` instance.
+
+### Changed
+
+- Refactored the `AbstractHttpApplication` -> `HttpApplication` so that consumers of this framework are not required to 
+extend their own class but can instead use a standardized implementation that expects dependencies passed to it as 
+constructor dependencies.
+
+## 1.0.0-beta - 2019-01-19
 
 **This release represents a major BC Break as we incorporate Amphp's Event Loop support and move to an async 
 architecture.** It should be assumed that most items below will represent a break in previous versions.
