@@ -1,26 +1,27 @@
 {
-    "name": "cspray/labrador-http",
-    "require": {
-        "php": "~7.2",
-        "ext-json": "*",
-        "amphp/http-server": "~1.0",
-        "cspray/labrador": "~3.0.0-beta2",
-        "league/uri-schemes": "~1.2",
-        "nikic/fast-route": "~1.3"
+  "name": "cspray/labrador-http",
+  "require": {
+    "php": "~7.2",
+    "ext-json": "*",
+    "amphp/http-server": "~1.0",
+    "cspray/labrador": "~3.0.0-beta2",
+    "league/uri-schemes": "~1.2",
+    "nikic/fast-route": "~1.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Cspray\\Labrador\\Http\\": "src/"
     },
-    "require-dev": {
-        "phpunit/phpunit": "~7"
-    },
-    "autoload": {
-        "psr-4": {
-            "Cspray\\Labrador\\Http\\": "src/"
-        },
-        "files": ["src/_functions.php"]
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Cspray\\Labrador\\Http\\Test\\": "test/"
-        }
+    "files": [
+      "src/_functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Cspray\\Labrador\\Http\\Test\\": "test/"
     }
-
+  }
 }
