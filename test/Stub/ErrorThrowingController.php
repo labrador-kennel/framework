@@ -21,6 +21,6 @@ class ErrorThrowingController implements Controller {
      * @return Promise<\Amp\Http\Server\Response>
      */
     public function handleRequest(Request $request): Promise {
-        new Failure(new \Exception('Controller thrown exception'));
+        return new Failure(new \Exception('Controller thrown exception'));
     }
 }
