@@ -37,11 +37,9 @@ abstract class AbstractHttpApplication extends StandardApplication {
             $httpServer = new HttpServer($this->getSocketServers(), new CallableRequestHandler(function(Request $request) {
                 try {
                     $controller = $this->router->match($request);
-                    $response = $controller->handleRequest($request);
+                    return $controller->handleRequest($request);
                 } catch (\Throwable $error) {
-                    $response = $this->exceptionToResponse($error);
-                } finally {
-                    return $response;
+                    return $this->exceptionToResponse($error);
                 }
             }), $this->logger);
 
