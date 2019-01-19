@@ -44,7 +44,7 @@ class Route {
     /**
      * @return mixed
      */
-    public function getControllerClass() : string {
+    public function getControllerDescription() : string {
         return $this->controllerClass;
     }
 
