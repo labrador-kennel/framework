@@ -9,40 +9,59 @@
 
 namespace Cspray\Labrador\Http\Test\Router;
 
-use Cspray\Labrador\Http\HandlerResolver\HandlerResolver;
-use Cspray\Labrador\Http\Router\ResolvedRoute;
+use function Amp\call;
+use Amp\Http\Server\Driver\Client;
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\RequestHandler;
+use Amp\Promise;
+use Amp\Success;
+use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Route;
-use Cspray\Labrador\Http\Exception\InvalidHandlerException;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
-use Cspray\Labrador\Http\StatusCodes;
+use Cspray\Labrador\Http\Test\AsyncTestCase;
+use Cspray\Labrador\Http\Test\Stub\RequestDecoratorMiddleware;
+use Cspray\Labrador\Http\Test\Stub\ResponseControllerStub;
+use Cspray\Labrador\Http\Test\Stub\ResponseDecoratorMiddleware;
+use Cspray\Labrador\Http\Test\Stub\ToStringControllerStub;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\ServerRequest as Request;
-use PHPUnit_Framework_TestCase as UnitTestCase;
-use Zend\Diactoros\Uri;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
+use Amp\Http\Status;
+use League\Uri\Http;
 
-class FastRouteRouterTest extends UnitTestCase {
+class FastRouteRouterTest extends AsyncTestCase {
 
-    private $mockResolver;
+    /**
+     * @var Client
+     */
+    private $client;
+
+    public function setUp() {
+        parent::setUp();
+        $this->client = $this->createMock(Client::class);
+        $this->timeout(1500);
+    }
 
     private function getRouter() {
-        $this->mockResolver = $this->getMock(HandlerResolver::class);
         return new FastRouteRouter(
-            $this->mockResolver,
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
             function($data) { return new GcbDispatcher($data); }
         );
     }
 
+    private function getRequest(string $method, string $uri) : Request {
+        return new Request($this->client, $method, Http::createFromString($uri));
+    }
+
+    /**
+     * @throws InvalidTypeException
+     */
     public function testFastRouteDispatcherCallbackReturnsImproperTypeThrowsException() {
-        $mockResolver = $this->getMock(HandlerResolver::class);
         $router = new FastRouteRouter(
-            $mockResolver,
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
             function() { return 'not a dispatcher'; }
         );
@@ -50,111 +69,84 @@ class FastRouteRouterTest extends UnitTestCase {
         $this->expectException(InvalidTypeException::class);
         $this->expectExceptionMessage('A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor');
 
-        $router->match(new Request());
+        $router->match($this->getRequest('GET', '/'));
     }
 
-    public function testRouterNotFoundReturnsCorrectResolvedRoute() {
+    /**
+     * @throws InvalidTypeException
+     */
+    public function testRouterNotFoundReturnsDefaultController() {
         $router = $this->getRouter();
-        $resolved = $router->match(new Request());
-        $this->assertInstanceOf(ResolvedRoute::class, $resolved);
-        $this->assertTrue($resolved->isNotFound());
-        $handler = $resolved->getController();
-        /** @var ResponseInterface $response */
-        $response = $handler(new Request());
-        $this->assertSame(StatusCodes::NOT_FOUND, $response->getStatusCode());
-        $this->assertSame('Not Found', $response->getBody()->getContents());
+        $request = $this->getRequest('GET', '/');
+        $controller = $router->match($request);
+        /** @var Response $response */
+        $response = yield $controller->handleRequest($request);
+        $body = yield $response->getBody()->read();
+        $this->assertSame(Status::NOT_FOUND, $response->getStatus());
+        $this->assertSame('Not Found', $body);
+        $this->assertSame('DefaultNotFoundController', $controller->toString());
     }
 
-    public function testRouterMethodNotAllowedReturnsCorrectResolvedRoute() {
+    public function testRouterMethodNotAllowedReturnsCorrectController() {
         $router = $this->getRouter();
-        $request = (new Request())->withMethod('POST')
-            ->withUri(new Uri('http://labrador.dev/foo'));
-        $router->get('/foo', 'foo#bar');
-        $router->put('/foo', 'foo#baz');
+        $request = $this->getRequest('POST', 'http://labrador.dev/foo');
+        $mock = $this->createMock(Controller::class);
+        $router->addRoute('GET', '/foo', $mock);
+        $router->addRoute('PUT', '/foo', $mock);
 
-        $resolved = $router->match($request);
-        $this->assertInstanceOf(ResolvedRoute::class, $resolved);
-        $this->assertTrue($resolved->isMethodNotAllowed());
-        $this->assertSame(['GET', 'PUT'], $resolved->getAvailableMethods());
-        $handler = $resolved->getController();
-        /** @var ResponseInterface $response */
-        $response = $handler($request);
-        $this->assertSame(StatusCodes::METHOD_NOT_ALLOWED, $response->getStatusCode());
-        $this->assertSame('Method Not Allowed', $response->getBody()->getContents());
+        $controller = $router->match($request);
+        /** @var Response $response */
+        $response = yield $controller->handleRequest($request);
+        $body = yield $response->getBody()->read();
+        $this->assertSame(Status::METHOD_NOT_ALLOWED, $response->getStatus());
+        $this->assertSame('Method Not Allowed', $body);
+        $this->assertSame('DefaultMethodNotAllowedController', $controller->toString());
     }
 
-    public function testRouterIsOkReturnsCorrectResolvedRoute() {
+    public function testRouterIsOkReturnsCorrectController() {
         $router = $this->getRouter();
 
-        $request = (new Request())->withMethod('GET')
-            ->withUri(new Uri('http://labrador.dev/foo'));
-        $router->get('/foo', 'handler');
-        $this->mockResolver->expects($this->once())
-                           ->method('resolve')
-                           ->with($this->isInstanceOf(ServerRequestInterface::class), 'handler')
-                           ->willReturn(function() { return 'OK'; });
+        $request = $this->getRequest('GET', 'http://labrador.dev/foo');
+        $router->addRoute('GET', '/foo', new ResponseControllerStub(new Response(200, [], 'test val')));
 
-        $resolved = $router->match($request);
-        $this->assertInstanceOf(ResolvedRoute::class, $resolved);
-        $this->assertTrue($resolved->isOk());
-        $handler = $resolved->getController();
-        $this->assertSame('OK', $handler());
+        $controller = $router->match($request);
+        /** @var Response $response */
+        $response = yield $controller->handleRequest($request);
+        $body = yield $response->getBody()->read();
+
+        $this->assertSame(Status::OK, $response->getStatus());
+        $this->assertSame('test val', $body);
     }
 
     public function testRouteWithParametersSetOnRequestAttributes() {
         $router = $this->getRouter();
 
-        $router->post('/foo/{name}/{id}', 'attr#action');
+        $request = $this->getRequest('POST', 'http://www.sprog.dev/foo/bar/qux');
+        $router->addRoute('POST', '/foo/{name}/{id}', $this->createMock(Controller::class));
 
-        /** @var ServerRequestInterface $request */
+        $router->match($request);
 
-        $request = (new Request())->withMethod('POST')
-                                  ->withUri(new Uri('http://www.sprog.dev/foo/bar/qux'));
-        $this->mockResolver->expects($this->once())
-                           ->method('resolve')
-                           ->with($this->isInstanceOf(ServerRequestInterface::class), 'attr#action')
-                           ->willReturn(function() { return 'OK'; });
-
-        $resolved = $router->match($request);
-
-        $this->assertSame('bar', $resolved->getRequest()->getAttribute('name'));
-        $this->assertSame('qux', $resolved->getRequest()->getAttribute('id'));
-    }
-
-    public function testLabradorMetaRequestDataSetOnRequestAttributes() {
-        $router = $this->getRouter();
-
-        $router->post('/foo', 'controller#action');
-
-        $request = (new Request())->withMethod('POST')
-                                  ->withUri(new Uri('http://labrador.dev/foo'));
-        $this->mockResolver->expects($this->once())
-                           ->method('resolve')
-                           ->with($this->isInstanceOf(ServerRequestInterface::class), 'controller#action')
-                           ->will($this->returnValue(function() { return 'OK'; }));
-
-        $resolved = $router->match($request);
-
-        $this->assertSame(['handler' => 'controller#action'], $resolved->getRequest()->getAttribute('_labrador'));
+        $this->assertSame('bar', $request->getAttribute('name'));
+        $this->assertSame('qux', $request->getAttribute('id'));
     }
 
     public function testGetRoutesWithJustOne() {
         $router = $this->getRouter();
-        $router->get('/foo', 'handler');
+        $router->addRoute('GET', '/foo', new ToStringControllerStub('foo_get'));
 
         $routes = $router->getRoutes();
         $this->assertCount(1, $routes);
         $this->assertInstanceOf(Route::class, $routes[0]);
         $this->assertSame('/foo', $routes[0]->getPattern());
         $this->assertSame('GET', $routes[0]->getMethod());
-        $this->assertSame('handler', $routes[0]->getHandler());
+        $this->assertSame('foo_get', $routes[0]->getControllerDescription());
     }
 
     public function testGetRoutesWithOnePatternSupportingMultipleMethods() {
         $router = $this->getRouter();
-        $router->get('/foo/bar', 'foo_bar_get');
-        $router->post('/foo/bar', 'foo_bar_post');
-        $router->put('/foo/bar', 'foo_bar_put');
+        $router->addRoute('GET', '/foo/bar', new ToStringControllerStub('foo_bar_get'));
+        $router->addRoute('POST', '/foo/bar', new ToStringControllerStub('foo_bar_post'));
+        $router->addRoute('PUT', '/foo/bar', new ToStringControllerStub('foo_bar_put'));
 
         $expected = [
             ['GET', '/foo/bar', 'foo_bar_get'],
@@ -165,7 +157,7 @@ class FastRouteRouterTest extends UnitTestCase {
         $routes = $router->getRoutes();
         foreach ($routes as $route) {
             $this->assertInstanceOf(Route::class, $route);
-            $actual[] = [$route->getMethod(), $route->getPattern(), $route->getHandler()];
+            $actual[] = [$route->getMethod(), $route->getPattern(), $route->getControllerDescription()];
         }
 
         $this->assertSame($expected, $actual);
@@ -173,14 +165,14 @@ class FastRouteRouterTest extends UnitTestCase {
 
     public function testGetRoutesWithStaticAndVariable() {
         $router = $this->getRouter();
-        $router->get('/foo/bar/{id}', 'foo_bar_id');
-        $router->get('/foo/baz/{name}', 'foo_baz_name');
-        $router->post('/foo/baz', 'foo_baz_post');
-        $router->put('/foo/quz', 'foo_quz_put');
+        $router->addRoute('GET', '/foo/bar/{id}', new ToStringControllerStub('foo_bar_show_get'));
+        $router->addRoute('GET', '/foo/baz/{name}', new ToStringControllerStub('foo_bar_show_name_get'));
+        $router->addRoute('POST', '/foo/baz', new ToStringControllerStub('foo_baz_post'));
+        $router->addRoute('PUT', '/foo/quz', new ToStringControllerStub('foo_quz_put'));
 
         $expected = [
-            ['GET', '/foo/bar/{id}', 'foo_bar_id'],
-            ['GET', '/foo/baz/{name}', 'foo_baz_name'],
+            ['GET', '/foo/bar/{id}', 'foo_bar_show_get'],
+            ['GET', '/foo/baz/{name}', 'foo_bar_show_name_get'],
             ['POST', '/foo/baz', 'foo_baz_post'],
             ['PUT', '/foo/quz', 'foo_quz_put']
         ];
@@ -188,132 +180,73 @@ class FastRouteRouterTest extends UnitTestCase {
         $routes = $router->getRoutes();
         foreach ($routes as $route) {
             $this->assertInstanceOf(Route::class, $route);
-            $actual[] = [$route->getMethod(), $route->getPattern(), $route->getHandler()];
+            $actual[] = [$route->getMethod(), $route->getPattern(), $route->getControllerDescription()];
         }
 
         $this->assertSame($expected, $actual);
     }
 
-    public function testMountingRouterAddsPrefix() {
-        $router = $this->getRouter();
-        $router->mount('/prefix', function(FastRouteRouter $router) {
-            $router->get('/foo', 'something');
-        });
-        $router->get('/noprefix', 'something else');
-
-        $expected = [
-            ['GET', '/prefix/foo', 'something'],
-            ['GET', '/noprefix', 'something else']
-        ];
-        $actual = [];
-        $routes = $router->getRoutes();
-        foreach ($routes as $route) {
-            $actual[] = [$route->getMethod(), $route->getPattern(), $route->getHandler()];
-        }
-
-        $this->assertSame($expected, $actual);
-    }
-
-    public function testNestedMountingAddsCorrectPrefixes() {
-        $router = $this->getRouter();
-        $router->mount('/foo', function(FastRouteRouter $router) {
-            $router->delete('/foo-get', 'one');
-            $router->mount('/bar', function(FastRouteRouter $router) {
-                $router->post('/bar-post', 'two');
-                $router->mount('/baz', function(FastRouteRouter $router) {
-                    $router->put('/baz-put', 'three');
-                });
-            });
-        });
-
-        $expected = [
-            ['DELETE', '/foo/foo-get', 'one'],
-            ['POST', '/foo/bar/bar-post', 'two'],
-            ['PUT', '/foo/bar/baz/baz-put', 'three']
-        ];
-        $actual = [];
-        foreach ($router->getRoutes() as $route) {
-            $actual[] = [$route->getMethod(), $route->getPattern(), $route->getHandler()];
-        }
-
-        $this->assertSame($expected, $actual);
-    }
-
-    public function testResolverReturnsFalseThrowsException() {
-        $router = $this->getRouter();
-        $this->mockResolver->expects($this->once())->method('resolve')->willReturn(false);
-        $router->get('/foo', 'something');
-
-        $this->expectException(InvalidHandlerException::class);
-        $this->expectExceptionMessage('Could not resolve matched handler to a callable controller');
-
-        $request = (new Request())->withMethod('GET')
-                                  ->withUri(new Uri('http://labrador.dev/foo'));
-
-        $router->match($request);
-    }
 
     public function testSettingNotFoundController() {
         $router = $this->getRouter();
-        $router->setNotFoundController(function() { return 'the set controller'; });
+        $mock = $this->createMock(Controller::class);
+        $router->setNotFoundController($mock);
         $controller = $router->getNotFoundController();
-        $this->assertSame('the set controller', $controller());
+        $this->assertSame($mock, $controller);
     }
 
     public function testSettingMethodNotAllowedController() {
         $router = $this->getRouter();
-        $router->setMethodNotAllowedController(function() { return 'the set controller'; });
+        $mock = $this->createMock(Controller::class);
+        $router->setMethodNotAllowedController($mock);
         $controller = $router->getMethodNotAllowedController();
-        $this->assertSame('the set controller', $controller());
-    }
-
-    public function testSettingMountedRoot() {
-        $router = $this->getRouter();
-        $router->mount('/foo', function($router) {
-            $router->get($router->root(), 'something');
-        });
-
-        $request = (new Request())->withMethod('GET')
-                                  ->withUri(new Uri('http://example.com/foo'));
-        $this->mockResolver->expects($this->once())
-                           ->method('resolve')
-                           ->with($this->isInstanceOf(ServerRequestInterface::class), 'something')
-                           ->willReturn(function() { return 'the set controller'; });
-
-        $resolved = $router->match($request);
-        $controller = $resolved->getController();
-        $this->assertSame('the set controller', $controller());
-    }
-
-    public function testUsingRouterRootWithoutMount() {
-        $request = (new Request())->withMethod('GET')
-            ->withUri(new Uri('http://example.com'));
-        $router = $this->getRouter();
-        $router->get($router->root(), 'something');
-        $this->mockResolver->expects($this->once())
-             ->method('resolve')
-             ->with($this->isInstanceOf(ServerRequestInterface::class), 'something')
-             ->willReturn(function() { return 'the set controller'; });
-
-        $resolved = $router->match($request);
-        $controller = $resolved->getController();
-        $this->assertSame('the set controller', $controller());
+        $this->assertSame($mock, $controller);
     }
 
     public function testUrlDecodingCustomAttributes() {
-        $request = (new Request())->withMethod('GET')
-            ->withUri(new Uri('http://example.com/foo%20bar'));
+        $request = $this->getRequest('GET', 'http://example.com/foo%20bar');
         $router = $this->getRouter();
-        $router->get('/{param}', 'something');
-        $this->mockResolver->expects($this->once())
-                           ->method('resolve')
-                           ->with($this->isInstanceOf(ServerRequestInterface::class), 'something')
-                           ->willReturn(function() { return ''; });
+        $mock = $this->createMock(Controller::class);
+        $router->addRoute('GET', '/{param}', $mock);
+        $router->match($request);
 
-        $resolved = $router->match($request);
+        $this->assertSame('foo bar', $request->getAttribute('param'));
+    }
 
-        $this->assertTrue($resolved->isOk());
-        $this->assertSame('foo bar', $resolved->getRequest()->getAttribute('param'));
+    private function defaultMiddlewares() {
+        $requestDecorator = new RequestDecoratorMiddleware();
+        $responseDecorator = new ResponseDecoratorMiddleware();
+
+        return [$requestDecorator, $responseDecorator];
+    }
+
+    public function routerRouteMethodProvider() {
+        return [
+            ['GET'],
+            ['POST'],
+            ['PUT'],
+            ['DELETE'],
+        ];
+    }
+
+    /**
+     * @param string $httpMethod
+     * @throws InvalidTypeException
+     * @dataProvider routerRouteMethodProvider
+     */
+    public function testAddingMiddlewareToSingleRoute(string $httpMethod) {
+        $request = $this->getRequest($httpMethod, 'http://example.com/foo');
+        $router = $this->getRouter();
+        $responseController = new ResponseControllerStub(new Response(200, [], 'decorated value:'));
+        $router->addRoute($httpMethod, '/foo', $responseController, ...$this->defaultMiddlewares());
+
+        $controller = $router->match($request);
+
+        /** @var Response $response */
+        $response = yield $controller->handleRequest($request);
+        $body = yield $response->getBody()->read();
+
+        $this->assertSame('decorated value: foobar', $body);
     }
 
 }

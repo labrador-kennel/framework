@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.0.0-beta - 2019-??-??
+
+**This release represents a major BC Break as we incorporate Amphp's Event Loop support and move to an async 
+architecture.** It should be assumed that most items below will represent a break in previous versions.
+
+### Added
+
+- Adds an `AbstractHttpApplication` implementation that allows for the easy startup of an Amphp HTTP Server by simply providing the appropriate Logger, Router, and set of SocketServers to listen to.
+- Adds a `Controller` interface that acts as an amphp http-server RequestHandler. At the moment this interface does little more than an amphp RequestHandler though we anticipate that changing in the future.
+- Adds a `MiddlewareController` implementation that handles when amphp Middleware are added to a route.
+- Adds a `FriendlyRouter` implementation that adds syntactic sugar onto lower-level Router implementations.
+- Adds a `RouterPlugin` interface that will take advantage of Labrador 3's custom plugin functionality to allow adding routes to the Router at Engine bootup.
+
+### Changed
+
+- Upgraded Labrador to use the most recent 3.0 branch to move to asynchronous processing with amphp.
+- Changed the `Router` interface to reflect the changes moving to amphp http-server.
+- Changed the `FastRouteRouter` implementation to no longer directly have convenience methods. Instead you should pass implementations of `Router` to `FriendlyRouter` for easier route additions.
+
+### Removed
+
+- Removed the `StatusCodes` object as it was duplicating functionality provided by amphp's HTTP package.
+
 ## 0.6.0 - 2016-03-20
 
 - **BC BREAK** Removes the Symfony\HttpFoundation library and transitions to a PSR-7 spec compliant library with 
