@@ -5,14 +5,13 @@ namespace Cspray\Labrador\Http\Test;
 use Amp\Artax\Client as HttpClient;
 use Amp\Artax\DefaultClient as DefaultHttpClient;
 use Amp\Http\Server\Response;
+use Amp\Http\Status;
 use function Amp\Socket\listen;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
-use Cspray\Labrador\Application;
 use Cspray\Labrador\Http\AbstractHttpApplication;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\Http\StatusCodes;
 use Cspray\Labrador\Http\Test\Stub\ErrorThrowingController;
 use Cspray\Labrador\Http\Test\Stub\ResponseControllerStub;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
@@ -50,15 +49,18 @@ class ErrorRespondingApplicationTestSubject extends AbstractHttpApplication {
     }
 
     /**
-     * @return Server[]
-     * @throws SocketException
+     * @return SocketServer[]
      */
     protected function getSocketServers(): array {
         return [$this->serverSocket];
     }
 
+    /**
+     * @param \Throwable $throwable
+     * @return Response
+     */
     protected function exceptionToResponse(\Throwable $throwable): Response {
-        return new Response(StatusCodes::SERVICE_UNAVAILABLE);
+        return new Response(Status::SERVICE_UNAVAILABLE);
     }
 }
 
@@ -114,7 +116,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
         $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/foo');
         $body = yield $response->getBody();
 
-        $this->assertSame(StatusCodes::OK, $response->getStatus());
+        $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('From controller', $body);
     }
 
@@ -128,7 +130,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
         $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/bar');
         $body = yield $response->getBody();
 
-        $this->assertSame(StatusCodes::NOT_FOUND, $response->getStatus());
+        $this->assertSame(Status::NOT_FOUND, $response->getStatus());
         $this->assertSame('Not Found', $body);
     }
 
@@ -140,13 +142,13 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
 
         $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
 
-        $this->assertSame(StatusCodes::INTERNAL_SERVER_ERROR, $response->getStatus());
+        $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
 
         // now make sure the server hasn't crashed
         $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/foo');
         $body = yield $response->getBody();
 
-        $this->assertSame(StatusCodes::OK, $response->getStatus());
+        $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('From controller', $body);
     }
 
@@ -158,7 +160,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
 
         $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
 
-        $this->assertSame(StatusCodes::SERVICE_UNAVAILABLE, $response->getStatus());
+        $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
     }
 
 

@@ -2,10 +2,7 @@
 
 namespace Cspray\Labrador\Http\Router;
 
-use Amp\{
-    Promise,
-    Success,
-};
+use Amp\{Http\Status, Promise, Success};
 use Amp\Http\Server\{
     Middleware,
     Request,
@@ -135,7 +132,7 @@ class FastRouteRouter implements Router {
         if (!$this->notFoundController) {
             return $this->defaultController(
                 'DefaultNotFoundController',
-                StatusCodes::NOT_FOUND,
+                Status::NOT_FOUND,
                 'Not Found'
             );
         }
@@ -152,7 +149,7 @@ class FastRouteRouter implements Router {
         if (!$this->methodNotAllowedController) {
             return $this->defaultController(
                 'DefaultMethodNotAllowedController',
-                StatusCodes::METHOD_NOT_ALLOWED,
+                Status::METHOD_NOT_ALLOWED,
                 'Method Not Allowed'
             );
         }

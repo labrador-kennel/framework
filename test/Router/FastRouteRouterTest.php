@@ -19,7 +19,6 @@ use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Route;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
-use Cspray\Labrador\Http\StatusCodes;
 use Cspray\Labrador\Http\Test\AsyncTestCase;
 use Cspray\Labrador\Http\Test\Stub\RequestDecoratorMiddleware;
 use Cspray\Labrador\Http\Test\Stub\ResponseControllerStub;
@@ -31,6 +30,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
+use Amp\Http\Status;
 use League\Uri\Http;
 
 class FastRouteRouterTest extends AsyncTestCase {
@@ -82,7 +82,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         /** @var Response $response */
         $response = yield $controller->handleRequest($request);
         $body = yield $response->getBody()->read();
-        $this->assertSame(StatusCodes::NOT_FOUND, $response->getStatus());
+        $this->assertSame(Status::NOT_FOUND, $response->getStatus());
         $this->assertSame('Not Found', $body);
         $this->assertSame('DefaultNotFoundController', $controller->toString());
     }
@@ -98,7 +98,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         /** @var Response $response */
         $response = yield $controller->handleRequest($request);
         $body = yield $response->getBody()->read();
-        $this->assertSame(StatusCodes::METHOD_NOT_ALLOWED, $response->getStatus());
+        $this->assertSame(Status::METHOD_NOT_ALLOWED, $response->getStatus());
         $this->assertSame('Method Not Allowed', $body);
         $this->assertSame('DefaultMethodNotAllowedController', $controller->toString());
     }
@@ -114,7 +114,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         $response = yield $controller->handleRequest($request);
         $body = yield $response->getBody()->read();
 
-        $this->assertSame(StatusCodes::OK, $response->getStatus());
+        $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('test val', $body);
     }
 
