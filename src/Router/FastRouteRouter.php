@@ -2,18 +2,21 @@
 
 namespace Cspray\Labrador\Http\Router;
 
-use Amp\{Http\Status, Promise, Success};
+use Cspray\Labrador\Http\{
+    Controller\Controller,
+    Controller\MiddlewareController,
+    Exception\InvalidTypeException,
+};
+
+use Amp\{
+    Http\Status,
+    Promise,
+    Success
+};
 use Amp\Http\Server\{
     Middleware,
     Request,
     Response,
-};
-use Cspray\Labrador\Http\Controller\{
-    Controller,
-    MiddlewareController,
-};
-use Cspray\Labrador\Http\{
-    Exception\InvalidTypeException,
 };
 use FastRoute\{
     Dispatcher,

@@ -1,26 +1,26 @@
 <?php
 
-/**
- *
- * @license See LICENSE in source root
- * @version 1.0
- * @since   1.0
- */
-
 namespace Cspray\Labrador\Http;
 
-use Cspray\Labrador\{AsyncEvent\AmpEmitter,
+use Cspray\Labrador\{
+    AsyncEvent\AmpEmitter,
     AsyncEvent\Emitter,
     CoreEngine,
     Engine,
-    Http\Plugin\RouterPlugin,
-    PluginManager};
-use Cspray\Labrador\Http\Router;
+    PluginManager
+};
+use Cspray\Labrador\Http\{
+    Router,
+    Plugin\RouterPlugin
+};
+
 use Auryn\Injector;
-use FastRoute\RouteParser\Std as StdRouteParser;
-use FastRoute\RouteCollector;
-use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
-use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
+use FastRoute\{
+    DataGenerator\GroupCountBased as GcbGenerator,
+    Dispatcher\GroupCountBased as GcbDispatcher,
+    RouteCollector,
+    RouteParser\Std as StdRouteParser
+};
 
 class DependencyGraph {
 

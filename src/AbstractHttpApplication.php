@@ -2,16 +2,20 @@
 
 namespace Cspray\Labrador\Http;
 
-use Amp\Http\Server\RequestHandler\CallableRequestHandler;
-use Amp\Http\Server\Server as HttpServer;
-use Amp\Http\Server\Request;
-use Amp\Http\Server\Response;
-use Amp\Promise;
-use Amp\Socket\Server as SocketServer;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\StandardApplication;
-use function Amp\call;
+
+use Amp\Http\Server\{
+    RequestHandler\CallableRequestHandler,
+    Request,
+    Response,
+    Server as HttpServer,
+};
+use Amp\Promise;
+use Amp\Socket\Server as SocketServer;
 use Psr\Log\LoggerInterface;
+
+use function Amp\call;
 
 abstract class AbstractHttpApplication extends StandardApplication {
 

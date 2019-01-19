@@ -2,9 +2,11 @@
 
 namespace Cspray\Labrador\Http\Controller;
 
-use Amp\Http\Server\Middleware;
-use Amp\Http\Server\Request;
 use Amp\Promise;
+use Amp\Http\Server\{
+    Middleware,
+    Request,
+};
 
 class MiddlewareController implements Controller {
 
