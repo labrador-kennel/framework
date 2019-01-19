@@ -13,7 +13,6 @@ use Cspray\Labrador\Http\Controller\{
     MiddlewareController,
 };
 use Cspray\Labrador\Http\{
-    StatusCodes,
     Exception\InvalidTypeException,
 };
 use FastRoute\{

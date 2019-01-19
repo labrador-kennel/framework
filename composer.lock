@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b8fa79ceddad8660272e3bb8bcec249",
+    "content-hash": "28ecc6d5ea0bab253ecfa17dbce782b6",
     "packages": [
         {
             "name": "amphp/amp",
@@ -623,16 +623,16 @@
         },
         {
             "name": "amphp/process",
-            "version": "v1.0.2",
+            "version": "v1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/process.git",
-                "reference": "90f3f31cbd0eee7fa5ae03ce588b1fc8f122997c"
+                "reference": "e7e28219da753f865f9055e87d0b9b110ea607ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/process/zipball/90f3f31cbd0eee7fa5ae03ce588b1fc8f122997c",
-                "reference": "90f3f31cbd0eee7fa5ae03ce588b1fc8f122997c",
+                "url": "https://api.github.com/repos/amphp/process/zipball/e7e28219da753f865f9055e87d0b9b110ea607ba",
+                "reference": "e7e28219da753f865f9055e87d0b9b110ea607ba",
                 "shasum": ""
             },
             "require": {
@@ -674,7 +674,7 @@
             ],
             "description": "Asynchronous process manager.",
             "homepage": "https://github.com/amphp/process",
-            "time": "2018-11-09T00:02:00+00:00"
+            "time": "2019-01-15T21:42:43+00:00"
         },
         {
             "name": "amphp/socket",
@@ -927,16 +927,16 @@
         },
         {
             "name": "cspray/labrador",
-            "version": "3.0.0-beta2",
+            "version": "3.0.0-beta3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/core.git",
-                "reference": "c1cc2b53b7abfa8ffe44d328b66a3276a2536bb5"
+                "reference": "03c649c1f967e27151df81f2dda8d6ea4989f03b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/c1cc2b53b7abfa8ffe44d328b66a3276a2536bb5",
-                "reference": "c1cc2b53b7abfa8ffe44d328b66a3276a2536bb5",
+                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/03c649c1f967e27151df81f2dda8d6ea4989f03b",
+                "reference": "03c649c1f967e27151df81f2dda8d6ea4989f03b",
                 "shasum": ""
             },
             "require": {
@@ -974,7 +974,7 @@
                 }
             ],
             "description": "A microframework providing a plugin and event system to build PHP powered applications.",
-            "time": "2019-01-13T18:25:47+00:00"
+            "time": "2019-01-19T15:52:14+00:00"
         },
         {
             "name": "cspray/labrador-async-event",
@@ -2417,16 +2417,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.5.1",
+            "version": "7.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c23d78776ad415d5506e0679723cb461d71f488f"
+                "reference": "7c89093bd00f7d5ddf0ab81dee04f801416b4944"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c23d78776ad415d5506e0679723cb461d71f488f",
-                "reference": "c23d78776ad415d5506e0679723cb461d71f488f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7c89093bd00f7d5ddf0ab81dee04f801416b4944",
+                "reference": "7c89093bd00f7d5ddf0ab81dee04f801416b4944",
                 "shasum": ""
             },
             "require": {
@@ -2497,7 +2497,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-12-12T07:20:32+00:00"
+            "time": "2019-01-15T08:19:08+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
