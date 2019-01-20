@@ -27,7 +27,7 @@ use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class AbstractHttpApplicationTest extends AsyncTestCase {
+class HttpApplicationTest extends AsyncTestCase {
 
     /**
      * @var SocketServer
@@ -167,7 +167,7 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
             }
         };
         $application->addMiddleware($middleware);
-        /** @var Response $response */
+
         yield $application->execute();
 
         /** @var \Amp\Artax\Response $response */

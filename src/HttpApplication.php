@@ -31,7 +31,7 @@ final class HttpApplication extends StandardApplication {
         $this->logger = $logger;
         $this->router = $router;
         $this->socketServers = $socketServers;
-        $this->exceptionToResponseHandler = function(\Throwable $error) {
+        $this->exceptionToResponseHandler = function(/* Throwable $error */) {
             return new Response(Status::INTERNAL_SERVER_ERROR);
         };
     }
