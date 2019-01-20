@@ -1,13 +1,22 @@
 # Changelog
 
+## 1.0.0-beta3 - 2019-01-20
+
+#### Added
+
+- Adds a `HttpApplication::addMiddleware` method that allows `Middleware` to be added
+to every request with the possibility of short-circuiting Router matching by returning 
+a Response. This allows for functionality like CORS support without requiring going 
+through the Routing layer and executing Controllers.
+
 ## 1.0.0-beta2 - 2019-01-19
 
-### Added
+#### Added
 
 - Ensures that exceptions thrown by Controllers or Middleware are appropriately logged using the Logger implementation 
 passed to the `HttpApplication` instance.
 
-### Changed
+#### Changed
 
 - Refactored the `AbstractHttpApplication` -> `HttpApplication` so that consumers of this framework are not required to 
 extend their own class but can instead use a standardized implementation that expects dependencies passed to it as 
@@ -18,7 +27,7 @@ constructor dependencies.
 **This release represents a major BC Break as we incorporate Amphp's Event Loop support and move to an async 
 architecture.** It should be assumed that most items below will represent a break in previous versions.
 
-### Added
+#### Added
 
 - Adds an `AbstractHttpApplication` implementation that allows for the easy startup of an Amphp HTTP Server by simply providing the appropriate Logger, Router, and set of SocketServers to listen to.
 - Adds a `Controller` interface that acts as an amphp http-server RequestHandler. At the moment this interface does little more than an amphp RequestHandler though we anticipate that changing in the future.
@@ -26,13 +35,13 @@ architecture.** It should be assumed that most items below will represent a brea
 - Adds a `FriendlyRouter` implementation that adds syntactic sugar onto lower-level Router implementations.
 - Adds a `RouterPlugin` interface that will take advantage of Labrador 3's custom plugin functionality to allow adding routes to the Router at Engine bootup.
 
-### Changed
+#### Changed
 
 - Upgraded Labrador to use the most recent 3.0 branch to move to asynchronous processing with amphp.
 - Changed the `Router` interface to reflect the changes moving to amphp http-server.
 - Changed the `FastRouteRouter` implementation to no longer directly have convenience methods. Instead you should pass implementations of `Router` to `FriendlyRouter` for easier route additions.
 
-### Removed
+#### Removed
 
 - Removed the `StatusCodes` object as it was duplicating functionality provided by amphp's HTTP package.
 

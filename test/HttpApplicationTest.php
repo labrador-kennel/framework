@@ -4,11 +4,16 @@ namespace Cspray\Labrador\Http\Test;
 
 use Amp\Artax\Client as HttpClient;
 use Amp\Artax\DefaultClient as DefaultHttpClient;
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Status;
+use Amp\Promise;
 use function Amp\Socket\listen;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
+use Amp\Success;
 use Cspray\Labrador\Http\HttpApplication;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
@@ -18,10 +23,11 @@ use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
+use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
-class AbstractHttpApplicationTest extends AsyncTestCase {
+class HttpApplicationTest extends AsyncTestCase {
 
     /**
      * @var SocketServer
@@ -139,8 +145,37 @@ class AbstractHttpApplicationTest extends AsyncTestCase {
         $this->registerRoutes($router);
         yield $application->execute();
 
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
+        yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
     }
 
+    public function testAddingMiddlewareCanShortCircuitRouterMatching() {
+        $router = $this->createMock(Router::class);
+        $router->expects($this->never())->method('match');
+        $logger = new NullLogger();
+        $application = new HttpApplication($logger, $router, $this->socketServer);
+        $middleware = new class implements Middleware {
+
+            /**
+             * @param Request $request
+             * @param RequestHandler $requestHandler
+             *
+             * @return Promise<\Amp\Http\Server\Response>
+             */
+            public function handleRequest(Request $request, RequestHandler $requestHandler): Promise {
+                $response = new Response(Status::ACCEPTED, [], 'Short circuited router');
+                return new Success($response);
+            }
+        };
+        $application->addMiddleware($middleware);
+
+        yield $application->execute();
+
+        /** @var \Amp\Artax\Response $response */
+        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/does_not_matter');
+        $body = yield $response->getBody()->read();
+
+        $this->assertSame(Status::ACCEPTED, $response->getStatus());
+        $this->assertSame('Short circuited router', $body);
+    }
 
 }

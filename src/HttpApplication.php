@@ -7,10 +7,11 @@ use Cspray\Labrador\StandardApplication;
 
 use Amp\Http\Status;
 use Amp\Http\Server\{
+    Middleware,
     RequestHandler\CallableRequestHandler,
     Request,
     Response,
-    Server as HttpServer,
+    Server as HttpServer
 };
 use Amp\Promise;
 use Amp\Socket\Server as SocketServer;
@@ -24,14 +25,30 @@ final class HttpApplication extends StandardApplication {
     private $router;
     private $socketServers;
     private $exceptionToResponseHandler;
+    private $middlewares = [];
 
     public function __construct(LoggerInterface $logger, Router $router, SocketServer ...$socketServers) {
         $this->logger = $logger;
         $this->router = $router;
         $this->socketServers = $socketServers;
-        $this->exceptionToResponseHandler = function(\Throwable $error) {
+        $this->exceptionToResponseHandler = function(/* Throwable $error */) {
             return new Response(Status::INTERNAL_SERVER_ERROR);
         };
+    }
+
+    /**
+     * Add a Middleware that will be invoked _before_ the application attempts to match the given Request to the Router
+     * AND will be invoked for _every_ request.
+     *
+     * Generally speaking you should avoid adding too many Middleware to this and let the Router and Controllers control
+     * your application flow, pun intended. Instead you should reserve this for low-level aspects of HTTP Requests. One
+     * of the primary use cases for this Middleware is to support CORS before the Router has an opportunity to send a
+     * Method Not Allowed response for OPTIONS requests.
+     *
+     * @param Middleware $middleware
+     */
+    public function addMiddleware(Middleware $middleware) : void {
+        $this->middlewares[] = $middleware;
     }
 
     /**
@@ -44,19 +61,21 @@ final class HttpApplication extends StandardApplication {
      * @return Promise
      */
     final public function execute() : Promise {
-        return call(function() {
-            $httpServer = new HttpServer($this->socketServers, new CallableRequestHandler(function(Request $request) {
-                try {
-                    $controller = $this->router->match($request);
-                    $response = yield $controller->handleRequest($request);
-                    return $response;
-                } catch (\Throwable $error) {
-                    $msgFormat = 'Exception thrown processing %s %s. Message: %s';
-                    $msg = sprintf($msgFormat, $request->getMethod(), $request->getUri(), $error->getMessage());
-                    $this->logger->critical($msg, ['exception' => $error]);
-                    return $this->exceptionToResponse($error);
-                }
-            }), $this->logger);
+        $applicationHandler = new CallableRequestHandler(function(Request $request) {
+            try {
+                $controller = $this->router->match($request);
+                $response = yield $controller->handleRequest($request);
+                return $response;
+            } catch (\Throwable $error) {
+                $msgFormat = 'Exception thrown processing %s %s. Message: %s';
+                $msg = sprintf($msgFormat, $request->getMethod(), $request->getUri(), $error->getMessage());
+                $this->logger->critical($msg, ['exception' => $error]);
+                return $this->exceptionToResponse($error);
+            }
+        });
+        return call(function() use($applicationHandler) {
+            $handler = Middleware\stack($applicationHandler, ...$this->middlewares);
+            $httpServer = new HttpServer($this->socketServers, $handler, $this->logger);
 
             yield $httpServer->start();
         });
