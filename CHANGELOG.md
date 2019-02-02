@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0-beta4 2019-02-02
+
+#### Added
+
+- Adds an abstract `HookableController` implementation that allows extending classes to define a 
+`beforeAction` and/or `afterAction` hooks that allow Controller specific logic that may need to 
+take place before a Request is processed by business logic or to enforce Response data is present. 
+
 ## 1.0.0-beta3 - 2019-01-20
 
 #### Added
