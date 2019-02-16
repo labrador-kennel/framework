@@ -4,14 +4,10 @@ namespace Cspray\Labrador\Http\Controller;
 
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 
-use Amp\{
-    Promise,
-    Success
-};
-use Amp\Http\Server\{
-    Request,
-    Response
-};
+use Amp\Promise;
+use Amp\Success;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
 
 use function Amp\call;
 
@@ -92,5 +88,4 @@ abstract class HookableController implements Controller {
      * @return Promise(Response)
      */
     abstract protected function handle(Request $request) : Promise;
-
 }

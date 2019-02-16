@@ -2,25 +2,19 @@
 
 namespace Cspray\Labrador\Http;
 
-use Cspray\Labrador\{
-    AsyncEvent\AmpEmitter,
-    AsyncEvent\Emitter,
-    CoreEngine,
-    Engine,
-    PluginManager
-};
-use Cspray\Labrador\Http\{
-    Router,
-    Plugin\RouterPlugin
-};
+use Cspray\Labrador\AmpEngine;
+use Cspray\Labrador\AsyncEvent\AmpEmitter;
+use Cspray\Labrador\AsyncEvent\Emitter;
+use Cspray\Labrador\Engine;
+use Cspray\Labrador\PluginManager;
+use Cspray\Labrador\Http\Router;
+use Cspray\Labrador\Http\Plugin\RouterPlugin;
 
 use Auryn\Injector;
-use FastRoute\{
-    DataGenerator\GroupCountBased as GcbGenerator,
-    Dispatcher\GroupCountBased as GcbDispatcher,
-    RouteCollector,
-    RouteParser\Std as StdRouteParser
-};
+use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
+use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std as StdRouteParser;
 
 class DependencyGraph {
 
@@ -42,7 +36,7 @@ class DependencyGraph {
         $injector->alias(Emitter::class, AmpEmitter::class);
 
         $injector->share(Engine::class);
-        $injector->alias(Engine::class, CoreEngine::class);
+        $injector->alias(Engine::class, AmpEngine::class);
         $injector->prepare(Engine::class, function(Engine $engine, Injector $injector) {
             $injector->execute([$engine, 'registerPluginHandler'], [
                 RouterPlugin::class,
@@ -68,5 +62,4 @@ class DependencyGraph {
         ]);
         $injector->alias(Router\Router::class, Router\FastRouteRouter::class);
     }
-
 }

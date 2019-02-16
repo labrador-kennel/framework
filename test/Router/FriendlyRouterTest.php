@@ -2,12 +2,12 @@
 
 namespace Cspray\Labrador\Http\Test\Router;
 
-use Amp\Http\Server\{Driver\Client, Middleware, Request};
+use Amp\Http\Server\Driver\Client;
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Router\{
-    FriendlyRouter,
-    Router,
-};
+use Cspray\Labrador\Http\Router\FriendlyRouter;
+use Cspray\Labrador\Http\Router\Router;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 
@@ -229,5 +229,4 @@ class FriendlyRouterTest extends TestCase {
 
         $this->assertSame($controller, $actual);
     }
-
 }

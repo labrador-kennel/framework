@@ -57,7 +57,8 @@ class HttpApplicationTest extends AsyncTestCase {
     private function getRouter() {
         return new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
     }
 
@@ -177,5 +178,4 @@ class HttpApplicationTest extends AsyncTestCase {
         $this->assertSame(Status::ACCEPTED, $response->getStatus());
         $this->assertSame('Short circuited router', $body);
     }
-
 }

@@ -29,5 +29,4 @@ class BeforeActionResponseHookableControllerStub extends HookableController {
     public function toString(): string {
         // TODO: Implement toString() method.
     }
-
 }

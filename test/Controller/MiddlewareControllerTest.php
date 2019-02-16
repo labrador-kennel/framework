@@ -23,5 +23,4 @@ class MiddlewareControllerTest extends TestCase {
         $actual = $subject->toString();
         $this->assertSame($expected, $actual);
     }
-
 }

@@ -6,13 +6,11 @@ use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\StandardApplication;
 
 use Amp\Http\Status;
-use Amp\Http\Server\{
-    Middleware,
-    RequestHandler\CallableRequestHandler,
-    Request,
-    Response,
-    Server as HttpServer
-};
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\RequestHandler\CallableRequestHandler;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
+use Amp\Http\Server\Server as HttpServer;
 use Amp\Promise;
 use Amp\Socket\Server as SocketServer;
 use Psr\Log\LoggerInterface;
@@ -88,5 +86,4 @@ final class HttpApplication extends StandardApplication {
     protected function exceptionToResponse(\Throwable $throwable) : Response {
         return ($this->exceptionToResponseHandler)($throwable);
     }
-
 }

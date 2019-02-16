@@ -30,5 +30,4 @@ class ResponseDecoratorMiddleware implements Middleware {
             return $response;
         });
     }
-
 }

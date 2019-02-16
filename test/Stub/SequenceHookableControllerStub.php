@@ -34,5 +34,4 @@ class SequenceHookableControllerStub extends HookableController {
     public function toString() : string {
         return self::class;
     }
-
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ *
  * @license See LICENSE in source root
  * @version 1.0
  * @since   1.0
@@ -26,5 +26,4 @@ class RouteTest extends TestCase {
     function testRouteToString($route, $expected) {
         $this->assertEquals($expected, (string) $route);
     }
-
 }

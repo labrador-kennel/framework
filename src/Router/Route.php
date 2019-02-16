@@ -55,5 +55,4 @@ class Route {
         $format = "%s\t%s\t\t%s";
         return sprintf($format, $this->method, $this->pattern, $this->controllerClass);
     }
-
 }

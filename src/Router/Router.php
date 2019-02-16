@@ -2,10 +2,8 @@
 
 namespace Cspray\Labrador\Http\Router;
 
-use Amp\Http\Server\{
-    Middleware,
-    Request
-};
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Controller\Controller;
 
 /**
@@ -75,5 +73,4 @@ interface Router {
      * @return Route[]
      */
     public function getRoutes() : array;
-
 }
