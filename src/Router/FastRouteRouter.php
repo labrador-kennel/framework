@@ -47,7 +47,12 @@ class FastRouteRouter implements Router {
      * @param Middleware[] $middlewares
      * @return void
      */
-    public function addRoute(string $method, string $pattern, Controller $controller, Middleware ...$middlewares) : void {
+    public function addRoute(
+        string $method,
+        string $pattern,
+        Controller $controller,
+        Middleware ...$middlewares
+    ) : void {
         $this->routes[] = new Route($pattern, $method, $controller->toString());
         if (!empty($middlewares)) {
             $controller = new MiddlewareController($controller, ...$middlewares);

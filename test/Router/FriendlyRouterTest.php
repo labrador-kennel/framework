@@ -67,7 +67,9 @@ class FriendlyRouterTest extends TestCase {
                          ->method('addRoute')
                          ->with('PUT', '/foo/bar/baz/baz-put', $bazPutController);
         $router = $this->getRouter();
-        $router->mount('/foo', function(FriendlyRouter $router) use($fooGetController, $barPostController, $bazPutController) {
+        $router->mount('/foo', function(FriendlyRouter $router) use(
+            $fooGetController, $barPostController, $bazPutController
+        ) {
             $router->get('/foo-get', $fooGetController);
             $router->mount('/bar', function(FriendlyRouter $router) use($barPostController, $bazPutController) {
                 $router->post('/bar-post', $barPostController);

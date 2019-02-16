@@ -15,7 +15,8 @@ use Cspray\Labrador\Http\Controller\Controller;
 interface Router {
 
     /**
-     * Add a Controller and an optional set of Middleware that should be returned from match() for a Request that matches
+     * Add a Controller and an optional set of Middleware that should be returned from match() for a Request that
+     * matches
      * the given $method and $pattern.
      *
      * @param string $method
@@ -24,7 +25,12 @@ interface Router {
      * @param Middleware[] $middlewares
      * @return void
      */
-    public function addRoute(string $method, string $pattern, Controller $controller, Middleware ...$middlewares) : void;
+    public function addRoute(
+        string $method,
+        string $pattern,
+        Controller $controller,
+        Middleware ...$middlewares
+    ) : void;
 
     /**
      * If the Router implementation cannot reasonably match the $request against a configured Controller the default

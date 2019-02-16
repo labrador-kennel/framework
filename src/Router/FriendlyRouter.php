@@ -111,7 +111,12 @@ class FriendlyRouter implements Router {
      * @param Middleware[] $middlewares
      * @return void
      */
-    public function addRoute(string $method, string $pattern, Controller $controller, Middleware ...$middlewares): void {
+    public function addRoute(
+        string $method,
+        string $pattern,
+        Controller $controller,
+        Middleware ...$middlewares
+    ) : void {
         // @todo implement FastRouterRouteCollector and parse required data from Route objects
         if ($this->isMounted()) {
             $pattern = implode('', $this->mounts['prefix']) . $pattern;

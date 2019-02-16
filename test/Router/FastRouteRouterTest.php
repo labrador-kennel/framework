@@ -69,7 +69,8 @@ class FastRouteRouterTest extends AsyncTestCase {
         );
 
         $this->expectException(InvalidTypeException::class);
-        $this->expectExceptionMessage('A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor');
+        $expectedMsg = 'A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor';
+        $this->expectExceptionMessage($expectedMsg);
 
         $router->match($this->getRequest('GET', '/'));
     }
