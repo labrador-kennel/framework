@@ -2,26 +2,18 @@
 
 namespace Cspray\Labrador\Http\Router;
 
-use Cspray\Labrador\Http\{
-    Controller\Controller,
-    Controller\MiddlewareController,
-    Exception\InvalidTypeException,
-};
+use Cspray\Labrador\Http\Controller\Controller;
+use Cspray\Labrador\Http\Controller\MiddlewareController;
+use Cspray\Labrador\Http\Exception\InvalidTypeException;
 
-use Amp\{
-    Http\Status,
-    Promise,
-    Success
-};
-use Amp\Http\Server\{
-    Middleware,
-    Request,
-    Response,
-};
-use FastRoute\{
-    Dispatcher,
-    RouteCollector,
-};
+use Amp\Http\Status;
+use Amp\Promise;
+use Amp\Success;
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
+use FastRoute\Dispatcher;
+use FastRoute\RouteCollector;
 
 /**
  * A Router implementation that makes use of FastRoute to do the actual heavy lifting.
@@ -46,7 +38,6 @@ class FastRouteRouter implements Router {
     public function __construct(RouteCollector $collector, callable $dispatcherCb) {
         $this->collector = $collector;
         $this->dispatcherCb = $dispatcherCb;
-
     }
 
     /**
@@ -56,7 +47,12 @@ class FastRouteRouter implements Router {
      * @param Middleware[] $middlewares
      * @return void
      */
-    public function addRoute(string $method, string $pattern, Controller $controller, Middleware ...$middlewares) : void {
+    public function addRoute(
+        string $method,
+        string $pattern,
+        Controller $controller,
+        Middleware ...$middlewares
+    ) : void {
         $this->routes[] = new Route($pattern, $method, $controller->toString());
         if (!empty($middlewares)) {
             $controller = new MiddlewareController($controller, ...$middlewares);
@@ -206,5 +202,4 @@ class FastRouteRouter implements Router {
     public function setMethodNotAllowedController(Controller $controller) : void {
         $this->methodNotAllowedController = $controller;
     }
-
 }

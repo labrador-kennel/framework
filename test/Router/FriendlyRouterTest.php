@@ -2,12 +2,12 @@
 
 namespace Cspray\Labrador\Http\Test\Router;
 
-use Amp\Http\Server\{Driver\Client, Middleware, Request};
+use Amp\Http\Server\Driver\Client;
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Router\{
-    FriendlyRouter,
-    Router,
-};
+use Cspray\Labrador\Http\Router\FriendlyRouter;
+use Cspray\Labrador\Http\Router\Router;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 
@@ -67,7 +67,9 @@ class FriendlyRouterTest extends TestCase {
                          ->method('addRoute')
                          ->with('PUT', '/foo/bar/baz/baz-put', $bazPutController);
         $router = $this->getRouter();
-        $router->mount('/foo', function(FriendlyRouter $router) use($fooGetController, $barPostController, $bazPutController) {
+        $router->mount('/foo', function(FriendlyRouter $router) use(
+            $fooGetController, $barPostController, $bazPutController
+        ) {
             $router->get('/foo-get', $fooGetController);
             $router->mount('/bar', function(FriendlyRouter $router) use($barPostController, $bazPutController) {
                 $router->post('/bar-post', $barPostController);
@@ -229,5 +231,4 @@ class FriendlyRouterTest extends TestCase {
 
         $this->assertSame($controller, $actual);
     }
-
 }

@@ -8,5 +8,4 @@ use Cspray\Labrador\Plugin\Plugin;
 interface RouterPlugin extends Plugin {
 
     public function registerRoutes(Router $router) : void;
-
 }

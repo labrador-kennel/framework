@@ -49,7 +49,8 @@ class FastRouteRouterTest extends AsyncTestCase {
     private function getRouter() {
         return new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
     }
 
@@ -63,11 +64,13 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testFastRouteDispatcherCallbackReturnsImproperTypeThrowsException() {
         $router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function() { return 'not a dispatcher'; }
+            function() { return 'not a dispatcher';
+            }
         );
 
         $this->expectException(InvalidTypeException::class);
-        $this->expectExceptionMessage('A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor');
+        $expectedMsg = 'A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor';
+        $this->expectExceptionMessage($expectedMsg);
 
         $router->match($this->getRequest('GET', '/'));
     }
@@ -248,5 +251,4 @@ class FastRouteRouterTest extends AsyncTestCase {
 
         $this->assertSame('decorated value: foobar', $body);
     }
-
 }

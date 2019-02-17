@@ -4,20 +4,16 @@ namespace Cspray\Labrador\Http\Controller;
 
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 
-use Amp\{
-    Promise,
-    Success
-};
-use Amp\Http\Server\{
-    Request,
-    Response
-};
+use Amp\Promise;
+use Amp\Success;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
 
 use function Amp\call;
 
 /**
- * A Controller implementation that allows you to hook into the processing so that you may short circuit normal processing
- * with beforeAction or decorate a Response from normal processing with afterAction.
+ * A Controller implementation that allows you to hook into the processing so that you may short circuit normal
+ * processing with beforeAction or decorate a Response from normal processing with afterAction.
  *
  * @license See LICENSE in source root.
  */
@@ -57,11 +53,12 @@ abstract class HookableController implements Controller {
     }
 
     /**
-     * Override this method in your concrete implementations to short circuit or perform some logic before the Controller's
-     * primary execution occurs.
+     * Override this method in your concrete implementations to short circuit or perform some logic before the
+     * Controller's primary execution occurs.
      *
      * If you resolve the returned Promise with a Response it will be sent back to the user and neither the handle()
-     * method nor the afterAction() will be executed. If you resolve the Promise with any other value it will be ignored.
+     * method nor the afterAction() will be executed. If you resolve the Promise with any other value it will be
+     * ignored.
      *
      * @param Request $request
      * @return Promise(Response|null)
@@ -92,5 +89,4 @@ abstract class HookableController implements Controller {
      * @return Promise(Response)
      */
     abstract protected function handle(Request $request) : Promise;
-
 }

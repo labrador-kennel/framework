@@ -2,11 +2,10 @@
 
 namespace Cspray\Labrador\Http\Test;
 
-use Auryn\Injector;
+use Cspray\Labrador\AmpEngine;
 use Cspray\Labrador\AsyncEvent\Emitter;
 use Cspray\Labrador\AsyncEvent\AmpEmitter;
 use Cspray\Labrador\AsyncEvent\StandardEvent;
-use Cspray\Labrador\CoreEngine;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Http\DependencyGraph;
 use Cspray\Labrador\Http\Plugin\RouterPlugin;
@@ -24,7 +23,7 @@ class DependencyGraphTest extends AsyncTestCase {
         $this->assertInstanceOf(AmpEmitter::class, $emitter);
 
         $engine = $injector->make(Engine::class);
-        $this->assertInstanceOf(CoreEngine::class, $engine);
+        $this->assertInstanceOf(AmpEngine::class, $engine);
 
         $router = $injector->make(Router::class);
         $this->assertInstanceOf(FastRouteRouter::class, $router);
@@ -59,5 +58,4 @@ class DependencyGraphTest extends AsyncTestCase {
         $emitter = $injector->make(Emitter::class);
         yield $emitter->emit(new StandardEvent(Engine::ENGINE_BOOTUP_EVENT, $engine));
     }
-
 }

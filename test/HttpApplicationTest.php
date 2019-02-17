@@ -57,7 +57,8 @@ class HttpApplicationTest extends AsyncTestCase {
     private function getRouter() {
         return new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
     }
 
@@ -103,7 +104,8 @@ class HttpApplicationTest extends AsyncTestCase {
         $this->registerRoutes($router);
         yield $application->execute();
 
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
+        $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
+        $response = yield $this->client->request($url);
 
         $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
 
@@ -125,7 +127,8 @@ class HttpApplicationTest extends AsyncTestCase {
         $this->registerRoutes($router);
         yield $application->execute();
 
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
+        $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
+        $response = yield $this->client->request($url);
 
         $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
     }
@@ -133,12 +136,14 @@ class HttpApplicationTest extends AsyncTestCase {
     public function testErrorLogged() {
         $router = $this->getRouter();
         $logger = $this->createMock(LoggerInterface::class);
-        $expectedMsg = 'Exception thrown processing GET http://' . $this->socketServer->getAddress() . '/throw-error. Message: Controller thrown exception';
+        $expectedMsg = 'Exception thrown processing GET http://' . $this->socketServer->getAddress() . '/throw-error.';
+        $expectedMsg .= ' Message: Controller thrown exception';
         $logger->expects($this->once())
                ->method('critical')
                ->with($expectedMsg, $this->callback(function($secondArg) {
-                   $exception = $secondArg['exception'] ?? null;
-                   return $exception instanceof \Exception && $exception->getMessage() === 'Controller thrown exception';
+                    $exception = $secondArg['exception'] ?? null;
+                    return $exception instanceof \Exception &&
+                        $exception->getMessage() === 'Controller thrown exception';
                }));
         $application = new HttpApplication($logger, $router, $this->socketServer);
 
@@ -171,11 +176,11 @@ class HttpApplicationTest extends AsyncTestCase {
         yield $application->execute();
 
         /** @var \Amp\Artax\Response $response */
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/does_not_matter');
+        $url = 'http://' . $this->socketServer->getAddress() . '/does_not_matter';
+        $response = yield $this->client->request($url);
         $body = yield $response->getBody()->read();
 
         $this->assertSame(Status::ACCEPTED, $response->getStatus());
         $this->assertSame('Short circuited router', $body);
     }
-
 }

@@ -87,5 +87,4 @@ class HookableControllerTest extends AsyncTestCase {
         $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('From Only Handler', $body);
     }
-
 }

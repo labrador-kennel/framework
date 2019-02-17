@@ -19,5 +19,4 @@ class RequestDecoratorMiddleware implements Middleware {
         $request->setAttribute('decorated', 'foobar');
         return $requestHandler->handleRequest($request);
     }
-
 }

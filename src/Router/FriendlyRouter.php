@@ -2,10 +2,8 @@
 
 namespace Cspray\Labrador\Http\Router;
 
-use Amp\Http\Server\{
-    Middleware,
-    Request,
-};
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Controller\Controller;
 
 /**
@@ -113,14 +111,19 @@ class FriendlyRouter implements Router {
      * @param Middleware[] $middlewares
      * @return void
      */
-    public function addRoute(string $method, string $pattern, Controller $controller, Middleware ...$middlewares): void {
+    public function addRoute(
+        string $method,
+        string $pattern,
+        Controller $controller,
+        Middleware ...$middlewares
+    ) : void {
         // @todo implement FastRouterRouteCollector and parse required data from Route objects
         if ($this->isMounted()) {
             $pattern = implode('', $this->mounts['prefix']) . $pattern;
             $middlewares = array_merge([], $this->mounts['middleware'], $middlewares);
         }
 
-        $this->router->addRoute($method, $pattern,$controller, ...$middlewares);
+        $this->router->addRoute($method, $pattern, $controller, ...$middlewares);
     }
 
     /**
@@ -153,5 +156,4 @@ class FriendlyRouter implements Router {
     public function getMethodNotAllowedController(): Controller {
         return $this->router->getMethodNotAllowedController();
     }
-
 }
