@@ -3,7 +3,7 @@
 namespace Cspray\Labrador\Http;
 
 use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\StandardApplication;
+use Cspray\Labrador\AbstractApplication;
 
 use Amp\Http\Status;
 use Amp\Http\Server\Middleware;
@@ -13,20 +13,20 @@ use Amp\Http\Server\Response;
 use Amp\Http\Server\Server as HttpServer;
 use Amp\Promise;
 use Amp\Socket\Server as SocketServer;
+use Cspray\Labrador\Plugin\Pluggable;
 use Psr\Log\LoggerInterface;
 
 use function Amp\call;
 
-final class HttpApplication extends StandardApplication {
+final class HttpApplication extends AbstractApplication {
 
-    private $logger;
     private $router;
     private $socketServers;
     private $exceptionToResponseHandler;
     private $middlewares = [];
 
-    public function __construct(LoggerInterface $logger, Router $router, SocketServer ...$socketServers) {
-        $this->logger = $logger;
+    public function __construct(Pluggable $pluginManager, Router $router, SocketServer ...$socketServers) {
+        parent::__construct($pluginManager);
         $this->router = $router;
         $this->socketServers = $socketServers;
         $this->exceptionToResponseHandler = function(/* Throwable $error */) {

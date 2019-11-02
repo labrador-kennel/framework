@@ -2,15 +2,19 @@
 
 namespace Cspray\Labrador\Http\Test;
 
-use Amp\Artax\Client as HttpClient;
-use Amp\Artax\DefaultClient as DefaultHttpClient;
+use Amp\Http\Client\HttpClientBuilder;
+use Amp\Http\Client\HttpClient;
+use Amp\Http\Client\Request as ClientRequest;
+use Amp\Http\Client\Response as ClientResponse;
 use Amp\Http\Server\Middleware;
-use Amp\Http\Server\Request;
+use Amp\Http\Server\Request as ServerRequest;
+use Amp\Http\Server\Response as ServerResponse;
 use Amp\Http\Server\RequestHandler;
-use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Amp\Promise;
-use function Amp\Socket\listen;
+use Auryn\Injector;
+use Cspray\Labrador\AsyncEvent\AmpEmitter;
+use Cspray\Labrador\Plugin\PluginManager;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
 use Amp\Success;
@@ -23,7 +27,6 @@ use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -39,14 +42,19 @@ class HttpApplicationTest extends AsyncTestCase {
      */
     private $client;
 
+    private $pluginManager;
+
     /**
      * @throws SocketException
      */
     public function setUp() {
         parent::setUp();
         $this->timeout(1500);
-        $this->socketServer = listen('tcp://127.0.0.1:0');
-        $this->client = new DefaultHttpClient();
+        $this->socketServer = SocketServer::listen('tcp://127.0.0.1:0');
+        $this->client = HttpClientBuilder::buildDefault();
+        $emitter = new AmpEmitter();
+        $injector = new Injector();
+        $this->pluginManager = new PluginManager($injector, $emitter);
     }
 
     public function tearDown() {
@@ -63,7 +71,7 @@ class HttpApplicationTest extends AsyncTestCase {
     }
 
     private function registerRoutes(Router $router) {
-        $controller = new ResponseControllerStub(new Response(200, [], 'From controller'));
+        $controller = new ResponseControllerStub(new ServerResponse(200, [], 'From controller'));
         $errorController = new ErrorThrowingController();
         $router->addRoute('GET', '/foo', $controller);
         $router->addRoute('GET', '/throw-error', $errorController);
@@ -71,14 +79,17 @@ class HttpApplicationTest extends AsyncTestCase {
 
     public function testBasicRouteFound() {
         $router = $this->getRouter();
-        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
+        $application->setLogger(new NullLogger());
         $this->registerRoutes($router);
 
         yield $application->execute();
 
-        /** @var Response $response */
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/foo');
-        $body = yield $response->getBody();
+        /** @var ClientResponse $response */
+        $response = yield $this->client->request(
+            new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+        );
+        $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('From controller', $body);
@@ -86,13 +97,16 @@ class HttpApplicationTest extends AsyncTestCase {
 
     public function testRouteNotFound() {
         $router = $this->getRouter();
-        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
+        $application->setLogger(new NullLogger());
         $this->registerRoutes($router);
         yield $application->execute();
 
-        /** @var Response $response */
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/bar');
-        $body = yield $response->getBody();
+        /** @var ClientResponse $response */
+        $response = yield $this->client->request(
+            new ClientRequest('http://' . $this->socketServer->getAddress() . '/bar')
+        );
+        $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::NOT_FOUND, $response->getStatus());
         $this->assertSame('Not Found', $body);
@@ -100,18 +114,22 @@ class HttpApplicationTest extends AsyncTestCase {
 
     public function testHandlesErrorGracefully() {
         $router = $this->getRouter();
-        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
+        $application->setLogger(new NullLogger());
         $this->registerRoutes($router);
         yield $application->execute();
 
         $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
-        $response = yield $this->client->request($url);
+        /** @var ClientResponse $response */
+        $response = yield $this->client->request(new ClientRequest($url));
 
         $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
 
-        // now make sure the server hasn't crashed
-        $response = yield $this->client->request('http://' . $this->socketServer->getAddress() . '/foo');
-        $body = yield $response->getBody();
+        /** @var ClientResponse $response */
+        $response = yield $this->client->request(
+            new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+        );
+        $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::OK, $response->getStatus());
         $this->assertSame('From controller', $body);
@@ -119,16 +137,18 @@ class HttpApplicationTest extends AsyncTestCase {
 
     public function testErrorResponseReturnedFromApplication() {
         $router = $this->getRouter();
-        $application = new HttpApplication(new NullLogger(), $router, $this->socketServer);
+        $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
+        $application->setLogger(new NullLogger());
         $application->setExceptionToResponseHandler(function(\Throwable $error) {
-            return new Response(Status::SERVICE_UNAVAILABLE);
+            return new ServerResponse(Status::SERVICE_UNAVAILABLE);
         });
 
         $this->registerRoutes($router);
         yield $application->execute();
 
         $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
-        $response = yield $this->client->request($url);
+        /** @var ClientResponse $response */
+        $response = yield $this->client->request(new ClientRequest($url));
 
         $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
     }
@@ -145,29 +165,31 @@ class HttpApplicationTest extends AsyncTestCase {
                     return $exception instanceof \Exception &&
                         $exception->getMessage() === 'Controller thrown exception';
                }));
-        $application = new HttpApplication($logger, $router, $this->socketServer);
+        $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
+        $application->setLogger($logger);
 
         $this->registerRoutes($router);
         yield $application->execute();
 
-        yield $this->client->request('http://' . $this->socketServer->getAddress() . '/throw-error');
+        yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/throw-error'));
     }
 
     public function testAddingMiddlewareCanShortCircuitRouterMatching() {
         $router = $this->createMock(Router::class);
         $router->expects($this->never())->method('match');
         $logger = new NullLogger();
-        $application = new HttpApplication($logger, $router, $this->socketServer);
+        $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
+        $application->setLogger($logger);
         $middleware = new class implements Middleware {
 
             /**
-             * @param Request $request
+             * @param ServerRequest $request
              * @param RequestHandler $requestHandler
              *
-             * @return Promise<\Amp\Http\Server\Response>
+             * @return Promise<ServerResponse>
              */
-            public function handleRequest(Request $request, RequestHandler $requestHandler): Promise {
-                $response = new Response(Status::ACCEPTED, [], 'Short circuited router');
+            public function handleRequest(ServerRequest $request, RequestHandler $requestHandler): Promise {
+                $response = new ServerResponse(Status::ACCEPTED, [], 'Short circuited router');
                 return new Success($response);
             }
         };
@@ -175,10 +197,10 @@ class HttpApplicationTest extends AsyncTestCase {
 
         yield $application->execute();
 
-        /** @var \Amp\Artax\Response $response */
+        /** @var ClientResponse $response */
         $url = 'http://' . $this->socketServer->getAddress() . '/does_not_matter';
-        $response = yield $this->client->request($url);
-        $body = yield $response->getBody()->read();
+        $response = yield $this->client->request(new ClientRequest($url));
+        $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::ACCEPTED, $response->getStatus());
         $this->assertSame('Short circuited router', $body);

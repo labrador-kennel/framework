@@ -3,12 +3,15 @@
 namespace Cspray\Labrador\Http;
 
 use Cspray\Labrador\AmpEngine;
+use Cspray\Labrador\Application;
 use Cspray\Labrador\AsyncEvent\AmpEmitter;
 use Cspray\Labrador\AsyncEvent\Emitter;
 use Cspray\Labrador\Engine;
-use Cspray\Labrador\PluginManager;
+use Cspray\Labrador\Plugin\Pluggable;
+use Cspray\Labrador\Plugin\PluginManager;
 use Cspray\Labrador\Http\Router;
 use Cspray\Labrador\Http\Plugin\RouterPlugin;
+use Cspray\Labrador\DependencyGraph as CoreDependencyGraph;
 
 use Auryn\Injector;
 use FastRoute\DataGenerator\GroupCountBased as GcbGenerator;
@@ -17,6 +20,12 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 
 class DependencyGraph {
+
+    private $coreDependencyGraph;
+
+    public function __construct(CoreDependencyGraph $coreDependencyGraph) {
+        $this->coreDependencyGraph = $coreDependencyGraph;
+    }
 
     public function wireObjectGraph(Injector $injector = null) : Injector {
         $injector = $injector ?? new Injector();
@@ -28,26 +37,20 @@ class DependencyGraph {
     }
 
     private function registerCoreServices(Injector $injector) {
-        $injector->define(PluginManager::class, [
-            ':injector' => $injector
-        ]);
+        $this->coreDependencyGraph->wireObjectGraph($injector);
+    }
 
-        $injector->share(Emitter::class);
-        $injector->alias(Emitter::class, AmpEmitter::class);
-
-        $injector->share(Engine::class);
-        $injector->alias(Engine::class, AmpEngine::class);
-        $injector->prepare(Engine::class, function(Engine $engine, Injector $injector) {
-            $injector->execute([$engine, 'registerPluginHandler'], [
-                RouterPlugin::class,
+    private function registerRouterServices(Injector $injector) {
+        $injector->share(Application::class);
+        $injector->alias(Application::class, HttpApplication::class);
+        $injector->prepare(Application::class, function(Application $app, Injector $injector) {
+            $injector->execute([$app, 'registerPluginLoadHandler'], [
+                 RouterPlugin::class,
                 function(RouterPlugin $plugin) use($injector) {
                     $injector->execute([$plugin, 'registerRoutes']);
                 }
             ]);
         });
-    }
-
-    private function registerRouterServices(Injector $injector) {
         $injector->share(RouteCollector::class);
         $injector->define(RouteCollector::class, [
             'routeParser' => StdRouteParser::class,
