@@ -2,6 +2,7 @@
 
 namespace Cspray\Labrador\Http\Test;
 
+use Amp\PHPUnit\AsyncTestCase;
 use Amp\Socket\Server;
 use Cspray\Labrador\AmpEngine;
 use Cspray\Labrador\Application;
