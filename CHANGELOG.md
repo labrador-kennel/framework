@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0-beta5 2019-11-02
+
+#### Changed
+
+- Updates the cspray/labrador library to 3.0.0-beta6.
+- The DependencyGraph uses the Core\DependencyGraph to provide an appropriate object graph for core functionality 
+instead of reimplementing the object graph.
+- The HttpApplication now extends from Core\AbstractApplication.
+
 ## 1.0.0-beta4 2019-02-02
 
 #### Added

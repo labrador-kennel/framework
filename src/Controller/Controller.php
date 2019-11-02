@@ -13,4 +13,5 @@ use Amp\Http\Server\RequestHandler;
 interface Controller extends RequestHandler {
 
     public function toString() : string;
+
 }

@@ -2,21 +2,32 @@
 
 namespace Cspray\Labrador\Http\Test;
 
+use Amp\Socket\Server;
 use Cspray\Labrador\AmpEngine;
+use Cspray\Labrador\Application;
 use Cspray\Labrador\AsyncEvent\Emitter;
 use Cspray\Labrador\AsyncEvent\AmpEmitter;
-use Cspray\Labrador\AsyncEvent\StandardEvent;
+use Cspray\Labrador\Configuration;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Http\DependencyGraph;
 use Cspray\Labrador\Http\Plugin\RouterPlugin;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\PluginManager;
+use Cspray\Labrador\Plugin\PluginManager;
+use Cspray\Labrador\DependencyGraph as CoreDependencyGraph;
 
 class DependencyGraphTest extends AsyncTestCase {
 
+    private $configuration;
+
+    public function setUp() : void {
+        parent::setUp();
+        $this->configuration = $this->getMockBuilder(Configuration::class)->getMock();
+        $this->configuration->expects($this->once())->method('getLogPath')->willReturn('/dev/null');
+    }
+
     public function testServicesRegisteredCorrectly() {
-        $subject = new DependencyGraph();
+        $subject = new DependencyGraph(new CoreDependencyGraph($this->configuration));
         $injector = $subject->wireObjectGraph();
 
         $emitter = $injector->make(Emitter::class);
@@ -30,7 +41,7 @@ class DependencyGraphTest extends AsyncTestCase {
     }
 
     public function testPluginManagerInjectorShared() {
-        $subject = new DependencyGraph();
+        $subject = new DependencyGraph(new CoreDependencyGraph($this->configuration));
         $injector = $subject->wireObjectGraph();
         $pluginManager = $injector->make(PluginManager::class);
         // normally we would not test private property accessors this way but it saves us from having to share the
@@ -43,19 +54,24 @@ class DependencyGraphTest extends AsyncTestCase {
     }
 
     public function testEngineLoadsRouterPlugin() {
-        $subject = new DependencyGraph();
+        $subject = new DependencyGraph(new CoreDependencyGraph($this->configuration));
         $injector = $subject->wireObjectGraph();
-        /** @var Engine $engine */
-        $engine = $injector->make(Engine::class);
+        /** @var Application $app */
+        $app = $injector->make(Application::class, [':socketServers' => new Server(@fopen('/dev/null', 'rb'))]);
+
+        $app->registerPlugin(TestRouterPlugin::class);
+        yield $app->loadPlugins();
+
         $router = $injector->make(Router::class);
-        $routerPlugin = $this->createMock(RouterPlugin::class);
-        $routerPlugin->expects($this->once())
-                     ->method('registerRoutes')
-                     ->with($router);
+        $this->assertSame($app->getLoadedPlugin(TestRouterPlugin::class)->router, $router);
+    }
+}
 
-        $engine->registerPlugin($routerPlugin);
+class TestRouterPlugin implements RouterPlugin {
 
-        $emitter = $injector->make(Emitter::class);
-        yield $emitter->emit(new StandardEvent(Engine::ENGINE_BOOTUP_EVENT, $engine));
+    public $router;
+
+    public function registerRoutes(Router $router) : void {
+        $this->router = $router;
     }
 }
