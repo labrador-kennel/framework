@@ -3,6 +3,7 @@
 namespace Cspray\Labrador\Http\Test;
 
 use Amp\Http\Client\HttpClientBuilder;
+use Amp\Http\Client\HttpClient;
 use Amp\Http\Client\Request as ClientRequest;
 use Amp\Http\Client\Response as ClientResponse;
 use Amp\Http\Server\Middleware;
@@ -14,7 +15,6 @@ use Amp\Promise;
 use Auryn\Injector;
 use Cspray\Labrador\AsyncEvent\AmpEmitter;
 use Cspray\Labrador\Plugin\PluginManager;
-use function Amp\Socket\listen;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
 use Amp\Success;
@@ -27,7 +27,6 @@ use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
-use Monolog\Logger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -51,7 +50,7 @@ class HttpApplicationTest extends AsyncTestCase {
     public function setUp() {
         parent::setUp();
         $this->timeout(1500);
-        $this->socketServer = listen('tcp://127.0.0.1:0');
+        $this->socketServer = SocketServer::listen('tcp://127.0.0.1:0');
         $this->client = HttpClientBuilder::buildDefault();
         $emitter = new AmpEmitter();
         $injector = new Injector();
@@ -87,7 +86,9 @@ class HttpApplicationTest extends AsyncTestCase {
         yield $application->execute();
 
         /** @var ClientResponse $response */
-        $response = yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo'));
+        $response = yield $this->client->request(
+            new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+        );
         $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::OK, $response->getStatus());
@@ -102,7 +103,9 @@ class HttpApplicationTest extends AsyncTestCase {
         yield $application->execute();
 
         /** @var ClientResponse $response */
-        $response = yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/bar'));
+        $response = yield $this->client->request(
+            new ClientRequest('http://' . $this->socketServer->getAddress() . '/bar')
+        );
         $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::NOT_FOUND, $response->getStatus());
@@ -117,12 +120,15 @@ class HttpApplicationTest extends AsyncTestCase {
         yield $application->execute();
 
         $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
+        /** @var ClientResponse $response */
         $response = yield $this->client->request(new ClientRequest($url));
 
         $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
 
         /** @var ClientResponse $response */
-        $response = yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo'));
+        $response = yield $this->client->request(
+            new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+        );
         $body = yield $response->getBody()->buffer();
 
         $this->assertSame(Status::OK, $response->getStatus());

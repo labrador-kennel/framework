@@ -10,7 +10,7 @@ use Cspray\Labrador\AsyncEvent\AmpEmitter;
 use Cspray\Labrador\Configuration;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Http\DependencyGraph;
-use Cspray\Labrador\Http\Plugin\RouterPlugin;
+use Cspray\Labrador\Http\Test\Stub\TestRouterPlugin;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Plugin\PluginManager;
@@ -64,14 +64,5 @@ class DependencyGraphTest extends AsyncTestCase {
 
         $router = $injector->make(Router::class);
         $this->assertSame($app->getLoadedPlugin(TestRouterPlugin::class)->router, $router);
-    }
-}
-
-class TestRouterPlugin implements RouterPlugin {
-
-    public $router;
-
-    public function registerRoutes(Router $router) : void {
-        $this->router = $router;
     }
 }
