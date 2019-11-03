@@ -2,6 +2,9 @@
 
 namespace Cspray\Labrador\Http;
 
+use Amp\Deferred;
+use Amp\Http\Server\ServerObserver;
+use Amp\Success;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\AbstractApplication;
 
@@ -14,7 +17,6 @@ use Amp\Http\Server\Server as HttpServer;
 use Amp\Promise;
 use Amp\Socket\Server as SocketServer;
 use Cspray\Labrador\Plugin\Pluggable;
-use Psr\Log\LoggerInterface;
 
 use function Amp\call;
 
@@ -24,6 +26,11 @@ final class HttpApplication extends AbstractApplication {
     private $socketServers;
     private $exceptionToResponseHandler;
     private $middlewares = [];
+
+    /**
+     * @var HttpServer
+     */
+    private $httpServer;
 
     public function __construct(Pluggable $pluginManager, Router $router, SocketServer ...$socketServers) {
         parent::__construct($pluginManager);
@@ -58,7 +65,7 @@ final class HttpApplication extends AbstractApplication {
      *
      * @return Promise
      */
-    final public function execute() : Promise {
+    protected function doStart() : Promise {
         $applicationHandler = new CallableRequestHandler(function(Request $request) {
             try {
                 $controller = $this->router->match($request);
@@ -71,19 +78,69 @@ final class HttpApplication extends AbstractApplication {
                 return $this->exceptionToResponse($error);
             }
         });
-        return call(function() use($applicationHandler) {
-            $handler = Middleware\stack($applicationHandler, ...$this->middlewares);
-            $httpServer = new HttpServer($this->socketServers, $handler, $this->logger);
 
-            yield $httpServer->start();
+
+        return call(function() use($applicationHandler) {
+            $deferred = new Deferred();
+
+            $handler = Middleware\stack($applicationHandler, ...$this->middlewares);
+            $this->httpServer = new HttpServer($this->socketServers, $handler, $this->logger);
+
+            $this->httpServer->attach($this->getServerObserver($deferred));
+
+            yield $this->httpServer->start();
+
+            return $deferred->promise();
         });
+    }
+
+    public function stop() : Promise {
+        // we should only need to stop the http server, the ServerObserver will resolve the deferred when server stops
+        return $this->httpServer->stop();
     }
 
     public function setExceptionToResponseHandler(callable $callback) : void {
         $this->exceptionToResponseHandler = $callback;
     }
 
-    protected function exceptionToResponse(\Throwable $throwable) : Response {
+    private function exceptionToResponse(\Throwable $throwable) : Response {
         return ($this->exceptionToResponseHandler)($throwable);
+    }
+
+    private function getServerObserver(Deferred $deferred) : ServerObserver {
+        return new class($deferred) implements ServerObserver {
+
+            private $deferred;
+
+            public function __construct(Deferred $deferred) {
+                $this->deferred = $deferred;
+            }
+
+            /**
+             * Invoked when the server is starting. Server sockets have been opened, but are not yet accepting client
+             * connections. This method should be used to set up any necessary state for responding to requests,
+             * including starting loop watchers such as timers.
+             *
+             * @param HttpServer $server
+             *
+             * @return Promise
+             */
+            public function onStart(HttpServer $server) : Promise {
+                return new Success();
+            }
+
+            /**
+             * Invoked when the server has initiated stopping. No further requests are accepted and any connected
+             * clients should be closed gracefully and any loop watchers cancelled.
+             *
+             * @param HttpServer $server
+             *
+             * @return Promise
+             */
+            public function onStop(HttpServer $server) : Promise {
+                $this->deferred->resolve();
+                return new Success();
+            }
+        };
     }
 }

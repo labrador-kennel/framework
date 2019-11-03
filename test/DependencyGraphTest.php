@@ -2,12 +2,12 @@
 
 namespace Cspray\Labrador\Http\Test;
 
+use Amp\PHPUnit\AsyncTestCase;
 use Amp\Socket\Server;
 use Cspray\Labrador\AmpEngine;
 use Cspray\Labrador\Application;
 use Cspray\Labrador\AsyncEvent\Emitter;
 use Cspray\Labrador\AsyncEvent\AmpEmitter;
-use Cspray\Labrador\Configuration;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Http\DependencyGraph;
 use Cspray\Labrador\Http\Test\Stub\TestRouterPlugin;
@@ -15,19 +15,19 @@ use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Plugin\PluginManager;
 use Cspray\Labrador\DependencyGraph as CoreDependencyGraph;
+use Psr\Log\NullLogger;
 
 class DependencyGraphTest extends AsyncTestCase {
 
-    private $configuration;
+    private $logger;
 
     public function setUp() : void {
         parent::setUp();
-        $this->configuration = $this->getMockBuilder(Configuration::class)->getMock();
-        $this->configuration->expects($this->once())->method('getLogPath')->willReturn('/dev/null');
+        $this->logger = new NullLogger();
     }
 
     public function testServicesRegisteredCorrectly() {
-        $subject = new DependencyGraph(new CoreDependencyGraph($this->configuration));
+        $subject = new DependencyGraph(new CoreDependencyGraph($this->logger));
         $injector = $subject->wireObjectGraph();
 
         $emitter = $injector->make(Emitter::class);
@@ -41,7 +41,7 @@ class DependencyGraphTest extends AsyncTestCase {
     }
 
     public function testPluginManagerInjectorShared() {
-        $subject = new DependencyGraph(new CoreDependencyGraph($this->configuration));
+        $subject = new DependencyGraph(new CoreDependencyGraph($this->logger));
         $injector = $subject->wireObjectGraph();
         $pluginManager = $injector->make(PluginManager::class);
         // normally we would not test private property accessors this way but it saves us from having to share the
@@ -54,7 +54,7 @@ class DependencyGraphTest extends AsyncTestCase {
     }
 
     public function testEngineLoadsRouterPlugin() {
-        $subject = new DependencyGraph(new CoreDependencyGraph($this->configuration));
+        $subject = new DependencyGraph(new CoreDependencyGraph($this->logger));
         $injector = $subject->wireObjectGraph();
         /** @var Application $app */
         $app = $injector->make(Application::class, [':socketServers' => new Server(@fopen('/dev/null', 'rb'))]);

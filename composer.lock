@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ea92392d943b3225213e1fd896ca4a8",
+    "content-hash": "5c3c69194313d73a0acc40ecf9abb17f",
     "packages": [
         {
             "name": "amphp/amp",
@@ -953,16 +953,16 @@
         },
         {
             "name": "cspray/labrador",
-            "version": "3.0.0-beta6",
+            "version": "3.0.0-beta7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/core.git",
-                "reference": "6c83e392a7218ca4a8931fb73103cb9a3c93d27f"
+                "reference": "a262cce4b90dada8dc910557f50fbd10eaa9b7ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/6c83e392a7218ca4a8931fb73103cb9a3c93d27f",
-                "reference": "6c83e392a7218ca4a8931fb73103cb9a3c93d27f",
+                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/a262cce4b90dada8dc910557f50fbd10eaa9b7ca",
+                "reference": "a262cce4b90dada8dc910557f50fbd10eaa9b7ca",
                 "shasum": ""
             },
             "require": {
@@ -1011,7 +1011,7 @@
                 "amphp",
                 "labrador-kennel"
             ],
-            "time": "2019-11-02T12:52:22+00:00"
+            "time": "2019-11-03T14:42:29+00:00"
         },
         {
             "name": "cspray/labrador-async-event",
@@ -2152,6 +2152,51 @@
                 "rest"
             ],
             "time": "2019-11-01T15:47:01+00:00"
+        },
+        {
+            "name": "amphp/phpunit-util",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/phpunit-util.git",
+                "reference": "840959c895593084bc3ef5c8021c30e361e0ba8d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amphp/phpunit-util/zipball/840959c895593084bc3ef5c8021c30e361e0ba8d",
+                "reference": "840959c895593084bc3ef5c8021c30e361e0ba8d",
+                "shasum": ""
+            },
+            "require": {
+                "phpunit/phpunit": "^6 | ^7 | ^8"
+            },
+            "require-dev": {
+                "amphp/amp": "^2",
+                "amphp/php-cs-fixer-config": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Amp\\PHPUnit\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                },
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                }
+            ],
+            "description": "Helper package to ease testing with PHPUnit.",
+            "homepage": "http://amphp.org/phpunit-util",
+            "time": "2019-10-04T19:46:01+00:00"
         },
         {
             "name": "cspray/labrador-coding-standard",

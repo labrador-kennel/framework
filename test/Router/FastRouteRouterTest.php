@@ -9,17 +9,12 @@
 
 namespace Cspray\Labrador\Http\Test\Router;
 
-use function Amp\call;
+use Amp\PHPUnit\AsyncTestCase;
 use Amp\Http\Server\Driver\Client;
-use Amp\Http\Server\Middleware;
-use Amp\Http\Server\RequestHandler;
-use Amp\Promise;
-use Amp\Success;
 use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Route;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
-use Cspray\Labrador\Http\Test\AsyncTestCase;
 use Cspray\Labrador\Http\Test\Stub\RequestDecoratorMiddleware;
 use Cspray\Labrador\Http\Test\Stub\ResponseControllerStub;
 use Cspray\Labrador\Http\Test\Stub\ResponseDecoratorMiddleware;
@@ -43,7 +38,7 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function setUp() {
         parent::setUp();
         $this->client = $this->createMock(Client::class);
-        $this->timeout(1500);
+        $this->setTimeout(1500);
     }
 
     private function getRouter() {
