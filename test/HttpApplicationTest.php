@@ -30,7 +30,6 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use function Amp\call;
 
 class HttpApplicationTest extends AsyncTestCase {
 
@@ -80,9 +79,7 @@ class HttpApplicationTest extends AsyncTestCase {
     }
 
     private function stopServer(HttpApplication $application) : Promise {
-        $httpServer = (new \ReflectionObject($application))->getProperty('httpServer');
-        $httpServer->setAccessible(true);
-        return $httpServer->getValue($application)->stop();
+        return $application->stop();
     }
 
     public function testBasicRouteFound() {
@@ -91,7 +88,7 @@ class HttpApplicationTest extends AsyncTestCase {
         $application->setLogger(new NullLogger());
         $this->registerRoutes($router);
 
-        $application->execute();
+        $application->start();
 
         /** @var ClientResponse $response */
         $response = yield $this->client->request(
@@ -110,7 +107,7 @@ class HttpApplicationTest extends AsyncTestCase {
         $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
         $application->setLogger(new NullLogger());
         $this->registerRoutes($router);
-        $application->execute();
+        $application->start();
 
         /** @var ClientResponse $response */
         $response = yield $this->client->request(
@@ -129,7 +126,7 @@ class HttpApplicationTest extends AsyncTestCase {
         $application = new HttpApplication($this->pluginManager, $router, $this->socketServer);
         $application->setLogger(new NullLogger());
         $this->registerRoutes($router);
-        $application->execute();
+        $application->start();
 
         $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
         /** @var ClientResponse $response */
@@ -158,7 +155,7 @@ class HttpApplicationTest extends AsyncTestCase {
         });
 
         $this->registerRoutes($router);
-        $application->execute();
+        $application->start();
 
         $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
         /** @var ClientResponse $response */
@@ -185,7 +182,7 @@ class HttpApplicationTest extends AsyncTestCase {
         $application->setLogger($logger);
 
         $this->registerRoutes($router);
-        $application->execute();
+        $application->start();
 
         yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/throw-error'));
 
@@ -213,7 +210,7 @@ class HttpApplicationTest extends AsyncTestCase {
         };
         $application->addMiddleware($middleware);
 
-        $application->execute();
+        $application->start();
 
         /** @var ClientResponse $response */
         $url = 'http://' . $this->socketServer->getAddress() . '/does_not_matter';

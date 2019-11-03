@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4251e9e87aab58b029326542c7a6235c",
+    "content-hash": "5c3c69194313d73a0acc40ecf9abb17f",
     "packages": [
         {
             "name": "amphp/amp",
@@ -953,16 +953,16 @@
         },
         {
             "name": "cspray/labrador",
-            "version": "3.0.0-beta6",
+            "version": "3.0.0-beta7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/core.git",
-                "reference": "6c83e392a7218ca4a8931fb73103cb9a3c93d27f"
+                "reference": "a262cce4b90dada8dc910557f50fbd10eaa9b7ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/6c83e392a7218ca4a8931fb73103cb9a3c93d27f",
-                "reference": "6c83e392a7218ca4a8931fb73103cb9a3c93d27f",
+                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/a262cce4b90dada8dc910557f50fbd10eaa9b7ca",
+                "reference": "a262cce4b90dada8dc910557f50fbd10eaa9b7ca",
                 "shasum": ""
             },
             "require": {
@@ -1011,7 +1011,7 @@
                 "amphp",
                 "labrador-kennel"
             ],
-            "time": "2019-11-02T12:52:22+00:00"
+            "time": "2019-11-03T14:42:29+00:00"
         },
         {
             "name": "cspray/labrador-async-event",

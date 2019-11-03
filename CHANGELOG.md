@@ -1,6 +1,17 @@
 # Changelog
 
-## 1.0.0-beta5 2019-11-02
+## 1.0.0-beta6 - 2019-11-02
+
+#### Changed
+
+- Updates the cspray/labrador library to 3.0.0-beta7. 
+- Changes the `HttpApplication` implementation to properly implement the AbstractApplication class.
+
+#### Fixed
+
+- Fixes the `HttpApplication` class to no longer resolve its `start()` Promise before the Amp HTTP Server has stopped.
+
+## 1.0.0-beta5 - 2019-11-02
 
 #### Changed
 

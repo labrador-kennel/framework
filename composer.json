@@ -5,7 +5,7 @@
     "ext-json": "*",
     "amphp/http-server": "~2.0.0-rc2",
     "amphp/file": "^1.0",
-    "cspray/labrador": "~3.0.0-beta6",
+    "cspray/labrador": "~3.0.0-beta7",
     "cspray/labrador-async-event": "2.0.0-rc1",
     "league/uri-schemes": "~1.2",
     "nikic/fast-route": "~1.3",

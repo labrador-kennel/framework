@@ -26,6 +26,10 @@ final class HttpApplication extends AbstractApplication {
     private $socketServers;
     private $exceptionToResponseHandler;
     private $middlewares = [];
+
+    /**
+     * @var HttpServer
+     */
     private $httpServer;
 
     public function __construct(Pluggable $pluginManager, Router $router, SocketServer ...$socketServers) {
@@ -61,7 +65,7 @@ final class HttpApplication extends AbstractApplication {
      *
      * @return Promise
      */
-    public function execute() : Promise {
+    protected function doStart() : Promise {
         $applicationHandler = new CallableRequestHandler(function(Request $request) {
             try {
                 $controller = $this->router->match($request);
@@ -88,6 +92,11 @@ final class HttpApplication extends AbstractApplication {
 
             return $deferred->promise();
         });
+    }
+
+    public function stop() : Promise {
+        // we should only need to stop the http server, the ServerObserver will resolve the deferred when server stops
+        return $this->httpServer->stop();
     }
 
     public function setExceptionToResponseHandler(callable $callback) : void {
