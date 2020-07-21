@@ -6,8 +6,8 @@ use Amp\PHPUnit\AsyncTestCase;
 use Amp\Socket\Server;
 use Cspray\Labrador\AmpEngine;
 use Cspray\Labrador\Application;
-use Cspray\Labrador\AsyncEvent\Emitter;
-use Cspray\Labrador\AsyncEvent\AmpEmitter;
+use Cspray\Labrador\AsyncEvent\EventEmitter;
+use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
 use Cspray\Labrador\Engine;
 use Cspray\Labrador\Http\DependencyGraph;
 use Cspray\Labrador\Http\Test\Stub\TestRouterPlugin;
@@ -30,8 +30,8 @@ class DependencyGraphTest extends AsyncTestCase {
         $subject = new DependencyGraph(new CoreDependencyGraph($this->logger));
         $injector = $subject->wireObjectGraph();
 
-        $emitter = $injector->make(Emitter::class);
-        $this->assertInstanceOf(AmpEmitter::class, $emitter);
+        $emitter = $injector->make(EventEmitter::class);
+        $this->assertInstanceOf(AmpEventEmitter::class, $emitter);
 
         $engine = $injector->make(Engine::class);
         $this->assertInstanceOf(AmpEngine::class, $engine);

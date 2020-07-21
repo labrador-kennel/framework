@@ -14,7 +14,7 @@ use Amp\Http\Status;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Promise;
 use Auryn\Injector;
-use Cspray\Labrador\AsyncEvent\AmpEmitter;
+use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
 use Cspray\Labrador\Plugin\PluginManager;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
@@ -53,7 +53,7 @@ class HttpApplicationTest extends AsyncTestCase {
         $this->setTimeout(1500);
         $this->socketServer = SocketServer::listen('tcp://127.0.0.1:0');
         $this->client = HttpClientBuilder::buildDefault();
-        $emitter = new AmpEmitter();
+        $emitter = new AmpEventEmitter();
         $injector = new Injector();
         $this->pluginManager = new PluginManager($injector, $emitter);
     }
