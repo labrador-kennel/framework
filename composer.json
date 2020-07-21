@@ -3,11 +3,10 @@
   "require": {
     "php": "~7.2",
     "ext-json": "*",
-    "amphp/http-server": "~2.0.0-rc2",
+    "amphp/http-server": "~2.1",
     "amphp/file": "^1.0",
     "cspray/labrador": "dev-main",
     "cspray/labrador-async-event": "~2.2.0",
-    "league/uri-schemes": "~1.2",
     "nikic/fast-route": "~1.3",
     "monolog/monolog": "^2.0"
   },
