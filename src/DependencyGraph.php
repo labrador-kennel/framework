@@ -2,13 +2,7 @@
 
 namespace Cspray\Labrador\Http;
 
-use Cspray\Labrador\AmpEngine;
 use Cspray\Labrador\Application;
-use Cspray\Labrador\AsyncEvent\AmpEmitter;
-use Cspray\Labrador\AsyncEvent\Emitter;
-use Cspray\Labrador\Engine;
-use Cspray\Labrador\Plugin\Pluggable;
-use Cspray\Labrador\Plugin\PluginManager;
 use Cspray\Labrador\Http\Router;
 use Cspray\Labrador\Http\Plugin\RouterPlugin;
 use Cspray\Labrador\DependencyGraph as CoreDependencyGraph;
