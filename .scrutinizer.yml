@@ -8,7 +8,7 @@ filter:
 tools:
   php_code_coverage:
     enabled: true
-    test_command: phpunit --configuration travis-phpunit.xml.dist
+    test_command: phpunit --configuration travis-phpunit.xml
     filter:
       paths: ["src/*"]
       excluded_paths: ["tests/*", "vendor/*"]

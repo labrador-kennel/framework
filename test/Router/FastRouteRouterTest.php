@@ -9,8 +9,8 @@
 
 namespace Cspray\Labrador\Http\Test\Router;
 
-use Amp\PHPUnit\AsyncTestCase;
 use Amp\Http\Server\Driver\Client;
+use Amp\PHPUnit\AsyncTestCase;
 use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Route;
@@ -35,7 +35,7 @@ class FastRouteRouterTest extends AsyncTestCase {
      */
     private $client;
 
-    public function setUp() {
+    public function setUp() : void {
         parent::setUp();
         $this->client = $this->createMock(Client::class);
         $this->setTimeout(1500);

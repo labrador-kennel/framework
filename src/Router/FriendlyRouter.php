@@ -10,7 +10,7 @@ use Cspray\Labrador\Http\Controller\Controller;
  * A Router that acts as a decorator over other Router implementations and provides convenience methods for defining
  * complex routing.
  */
-class FriendlyRouter implements Router {
+final class FriendlyRouter implements Router {
 
     private $mounts = [
         'prefix' => [],
