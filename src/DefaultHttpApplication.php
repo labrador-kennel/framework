@@ -2,6 +2,14 @@
 
 namespace Cspray\Labrador\Http;
 
+use Amp\Deferred;
+use Amp\Http\Server\ServerObserver;
+use Amp\Loop;
+use Amp\Success;
+use Cspray\Labrador\ApplicationState;
+use Cspray\Labrador\AsyncEvent\EventEmitter;
+use Cspray\Labrador\Http\Event\HttpApplicationStartedEvent;
+use Cspray\Labrador\Http\Event\HttpApplicationStoppedEvent;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\AbstractApplication;
 
@@ -19,18 +27,27 @@ use function Amp\call;
 
 class DefaultHttpApplication extends AbstractApplication implements HttpApplication {
 
+    private $eventEmitter;
     private $router;
     private $socketServers;
     private $exceptionToResponseHandler;
     private $middlewares = [];
+
+    private $httpServerDeferred = null;
 
     /**
      * @var HttpServer
      */
     private $httpServer;
 
-    public function __construct(Pluggable $pluginManager, Router $router, SocketServer ...$socketServers) {
+    public function __construct(
+        Pluggable $pluginManager,
+        EventEmitter $eventEmitter,
+        Router $router,
+        SocketServer ...$socketServers
+    ) {
         parent::__construct($pluginManager);
+        $this->eventEmitter = $eventEmitter;
         $this->router = $router;
         $this->socketServers = $socketServers;
         $this->exceptionToResponseHandler = function(/* Throwable $error */) {
@@ -63,30 +80,64 @@ class DefaultHttpApplication extends AbstractApplication implements HttpApplicat
      * @return Promise
      */
     protected function doStart() : Promise {
-        $applicationHandler = new CallableRequestHandler(function(Request $request) {
-            try {
-                $controller = $this->router->match($request);
-                $response = yield $controller->handleRequest($request);
-                return $response;
-            } catch (\Throwable $error) {
-                $msgFormat = 'Exception thrown processing %s %s. Message: %s';
-                $msg = sprintf($msgFormat, $request->getMethod(), $request->getUri(), $error->getMessage());
-                $this->logger->critical($msg, ['exception' => $error]);
-                return $this->exceptionToResponse($error);
-            }
-        });
-        return call(function() use($applicationHandler) {
+        $this->httpServerDeferred = new Deferred();
+
+        Loop::defer(function() {
+            $applicationHandler = new CallableRequestHandler(function(Request $request) {
+                try {
+                    $controller = $this->router->match($request);
+                    $response = yield $controller->handleRequest($request);
+                    return $response;
+                } catch (\Throwable $error) {
+                    $msgFormat = 'Exception thrown processing %s %s. Message: %s';
+                    $msg = sprintf($msgFormat, $request->getMethod(), $request->getUri(), $error->getMessage());
+                    $this->logger->critical($msg, ['exception' => $error]);
+                    return $this->exceptionToResponse($error);
+                }
+            });
             $handler = Middleware\stack($applicationHandler, ...$this->middlewares);
             $this->httpServer = new HttpServer($this->socketServers, $handler, $this->logger);
+            $this->httpServer->attach(
+                new class($this, $this->eventEmitter, $this->httpServerDeferred) implements ServerObserver {
 
-            return $this->httpServer->start();
+                    private $app;
+                    private $eventEmitter;
+                    private $deferred;
+
+                    public function __construct(HttpApplication $app, EventEmitter $eventEmitter, Deferred $deferred) {
+                        $this->app = $app;
+                        $this->eventEmitter = $eventEmitter;
+                        $this->deferred = $deferred;
+                    }
+
+                    public function onStart(\Amp\Http\Server\HttpServer $server) : Promise {
+                        return call(function() {
+                            Loop::defer(function() {
+                                $event = new HttpApplicationStartedEvent($this->app);
+                                yield $this->eventEmitter->emit($event);
+                            });
+                        });
+                    }
+
+                    public function onStop(\Amp\Http\Server\HttpServer $server) : Promise {
+                        return new Success();
+                    }
+                }
+            );
+
+            yield $this->httpServer->start();
         });
+
+        return $this->httpServerDeferred->promise();
     }
 
     public function stop() : Promise {
-         // We only need to call stop on the httpServer. The AbstractApplication handling of the doStart promise will
-        // properly set the state of the app and deal with any other deferrables when this promise resolves
-         return $this->httpServer->stop();
+        return call(function() {
+            yield $this->httpServer->stop();
+            $this->setState(ApplicationState::Stopped());
+            yield $this->eventEmitter->emit(new HttpApplicationStoppedEvent($this));
+            $this->httpServerDeferred->resolve();
+        });
     }
 
     public function setExceptionToResponseHandler(callable $callback) : void {

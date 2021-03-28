@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6eebaf579fe9f5252df39315ddd92455",
+    "content-hash": "3863d02609e9e3b20a11121b689f9473",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -1053,16 +1053,16 @@
         },
         {
             "name": "cspray/labrador",
-            "version": "3.2.0-alpha",
+            "version": "3.2.0-alpha2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/core.git",
-                "reference": "4a1ef9322700aa5dc1387c885b2041be9b5475d1"
+                "reference": "47069b05fe6acc66970c8814b332cc3a5acb2fd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/4a1ef9322700aa5dc1387c885b2041be9b5475d1",
-                "reference": "4a1ef9322700aa5dc1387c885b2041be9b5475d1",
+                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/47069b05fe6acc66970c8814b332cc3a5acb2fd0",
+                "reference": "47069b05fe6acc66970c8814b332cc3a5acb2fd0",
                 "shasum": ""
             },
             "require": {
@@ -1109,9 +1109,9 @@
             ],
             "support": {
                 "issues": "https://github.com/labrador-kennel/core/issues",
-                "source": "https://github.com/labrador-kennel/core/tree/3.2.0-alpha"
+                "source": "https://github.com/labrador-kennel/core/tree/3.2.0-alpha2"
             },
-            "time": "2021-03-28T00:35:09+00:00"
+            "time": "2021-03-28T22:22:51+00:00"
         },
         {
             "name": "cspray/labrador-async-event",
