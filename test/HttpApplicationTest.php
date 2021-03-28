@@ -2,6 +2,7 @@
 
 namespace Cspray\Labrador\Http\Test;
 
+use Amp\Deferred;
 use Amp\Http\Client\HttpClientBuilder;
 use Amp\Http\Client\HttpClient;
 use Amp\Http\Client\Request as ClientRequest;
@@ -11,10 +12,14 @@ use Amp\Http\Server\Request as ServerRequest;
 use Amp\Http\Server\Response as ServerResponse;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Status;
+use Amp\Loop;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Promise;
 use Auryn\Injector;
+use Cspray\Labrador\ApplicationState;
 use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
+use Cspray\Labrador\AsyncEvent\EventEmitter;
+use Cspray\Labrador\Http\HttpApplication;
 use Cspray\Labrador\Plugin\PluginManager;
 use Amp\Socket\Server as SocketServer;
 use Amp\Socket\SocketException;
@@ -28,8 +33,10 @@ use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
+use League\Uri\Http;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use function Amp\call;
 
 class HttpApplicationTest extends AsyncTestCase {
 
@@ -45,31 +52,37 @@ class HttpApplicationTest extends AsyncTestCase {
 
     private $pluginManager;
 
+    /**
+     * @var HttpApplication
+     */
     private $application;
 
     private $router;
+
+    /**
+     * @var EventEmitter
+     */
+    private $eventEmitter;
 
     /**
      * @throws SocketException
      */
     public function setUpAsync() {
         parent::setUpAsync();
-        $this->setTimeout(1500);
+        $this->setTimeout(500);
         $this->socketServer = SocketServer::listen('tcp://127.0.0.1:0');
         $this->client = HttpClientBuilder::buildDefault();
         $emitter = new AmpEventEmitter();
         $injector = new Injector();
         $this->pluginManager = new PluginManager($injector, $emitter);
         $this->router = $this->getRouter();
+        $this->eventEmitter = new AmpEventEmitter();
         $this->application = new DefaultHttpApplication(
             $this->pluginManager,
+            $this->eventEmitter,
             $this->router,
             $this->socketServer
         );
-    }
-
-    public function tearDownAsync() {
-        yield $this->application->stop();
     }
 
     private function getRouter() {
@@ -87,57 +100,122 @@ class HttpApplicationTest extends AsyncTestCase {
         $router->addRoute('GET', '/throw-error', $errorController);
     }
 
+    protected function runHttpApplicationTest(callable $callable) : Promise {
+        $deferred = new Deferred();
+
+        $this->eventEmitter->once(
+            HttpApplication::APPLICATION_STARTED_EVENT,
+            function() use($deferred, $callable) {
+                yield call($callable);
+                yield $this->application->stop();
+                $deferred->resolve();
+            }
+        );
+
+        Loop::defer([$this->application, 'start']);
+
+        return $deferred->promise();
+    }
+
+    public function testApplicationStateStartingApp() {
+        $this->application->setLogger(new NullLogger());
+        $this->registerRoutes($this->router);
+
+        return $this->runHttpApplicationTest(function() {
+            $this->assertEquals(ApplicationState::Started(), $this->application->getState());
+        });
+    }
+
+    public function testApplicationStateStoppedAfterStoppingApp() {
+        $this->application->setLogger(new NullLogger());
+        $this->registerRoutes($this->router);
+
+        $deferred = new Deferred();
+
+        $this->eventEmitter->once(HttpApplication::APPLICATION_STARTED_EVENT, function() use($deferred) {
+            yield $this->application->stop();
+            $this->assertEquals(ApplicationState::Stopped(), $this->application->getState());
+            $deferred->resolve();
+        });
+
+        Loop::defer([$this->application, 'start']);
+
+        return $deferred->promise();
+    }
+
+    public function testApplicationStopEventEmitted() {
+        $this->application->setLogger(new NullLogger());
+        $this->registerRoutes($this->router);
+
+        $deferred = new Deferred();
+
+        $this->eventEmitter->once(HttpApplication::APPLICATION_STARTED_EVENT, function() use($deferred) {
+            yield $this->application->stop();
+        });
+
+        $this->eventEmitter->once(HttpApplication::APPLICATION_STOPPED_EVENT, function() use($deferred) {
+            $this->assertEquals(ApplicationState::Stopped(), $this->application->getState());
+            $deferred->resolve();
+        });
+
+        Loop::defer([$this->application, 'start']);
+
+        return $deferred->promise();
+    }
+
     public function testBasicRouteFound() {
         $this->application->setLogger(new NullLogger());
         $this->registerRoutes($this->router);
 
-        yield $this->application->start();
+        return $this->runHttpApplicationTest(function() {
+            /** @var ClientResponse $response */
+            $response = yield $this->client->request(
+                new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+            );
+            $body = yield $response->getBody()->buffer();
 
-        /** @var ClientResponse $response */
-        $response = yield $this->client->request(
-            new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
-        );
-        $body = yield $response->getBody()->buffer();
+            $this->assertSame(Status::OK, $response->getStatus());
+            $this->assertSame('From controller', $body);
+        });
 
-        $this->assertSame(Status::OK, $response->getStatus());
-        $this->assertSame('From controller', $body);
     }
 
     public function testRouteNotFound() {
         $this->application->setLogger(new NullLogger());
         $this->registerRoutes($this->router);
-        yield $this->application->start();
 
-        /** @var ClientResponse $response */
-        $response = yield $this->client->request(
-            new ClientRequest('http://' . $this->socketServer->getAddress() . '/bar')
-        );
-        $body = yield $response->getBody()->buffer();
+        return $this->runHttpApplicationTest(function() {
+            /** @var ClientResponse $response */
+            $response = yield $this->client->request(
+                new ClientRequest('http://' . $this->socketServer->getAddress() . '/bar')
+            );
+            $body = yield $response->getBody()->buffer();
 
-        $this->assertSame(Status::NOT_FOUND, $response->getStatus());
-        $this->assertSame('Not Found', $body);
+            $this->assertSame(Status::NOT_FOUND, $response->getStatus());
+            $this->assertSame('Not Found', $body);
+        });
     }
 
     public function testHandlesErrorGracefully() {
         $this->application->setLogger(new NullLogger());
         $this->registerRoutes($this->router);
 
-        yield $this->application->start();
+        return $this->runHttpApplicationTest(function() {
+            $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
+            /** @var ClientResponse $response */
+            $response = yield $this->client->request(new ClientRequest($url));
 
-        $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
-        /** @var ClientResponse $response */
-        $response = yield $this->client->request(new ClientRequest($url));
+            $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
 
-        $this->assertSame(Status::INTERNAL_SERVER_ERROR, $response->getStatus());
+            /** @var ClientResponse $response */
+            $response = yield $this->client->request(
+                new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+            );
+            $body = yield $response->getBody()->buffer();
 
-        /** @var ClientResponse $response */
-        $response = yield $this->client->request(
-            new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
-        );
-        $body = yield $response->getBody()->buffer();
-
-        $this->assertSame(Status::OK, $response->getStatus());
-        $this->assertSame('From controller', $body);
+            $this->assertSame(Status::OK, $response->getStatus());
+            $this->assertSame('From controller', $body);
+        });
     }
 
     public function testErrorResponseReturnedFromApplication() {
@@ -147,13 +225,15 @@ class HttpApplicationTest extends AsyncTestCase {
         });
 
         $this->registerRoutes($this->router);
-        yield $this->application->start();
 
-        $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
-        /** @var ClientResponse $response */
-        $response = yield $this->client->request(new ClientRequest($url));
+        return $this->runHttpApplicationTest(function() {
+            $url = 'http://' . $this->socketServer->getAddress() . '/throw-error';
+            /** @var ClientResponse $response */
+            $response = yield $this->client->request(new ClientRequest($url));
 
-        $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
+            $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
+        });
+
     }
 
     public function testErrorLogged() {
@@ -170,9 +250,11 @@ class HttpApplicationTest extends AsyncTestCase {
         $this->application->setLogger($logger);
 
         $this->registerRoutes($this->router);
-        yield $this->application->start();
 
-        yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/throw-error'));
+        return $this->runHttpApplicationTest(function() {
+            yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/throw-error'));
+        });
+
     }
 
     public function testAddingMiddlewareCanShortCircuitRouterMatching() {
@@ -200,14 +282,14 @@ class HttpApplicationTest extends AsyncTestCase {
         };
         $this->application->addMiddleware($middleware);
 
-        yield $this->application->start();
+        $this->runHttpApplicationTest(function() {
+            /** @var ClientResponse $response */
+            $url = 'http://' . $this->socketServer->getAddress() . '/does_not_matter';
+            $response = yield $this->client->request(new ClientRequest($url));
+            $body = yield $response->getBody()->buffer();
 
-        /** @var ClientResponse $response */
-        $url = 'http://' . $this->socketServer->getAddress() . '/does_not_matter';
-        $response = yield $this->client->request(new ClientRequest($url));
-        $body = yield $response->getBody()->buffer();
-
-        $this->assertSame(Status::ACCEPTED, $response->getStatus());
-        $this->assertSame('Short circuited router', $body);
+            $this->assertSame(Status::ACCEPTED, $response->getStatus());
+            $this->assertSame('Short circuited router', $body);
+        });
     }
 }
