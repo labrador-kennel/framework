@@ -17,7 +17,7 @@ use Cspray\Labrador\Plugin\Pluggable;
 
 use function Amp\call;
 
-final class DefaultHttpApplication extends AbstractApplication implements HttpApplication {
+class DefaultHttpApplication extends AbstractApplication implements HttpApplication {
 
     private $router;
     private $socketServers;
