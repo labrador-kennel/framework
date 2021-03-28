@@ -62,7 +62,7 @@ final class DefaultHttpApplication extends AbstractApplication implements HttpAp
      *
      * @return Promise
      */
-     protected function doStart() : Promise {
+    protected function doStart() : Promise {
         $applicationHandler = new CallableRequestHandler(function(Request $request) {
             try {
                 $controller = $this->router->match($request);

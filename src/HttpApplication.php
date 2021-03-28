@@ -7,8 +7,7 @@ use Cspray\Labrador\Application;
 
 interface HttpApplication extends Application {
 
-    function addMiddleware(Middleware $middleware) : void;
+    public function addMiddleware(Middleware $middleware) : void;
 
-    function setExceptionToResponseHandler(callable $callable) : void;
-
+    public function setExceptionToResponseHandler(callable $callable) : void;
 }
