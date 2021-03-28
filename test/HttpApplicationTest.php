@@ -177,7 +177,6 @@ class HttpApplicationTest extends AsyncTestCase {
             $this->assertSame(Status::OK, $response->getStatus());
             $this->assertSame('From controller', $body);
         });
-
     }
 
     public function testRouteNotFound() {
@@ -233,7 +232,6 @@ class HttpApplicationTest extends AsyncTestCase {
 
             $this->assertSame(Status::SERVICE_UNAVAILABLE, $response->getStatus());
         });
-
     }
 
     public function testErrorLogged() {
@@ -252,9 +250,10 @@ class HttpApplicationTest extends AsyncTestCase {
         $this->registerRoutes($this->router);
 
         return $this->runHttpApplicationTest(function() {
-            yield $this->client->request(new ClientRequest('http://' . $this->socketServer->getAddress() . '/throw-error'));
+            yield $this->client->request(
+                new ClientRequest('http://' . $this->socketServer->getAddress() . '/throw-error')
+            );
         });
-
     }
 
     public function testAddingMiddlewareCanShortCircuitRouterMatching() {

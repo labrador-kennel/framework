@@ -11,5 +11,4 @@ class HttpApplicationStoppedEvent extends StandardEvent {
     public function __construct(HttpApplication $app) {
         parent::__construct(HttpApplication::APPLICATION_STOPPED_EVENT, $app);
     }
-
 }
