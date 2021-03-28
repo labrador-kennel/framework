@@ -14,36 +14,25 @@ use PHPUnit\Framework\TestCase;
 class FriendlyRouterTest extends TestCase {
 
     private $mockRouter;
-    private $client;
 
-    public function setUp() {
+    public function setUp() : void {
         parent::setUp();
-        $this->client = $this->createMock(Client::class);
         $this->mockRouter = $this->createMock(Router::class);
     }
 
-    private function getRouter() {
+    private function getRouter() : FriendlyRouter {
         return new FriendlyRouter($this->mockRouter);
-    }
-
-    public function routerRouteMethodProvider() {
-        return [
-            ['GET'],
-            ['POST'],
-            ['PUT'],
-            ['DELETE'],
-        ];
     }
 
     public function testMountingRouterAddsPrefix() {
         $mountedController = $this->createMock(Controller::class);
         $unmountedController = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->at(0))
+        $this->mockRouter->expects($this->exactly(2))
                          ->method('addRoute')
-                         ->with('GET', '/prefix/foo', $mountedController);
-        $this->mockRouter->expects($this->at(1))
-                         ->method('addRoute')
-                         ->with('GET', '/noprefix', $unmountedController);
+                         ->withConsecutive(
+                             ['GET', '/prefix/foo', $mountedController],
+                             ['GET', '/noprefix', $unmountedController]
+                         );
 
         $router = $this->getRouter();
         $router->mount('/prefix', function (FriendlyRouter $router) use ($mountedController) {
@@ -57,15 +46,14 @@ class FriendlyRouterTest extends TestCase {
         $barPostController = $this->createMock(Controller::class);
         $bazPutController = $this->createMock(Controller::class);
 
-        $this->mockRouter->expects($this->at(0))
+        $this->mockRouter->expects($this->exactly(3))
                          ->method('addRoute')
-                         ->with('GET', '/foo/foo-get', $fooGetController);
-        $this->mockRouter->expects($this->at(1))
-                         ->method('addRoute')
-                         ->with('POST', '/foo/bar/bar-post', $barPostController);
-        $this->mockRouter->expects($this->at(2))
-                         ->method('addRoute')
-                         ->with('PUT', '/foo/bar/baz/baz-put', $bazPutController);
+                         ->withConsecutive(
+                             ['GET', '/foo/foo-get', $fooGetController],
+                             ['POST', '/foo/bar/bar-post', $barPostController],
+                             ['PUT', '/foo/bar/baz/baz-put', $bazPutController]
+                         );
+
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use(
             $fooGetController, $barPostController, $bazPutController
@@ -82,23 +70,17 @@ class FriendlyRouterTest extends TestCase {
 
     public function testAddingMiddlewareToMountedRoute() {
         $controller = $this->createMock(Controller::class);
-        $defaultMiddlewares = [
-            $this->createMock(Middleware::class),
-            $this->createMock(Middleware::class)
-        ];
+        $middlewareA = $this->createMock(Middleware::class);
+        $middlewareB = $this->createMock(Middleware::class);
 
-        $this->mockRouter->expects($this->at(0))
+        $this->mockRouter->expects($this->exactly(4))
                          ->method('addRoute')
-                         ->with('GET', '/foo/bar', $controller, ...$defaultMiddlewares);
-        $this->mockRouter->expects($this->at(1))
-                         ->method('addRoute')
-                         ->with('POST', '/foo/bar', $controller, ...$defaultMiddlewares);
-        $this->mockRouter->expects($this->at(2))
-                         ->method('addRoute')
-                         ->with('PUT', '/foo/bar', $controller, ...$defaultMiddlewares);
-        $this->mockRouter->expects($this->at(3))
-                         ->method('addRoute')
-                         ->with('DELETE', '/foo/bar', $controller, ...$defaultMiddlewares);
+                         ->withConsecutive(
+                             ['GET', '/foo/bar', $controller, $middlewareA, $middlewareB],
+                             ['POST', '/foo/bar', $controller, $middlewareA, $middlewareB],
+                             ['PUT', '/foo/bar', $controller, $middlewareA, $middlewareB],
+                             ['DELETE', '/foo/bar', $controller, $middlewareA, $middlewareB]
+                         );
 
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use($controller) {
@@ -106,26 +88,25 @@ class FriendlyRouterTest extends TestCase {
             $router->post('/bar', $controller);
             $router->put('/bar', $controller);
             $router->delete('/bar', $controller);
-        }, ...$defaultMiddlewares);
+        }, $middlewareA, $middlewareB);
     }
 
     public function testMultipleMountsOnlyAddsMiddlewareAppropriately() {
         $controller = $this->createMock(Controller::class);
-        $defaultMiddlewares = [
-            $this->createMock(Middleware::class),
-            $this->createMock(Middleware::class)
-        ];
+        $middlewareA = $this->createMock(Middleware::class);
+        $middlewareB = $this->createMock(Middleware::class);
 
-        $this->mockRouter->expects($this->at(0))
+        $this->mockRouter->expects($this->exactly(2))
                          ->method('addRoute')
-                         ->with('GET', '/foo/bar', $controller, ...$defaultMiddlewares);
-        $this->mockRouter->expects($this->at(1))
-                         ->method('addRoute')
-                         ->with('POST', '/foo/bar', $controller);
+                         ->withConsecutive(
+                             ['GET', '/foo/bar', $controller, $middlewareA, $middlewareB],
+                             ['POST', '/foo/bar', $controller]
+                         );
+
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use($controller) {
             $router->get('/bar', $controller);
-        }, ...$defaultMiddlewares);
+        }, $middlewareA, $middlewareB);
         $router->mount('/foo', function(FriendlyRouter $router) use($controller) {
             $router->post('/bar', $controller);
         });

@@ -18,7 +18,7 @@ use FastRoute\RouteCollector;
 /**
  * A Router implementation that makes use of FastRoute to do the actual heavy lifting.
  */
-class FastRouteRouter implements Router {
+final class FastRouteRouter implements Router {
 
     private $dispatcherCb;
     private $collector;
