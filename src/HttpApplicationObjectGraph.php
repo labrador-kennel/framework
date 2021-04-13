@@ -49,14 +49,15 @@ class HttpApplicationObjectGraph extends CoreApplicationObjectGraph {
 
             $router = new FastRouteRouter(
                 new RouteCollector(new RouteParser\Std(), new DataGenerator\GroupCountBased()),
-                function($data) { return new Dispatcher\GroupCountBased($data); }
+                function($data) { return new Dispatcher\GroupCountBased($data);
+                }
             );
             $injector->share($router);
             $injector->alias(Router::class, get_class($router));
             $injector->share(Application::class);
             $injector->alias(Application::class, DefaultHttpApplication::class);
             $injector->alias(HttpApplication::class, DefaultHttpApplication::class);
-            // We are delegating this instead of setting a define so that our Socket doesn't start listening until necessary
+            // We are delegating this instead of define so that our Socket doesn't start listening until necessary
             $injector->delegate(DefaultHttpApplication::class, function() use($injector, $settings) {
                 $pluginManager = $injector->make(Pluggable::class);
                 $emitter = $injector->make(EventEmitter::class);
@@ -85,5 +86,4 @@ class HttpApplicationObjectGraph extends CoreApplicationObjectGraph {
 
         return $injector;
     }
-
 }

@@ -118,5 +118,4 @@ class HttpApplicationObjectGraphTest extends AsyncTestCase {
             }
         };
     }
-
 }
