@@ -194,13 +194,9 @@ class HttpApplicationTest extends AsyncTestCase {
             );
 
             $this->assertSame(Status::OK, $response->getStatus());
-            $this->assertSame([
-                [
-                    'level' => 'info',
-                    'message' => 'Using "' . ResponseControllerStub::class . '" Controller for GET /foo',
-                    'context' => []
-                ]
-            ], $testLogger->records);
+            $this->assertTrue(
+                $testLogger->hasInfo('Using "' . ResponseControllerStub::class . '" Controller for GET /foo')
+            );
         });
     }
 
