@@ -15,6 +15,7 @@ use Amp\Http\Status;
 use Amp\Loop;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Promise;
+use Amp\Socket\Server;
 use Auryn\Injector;
 use Cspray\Labrador\ApplicationState;
 use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
@@ -36,6 +37,7 @@ use FastRoute\RouteParser\Std as StdRouteParser;
 use League\Uri\Http;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Psr\Log\Test\TestLogger;
 use function Amp\call;
 
 class HttpApplicationTest extends AsyncTestCase {
@@ -70,10 +72,10 @@ class HttpApplicationTest extends AsyncTestCase {
     public function setUpAsync() {
         parent::setUpAsync();
         $this->setTimeout(500);
-        $this->socketServer = SocketServer::listen('tcp://127.0.0.1:0');
         $this->client = HttpClientBuilder::buildDefault();
         $emitter = new AmpEventEmitter();
         $injector = new Injector();
+        $this->socketServer = Server::listen('tcp://127.0.0.1:0');
         $this->pluginManager = new PluginManager($injector, $emitter);
         $this->router = $this->getRouter();
         $this->eventEmitter = new AmpEventEmitter();
@@ -176,6 +178,25 @@ class HttpApplicationTest extends AsyncTestCase {
 
             $this->assertSame(Status::OK, $response->getStatus());
             $this->assertSame('From controller', $body);
+        });
+    }
+
+    public function testRouteFoundLogged() {
+        $testLogger = new TestLogger();
+        $this->application->setLogger($testLogger);
+        $this->registerRoutes($this->router);
+
+        return $this->runHttpApplicationTest(function() use($testLogger) {
+            $testLogger->reset();
+            /** @var ClientResponse $response */
+            $response = yield $this->client->request(
+                new ClientRequest('http://' . $this->socketServer->getAddress() . '/foo')
+            );
+
+            $this->assertSame(Status::OK, $response->getStatus());
+            $this->assertTrue(
+                $testLogger->hasInfo('Using "' . ResponseControllerStub::class . '" Controller for GET /foo')
+            );
         });
     }
 
