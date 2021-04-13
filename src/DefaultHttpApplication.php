@@ -23,6 +23,7 @@ use Amp\Promise;
 use Amp\Socket\Server as SocketServer;
 use Cspray\Labrador\Plugin\Pluggable;
 
+use Throwable;
 use function Amp\call;
 
 class DefaultHttpApplication extends AbstractApplication implements HttpApplication {
@@ -86,9 +87,14 @@ class DefaultHttpApplication extends AbstractApplication implements HttpApplicat
             $applicationHandler = new CallableRequestHandler(function(Request $request) {
                 try {
                     $controller = $this->router->match($request);
-                    $response = yield $controller->handleRequest($request);
-                    return $response;
-                } catch (\Throwable $error) {
+                    $this->logger->info(sprintf(
+                        'Using "%s" Controller for %s %s',
+                        get_class($controller),
+                        $request->getMethod(),
+                        $request->getUri()->getPath()
+                    ));
+                    return yield $controller->handleRequest($request);
+                } catch (Throwable $error) {
                     $msgFormat = 'Exception thrown processing %s %s. Message: %s';
                     $msg = sprintf($msgFormat, $request->getMethod(), $request->getUri(), $error->getMessage());
                     $this->logger->critical($msg, ['exception' => $error]);
@@ -98,16 +104,14 @@ class DefaultHttpApplication extends AbstractApplication implements HttpApplicat
             $handler = Middleware\stack($applicationHandler, ...$this->middlewares);
             $this->httpServer = new HttpServer($this->socketServers, $handler, $this->logger);
             $this->httpServer->attach(
-                new class($this, $this->eventEmitter, $this->httpServerDeferred) implements ServerObserver {
+                new class($this, $this->eventEmitter) implements ServerObserver {
 
                     private $app;
                     private $eventEmitter;
-                    private $deferred;
 
-                    public function __construct(HttpApplication $app, EventEmitter $eventEmitter, Deferred $deferred) {
+                    public function __construct(HttpApplication $app, EventEmitter $eventEmitter) {
                         $this->app = $app;
                         $this->eventEmitter = $eventEmitter;
-                        $this->deferred = $deferred;
                     }
 
                     public function onStart(\Amp\Http\Server\HttpServer $server) : Promise {
@@ -140,11 +144,11 @@ class DefaultHttpApplication extends AbstractApplication implements HttpApplicat
         });
     }
 
-    public function setExceptionToResponseHandler(callable $callback) : void {
-        $this->exceptionToResponseHandler = $callback;
+    public function setExceptionToResponseHandler(callable $callable) : void {
+        $this->exceptionToResponseHandler = $callable;
     }
 
-    protected function exceptionToResponse(\Throwable $throwable) : Response {
+    protected function exceptionToResponse(Throwable $throwable) : Response {
         return ($this->exceptionToResponseHandler)($throwable);
     }
 }
