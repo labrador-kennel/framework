@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3863d02609e9e3b20a11121b689f9473",
+    "content-hash": "22df28ffbf9209037aa57c42f06271a7",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -150,16 +150,16 @@
         },
         {
             "name": "amphp/byte-stream",
-            "version": "v1.8.0",
+            "version": "v1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/byte-stream.git",
-                "reference": "f0c20cf598a958ba2aa8c6e5a71c697d652c7088"
+                "reference": "acbd8002b3536485c997c4e019206b3f10ca15bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/byte-stream/zipball/f0c20cf598a958ba2aa8c6e5a71c697d652c7088",
-                "reference": "f0c20cf598a958ba2aa8c6e5a71c697d652c7088",
+                "url": "https://api.github.com/repos/amphp/byte-stream/zipball/acbd8002b3536485c997c4e019206b3f10ca15bd",
+                "reference": "acbd8002b3536485c997c4e019206b3f10ca15bd",
                 "shasum": ""
             },
             "require": {
@@ -215,9 +215,15 @@
             "support": {
                 "irc": "irc://irc.freenode.org/amphp",
                 "issues": "https://github.com/amphp/byte-stream/issues",
-                "source": "https://github.com/amphp/byte-stream/tree/master"
+                "source": "https://github.com/amphp/byte-stream/tree/v1.8.1"
             },
-            "time": "2020-06-29T18:35:05+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-03-30T17:13:30+00:00"
         },
         {
             "name": "amphp/cache",
@@ -488,16 +494,16 @@
         },
         {
             "name": "amphp/http-server",
-            "version": "v2.1.0",
+            "version": "v2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-server.git",
-                "reference": "30063e245559095ff99a320b88a8a88ff719cc6e"
+                "reference": "d1f71b05c5a2f642b54df88b8b328b721eada625"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server/zipball/30063e245559095ff99a320b88a8a88ff719cc6e",
-                "reference": "30063e245559095ff99a320b88a8a88ff719cc6e",
+                "url": "https://api.github.com/repos/amphp/http-server/zipball/d1f71b05c5a2f642b54df88b8b328b721eada625",
+                "reference": "d1f71b05c5a2f642b54df88b8b328b721eada625",
                 "shasum": ""
             },
             "require": {
@@ -537,7 +543,8 @@
                 },
                 "files": [
                     "src/Middleware/functions.php",
-                    "src/functions.php"
+                    "src/functions.php",
+                    "src/Server.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -573,9 +580,15 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-server/issues",
-                "source": "https://github.com/amphp/http-server/tree/master"
+                "source": "https://github.com/amphp/http-server/tree/v2.1.2"
             },
-            "time": "2020-06-20T14:40:33+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-04-16T08:52:44+00:00"
         },
         {
             "name": "amphp/log",
@@ -699,16 +712,16 @@
         },
         {
             "name": "amphp/process",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/process.git",
-                "reference": "355b1e561b01c16ab3d78fada1ad47ccc96df70e"
+                "reference": "b88c6aef75c0b22f6f021141dd2d5e7c5db4c124"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/process/zipball/355b1e561b01c16ab3d78fada1ad47ccc96df70e",
-                "reference": "355b1e561b01c16ab3d78fada1ad47ccc96df70e",
+                "url": "https://api.github.com/repos/amphp/process/zipball/b88c6aef75c0b22f6f021141dd2d5e7c5db4c124",
+                "reference": "b88c6aef75c0b22f6f021141dd2d5e7c5db4c124",
                 "shasum": ""
             },
             "require": {
@@ -740,21 +753,27 @@
                     "email": "bobwei9@hotmail.com"
                 },
                 {
-                    "name": "Niklas Keller",
-                    "email": "me@kelunik.com"
-                },
-                {
                     "name": "Aaron Piotrowski",
                     "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
                 }
             ],
             "description": "Asynchronous process manager.",
             "homepage": "https://github.com/amphp/process",
             "support": {
                 "issues": "https://github.com/amphp/process/issues",
-                "source": "https://github.com/amphp/process/tree/master"
+                "source": "https://github.com/amphp/process/tree/v1.1.1"
             },
-            "time": "2019-02-26T16:33:03+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-03-30T20:04:22+00:00"
         },
         {
             "name": "amphp/serialization",
@@ -1053,16 +1072,16 @@
         },
         {
             "name": "cspray/labrador",
-            "version": "3.2.0-alpha2",
+            "version": "3.2.0-alpha4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/core.git",
-                "reference": "47069b05fe6acc66970c8814b332cc3a5acb2fd0"
+                "reference": "f3c1aac5b163323972099052f5d507764004b81a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/47069b05fe6acc66970c8814b332cc3a5acb2fd0",
-                "reference": "47069b05fe6acc66970c8814b332cc3a5acb2fd0",
+                "url": "https://api.github.com/repos/labrador-kennel/core/zipball/f3c1aac5b163323972099052f5d507764004b81a",
+                "reference": "f3c1aac5b163323972099052f5d507764004b81a",
                 "shasum": ""
             },
             "require": {
@@ -1109,9 +1128,9 @@
             ],
             "support": {
                 "issues": "https://github.com/labrador-kennel/core/issues",
-                "source": "https://github.com/labrador-kennel/core/tree/3.2.0-alpha2"
+                "source": "https://github.com/labrador-kennel/core/tree/3.2.0-alpha4"
             },
-            "time": "2021-03-28T22:22:51+00:00"
+            "time": "2021-05-01T16:40:03+00:00"
         },
         {
             "name": "cspray/labrador-async-event",
@@ -4004,16 +4023,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.8",
+            "version": "3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "9d583721a7157ee997f235f327de038e7ea6dac4"
+                "reference": "ffced0d2c8fa8e6cdc4d695a743271fab6c38625"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/9d583721a7157ee997f235f327de038e7ea6dac4",
-                "reference": "9d583721a7157ee997f235f327de038e7ea6dac4",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/ffced0d2c8fa8e6cdc4d695a743271fab6c38625",
+                "reference": "ffced0d2c8fa8e6cdc4d695a743271fab6c38625",
                 "shasum": ""
             },
             "require": {
@@ -4056,7 +4075,7 @@
                 "source": "https://github.com/squizlabs/PHP_CodeSniffer",
                 "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
             },
-            "time": "2020-10-23T02:01:07+00:00"
+            "time": "2021-04-09T00:54:41+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
