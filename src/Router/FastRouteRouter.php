@@ -2,13 +2,12 @@
 
 namespace Cspray\Labrador\Http\Router;
 
+use Cspray\AnnotatedContainer\Attribute\Service;
 use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Controller\MiddlewareController;
 use Cspray\Labrador\Http\Exception\InvalidTypeException;
 
 use Amp\Http\Status;
-use Amp\Promise;
-use Amp\Success;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
@@ -18,6 +17,7 @@ use FastRoute\RouteCollector;
 /**
  * A Router implementation that makes use of FastRoute to do the actual heavy lifting.
  */
+#[Service]
 final class FastRouteRouter implements Router {
 
     private $dispatcherCb;
@@ -173,8 +173,8 @@ final class FastRouteRouter implements Router {
              *
              * @return Promise<\Amp\Http\Server\Response>
              */
-            public function handleRequest(Request $request): Promise {
-                return new Success(new Response($this->status, [], $this->body));
+            public function handleRequest(Request $request): Response {
+                return new Response($this->status, [], $this->body);
             }
 
             public function toString() : string {

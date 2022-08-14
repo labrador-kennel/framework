@@ -4,6 +4,7 @@ namespace Cspray\Labrador\Http\Router;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
+use Cspray\AnnotatedContainer\Attribute\Service;
 use Cspray\Labrador\Http\Controller\Controller;
 
 /**
@@ -12,6 +13,7 @@ use Cspray\Labrador\Http\Controller\Controller;
  *
  * @license See LICENSE in source root
  */
+#[Service]
 interface Router {
 
     /**

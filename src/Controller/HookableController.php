@@ -2,14 +2,9 @@
 
 namespace Cspray\Labrador\Http\Controller;
 
-use Cspray\Labrador\Http\Exception\InvalidTypeException;
-
-use Amp\Promise;
-use Amp\Success;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 
-use function Amp\call;
 
 /**
  * A Controller implementation that allows you to hook into the processing so that you may short circuit normal
@@ -24,32 +19,21 @@ abstract class HookableController implements Controller {
      * handle() method and ensures the beforeAction and afterAction methods are called appropriately.
      *
      * @param Request $request
-     * @return Promise(Response)
+     * @return Response
      */
-    final public function handleRequest(Request $request) : Promise {
-        return call(function() use($request) {
-            $potentialResponse = yield $this->beforeAction($request);
+    final public function handleRequest(Request $request) : Response {
+        $potentialResponse = $this->beforeAction($request);
+        if ($potentialResponse instanceof Response) {
+            $response = $potentialResponse;
+        } else {
+            $response = $this->handle($request);
+            $potentialResponse = $this->afterAction($request, $response);
             if ($potentialResponse instanceof Response) {
                 $response = $potentialResponse;
-            } else {
-                $response = yield $this->handle($request);
-                if (!$response instanceof Response) {
-                    $msg = 'The type resolved from a %s::handle() %s must be a %s.';
-                    throw new InvalidTypeException(sprintf(
-                        $msg,
-                        get_class($this),
-                        Promise::class,
-                        Response::class
-                    ));
-                }
-                $potentialResponse = yield $this->afterAction($request, $response);
-                if ($potentialResponse instanceof Response) {
-                    $response = $potentialResponse;
-                }
             }
+        }
 
-            return $response;
-        });
+        return $response;
     }
 
     /**
@@ -61,10 +45,9 @@ abstract class HookableController implements Controller {
      * ignored.
      *
      * @param Request $request
-     * @return Promise(Response|null)
      */
-    protected function beforeAction(Request $request) : Promise {
-        return new Success();
+    protected function beforeAction(Request $request) : ?Response {
+        return null;
     }
 
     /**
@@ -76,17 +59,17 @@ abstract class HookableController implements Controller {
      *
      * @param Request $request
      * @param Response $response
-     * @return Promise(Response|null)
+     * @return Response|null
      */
-    protected function afterAction(Request $request, Response $response) : Promise {
-        return new Success();
+    protected function afterAction(Request $request, Response $response) : ?Response {
+        return null;
     }
 
     /**
      * Execute the primary logic for your Controller; the Promise MUST resolve with a Response object.
      *
      * @param Request $request
-     * @return Promise(Response)
+     * @return Response
      */
-    abstract protected function handle(Request $request) : Promise;
+    abstract protected function handle(Request $request) : Response;
 }

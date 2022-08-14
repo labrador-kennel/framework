@@ -2,15 +2,17 @@
 
 namespace Cspray\Labrador\Http\Controller;
 
-use Amp\Promise;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
+use Amp\Http\Server\Response;
 
-class MiddlewareController implements Controller {
+final class MiddlewareController implements Controller {
 
-    private $controller;
-    private $middlewares;
-    private $stack;
+    private Controller $controller;
+    /** @var list<Middleware> */
+    private array $middlewares;
+    private RequestHandler $stack;
 
     public function __construct(Controller $controller, Middleware ...$middlewares) {
         $this->controller = $controller;
@@ -21,13 +23,13 @@ class MiddlewareController implements Controller {
     /**
      * @param Request $request
      *
-     * @return Promise<\Amp\Http\Server\Response>
+     * @return \Amp\Http\Server\Response
      */
-    public function handleRequest(Request $request): Promise {
+    public function handleRequest(Request $request) : Response {
         return $this->stack->handleRequest($request);
     }
 
-    public function toString(): string {
+    public function toString() : string {
         $string = $this->controller->toString() . '<';
         $string .= implode(', ', array_map(function(Middleware $middleware) {
             return get_class($middleware);
