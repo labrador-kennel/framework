@@ -22,7 +22,7 @@ final class ControllerInvokedEvent implements Event {
     }
 
     public function getName() : string {
-        return ApplicationEvent::ControllerInvoked->value;
+        return ApplicationEvent::WillInvokeController->value;
     }
 
     public function getTarget() : Controller {
