@@ -1,4 +1,4 @@
-name: 'Unit Testing & Code Lint'
+name: 'Unit Tests'
 
 on:
   push:
@@ -7,31 +7,13 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test:
+  continuous-integration:
 
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
-      - name: Composer 7
-        uses: php-actions/composer@v5
-        with:
-          php_version: 7
-      - name: PHP 7 tests
+      - name: Composer
+        uses: php-actions/composer@v6
+      - name: Tests
         uses: php-actions/phpunit@v2
-        with:
-          version: 8
-          php_version: 7
-
-      - name: Composer 8
-        uses: php-actions/composer@v5
-        with:
-          php_version: 8
-      - name: PHP 8 tests
-        uses: php-actions/phpunit@v2
-        with:
-          version: 8
-          php_version: 8
-
-      - name: Run code sniffer
-        run: composer run code-lint
