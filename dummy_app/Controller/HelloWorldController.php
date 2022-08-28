@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\Contoller;
+namespace Cspray\Labrador\HttpDummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;

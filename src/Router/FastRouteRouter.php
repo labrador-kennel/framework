@@ -5,7 +5,7 @@ namespace Cspray\Labrador\Http\Router;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Controller\MiddlewareController;
-use Cspray\Labrador\Http\Exception\InvalidTypeException;
+use Cspray\Labrador\Http\Exception\InvalidType;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
@@ -58,7 +58,7 @@ final class FastRouteRouter implements Router {
     /**
      * @param Request $request
      * @return Controller
-     * @throws InvalidTypeException
+     * @throws InvalidType
      */
     public function match(Request $request) : RoutingResolution {
         $uri = $request->getUri();
@@ -100,14 +100,13 @@ final class FastRouteRouter implements Router {
 
     /**
      * @return Dispatcher
-     * @throws InvalidTypeException
+     * @throws InvalidType
      */
     private function getDispatcher() : Dispatcher {
         $cb = $this->dispatcherCb;
         $dispatcher = $cb($this->collector->getData());
         if (!$dispatcher instanceof Dispatcher) {
-            $msg = 'A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor';
-            throw new InvalidTypeException($msg);
+            throw InvalidType::fromDispatcherCallbackInvalidReturn();
         }
 
         return $dispatcher;

@@ -20,6 +20,7 @@ use Cspray\Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
 use org\bovigo\vfs\vfsStreamWrapper as VirtualStream;
+use Ramsey\Uuid\Uuid;
 
 class HttpServerTest extends AsyncTestCase {
 
@@ -113,6 +114,67 @@ XML;
         ];
 
         self::assertSame($expected, $callRegistry->getCalled());
+    }
+
+    public function testDtoControllerGetMethodsAddedAsController() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/headers');
+        $request->setHeader('Custom-Header', 'my-header-val');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+
+        $expectedHeaders = [
+            'custom-header' => ['my-header-val'],
+            'accept' => ['*/*'],
+            'user-agent' => ['amphp/http-client @ v5.x'],
+            'accept-encoding' => ['gzip, deflate, identity'],
+            'host' => ['localhost:4200']
+        ];
+        self::assertSame('Received headers ' . json_encode($expectedHeaders), $response->getBody()->buffer());
+    }
+
+    public function testDtoControllerPostMethodsAddedAsController() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/method', 'POST');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Received method POST', $response->getBody()->buffer());
+    }
+
+    public function testDtoControllerPutMethodsAddedAsController() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/url', 'PUT');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Received UriInterface http://localhost:4200/dto/url', $response->getBody()->buffer());
+    }
+
+    public function testDtoControllerMultipleParameters() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/method-and-url');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Received GET and http://localhost:4200/dto/method-and-url', $response->getBody()->buffer());
+    }
+
+    public function testDtoControllerRouteParams() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $id = Uuid::uuid6();
+
+        $request = new Request('http://localhost:4200/dto/widget/' . $id->toString(), 'POST');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Received widget id as UuidInterface ' . $id->toString(), $response->getBody()->buffer());
     }
 
 }

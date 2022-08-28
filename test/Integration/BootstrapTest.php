@@ -10,9 +10,9 @@ use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap
 use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
 use Cspray\Labrador\AsyncEvent\EventEmitter;
 use Cspray\Labrador\Http\Bootstrap;
-use Cspray\Labrador\Http\ErrorHandlerFactory;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Router;
+use Cspray\Labrador\Http\Test\BootstrapAwareTestTrait;
 use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
 use Cspray\Labrador\Http\Test\Helper\VfsDirectoryResolver;
 use Cspray\Labrador\HttpDummyApp\AppMiddleware\BarMiddleware;
@@ -30,6 +30,10 @@ use Psr\Log\LoggerInterface;
  * being available in the container.
  */
 class BootstrapTest extends TestCase {
+
+    private const ExpectedControllerCount = 21;
+
+    use BootstrapAwareTestTrait;
 
     private VirtualDirectory $vfs;
 
@@ -55,29 +59,9 @@ class BootstrapTest extends TestCase {
     }
 
     private function configureAnnotatedContainer() : void {
-        $config = <<<XML
-<?xml version="1.0" encoding="UTF-8" ?>
-<annotatedContainer xmlns="https://annotated-container.cspray.io/schema/annotated-container.xsd">
-    <scanDirectories>
-        <source>
-            <dir>src</dir>
-            <dir>dummy_app</dir>
-            <dir>vendor/cspray/labrador-async-event/src</dir>
-        </source>
-    </scanDirectories>
-    <containerDefinitionBuilderContextConsumer>
-        Cspray\Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
-    </containerDefinitionBuilderContextConsumer>
-    <observers>
-        <fqcn>Cspray\Labrador\Http\DependencyInjection\AutowireObserver</fqcn>
-    </observers>
-</annotatedContainer>
-XML;
-
         VirtualFilesystem::newFile('annotated-container.xml')
-            ->withContent($config)
+            ->withContent(self::getDefaultConfiguration())
             ->at($this->vfs);
-
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsLogger() : void {
@@ -170,7 +154,7 @@ XML;
         /** @var Router $router */
         $router = $container->get(Router::class);
 
-        self::assertCount(1, $router->getRoutes());
+        self::assertCount(self::ExpectedControllerCount, $router->getRoutes());
     }
 
     public function testApplicationAutowiringStartedLogged() : void {

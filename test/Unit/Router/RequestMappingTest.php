@@ -14,8 +14,6 @@ class RequestMappingTest extends TestCase {
 
         self::assertSame(HttpMethod::Get, $subject->method);
         self::assertSame('/foo', $subject->pathPattern);
-        self::assertSame([ContentType::All], $subject->consumableContentTypes);
-        self::assertSame([ContentType::All], $subject->producedContentTypes);
     }
 
     public function testWithMethodImmutable() : void {

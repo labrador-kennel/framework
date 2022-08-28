@@ -14,7 +14,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\PHPUnit\AsyncTestCase;
 use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Exception\InvalidTypeException;
+use Cspray\Labrador\Http\Exception\InvalidType;
 use Cspray\Labrador\Http\HttpMethod;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\RequestMapping;
@@ -60,7 +60,7 @@ class FastRouteRouterTest extends AsyncTestCase {
             function() { return 'not a dispatcher'; }
         );
 
-        $this->expectException(InvalidTypeException::class);
+        $this->expectException(InvalidType::class);
         $expectedMsg = 'A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor';
         $this->expectExceptionMessage($expectedMsg);
 

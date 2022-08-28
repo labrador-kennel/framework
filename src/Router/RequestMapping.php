@@ -9,27 +9,17 @@ final class RequestMapping {
 
     private function __construct(
         public readonly HttpMethod $method,
-        public readonly string $pathPattern,
-        /**
-         * @var list<ContentType|string> $consumableContentTypes
-         */
-        public readonly array $consumableContentTypes,
-        /**
-         * @var list<ContentType|string> $producedContentTypes
-         */
-        public readonly array $producedContentTypes
+        public readonly string $pathPattern
     ) {}
 
     public static function fromMethodAndPath(HttpMethod $method, string $path) : self {
-        return new self($method, $path, [ContentType::All], [ContentType::All]);
+        return new self($method, $path);
     }
 
     public function withPath(string $path) : self {
         return new self(
             $this->method,
             $path,
-            $this->consumableContentTypes,
-            $this->producedContentTypes
         );
     }
 
