@@ -9,7 +9,10 @@
 
 namespace Cspray\Labrador\Http\Test\Unit\Router;
 
+use Cspray\Labrador\Http\HttpMethod;
+use Cspray\Labrador\Http\Router\RequestMapping;
 use Cspray\Labrador\Http\Router\Route;
+use Cspray\Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use PHPUnit\Framework\TestCase;
 
 class RouteTest extends TestCase {
@@ -17,9 +20,11 @@ class RouteTest extends TestCase {
     public function routeProvider() {
         return [
             [new Route(
-                '/handler-string',
-                'GET',
-                'handler_name'
+                RequestMapping::fromMethodAndPath(
+                    HttpMethod::Get,
+                    '/handler-string',
+                ),
+                new ToStringControllerStub('handler_name')
             ), "GET\t/handler-string\t\thandler_name"],
         ];
     }
@@ -27,7 +32,7 @@ class RouteTest extends TestCase {
     /**
      * @dataProvider routeProvider
      */
-    public function testRouteToString($route, $expected) {
-        $this->assertEquals($expected, (string) $route);
+    public function testRouteToString(Route $route, $expected) {
+        self::assertSame($expected, $route->toString());
     }
 }

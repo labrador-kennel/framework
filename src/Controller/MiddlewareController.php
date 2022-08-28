@@ -20,6 +20,10 @@ final class MiddlewareController implements Controller {
         $this->stack = Middleware\stack($this->controller, ...$middlewares);
     }
 
+    public function getMiddlewares() : array {
+        return $this->middlewares;
+    }
+
     /**
      * @param Request $request
      *

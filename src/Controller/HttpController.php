@@ -1,13 +1,18 @@
 <?php
 
-namespace Cspray\Labrador\Http\DependencyInjection;
+namespace Cspray\Labrador\Http\Controller;
 
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
-use Cspray\Labrador\Http\Http\HttpMethod;
+use Cspray\Labrador\Http\HttpMethod;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class HttpController implements ServiceAttribute {
 
+    /**
+     * @param HttpMethod $method
+     * @param string $pattern
+     * @param list<string> $profiles
+     */
     public function __construct(
         private readonly HttpMethod $method,
         private readonly string $pattern,

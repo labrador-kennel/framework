@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Http;
+namespace Cspray\Labrador\Http;
 
 enum HttpMethod : string {
     case Connect = 'CONNECT';

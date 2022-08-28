@@ -11,6 +11,7 @@ use Labrador\CompositeFuture\CompositeFuture;
 final class EventEmitterStub implements EventEmitter {
 
     private array $events = [];
+    private array $queuedEvents = [];
 
     public function register(Listener $listener) : ListenerRegistration {
         throw new \RuntimeException('You should not register listeners to this stub.');
@@ -25,6 +26,10 @@ final class EventEmitterStub implements EventEmitter {
         return $this->events;
     }
 
+    public function getQueuedEvents() : array {
+        return $this->queuedEvents;
+    }
+
     public function clearEmittedEvents() : void {
         $this->events = [];
     }
@@ -35,5 +40,9 @@ final class EventEmitterStub implements EventEmitter {
 
     public function getListeners(string $event) : array {
         throw new \RuntimeException('You should not attempt to get listeners for this stub');
+    }
+
+    public function queue(Event $event) : void {
+        $this->queuedEvents[] = $event;
     }
 }

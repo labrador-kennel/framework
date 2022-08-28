@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<annotatedContainer xmlns="https://annotated-container.cspray.io/schema/annotated-container.xsd">
+    <scanDirectories>
+        <source>
+            <dir>.</dir>
+            <dir>dummy_app</dir>
+            <dir>vendor/cspray/labrador-async-event/src</dir>
+        </source>
+    </scanDirectories>
+    <containerDefinitionBuilderContextConsumer>
+        Cspray\Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
+    </containerDefinitionBuilderContextConsumer>
+</annotatedContainer>

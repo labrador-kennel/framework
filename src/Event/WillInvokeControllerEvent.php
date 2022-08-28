@@ -5,11 +5,11 @@ namespace Cspray\Labrador\Http\Event;
 use Cspray\Labrador\AsyncEvent\Event;
 use Cspray\Labrador\Http\ApplicationEvent;
 use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Http\RequestAttribute;
+use Cspray\Labrador\Http\RequestAttribute;
 use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
-final class ControllerInvokedEvent implements Event {
+final class WillInvokeControllerEvent implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 

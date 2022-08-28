@@ -5,7 +5,7 @@ namespace Cspray\Labrador\Http\Event;
 use Amp\Http\Server\Response;
 use Cspray\Labrador\AsyncEvent\Event;
 use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Http\RequestAttribute;
+use Cspray\Labrador\Http\RequestAttribute;
 use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 

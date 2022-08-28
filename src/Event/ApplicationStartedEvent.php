@@ -13,7 +13,7 @@ class ApplicationStartedEvent implements Event {
 
     public function __construct(
         private readonly Application $application,
-        DateTimeImmutable $createdAt = null
+        DateTimeImmutable               $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }

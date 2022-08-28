@@ -7,7 +7,7 @@ enum ApplicationEvent : string {
     case AddRoutes = 'labrador.http.addRoutes';
     case ReceivingConnections = 'labrador.http.receivingConnections';
     case RequestReceived = 'labrador.http.requestReceived';
-    case ControllerInvoked = 'labrador.http.controllerInvoked';
+    case WillInvokeController = 'labrador.http.willInvokeController';
     case ResponseSent = 'labrador.http.responseSent';
     case ApplicationStopped = 'labrador.http.appStopped';
 }

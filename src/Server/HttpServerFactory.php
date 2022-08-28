@@ -1,10 +1,10 @@
 <?php
 
-namespace Cspray\Labrador\Http\Http;
+namespace Cspray\Labrador\Http\Server;
 
 use Amp\Http\Server\HttpServer;
+use Amp\Http\Server\SocketHttpServer;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
-use Cspray\Labrador\Http\Configuration\HttpServerConfiguration;
 use Psr\Log\LoggerInterface;
 
 final class HttpServerFactory {
@@ -14,7 +14,13 @@ final class HttpServerFactory {
         HttpServerConfiguration $serverConfiguration,
         LoggerInterface $logger
     ) : HttpServer {
+        $socketServer = new SocketHttpServer($logger);
 
+        foreach ($serverConfiguration->getUnencryptedInternetAddresses() as $address) {
+            $socketServer->expose($address);
+        }
+
+        return $socketServer;
     }
 
 }

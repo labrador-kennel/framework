@@ -6,53 +6,61 @@ use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Controller\Controller;
+use Cspray\Labrador\Http\Controller\MiddlewareController;
+use Cspray\Labrador\Http\HttpMethod;
+use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\FriendlyRouter;
 use Cspray\Labrador\Http\Router\Router;
+use Cspray\Labrador\Http\Router\RoutingResolution;
+use Cspray\Labrador\Http\Router\RoutingResolutionReason;
+use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
+use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std as StdRouteParser;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 
 class FriendlyRouterTest extends TestCase {
 
-    private $mockRouter;
-
     public function setUp() : void {
         parent::setUp();
-        $this->mockRouter = $this->createMock(Router::class);
     }
 
-    private function getRouter() : FriendlyRouter {
-        return new FriendlyRouter($this->mockRouter);
+    private function getRouter(Router $router = null) : FriendlyRouter {
+        $router = $router ?? new FastRouteRouter(
+            new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
+            function($data) { return new GcbDispatcher($data); }
+        );
+        return new FriendlyRouter($router);
     }
 
     public function testMountingRouterAddsPrefix() {
         $mountedController = $this->createMock(Controller::class);
         $unmountedController = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->exactly(2))
-                         ->method('addRoute')
-                         ->withConsecutive(
-                             ['GET', '/prefix/foo', $mountedController],
-                             ['GET', '/noprefix', $unmountedController]
-                         );
 
         $router = $this->getRouter();
         $router->mount('/prefix', function (FriendlyRouter $router) use ($mountedController) {
             $router->get('/foo', $mountedController);
         });
         $router->get('/noprefix', $unmountedController);
+
+        $routes = $router->getRoutes();
+
+        self::assertCount(2, $routes);
+
+        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->method);
+        self::assertSame('/prefix/foo', $routes[0]->requestMapping->pathPattern);
+        self::assertSame($mountedController, $routes[0]->controller);
+
+        self::assertSame(HttpMethod::Get, $routes[1]->requestMapping->method);
+        self::assertSame('/noprefix', $routes[1]->requestMapping->pathPattern);
+        self::assertSame($unmountedController, $routes[1]->controller);
     }
 
     public function testNestedMountingAddsCorrectPrefixes() {
         $fooGetController = $this->createMock(Controller::class);
         $barPostController = $this->createMock(Controller::class);
         $bazPutController = $this->createMock(Controller::class);
-
-        $this->mockRouter->expects($this->exactly(3))
-                         ->method('addRoute')
-                         ->withConsecutive(
-                             ['GET', '/foo/foo-get', $fooGetController],
-                             ['POST', '/foo/bar/bar-post', $barPostController],
-                             ['PUT', '/foo/bar/baz/baz-put', $bazPutController]
-                         );
 
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use(
@@ -66,21 +74,27 @@ class FriendlyRouterTest extends TestCase {
                 });
             });
         });
+
+        $routes = $router->getRoutes();
+        self::assertCount(3, $routes);
+
+        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->method);
+        self::assertSame('/foo/foo-get', $routes[0]->requestMapping->pathPattern);
+        self::assertSame($fooGetController, $routes[0]->controller);
+
+        self::assertSame(HttpMethod::Post, $routes[1]->requestMapping->method);
+        self::assertSame('/foo/bar/bar-post', $routes[1]->requestMapping->pathPattern);
+        self::assertSame($barPostController, $routes[1]->controller);
+
+        self::assertSame(HttpMethod::Put, $routes[2]->requestMapping->method);
+        self::assertSame('/foo/bar/baz/baz-put', $routes[2]->requestMapping->pathPattern);
+        self::assertSame($bazPutController, $routes[2]->controller);
     }
 
     public function testAddingMiddlewareToMountedRoute() {
         $controller = $this->createMock(Controller::class);
         $middlewareA = $this->createMock(Middleware::class);
         $middlewareB = $this->createMock(Middleware::class);
-
-        $this->mockRouter->expects($this->exactly(4))
-                         ->method('addRoute')
-                         ->withConsecutive(
-                             ['GET', '/foo/bar', $controller, $middlewareA, $middlewareB],
-                             ['POST', '/foo/bar', $controller, $middlewareA, $middlewareB],
-                             ['PUT', '/foo/bar', $controller, $middlewareA, $middlewareB],
-                             ['DELETE', '/foo/bar', $controller, $middlewareA, $middlewareB]
-                         );
 
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use($controller) {
@@ -89,19 +103,31 @@ class FriendlyRouterTest extends TestCase {
             $router->put('/bar', $controller);
             $router->delete('/bar', $controller);
         }, $middlewareA, $middlewareB);
+
+        $routes = $router->getRoutes();
+
+        self::assertCount(4, $routes);
+
+        self::assertInstanceOf(MiddlewareController::class, $routes[0]->controller);
+        self::assertSame([$middlewareA, $middlewareB], $routes[0]->controller->getMiddlewares());
+
+        self::assertInstanceOf(MiddlewareController::class, $routes[1]->controller);
+        self::assertSame([$middlewareA, $middlewareB], $routes[1]->controller->getMiddlewares());
+
+        self::assertInstanceOf(MiddlewareController::class, $routes[1]->controller);
+        self::assertSame([$middlewareA, $middlewareB], $routes[1]->controller->getMiddlewares());
+
+        self::assertInstanceOf(MiddlewareController::class, $routes[2]->controller);
+        self::assertSame([$middlewareA, $middlewareB], $routes[2]->controller->getMiddlewares());
+
+        self::assertInstanceOf(MiddlewareController::class, $routes[3]->controller);
+        self::assertSame([$middlewareA, $middlewareB], $routes[3]->controller->getMiddlewares());
     }
 
     public function testMultipleMountsOnlyAddsMiddlewareAppropriately() {
         $controller = $this->createMock(Controller::class);
         $middlewareA = $this->createMock(Middleware::class);
         $middlewareB = $this->createMock(Middleware::class);
-
-        $this->mockRouter->expects($this->exactly(2))
-                         ->method('addRoute')
-                         ->withConsecutive(
-                             ['GET', '/foo/bar', $controller, $middlewareA, $middlewareB],
-                             ['POST', '/foo/bar', $controller]
-                         );
 
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use($controller) {
@@ -110,6 +136,13 @@ class FriendlyRouterTest extends TestCase {
         $router->mount('/foo', function(FriendlyRouter $router) use($controller) {
             $router->post('/bar', $controller);
         });
+
+        $routes = $router->getRoutes();
+        self::assertCount(2, $routes);
+
+        self::assertInstanceOf(MiddlewareController::class, $routes[0]->controller);
+        self::assertSame([$middlewareA, $middlewareB], $routes[0]->controller->getMiddlewares());
+        self::assertSame($controller, $routes[1]->controller);
     }
 
     public function testMultipleNestedMounts() {
@@ -120,9 +153,6 @@ class FriendlyRouterTest extends TestCase {
             $this->createMock(Middleware::class),
         ];
         $expectedMiddlewares = array_merge([], $defaultMiddlewares, [$nestedMountMiddleware]);
-        $this->mockRouter->expects($this->once())
-                         ->method('addRoute')
-                         ->with('GET', '/foo/bar/baz', $controller, ...$expectedMiddlewares);
 
         $router = $this->getRouter();
         $router->mount('/foo', function(FriendlyRouter $router) use($nestedMountMiddleware, $controller) {
@@ -130,86 +160,27 @@ class FriendlyRouterTest extends TestCase {
                 $router->get('/baz', $controller);
             }, $nestedMountMiddleware);
         }, ...$defaultMiddlewares);
+
+        $routes = $router->getRoutes();
+
+        self::assertCount(1, $routes);
+        self::assertInstanceOf(MiddlewareController::class, $routes[0]->controller);
+        self::assertSame($expectedMiddlewares, $routes[0]->controller->getMiddlewares());
     }
 
-    public function testMiddlewareAddedToMountedRoute() {
-        $routeMiddleware = $this->createMock(Middleware::class);
-        $controller = $this->createMock(Controller::class);
-        $defaultMiddlewares = [
-            $this->createMock(Middleware::class),
-            $this->createMock(Middleware::class),
-        ];
-        $expectedMiddlewares = array_merge([], $defaultMiddlewares, [$routeMiddleware]);
-        $this->mockRouter->expects($this->once())
-            ->method('addRoute')
-            ->with('GET', '/foo/bar', $controller, ...$expectedMiddlewares);
+    public function testDelegateMatch() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            'GET',
+            Http::createFromString('http://example.com')
+        );
+        $router = $this->getMockBuilder(Router::class)->getMock();
+        $router->expects($this->once())
+            ->method('match')
+            ->with($request)
+            ->willReturn($resolution = new RoutingResolution(null, RoutingResolutionReason::NotFound));
 
-        $router = $this->getRouter();
-        $router->mount('/foo', function(FriendlyRouter $router) use($routeMiddleware, $controller) {
-            $router->get('/bar', $controller, $routeMiddleware);
-        }, ...$defaultMiddlewares);
+        $this->getRouter($router)->match($request);
     }
 
-    public function testDelegateMatchToPassedRouter() {
-        $request = new Request($this->createMock(Client::class), 'GET', Http::createFromString('/'));
-        $controller = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->once())
-                         ->method('match')
-                         ->with($request)
-                         ->willReturn($controller);
-
-        $router = $this->getRouter();
-        $actual = $router->match($request);
-
-        $this->assertSame($controller, $actual);
-    }
-
-    public function testDelegateGetRoutesToPassedRouter() {
-        $this->mockRouter->expects($this->once())
-                         ->method('getRoutes')
-                         ->willReturn([]);
-
-        $router = $this->getRouter();
-        $this->assertEmpty($router->getRoutes());
-    }
-
-    public function testDelegateSetNotFoundController() {
-        $controller = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->once())
-                         ->method('setNotFoundController')
-                         ->with($controller);
-        $router = $this->getRouter();
-        $router->setNotFoundController($controller);
-    }
-
-    public function testDelegateGetNotFoundController() {
-        $controller = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->once())
-            ->method('getNotFoundController')
-            ->willReturn($controller);
-        $router = $this->getRouter();
-        $actual = $router->getNotFoundController();
-
-        $this->assertSame($controller, $actual);
-    }
-    
-    public function testDelegateSetMethodNotAllowedController() {
-        $controller = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->once())
-            ->method('setMethodNotAllowedController')
-            ->with($controller);
-        $router = $this->getRouter();
-        $router->setMethodNotAllowedController($controller);
-    }
-
-    public function testDelegateGetMethodNotAllowedController() {
-        $controller = $this->createMock(Controller::class);
-        $this->mockRouter->expects($this->once())
-            ->method('getMethodNotAllowedController')
-            ->willReturn($controller);
-        $router = $this->getRouter();
-        $actual = $router->getMethodNotAllowedController();
-
-        $this->assertSame($controller, $actual);
-    }
 }

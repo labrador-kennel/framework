@@ -5,6 +5,7 @@ namespace Cspray\Labrador\Http\Event;
 
 use Cspray\Labrador\AsyncEvent\Event;
 use Cspray\Labrador\AsyncEvent\StandardEvent;
+use Cspray\Labrador\Http\AmpApplication;
 use Cspray\Labrador\Http\Application;
 use Cspray\Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
@@ -15,7 +16,7 @@ class ApplicationStoppedEvent implements Event {
 
     public function __construct(
         private readonly Application $app,
-        DateTimeImmutable $createdAt = null
+        DateTimeImmutable               $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }

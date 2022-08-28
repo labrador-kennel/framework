@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "952987ebc1c9d682d0cc5855bc49e565",
+    "content-hash": "1689399e131f88045920b88ad45a1d31",
     "packages": [
         {
             "name": "amphp/amp",
@@ -567,6 +567,80 @@
                 "source": "https://github.com/cspray/amphp-http-server/tree/task/add-http-server-methods"
             },
             "time": "2022-08-14T00:01:29+00:00"
+        },
+        {
+            "name": "amphp/log",
+            "version": "v2.0.0-beta.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/log.git",
+                "reference": "5e547191a881450603f3f60847e70c7e64f2d38e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amphp/log/zipball/5e547191a881450603f3f60847e70c7e64f2d38e",
+                "reference": "5e547191a881450603f3f60847e70c7e64f2d38e",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3",
+                "amphp/byte-stream": "^2",
+                "monolog/monolog": "^2 || ^1.23",
+                "php": ">=8",
+                "psr/log": "^3 || ^2 || ^1"
+            },
+            "require-dev": {
+                "amphp/file": "^3",
+                "amphp/php-cs-fixer-config": "dev-master",
+                "amphp/phpunit-util": "^3",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "^4.15"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Amp\\Log\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                }
+            ],
+            "description": "Non-blocking logging for PHP based on Amp, Revolt, and Monolog.",
+            "homepage": "https://github.com/amphp/log",
+            "keywords": [
+                "amp",
+                "amphp",
+                "async",
+                "log",
+                "logger",
+                "logging",
+                "non-blocking"
+            ],
+            "support": {
+                "issues": "https://github.com/amphp/log/issues",
+                "source": "https://github.com/amphp/log/tree/v2.0.0-beta.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-12-20T23:19:00+00:00"
         },
         {
             "name": "amphp/parser",
@@ -1184,16 +1258,16 @@
         },
         {
             "name": "cspray/annotated-container",
-            "version": "v1.5.2",
+            "version": "v2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container.git",
-                "reference": "b128f0cf2db9f50938a9baef1c6256209c84c4b3"
+                "reference": "8aca84f3327bdf002be2d36a01de926b2fbfe0ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/b128f0cf2db9f50938a9baef1c6256209c84c4b3",
-                "reference": "b128f0cf2db9f50938a9baef1c6256209c84c4b3",
+                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/8aca84f3327bdf002be2d36a01de926b2fbfe0ce",
+                "reference": "8aca84f3327bdf002be2d36a01de926b2fbfe0ce",
                 "shasum": ""
             },
             "require": {
@@ -1227,8 +1301,8 @@
             "autoload": {
                 "files": [
                     "src/Function/auto-wired-parameters.php",
-                    "src/Function/definitions.php",
-                    "src/Function/user-api.php"
+                    "src/Function/class-alias.php",
+                    "src/Function/definitions.php"
                 ],
                 "psr-4": {
                     "Cspray\\AnnotatedContainer\\": "src"
@@ -1254,9 +1328,9 @@
             ],
             "support": {
                 "issues": "https://github.com/cspray/annotated-container/issues",
-                "source": "https://github.com/cspray/annotated-container/tree/v1.5.2"
+                "source": "https://github.com/cspray/annotated-container/tree/v2"
             },
-            "time": "2022-08-13T11:53:14+00:00"
+            "time": "2022-08-21T23:02:47+00:00"
         },
         {
             "name": "cspray/annotated-target",
@@ -1359,17 +1433,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/async-event.git",
-                "reference": "b7d775fb0c132b0fd6874f32437a9fef8c647058"
+                "reference": "e13a6b0f455b5b5cb04155c99c6c3d5f1881d69a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/b7d775fb0c132b0fd6874f32437a9fef8c647058",
-                "reference": "b7d775fb0c132b0fd6874f32437a9fef8c647058",
+                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/e13a6b0f455b5b5cb04155c99c6c3d5f1881d69a",
+                "reference": "e13a6b0f455b5b5cb04155c99c6c3d5f1881d69a",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "~v3.0.0-beta.4",
-                "cspray/annotated-container": "^1.5",
+                "cspray/annotated-container": "^v2.x-dev",
                 "cspray/labrador-composite-future": "^1.1",
                 "cspray/labrador-exceptions": "^1.2",
                 "php": "^8.1"
@@ -1410,7 +1484,7 @@
                 "issues": "https://github.com/labrador-kennel/async-event/issues",
                 "source": "https://github.com/labrador-kennel/async-event/tree/main"
             },
-            "time": "2022-08-13T20:48:39+00:00"
+            "time": "2022-08-22T10:53:18+00:00"
         },
         {
             "name": "cspray/labrador-composite-future",
@@ -1798,6 +1872,108 @@
                 }
             ],
             "time": "2021-06-28T04:27:21+00:00"
+        },
+        {
+            "name": "monolog/monolog",
+            "version": "2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Seldaek/monolog.git",
+                "reference": "720488632c590286b88b80e62aa3d3d551ad4a50"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/720488632c590286b88b80e62aa3d3d551ad4a50",
+                "reference": "720488632c590286b88b80e62aa3d3d551ad4a50",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2",
+                "psr/log": "^1.0.1 || ^2.0 || ^3.0"
+            },
+            "provide": {
+                "psr/log-implementation": "1.0.0 || 2.0.0 || 3.0.0"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^2.4.9 || ^3.0",
+                "doctrine/couchdb": "~1.0@dev",
+                "elasticsearch/elasticsearch": "^7 || ^8",
+                "ext-json": "*",
+                "graylog2/gelf-php": "^1.4.2",
+                "guzzlehttp/guzzle": "^7.4",
+                "guzzlehttp/psr7": "^2.2",
+                "mongodb/mongodb": "^1.8",
+                "php-amqplib/php-amqplib": "~2.4 || ^3",
+                "phpspec/prophecy": "^1.15",
+                "phpstan/phpstan": "^0.12.91",
+                "phpunit/phpunit": "^8.5.14",
+                "predis/predis": "^1.1 || ^2.0",
+                "rollbar/rollbar": "^1.3 || ^2 || ^3",
+                "ruflin/elastica": "^7",
+                "swiftmailer/swiftmailer": "^5.3|^6.0",
+                "symfony/mailer": "^5.4 || ^6",
+                "symfony/mime": "^5.4 || ^6"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allow sending log messages to AWS services like DynamoDB",
+                "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
+                "elasticsearch/elasticsearch": "Allow sending log messages to an Elasticsearch server via official client",
+                "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
+                "ext-curl": "Required to send log messages using the IFTTTHandler, the LogglyHandler, the SendGridHandler, the SlackWebhookHandler or the TelegramBotHandler",
+                "ext-mbstring": "Allow to work properly with unicode symbols",
+                "ext-mongodb": "Allow sending log messages to a MongoDB server (via driver)",
+                "ext-openssl": "Required to send log messages using SSL",
+                "ext-sockets": "Allow sending log messages to a Syslog server (via UDP driver)",
+                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "mongodb/mongodb": "Allow sending log messages to a MongoDB server (via library)",
+                "php-amqplib/php-amqplib": "Allow sending log messages to an AMQP server using php-amqplib",
+                "rollbar/rollbar": "Allow sending log messages to Rollbar",
+                "ruflin/elastica": "Allow sending log messages to an Elastic Search server"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Monolog\\": "src/Monolog"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "https://seld.be"
+                }
+            ],
+            "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
+            "homepage": "https://github.com/Seldaek/monolog",
+            "keywords": [
+                "log",
+                "logging",
+                "psr-3"
+            ],
+            "support": {
+                "issues": "https://github.com/Seldaek/monolog/issues",
+                "source": "https://github.com/Seldaek/monolog/tree/2.8.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Seldaek",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/monolog/monolog",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-07-24T11:55:47+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -2715,6 +2891,57 @@
             "time": "2022-03-03T08:28:38+00:00"
         },
         {
+            "name": "mikey179/vfsstream",
+            "version": "v1.6.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bovigo/vfsStream.git",
+                "reference": "17d16a85e6c26ce1f3e2fa9ceeacdc2855db1e9f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/17d16a85e6c26ce1f3e2fa9ceeacdc2855db1e9f",
+                "reference": "17d16a85e6c26ce1f3e2fa9ceeacdc2855db1e9f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.5|^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.6.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "org\\bovigo\\vfs\\": "src/main/php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Frank Kleine",
+                    "homepage": "http://frankkleine.de/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Virtual file system to mock the real file system in unit tests.",
+            "homepage": "http://vfs.bovigo.org/",
+            "support": {
+                "issues": "https://github.com/bovigo/vfsStream/issues",
+                "source": "https://github.com/bovigo/vfsStream/tree/master",
+                "wiki": "https://github.com/bovigo/vfsStream/wiki"
+            },
+            "time": "2022-02-23T02:02:42+00:00"
+        },
+        {
             "name": "myclabs/deep-copy",
             "version": "1.11.0",
             "source": {
@@ -3113,23 +3340,23 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.15",
+            "version": "9.2.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2e9da11878c4202f97915c1cb4bb1ca318a63f5f"
+                "reference": "2593003befdcc10db5e213f9f28814f5aa8ac073"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2e9da11878c4202f97915c1cb4bb1ca318a63f5f",
-                "reference": "2e9da11878c4202f97915c1cb4bb1ca318a63f5f",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2593003befdcc10db5e213f9f28814f5aa8ac073",
+                "reference": "2593003befdcc10db5e213f9f28814f5aa8ac073",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "ext-xmlwriter": "*",
-                "nikic/php-parser": "^4.13.0",
+                "nikic/php-parser": "^4.14",
                 "php": ">=7.3",
                 "phpunit/php-file-iterator": "^3.0.3",
                 "phpunit/php-text-template": "^2.0.2",
@@ -3178,7 +3405,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.15"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.16"
             },
             "funding": [
                 {
@@ -3186,7 +3413,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-03-07T09:28:20+00:00"
+            "time": "2022-08-20T05:26:47+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -3431,16 +3658,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.21",
+            "version": "9.5.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "0e32b76be457de00e83213528f6bb37e2a38fcb1"
+                "reference": "e329ac6e8744f461518272612a479fde958752fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/0e32b76be457de00e83213528f6bb37e2a38fcb1",
-                "reference": "0e32b76be457de00e83213528f6bb37e2a38fcb1",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e329ac6e8744f461518272612a479fde958752fe",
+                "reference": "e329ac6e8744f461518272612a479fde958752fe",
                 "shasum": ""
             },
             "require": {
@@ -3517,7 +3744,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.21"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.22"
             },
             "funding": [
                 {
@@ -3529,7 +3756,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-06-19T12:14:25+00:00"
+            "time": "2022-08-20T08:25:46+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -4664,7 +4891,9 @@
     "minimum-stability": "beta",
     "stability-flags": {
         "amphp/http-server": 20,
+        "cspray/annotated-container": 20,
         "cspray/labrador-async-event": 20,
+        "amphp/log": 10,
         "amphp/http-client": 10,
         "amphp/phpunit-util": 10
     },

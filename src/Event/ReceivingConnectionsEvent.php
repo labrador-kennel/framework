@@ -19,7 +19,7 @@ class ReceivingConnectionsEvent implements Event {
     }
 
     public function getName() : string {
-        return ApplicationEvent::AddRoutes->value;
+        return ApplicationEvent::ReceivingConnections->value;
     }
 
     public function getTarget() : HttpServer {

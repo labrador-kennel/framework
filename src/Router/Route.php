@@ -10,49 +10,22 @@ declare(strict_types=1);
 
 namespace Cspray\Labrador\Http\Router;
 
-class Route {
+use Cspray\Labrador\Http\Controller\Controller;
 
-    private $pattern;
-    private $method;
-    private $controllerClass;
+final class Route {
 
-    /**
-     * @param string $pattern
-     * @param string $method
-     * @param string $controllerClass
-     */
-    public function __construct(string $pattern, string $method, string $controllerClass) {
-        $this->pattern = $pattern;
-        $this->method = $method;
-        $this->controllerClass = $controllerClass;
+    public function __construct(
+        public readonly RequestMapping $requestMapping,
+        public readonly Controller     $controller
+    ) {}
+
+    public function toString() : string {
+        return sprintf(
+            "%s\t%s\t\t%s",
+            $this->requestMapping->method->value,
+            $this->requestMapping->pathPattern,
+            $this->controller->toString()
+        );
     }
 
-    /**
-     * @return string
-     */
-    public function getPattern() : string {
-        return $this->pattern;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMethod() : string {
-        return $this->method;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getControllerDescription() : string {
-        return $this->controllerClass;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString() : string {
-        $format = "%s\t%s\t\t%s";
-        return sprintf($format, $this->method, $this->pattern, $this->controllerClass);
-    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\DependencyInjection;
+namespace Cspray\Labrador\Http\Middleware;
 
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 
@@ -8,8 +8,13 @@ use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 final class ApplicationMiddleware implements ServiceAttribute {
 
     public function __construct(
+        private readonly Priority $priority = Priority::Low,
         private readonly array $profiles = []
     ) {}
+
+    public function getPriority() : Priority {
+        return $this->priority;
+    }
 
     public function getProfiles() : array {
         return $this->profiles;

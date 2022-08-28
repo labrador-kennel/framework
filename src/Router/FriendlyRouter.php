@@ -5,6 +5,7 @@ namespace Cspray\Labrador\Http\Router;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Cspray\Labrador\Http\Controller\Controller;
+use Cspray\Labrador\Http\HttpMethod;
 
 /**
  * A Router that acts as a decorator over other Router implementations and provides convenience methods for defining
@@ -31,7 +32,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function get(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute('GET', $pattern, $controller, ...$middlewares);
+        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Get, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -44,7 +45,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function post(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute('POST', $pattern, $controller, ...$middlewares);
+        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Post, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -57,7 +58,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function put(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute('PUT', $pattern, $controller, ...$middlewares);
+        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Put, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -70,7 +71,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function delete(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute('DELETE', $pattern, $controller, ...$middlewares);
+        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Delete, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -104,56 +105,26 @@ final class FriendlyRouter implements Router {
         return !empty($this->mounts['prefix']);
     }
 
-    /**
-     * @param string $method
-     * @param string $pattern
-     * @param Controller $controller
-     * @param Middleware[] $middlewares
-     * @return void
-     */
     public function addRoute(
-        string $method,
-        string $pattern,
-        Controller $controller,
+        RequestMapping $requestMapping,
+        Controller     $controller,
         Middleware ...$middlewares
-    ) : void {
-        // @todo implement FastRouterRouteCollector and parse required data from Route objects
+    ) : Route {
         if ($this->isMounted()) {
-            $pattern = implode('', $this->mounts['prefix']) . $pattern;
+            $pattern = implode('', $this->mounts['prefix']) . $requestMapping->pathPattern;
+            $requestMapping = $requestMapping->withPath($pattern);
             $middlewares = array_merge([], $this->mounts['middleware'], $middlewares);
         }
 
-        $this->router->addRoute($method, $pattern, $controller, ...$middlewares);
+        return $this->router->addRoute($requestMapping, $controller, ...$middlewares);
     }
 
-    /**
-     * @param Request $request
-     * @return Controller
-     */
-    public function match(Request $request): Controller {
+    public function match(Request $request): RoutingResolution {
         return $this->router->match($request);
     }
 
-    /**
-     * @return Route[]
-     */
     public function getRoutes(): array {
         return $this->router->getRoutes();
     }
 
-    public function setNotFoundController(Controller $controller): void {
-        $this->router->setNotFoundController($controller);
-    }
-
-    public function getNotFoundController(): Controller {
-        return $this->router->getNotFoundController();
-    }
-
-    public function setMethodNotAllowedController(Controller $controller): void {
-        $this->router->setMethodNotAllowedController($controller);
-    }
-
-    public function getMethodNotAllowedController(): Controller {
-        return $this->router->getMethodNotAllowedController();
-    }
 }
