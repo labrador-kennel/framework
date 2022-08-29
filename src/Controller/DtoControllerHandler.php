@@ -24,6 +24,7 @@ use League\Uri\Contracts\QueryInterface;
 use Psr\Http\Message\UriInterface;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
+use ReflectionFunction;
 use ReflectionNamedType;
 use ReflectionParameter;
 use function Cspray\AnnotatedContainer\autowiredParams;
@@ -42,9 +43,8 @@ final class DtoControllerHandler implements Controller {
         private readonly DtoFactory $dtoFactory,
         private readonly string $description
     ) {
-        $reflection = new \ReflectionFunction($this->closure);
         $paramMap = [];
-        foreach ($reflection->getParameters() as $reflectionParameter) {
+        foreach ((new ReflectionFunction($this->closure))->getParameters() as $reflectionParameter) {
             $factory = $this->getParamFactoryForDtoInjectionAttribute($reflectionParameter);
             if ($factory instanceof Closure) {
                 $paramMap[$reflectionParameter->getName()] = $factory;
@@ -151,6 +151,8 @@ final class DtoControllerHandler implements Controller {
             return fn(Request $request) => Query::createFromUri($request->getUri());
         } else if ($parameterType === RequestBody::class) {
             return fn(Request $request) => $request->getBody();
+        } else if ($parameterType === Request::class) {
+            return fn(Request $request) => $request;
         }
 
         return null;

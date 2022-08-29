@@ -10,16 +10,17 @@ use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap
 use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
 use Cspray\Labrador\AsyncEvent\EventEmitter;
 use Cspray\Labrador\Http\Bootstrap;
+use Cspray\Labrador\Http\ErrorHandlerFactory;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\Route;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Test\BootstrapAwareTestTrait;
 use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
 use Cspray\Labrador\Http\Test\Helper\VfsDirectoryResolver;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\BarMiddleware;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\BazMiddleware;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\FooMiddleware;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\QuxMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\BarMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\BazMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\FooMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\QuxMiddleware;
 use Cspray\Labrador\HttpDummyApp\Controller\CheckDtoController;
 use Monolog\Logger;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
@@ -33,7 +34,7 @@ use Psr\Log\LoggerInterface;
  */
 class BootstrapTest extends TestCase {
 
-    private const ExpectedControllerCount = 21;
+    private const ExpectedControllerCount = 28;
 
     use BootstrapAwareTestTrait;
 
@@ -112,26 +113,9 @@ class BootstrapTest extends TestCase {
 
         $container = $bootstrap->bootstrapApplication()->container;
 
-        $errorHandler = $container->get(ErrorHandler::class);
+        $errorHandlerFactory = $container->get(ErrorHandlerFactory::class);
 
-        self::assertInstanceOf(DefaultErrorHandler::class, $errorHandler);
-    }
-
-    public function testCorrectlyConfiguredAnnotatedContainerAllowsErrorHandlerOverwriting() : void {
-        $this->configureAnnotatedContainer();
-
-        $errorHandler = $this->getMockBuilder(ErrorHandler::class)->getMock();
-        $bootstrap = new Bootstrap(
-            $this->containerBootstrap,
-            profiles: ['default', 'integration-test'],
-            errorHandler: $errorHandler
-        );
-
-        $container = $bootstrap->bootstrapApplication()->container;
-
-        $actual = $container->get(ErrorHandler::class);
-
-        self::assertSame($errorHandler, $actual);
+        self::assertInstanceOf(DefaultErrorHandler::class, $errorHandlerFactory->createErrorHandler());
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerHttpServer() : void {

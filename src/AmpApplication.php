@@ -14,6 +14,7 @@ use Cspray\Labrador\AsyncEvent\EventEmitter;
 use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Event\AddRoutesEvent;
 use Cspray\Labrador\Http\Event\ApplicationStartedEvent;
+use Cspray\Labrador\Http\Event\ApplicationStoppedEvent;
 use Cspray\Labrador\Http\Event\ReceivingConnectionsEvent;
 use Cspray\Labrador\Http\Event\RequestReceivedEvent;
 use Cspray\Labrador\Http\Event\ResponseSentEvent;
@@ -34,11 +35,11 @@ final class AmpApplication implements Application, RequestHandler {
     private ?ErrorHandler $errorHandler = null;
 
     public function __construct(
-        private readonly HttpServer $httpServer,
+        private readonly HttpServer                 $httpServer,
         private readonly ErrorHandlerFactory $errorHandlerFactory,
-        private readonly Router $router,
-        private readonly EventEmitter $emitter,
-        private readonly LoggerInterface $logger
+        private readonly Router                     $router,
+        private readonly EventEmitter               $emitter,
+        private readonly LoggerInterface            $logger
     ) {}
 
     public function getRouter() : Router {
@@ -66,10 +67,15 @@ final class AmpApplication implements Application, RequestHandler {
     }
 
     public function stop() : void {
+        $this->httpServer->stop();
+
+        $this->emitter->emit(new ApplicationStoppedEvent($this))->await();
+
+        $this->logger->info('Labrador HTTP application stopping.');
     }
 
     public function handleRequest(Request $request) : Response {
-        $requestId =  Uuid::uuid6();
+        $requestId = Uuid::uuid6();
         $request->setAttribute(RequestAttribute::RequestId->value, $requestId);
         $this->logger->info(
             'Started processing {method} {url} - Request id: {requestId}.',
@@ -85,8 +91,23 @@ final class AmpApplication implements Application, RequestHandler {
 
         if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
             $response = $this->getErrorHandler()->handleError(Status::NOT_FOUND, 'Not Found', $request);
+            $this->logger->notice(
+                'Did not find matching controller for Request id: {requestId}.',
+                [
+                    'requestId' => $requestId->toString()
+                ]
+            );
         } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
             $response = $this->getErrorHandler()->handleError(Status::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
+            $path = $request->getUri()->getPath() === '' ? '/' : $request->getUri()->getPath();
+            $this->logger->notice(
+                'Method {method} is not allowed on path {path} for Request id: {requestId}.',
+                [
+                    'method' => $request->getMethod(),
+                    'path' => $path,
+                    'requestId' => $requestId->toString()
+                ]
+            );
         } else {
             $controller = $routingResolution->controller;
 
@@ -111,9 +132,15 @@ final class AmpApplication implements Application, RequestHandler {
             }
 
             $response = Middleware\stack($controller, ...$middlewares)->handleRequest($request);
-
-            $this->emitter->queue(new ResponseSentEvent($response, $requestId));
         }
+
+        $this->emitter->queue(new ResponseSentEvent($response, $requestId));
+        $this->logger->info(
+            'Finished processing Request id: {requestId}.',
+            [
+                'requestId' => $requestId->toString()
+            ]
+        );
 
         return $response;
     }

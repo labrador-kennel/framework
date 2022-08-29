@@ -381,6 +381,22 @@ final class DtoControllerHandlerTest extends TestCase {
         self::assertSame('Received widget as Dto ' . $expectedJson, $response->getBody()->read());
     }
 
+    public function testInvokeObjectRequestByType() : void {
+        $controller = new CheckDtoController();
+        $subject = $this->subject($controller->checkRequest(...), 'checkRequest');
+
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/some/path?foo=bar&bar=baz')
+        );
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame(200, $response->getStatus());
+        self::assertSame('Received Request instance for /some/path', $response->getBody()->read());
+    }
+
     // ========================================== Test Bad Attributes ==================================================
 
     public function testInvokeObjectWithBadHeaders() : void {

@@ -3,26 +3,22 @@
 namespace Cspray\Labrador\Http\DependencyInjection;
 
 use Amp\Http\Server\Middleware;
-use Closure;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Observer;
 use Cspray\AnnotatedContainer\ContainerDefinition;
 use Cspray\AnnotatedContainer\Definition\ServiceDefinition;
 use Cspray\Labrador\Http\Application;
 use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Controller\Dto\Delete;
 use Cspray\Labrador\Http\Controller\Dto\DtoController;
-use Cspray\Labrador\Http\Controller\Dto\Get;
-use Cspray\Labrador\Http\Controller\Dto\Post;
-use Cspray\Labrador\Http\Controller\Dto\Put;
 use Cspray\Labrador\Http\Controller\DtoControllerHandler;
 use Cspray\Labrador\Http\Controller\HttpController;
-use Cspray\Labrador\Http\HttpMethod;
+use Cspray\Labrador\Http\Controller\RouteMappingAttribute;
 use Cspray\Labrador\Http\Middleware\ApplicationMiddleware;
 use Cspray\Labrador\Http\Router\RequestMapping;
 use Cspray\Labrador\Http\Router\Route;
 use Cspray\Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
+use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
 use function Cspray\AnnotatedContainer\autowiredParams;
@@ -71,38 +67,15 @@ class AutowireObserver implements Observer {
                     $dtoController = $container->get($serviceType);
                     assert(is_object($dtoController));
                     foreach ($reflection->getMethods() as $reflectionMethod) {
-                        $get = $reflectionMethod->getAttributes(Get::class);
-                        if ($get !== []) {
-                            $route = $router->addRoute(
-                                RequestMapping::fromMethodAndPath(HttpMethod::Get, $get[0]->newInstance()->path),
-                                $this->createDtoHandler($container, $dtoController, $reflectionMethod)
-                            );
-                            $this->logAddedRoute($route, $logger);
-                        }
+                        $routeMappingAttributes = $reflectionMethod->getAttributes(RouteMappingAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
+                        foreach ($routeMappingAttributes as $routeMappingAttribute) {
+                            $routeMapping = $routeMappingAttribute->newInstance();
+                            assert($routeMapping instanceof RouteMappingAttribute);
 
-                        $post = $reflectionMethod->getAttributes(Post::class);
-                        if ($post !== []) {
                             $route = $router->addRoute(
-                                RequestMapping::fromMethodAndPath(HttpMethod::Post, $post[0]->newInstance()->path),
-                                $this->createDtoHandler($container, $dtoController, $reflectionMethod)
-                            );
-                            $this->logAddedRoute($route, $logger);
-                        }
-
-                        $put = $reflectionMethod->getAttributes(Put::class);
-                        if ($put !== []) {
-                            $route = $router->addRoute(
-                                RequestMapping::fromMethodAndPath(HttpMethod::Put, $put[0]->newInstance()->path),
-                                $this->createDtoHandler($container, $dtoController, $reflectionMethod)
-                            );
-                            $this->logAddedRoute($route, $logger);
-                        }
-
-                        $delete = $reflectionMethod->getAttributes(Delete::class);
-                        if ($delete !== []) {
-                            $route = $router->addRoute(
-                                RequestMapping::fromMethodAndPath(HttpMethod::Delete, $delete[0]->newInstance()->path),
-                                $this->createDtoHandler($container, $dtoController, $reflectionMethod)
+                                RequestMapping::fromMethodAndPath($routeMapping->getHttpMethod(), $routeMapping->getPath()),
+                                $this->createDtoHandler($container, $dtoController, $reflectionMethod),
+                                ...$this->getMiddlewareFromRouteMappingAttribute($container, $routeMapping)
                             );
                             $this->logAddedRoute($route, $logger);
                         }
@@ -160,8 +133,9 @@ class AutowireObserver implements Observer {
         assert($controller instanceof Controller);
 
         $route = $router->addRoute(
-            RequestMapping::fromMethodAndPath($httpController->getMethod(), $httpController->getRoutePattern()),
-            $controller
+            RequestMapping::fromMethodAndPath($httpController->getHttpMethod(), $httpController->getPath()),
+            $controller,
+            ...$this->getMiddlewareFromRouteMappingAttribute($container, $httpController)
         );
         $this->logAddedRoute($route, $logger);
     }
@@ -209,5 +183,18 @@ class AutowireObserver implements Observer {
                 'priority' => $appMiddleware->getPriority()->name
             ]
         );
+    }
+
+    /**
+     * @return list<Middleware>
+     */
+    private function getMiddlewareFromRouteMappingAttribute(AnnotatedContainer $container, RouteMappingAttribute $attr) : array {
+        $middleware = [];
+        foreach ($attr->getMiddleware() as $middlewareClass) {
+            $middlewareService = $container->get($middlewareClass);
+            assert($middlewareService instanceof Middleware);
+            $middleware[] = $middlewareService;
+        }
+        return $middleware;
     }
 }

@@ -12,10 +12,11 @@ use Cspray\Labrador\Http\Application;
 use Cspray\Labrador\Http\Bootstrap;
 use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
 use Cspray\Labrador\Http\Test\Helper\VfsDirectoryResolver;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\BarMiddleware;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\BazMiddleware;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\FooMiddleware;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\QuxMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\BarMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\BazMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\FooMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\QuxMiddleware;
+use Cspray\Labrador\HttpDummyApp\CountingService;
 use Cspray\Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
@@ -187,6 +188,49 @@ XML;
 
         self::assertSame(Status::OK, $response->getStatus());
         self::assertSame('Received request to delete widget with id ' . $id->toString(), $response->getBody()->buffer());
+    }
+
+    public function testCountingServiceCalled() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/counting-service', 'GET');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Received method and called service GET', $response->getBody()->buffer());
+        self::assertSame(1, self::$container->get(CountingService::class)->getIt());
+    }
+
+    public function testRouteMiddlewareRespected() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/hello/middleware', 'GET');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Hello, Universe!', $response->getBody()->buffer());
+    }
+
+    public function methodDataProvider() : array {
+        return [
+            ['GET'],
+            ['POST'],
+            ['PUT'],
+            ['DELETE']
+        ];
+    }
+
+    /**
+     * @dataProvider methodDataProvider
+     */
+    public function testDtoRouteMiddlewareRespected(string $method) : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/middleware', $method);
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame($method . ' - Universe', $response->getBody()->buffer());
     }
 
 }

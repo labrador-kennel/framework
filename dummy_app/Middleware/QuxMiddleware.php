@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\AppMiddleware;
+namespace Cspray\Labrador\HttpDummyApp\Middleware;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
@@ -10,8 +10,8 @@ use Cspray\Labrador\Http\Middleware\ApplicationMiddleware;
 use Cspray\Labrador\Http\Middleware\Priority;
 use Cspray\Labrador\HttpDummyApp\MiddlewareCallRegistry;
 
-#[ApplicationMiddleware(priority: Priority::Low)]
-class BarMiddleware implements Middleware {
+#[ApplicationMiddleware(Priority::Critical)]
+class QuxMiddleware implements Middleware {
 
     public function __construct(
         private readonly MiddlewareCallRegistry $registry
@@ -19,7 +19,7 @@ class BarMiddleware implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
         $this->registry->called($this);
-        $request->setAttribute('labrador.http-dummy-app.middleware.bar', 'low');
+        $request->setAttribute('labrador.http-dummy-app.middleware.qux', 'critical');
         return $requestHandler->handleRequest($request);
     }
 }
