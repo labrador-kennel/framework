@@ -2,6 +2,7 @@
 
 namespace Cspray\Labrador\HttpDummyApp\Controller;
 
+use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Cspray\Labrador\Http\Controller\Dto\Body;
@@ -17,6 +18,8 @@ use Cspray\Labrador\Http\Controller\Dto\Put;
 use Cspray\Labrador\Http\Controller\Dto\QueryParams;
 use Cspray\Labrador\Http\Controller\Dto\RouteParam;
 use Cspray\Labrador\Http\Controller\Dto\Url;
+use Cspray\Labrador\HttpDummyApp\CountingService;
+use Cspray\Labrador\HttpDummyApp\Middleware\ControllerSpecificMiddleware;
 use Cspray\Labrador\HttpDummyApp\Model\Widget;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
@@ -124,6 +127,33 @@ class CheckDtoController {
     #[Delete('/dto/widget/{id}')]
     public function deleteWidget(#[RouteParam('id')] string $id) : Response {
         return new Response(body: 'Received request to delete widget with id ' . $id);
+    }
+
+    #[Get('/dto/request')]
+    public function checkRequest(Request $request) : Response {
+        return new Response(body: 'Received Request instance for ' . $request->getUri()->getPath());
+    }
+
+    #[Get('/dto/counting-service')]
+    public function checkRequestInjectionWithService(#[Method] string $method, CountingService $service) : Response {
+        $service->doIt();
+        return new Response(body: 'Received method and called service ' . $method);
+    }
+
+    #[
+        Get('/dto/middleware', middleware: [ControllerSpecificMiddleware::class]),
+        Post('/dto/middleware', middleware: [ControllerSpecificMiddleware::class]),
+        Put('/dto/middleware', middleware: [ControllerSpecificMiddleware::class]),
+        Delete('/dto/middleware', middleware: [ControllerSpecificMiddleware::class])
+    ]
+    public function checkMiddleware(#[Method] string $method, Request $request) : Response {
+        return new Response(
+            body: sprintf(
+                '%s - %s',
+                $method,
+                $request->getAttribute('labrador.http-dummy-app.routeMiddleware')
+            )
+        );
     }
 
 }

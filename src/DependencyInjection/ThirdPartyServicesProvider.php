@@ -2,7 +2,6 @@
 
 namespace Cspray\Labrador\Http\DependencyInjection;
 
-use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServer;
 use Cspray\AnnotatedContainer\Compile\ContainerDefinitionBuilderContext;
 use Cspray\AnnotatedContainer\Compile\ContainerDefinitionBuilderContextConsumer;
@@ -15,6 +14,5 @@ class ThirdPartyServicesProvider implements ContainerDefinitionBuilderContextCon
     public function consume(ContainerDefinitionBuilderContext $context) : void {
         service($context, objectType(HttpServer::class));
         service($context, objectType(LoggerInterface::class));
-        service($context, objectType(ErrorHandler::class));
     }
 }

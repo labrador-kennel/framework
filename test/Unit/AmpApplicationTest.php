@@ -9,9 +9,10 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Cspray\Labrador\Http\AmpApplication;
-use Cspray\Labrador\Http\ErrorHandlerFactory;
+use Cspray\Labrador\Http\DefaultErrorHandlerFactory;
 use Cspray\Labrador\Http\Event\AddRoutesEvent;
 use Cspray\Labrador\Http\Event\ApplicationStartedEvent;
+use Cspray\Labrador\Http\Event\ApplicationStoppedEvent;
 use Cspray\Labrador\Http\Event\ReceivingConnectionsEvent;
 use Cspray\Labrador\Http\Event\RequestReceivedEvent;
 use Cspray\Labrador\Http\Event\ResponseSentEvent;
@@ -21,10 +22,11 @@ use Cspray\Labrador\Http\Middleware\Priority;
 use Cspray\Labrador\Http\RequestAttribute;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
 use Cspray\Labrador\Http\Router\RequestMapping;
+use Cspray\Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
 use Cspray\Labrador\Http\Test\Unit\Stub\EventEmitterStub;
 use Cspray\Labrador\Http\Test\Unit\Stub\HttpServerStub;
 use Cspray\Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
-use Cspray\Labrador\HttpDummyApp\AppMiddleware\BarMiddleware;
+use Cspray\Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Cspray\Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
@@ -52,8 +54,6 @@ final class AmpApplicationTest extends TestCase {
         parent::setUp();
         $this->httpServer = new HttpServerStub();
         $this->errorHandler = $this->getMockBuilder(ErrorHandler::class)->getMock();
-        $errorHandlerFactory = new ErrorHandlerFactory();
-        $errorHandlerFactory->setErrorHandler($this->errorHandler);
         $this->router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
             function($data) { return new GcbDispatcher($data); }
@@ -62,7 +62,7 @@ final class AmpApplicationTest extends TestCase {
         $this->testHandler = new TestHandler();
         $this->subject = new AmpApplication(
             $this->httpServer,
-            $errorHandlerFactory,
+            new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()])
@@ -166,6 +166,13 @@ final class AmpApplicationTest extends TestCase {
         self::assertTrue($this->testHandler->hasInfoThatContains('Application server is responding to requests.'));
     }
 
+    public function testApplicationStoppedHasStoppingLogs() : void {
+        $this->subject->start();
+        $this->subject->stop();
+
+        self::assertTrue($this->testHandler->hasInfoThatContains('Labrador HTTP application stopping.'));
+    }
+
     public function testApplicationReceivesRequestLogsControllerMatched() : void {
         $this->subject->start();
 
@@ -204,9 +211,16 @@ final class AmpApplicationTest extends TestCase {
             ],
             LogLevel::INFO
         ));
+        self::assertTrue($this->testHandler->hasRecord(
+            [
+                'message' => 'Finished processing Request id: ' . $id . '.',
+                'requestId' => $id
+            ],
+            LogLevel::INFO
+        ));
     }
 
-    public function testRouteNotFoundCallsErrorHandler() : void {
+    public function testRouteNotFoundCallsErrorHandlerAndIsLogged() : void {
         $this->subject->start();
 
         $this->emitter->clearEmittedEvents();
@@ -224,10 +238,19 @@ final class AmpApplicationTest extends TestCase {
 
         $actual = $this->subject->handleRequest($request);
 
+        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
+
         self::assertSame($response, $actual);
+        self::assertTrue($this->testHandler->hasRecord(
+            [
+                'message' => 'Did not find matching controller for Request id: ' . $id . '.',
+                'requestId' => $id->toString()
+            ],
+            LogLevel::NOTICE
+        ));
     }
 
-    public function testRouteMethodNotAllowedCallsErrorHandler() : void {
+    public function testRouteMethodNotAllowedCallsErrorHandlerAndIsLogged() : void {
         $this->subject->start();
 
         $this->emitter->clearEmittedEvents();
@@ -250,7 +273,20 @@ final class AmpApplicationTest extends TestCase {
 
         $actual = $this->subject->handleRequest($request);
 
+        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
+
         self::assertSame($response, $actual);
+        self::assertTrue($this->testHandler->hasRecord(
+            [
+                'message' => 'Method GET is not allowed on path / for Request id: ' . $id . '.',
+                'method' => 'GET',
+                'path' => '/',
+                'requestId' => $id->toString()
+            ],
+            LogLevel::NOTICE
+        ));
+
+        self::assertCount(2, $this->emitter->getQueuedEvents());
     }
 
     public function testMiddlewaresCalled() : void {
@@ -269,8 +305,7 @@ final class AmpApplicationTest extends TestCase {
         );
 
         $this->subject->addMiddleware(
-            new BarMiddleware(new MiddlewareCallRegistry()),
-            Priority::Low
+            new BarMiddleware(new MiddlewareCallRegistry())
         );
 
         $this->httpServer->receiveRequest($request);
@@ -281,6 +316,29 @@ final class AmpApplicationTest extends TestCase {
         ];
 
         self::assertSame($expected, $request->getAttributes());
+    }
+
+    public function testStartAndStopDelegatedToHttpServer() : void {
+        self::assertSame(HttpServerStatus::Stopped, $this->httpServer->getStatus());
+
+        $this->subject->start();
+
+        self::assertSame(HttpServerStatus::Started, $this->httpServer->getStatus());
+
+        $this->subject->stop();
+
+        self::assertSame(HttpServerStatus::Stopped, $this->httpServer->getStatus());
+    }
+
+    public function testStopEventEmitted() : void {
+        $this->subject->start();
+
+        $this->emitter->clearEmittedEvents();
+
+        $this->subject->stop();
+
+        self::assertCount(1, $this->emitter->getEmittedEvents());
+        self::assertInstanceOf(ApplicationStoppedEvent::class, $this->emitter->getEmittedEvents()[0]);
     }
 
 }

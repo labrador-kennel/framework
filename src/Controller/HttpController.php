@@ -2,29 +2,40 @@
 
 namespace Cspray\Labrador\Http\Controller;
 
+use Amp\Http\Server\Middleware;
+use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 use Cspray\Labrador\Http\HttpMethod;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
-final class HttpController implements ServiceAttribute {
+#[Attribute(Attribute::TARGET_CLASS)]
+final class HttpController implements ServiceAttribute, RouteMappingAttribute {
 
-    /**
-     * @param HttpMethod $method
-     * @param string $pattern
-     * @param list<string> $profiles
-     */
     public function __construct(
         private readonly HttpMethod $method,
         private readonly string $pattern,
+        /**
+         * @var list<class-string<Middleware>> $middleware
+         */
+        private readonly array $middleware = [],
+        /**
+         * @var list<string> $profiles
+         */
         private readonly array $profiles = []
     ) {}
 
-    public function getMethod() : HttpMethod {
+    public function getHttpMethod() : HttpMethod {
         return $this->method;
     }
 
-    public function getRoutePattern() : string {
+    public function getPath() : string {
         return $this->pattern;
+    }
+
+    /**
+     * @return list<class-string<Middleware>>
+     */
+    public function getMiddleware() : array {
+        return $this->middleware;
     }
 
     public function getProfiles() : array {

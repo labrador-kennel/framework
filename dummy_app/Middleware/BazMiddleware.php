@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\AppMiddleware;
+namespace Cspray\Labrador\HttpDummyApp\Middleware;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;

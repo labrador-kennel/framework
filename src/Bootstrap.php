@@ -13,17 +13,10 @@ final class Bootstrap {
          * @var list<string> $profiles
          */
         private readonly array $profiles = ['default'],
-        private readonly ?ErrorHandler $errorHandler = null
     ) {}
 
     public function bootstrapApplication() : BootstrapResults {
         $container = $this->bootstrap->bootstrapContainer(profiles: $this->profiles);
-
-        if ($this->errorHandler instanceof ErrorHandler) {
-            $errorHandlerFactory = $container->get(ErrorHandlerFactory::class);
-            assert($errorHandlerFactory instanceof ErrorHandlerFactory);
-            $errorHandlerFactory->setErrorHandler($this->errorHandler);
-        }
 
         $app = $container->get(Application::class);
         assert($app instanceof Application);
