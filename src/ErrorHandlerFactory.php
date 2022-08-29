@@ -10,7 +10,7 @@ use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 #[Service]
 class ErrorHandlerFactory {
 
-    private ?ErrorHandler $errorHandler;
+    private ?ErrorHandler $errorHandler = null;
 
     #[ServiceDelegate]
     public function createErrorHandler() : ErrorHandler {

@@ -2,7 +2,9 @@
 
 namespace Cspray\Labrador\Http\Controller\Dto;
 
-#[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class Body {
+use Attribute;
+
+#[Attribute(Attribute::TARGET_PARAMETER)]
+final class Body implements DtoInjectionAttribute {
 
 }

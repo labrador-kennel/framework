@@ -10,7 +10,7 @@ use Amp\Http\Server\Response;
 final class MiddlewareController implements Controller {
 
     private Controller $controller;
-    /** @var list<Middleware> */
+    /** @var Middleware[] */
     private array $middlewares;
     private RequestHandler $stack;
 

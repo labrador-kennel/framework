@@ -3,6 +3,6 @@
 namespace Cspray\Labrador\Http\Controller\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-final class Method {
+final class Method implements DtoInjectionAttribute {
 
 }

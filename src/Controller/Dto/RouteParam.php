@@ -3,7 +3,7 @@
 namespace Cspray\Labrador\Http\Controller\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class RouteParam {
+class RouteParam implements DtoInjectionAttribute {
 
     public function __construct(
         public readonly string $name

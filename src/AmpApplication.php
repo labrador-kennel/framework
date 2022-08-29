@@ -11,6 +11,7 @@ use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Cspray\Labrador\AsyncEvent\EventEmitter;
+use Cspray\Labrador\Http\Controller\Controller;
 use Cspray\Labrador\Http\Event\AddRoutesEvent;
 use Cspray\Labrador\Http\Event\ApplicationStartedEvent;
 use Cspray\Labrador\Http\Event\ReceivingConnectionsEvent;
@@ -26,8 +27,11 @@ use Ramsey\Uuid\Uuid;
 #[Service]
 final class AmpApplication implements Application, RequestHandler {
 
+    /**
+     * @var array<string, Middleware[]>
+     */
     private array $middleware = [];
-    private ErrorHandler $errorHandler;
+    private ?ErrorHandler $errorHandler = null;
 
     public function __construct(
         private readonly HttpServer $httpServer,
@@ -55,9 +59,7 @@ final class AmpApplication implements Application, RequestHandler {
         $this->logger->info('Allowing routes to be added through event system.');
         $this->emitter->emit(new AddRoutesEvent($this->router))->await();
 
-        $this->errorHandler = $this->errorHandlerFactory->createErrorHandler();
-
-        $this->httpServer->start($this, $this->errorHandler);
+        $this->httpServer->start($this, $this->getErrorHandler());
 
         $this->logger->info('Application server is responding to requests.');
         $this->emitter->emit(new ReceivingConnectionsEvent($this->httpServer))->await();
@@ -82,11 +84,13 @@ final class AmpApplication implements Application, RequestHandler {
         $routingResolution = $this->router->match($request);
 
         if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
-            $response = $this->errorHandler->handleError(Status::NOT_FOUND, 'Not Found', $request);
+            $response = $this->getErrorHandler()->handleError(Status::NOT_FOUND, 'Not Found', $request);
         } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
-            $response = $this->errorHandler->handleError(Status::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
+            $response = $this->getErrorHandler()->handleError(Status::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
         } else {
             $controller = $routingResolution->controller;
+
+            assert($controller instanceof Controller);
 
             $this->logger->info(
                 'Found matching controller, {controller}, for Request id: {requestId}.',
@@ -112,5 +116,13 @@ final class AmpApplication implements Application, RequestHandler {
         }
 
         return $response;
+    }
+
+    private function getErrorHandler() : ErrorHandler {
+        if ($this->errorHandler === null) {
+            $this->errorHandler = $this->errorHandlerFactory->createErrorHandler();
+        }
+
+        return $this->errorHandler;
     }
 }

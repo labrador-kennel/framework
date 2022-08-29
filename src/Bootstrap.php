@@ -9,6 +9,9 @@ final class Bootstrap {
 
     public function __construct(
         private readonly AnnotatedContainerBootstrap $bootstrap,
+        /**
+         * @var list<string> $profiles
+         */
         private readonly array $profiles = ['default'],
         private readonly ?ErrorHandler $errorHandler = null
     ) {}
@@ -17,10 +20,13 @@ final class Bootstrap {
         $container = $this->bootstrap->bootstrapContainer(profiles: $this->profiles);
 
         if ($this->errorHandler instanceof ErrorHandler) {
-            $container->get(ErrorHandlerFactory::class)->setErrorHandler($this->errorHandler);
+            $errorHandlerFactory = $container->get(ErrorHandlerFactory::class);
+            assert($errorHandlerFactory instanceof ErrorHandlerFactory);
+            $errorHandlerFactory->setErrorHandler($this->errorHandler);
         }
 
         $app = $container->get(Application::class);
+        assert($app instanceof Application);
 
         return new BootstrapResults($app, $container);
     }

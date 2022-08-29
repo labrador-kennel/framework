@@ -9,12 +9,12 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 interface HttpServerConfiguration {
 
     /**
-     * @return InternetAddress
+     * @return list<InternetAddress>
      */
     public function getUnencryptedInternetAddresses() : array;
 
     /**
-     * @return InternetAddress
+     * @return list<InternetAddress>
      */
     public function getEncryptedInternetAddresses() : array;
 
