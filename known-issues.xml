@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="5.x-dev@">
+  <file src="src/AmpApplication.php">
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>start</code>
+      <code>stop</code>
+    </UndefinedInterfaceMethod>
+  </file>
+</files>
