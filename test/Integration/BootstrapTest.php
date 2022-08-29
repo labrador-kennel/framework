@@ -11,6 +11,7 @@ use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
 use Cspray\Labrador\AsyncEvent\EventEmitter;
 use Cspray\Labrador\Http\Bootstrap;
 use Cspray\Labrador\Http\Router\FastRouteRouter;
+use Cspray\Labrador\Http\Router\Route;
 use Cspray\Labrador\Http\Router\Router;
 use Cspray\Labrador\Http\Test\BootstrapAwareTestTrait;
 use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
@@ -19,6 +20,7 @@ use Cspray\Labrador\HttpDummyApp\AppMiddleware\BarMiddleware;
 use Cspray\Labrador\HttpDummyApp\AppMiddleware\BazMiddleware;
 use Cspray\Labrador\HttpDummyApp\AppMiddleware\FooMiddleware;
 use Cspray\Labrador\HttpDummyApp\AppMiddleware\QuxMiddleware;
+use Cspray\Labrador\HttpDummyApp\Controller\CheckDtoController;
 use Monolog\Logger;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
@@ -191,5 +193,84 @@ class BootstrapTest extends TestCase {
         self::assertStringContainsString('Adding ' . BazMiddleware::class . ' to application with Medium priority.', StreamBuffer::getBuffer());
         self::assertStringContainsString('Adding ' . FooMiddleware::class . ' to application with High priority.', StreamBuffer::getBuffer());
         self::assertStringContainsString('Adding ' . QuxMiddleware::class . ' to application with Critical priority.', StreamBuffer::getBuffer());
+    }
+
+    public function testDtoControllerRoutedWithCorrectControllerDescription() : void {
+        $this->configureAnnotatedContainer();
+
+        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $container = $bootstrap->bootstrapApplication()->container;
+
+        $router = $container->get(Router::class);
+
+        self::assertInstanceOf(Router::class, $router);
+
+        $routes = array_filter($router->getRoutes(), fn(Route $route) => $route->requestMapping->pathPattern === '/dto/headers');
+
+        self::assertCount(1, $routes);
+
+        $route = array_shift($routes);
+
+        self::assertSame(sprintf('DtoHandler<%s::checkHeaders>', CheckDtoController::class), $route->controller->toString());
+    }
+
+    public function testDtoControllerGetRouteLogged() : void {
+        $this->configureAnnotatedContainer();
+
+        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap->bootstrapApplication();
+
+        self::assertStringContainsString(
+            sprintf(
+                'labrador-http.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
+                CheckDtoController::class
+            ),
+            StreamBuffer::getBuffer()
+        );
+    }
+
+    public function testDtoControllerPostRouteLogged() : void {
+        $this->configureAnnotatedContainer();
+
+        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap->bootstrapApplication();
+
+        self::assertStringContainsString(
+            sprintf(
+                'labrador-http.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
+                CheckDtoController::class
+            ),
+            StreamBuffer::getBuffer()
+        );
+    }
+
+    public function testDtoControllerPutRouteLogged() : void {
+        $this->configureAnnotatedContainer();
+
+        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap->bootstrapApplication();
+
+        self::assertStringContainsString(
+            sprintf(
+                'labrador-http.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
+                CheckDtoController::class
+            ),
+            StreamBuffer::getBuffer()
+        );
+    }
+
+    public function testDtoControllerDeleteRouteLogged() : void {
+        $this->configureAnnotatedContainer();
+
+        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap->bootstrapApplication();
+
+        self::assertStringContainsString(
+            sprintf(
+                'labrador-http.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
+                CheckDtoController::class
+            ),
+            StreamBuffer::getBuffer()
+        );
     }
 }

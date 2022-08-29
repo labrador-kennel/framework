@@ -14,7 +14,7 @@ class LoggerFactory {
 
     #[ServiceDelegate]
     public static function createLogger() : LoggerInterface {
-        $logger = new Logger('labrador.http');
+        $logger = new Logger('labrador-http');
         $logger->pushProcessor(new PsrLogMessageProcessor());
 
         $handler = new StreamHandler(getStdout());

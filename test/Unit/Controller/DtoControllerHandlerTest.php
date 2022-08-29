@@ -4,18 +4,27 @@ namespace Cspray\Labrador\Http\Test\Unit\Controller;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestBody;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\Labrador\Http\Controller\DtoControllerHandler;
-use Cspray\Labrador\Http\ErrorHandlerFactory;
+use Cspray\Labrador\Http\Exception\InvalidDtoAttribute;
+use Cspray\Labrador\Http\Exception\InvalidType;
 use Cspray\Labrador\Http\HttpMethod;
 use Cspray\Labrador\Http\Test\BootstrapAwareTestTrait;
 use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
+use Cspray\Labrador\Http\Test\Unit\Stub\BadDtoController;
 use Cspray\Labrador\HttpDummyApp\Controller\CheckDtoController;
+use League\Uri\Components\Query;
+use League\Uri\Contracts\QueryInterface;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
+use Psr\Http\Message\UriInterface;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
+use function Cspray\AnnotatedContainer\autowiredParams;
+use function Cspray\AnnotatedContainer\rawParam;
 
 final class DtoControllerHandlerTest extends TestCase {
 
@@ -45,9 +54,21 @@ final class DtoControllerHandlerTest extends TestCase {
         self::assertTrue(stream_filter_remove($this->streamFilter));
     }
 
+    private function subject(\Closure $closure, string $description) : DtoControllerHandler {
+        $handler = $this->container->make(
+            DtoControllerHandler::class,
+            autowiredParams(
+                rawParam('closure', $closure),
+                rawParam('description', $description),
+            )
+        );
+        assert($handler instanceof DtoControllerHandler);
+        return $handler;
+    }
+
     public function testInvokeObjectHeadersDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkHeaders(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkHeaders(...), 'checkHeaders');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -64,7 +85,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectMethodDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkMethod(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkMethod(...), 'checkMethod');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -80,7 +101,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectHeadersParamNameDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkHeadersParamName(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkHeadersParamName(...), 'checkHeadersParamName');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -97,7 +118,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectSingleHeaderArrayDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkSingleHeaderArray(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkSingleHeaderArray(...), 'checkSingleHeaderArray');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -117,7 +138,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectSingleHeaderStringDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkSingleHeaderString(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkSingleHeaderString(...), 'checkSingleHeaderString');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -138,7 +159,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectUrlDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkUrl(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkUrl(...), 'checkUrl');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -154,7 +175,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectQueryStringDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->getQueryAsString(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->getQueryAsString(...), 'getQueryAsString');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -170,7 +191,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectQueryQueryInterfaceDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkQueryInterface(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkQueryInterface(...), 'checkQueryInterface');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -186,7 +207,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectQueryQueryDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkQueryComponent(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkQueryComponent(...), 'checkQueryComponent');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -202,7 +223,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectRouteParamDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkRouteParam(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkRouteParam(...), 'checkRouteParam');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -219,7 +240,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectRouteParamUuidDto() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkRouteParamUuid(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkRouteParamUuid(...), 'checkRouteParamUuid');
 
         $id = Uuid::uuid6();
         $request = new Request(
@@ -237,7 +258,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectUrlDtoByType() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkUriInjectedByType(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkUriInjectedByType(...), 'checkUriInjectedByType');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -253,7 +274,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectQueryInterfaceDtoByType() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkQueryInterfaceByType(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkQueryInterfaceByType(...), 'checkQueryInterfaceByType');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -269,7 +290,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectQueryDtoByType() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkQueryByType(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkQueryByType(...), 'checkQueryByType');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -285,7 +306,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectRequestBodyByType() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkBodyByType(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkBodyByType(...), 'checkBodyByType');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -302,7 +323,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectRequestBodyAsString() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkBodyAsString(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkBodyAsString(...), 'checkBodyAsString');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -319,7 +340,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectRequestBodyAsTypeAttribute() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkBodyAsTypeAttribute(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkBodyAsTypeAttribute(...),'checkBodyAsTypeAttribute');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -336,7 +357,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     public function testInvokeObjectDtoWidgetAttribute() : void {
         $controller = new CheckDtoController();
-        $subject = new DtoControllerHandler($controller->checkWidgetDto(...), $this->container, new ErrorHandlerFactory());
+        $subject = $this->subject($controller->checkWidgetDto(...), 'checkWidgetDto');
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -358,5 +379,97 @@ final class DtoControllerHandlerTest extends TestCase {
         $expectedJson = '{"name":"Widget Name","author":{"name":"Author Name","email":"author@example.com","website":"https:\/\/author.example.com"},"createdAt":"2022-01-01T13:00:00+00:00"}';
         self::assertSame(200, $response->getStatus());
         self::assertSame('Received widget as Dto ' . $expectedJson, $response->getBody()->read());
+    }
+
+    // ========================================== Test Bad Attributes ==================================================
+
+    public function testInvokeObjectWithBadHeaders() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "headers" on ' . BadDtoController::class . '::checkImplicitHeadersDto is marked with a #[Headers] Attribute but is not type-hinted as an array.');
+
+        $this->subject($controller->checkImplicitHeadersDto(...), BadDtoController::class . '::checkImplicitHeadersDto');
+    }
+
+    public function testInvokeObjectWithBadMethod() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "method" on ' . BadDtoController::class . '::checkMethodInt is marked with a #[Method] Attribute but is not type-hinted as a string.');
+
+        $this->subject($controller->checkMethodInt(...), BadDtoController::class . '::checkMethodInt');
+    }
+
+    public function testInvokeObjectWithBadHeader() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "token" on ' . BadDtoController::class . '::checkSingleHeaderNotArrayOrString is marked with a #[Header] Attribute but is not type-hinted as an array or string.');
+
+        $this->subject($controller->checkSingleHeaderNotArrayOrString(...), BadDtoController::class . '::checkSingleHeaderNotArrayOrString');
+    }
+
+    public function testInvokeObjectWithBadUrl() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "requestUrl" on ' . BadDtoController::class . '::checkUriArray is marked with a #[Url] Attribute but is not type-hinted as a ' . UriInterface::class . '.');
+
+        $this->subject($controller->checkUriArray(...), BadDtoController::class . '::checkUriArray');
+    }
+
+    public function testInvokeObjectWithBadQuery() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "query" on ' . BadDtoController::class . '::checkQueryFloat is marked with a #[QueryParams] Attribute but is not type-hinted as a string, ' . QueryInterface::class . ', or ' . Query::class . '.');
+
+        $this->subject($controller->checkQueryFloat(...), BadDtoController::class . '::checkQueryFloat');
+    }
+
+    public function testInvokeObjectWithBadRouteParam() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "foo" on ' . BadDtoController::class . '::checkRouteParamNotUuidOrString is marked with a #[RouteParam] Attribute but is not type-hinted as a string or ' . UuidInterface::class . '.');
+
+        $this->subject($controller->checkRouteParamNotUuidOrString(...), BadDtoController::class . '::checkRouteParamNotUuidOrString');
+    }
+
+    public function testInvokeObjectWithBadBody() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "body" on ' . BadDtoController::class . '::checkBodyNotRequestBodyOrString is marked with a #[Body] Attribute but is not type-hinted as a string or ' . RequestBody::class . '.');
+
+        $this->subject($controller->checkBodyNotRequestBodyOrString(...), BadDtoController::class . '::checkBodyNotRequestBodyOrString');
+    }
+
+    public function testInvokeObjectWithBadImplicitDto() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "widget" on ' . BadDtoController::class . '::checkImplicitDto is marked with a #[Dto] Attribute but is not type-hinted with a class type.');
+
+        $this->subject($controller->checkImplicitDto(...), BadDtoController::class . '::checkImplicitDto');
+    }
+
+    public function testInvokeObjectWithBadNonClassDto() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidType::class);
+        self::expectExceptionMessage('The parameter "bar" on ' . BadDtoController::class . '::checkNonClassDto is marked with a #[Dto] Attribute but is not type-hinted with a class type.');
+
+        $this->subject($controller->checkNonClassDto(...), BadDtoController::class . '::checkNonClassDto');
+    }
+
+    public function testInvokeObjectWithMultipleDtoAttributes() : void {
+        $controller = new BadDtoController();
+
+        self::expectException(InvalidDtoAttribute::class);
+        self::expectExceptionMessage('The parameter "duo" on ' . BadDtoController::class . '::checkMultipleAttributes declares multiple DTO Attributes but MUST contain only 1.');
+
+        $this->subject($controller->checkMultipleAttributes(...), BadDtoController::class . '::checkMultipleAttributes');
     }
 }

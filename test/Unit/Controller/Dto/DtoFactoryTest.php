@@ -4,7 +4,7 @@ namespace Cspray\Labrador\Http\Test\Unit\Controller\Dto;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Cspray\Labrador\Http\Controller\Dto\DtoFactory;
+use Cspray\Labrador\Http\Controller\Dto\ValinorDtoFactory;
 use Cspray\Labrador\HttpDummyApp\Model\Author;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 class DtoFactoryTest extends TestCase {
 
     public function testGetDtoFromJsonEncodedBody() : void {
-        $subject = new DtoFactory();
+        $subject = new ValinorDtoFactory();
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             'POST',

@@ -1,4 +1,4 @@
-name: 'Unit Tests'
+name: 'Unit Tests & Static Analysis'
 
 on:
   push:
@@ -17,3 +17,5 @@ jobs:
         uses: php-actions/composer@v6
       - name: Tests
         uses: php-actions/phpunit@v2
+      - name: Static Analysis
+        run: "vendor/bin/psalm.phar --long-progress"

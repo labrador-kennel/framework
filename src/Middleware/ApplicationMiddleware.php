@@ -9,6 +9,9 @@ final class ApplicationMiddleware implements ServiceAttribute {
 
     public function __construct(
         private readonly Priority $priority = Priority::Low,
+        /**
+         * @var list<string> $profiles
+         */
         private readonly array $profiles = []
     ) {}
 

@@ -20,6 +20,10 @@ final class FastRouteRouter implements Router {
 
     private $dispatcherCb;
     private readonly RouteCollector $collector;
+
+    /**
+     * @var Route[]
+     */
     private array $routes = [];
 
     /**
@@ -56,15 +60,13 @@ final class FastRouteRouter implements Router {
     }
 
     /**
-     * @param Request $request
-     * @return Controller
      * @throws InvalidType
      */
     public function match(Request $request) : RoutingResolution {
         $uri = $request->getUri();
         $path = empty($uri->getPath()) ? '/' : $uri->getPath();
         $routeData = $this->getDispatcher()->dispatch($request->getMethod(), $path);
-        $status = array_shift($routeData);
+        $status = (int) array_shift($routeData);
 
         $controller = null;
 
@@ -79,6 +81,8 @@ final class FastRouteRouter implements Router {
 
             $controller = $route->controller;
             foreach ($params as $k => $v) {
+                assert(is_string($k));
+                assert(is_string($v));
                 $request->setAttribute($k, urldecode($v));
             }
         }

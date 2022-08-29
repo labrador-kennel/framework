@@ -14,7 +14,7 @@ class RouterFactory {
     public static function createRouter() : Router {
         return new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function(array $data) : GcbDispatcher { return new GcbDispatcher($data); }
         );
     }
 

@@ -13,15 +13,17 @@ use Cspray\Labrador\Http\HttpMethod;
  */
 final class FriendlyRouter implements Router {
 
-    private $mounts = [
+    /**
+     * @var array{prefix: string[], middleware: Middleware[]}
+     */
+    private array $mounts = [
         'prefix' => [],
         'middleware' => [],
     ];
-    private $router;
 
-    public function __construct(Router $router) {
-        $this->router = $router;
-    }
+    public function __construct(
+        private readonly Router $router
+    ) {}
 
     /**
      * Define a Route that should respond to a GET request.

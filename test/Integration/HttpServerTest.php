@@ -177,4 +177,16 @@ XML;
         self::assertSame('Received widget id as UuidInterface ' . $id->toString(), $response->getBody()->buffer());
     }
 
+    public function testDtoControllerDelete() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $id = Uuid::uuid6();
+
+        $request = new Request('http://localhost:4200/dto/widget/' . $id->toString(), 'DELETE');
+        $response = $client->request($request);
+
+        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame('Received request to delete widget with id ' . $id->toString(), $response->getBody()->buffer());
+    }
+
 }

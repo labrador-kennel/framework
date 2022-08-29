@@ -2,12 +2,16 @@
 
 namespace Cspray\Labrador\Http\Controller\Dto;
 
+use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 
-#[\Attribute(\Attribute::TARGET_CLASS)]
+#[Attribute(Attribute::TARGET_CLASS)]
 final class DtoController implements ServiceAttribute {
 
     public function __construct(
+        /**
+         * @var list<string> $profiles
+         */
         private readonly array $profiles = []
     ) {}
 

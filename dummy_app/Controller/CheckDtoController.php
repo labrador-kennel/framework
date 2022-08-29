@@ -5,6 +5,7 @@ namespace Cspray\Labrador\HttpDummyApp\Controller;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Cspray\Labrador\Http\Controller\Dto\Body;
+use Cspray\Labrador\Http\Controller\Dto\Delete;
 use Cspray\Labrador\Http\Controller\Dto\Dto;
 use Cspray\Labrador\Http\Controller\Dto\DtoController;
 use Cspray\Labrador\Http\Controller\Dto\Get;
@@ -118,6 +119,11 @@ class CheckDtoController {
     #[Post('/dto/widget')]
     public function checkWidgetDto(#[Dto] Widget $widget) : Response {
         return new Response(body: 'Received widget as Dto ' . json_encode($widget));
+    }
+
+    #[Delete('/dto/widget/{id}')]
+    public function deleteWidget(#[RouteParam('id')] string $id) : Response {
+        return new Response(body: 'Received request to delete widget with id ' . $id);
     }
 
 }

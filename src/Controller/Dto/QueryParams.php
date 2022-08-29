@@ -3,6 +3,6 @@
 namespace Cspray\Labrador\Http\Controller\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class QueryParams {
+class QueryParams implements DtoInjectionAttribute {
 
 }
