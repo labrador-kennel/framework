@@ -6,17 +6,11 @@
     "test": "vendor/bin/phpunit",
     "test-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html ./build/coverage"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/cspray/amphp-http-server"
-    }
-  ],
   "minimum-stability": "beta",
   "require": {
     "php": "^8.1",
     "ext-json": "*",
-    "amphp/http-server": "dev-task/add-http-server-methods",
+    "amphp/http-server": "v3.0.0-beta.3",
     "cspray/annotated-container": "v2.x-dev",
     "cspray/labrador-async-event": "dev-main",
     "nikic/fast-route": "~1.3",

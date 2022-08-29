@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b234ee3a831696520c115ed0414f81d",
+    "content-hash": "dc888cd8a03f00242a86bb67432453e4",
     "packages": [
         {
             "name": "amphp/amp",
@@ -462,16 +462,16 @@
         },
         {
             "name": "amphp/http-server",
-            "version": "dev-task/add-http-server-methods",
+            "version": "v3.0.0-beta.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cspray/amphp-http-server.git",
-                "reference": "e27b36c4eb7f510dcec9d6b3cc7a4d06494d3edd"
+                "url": "https://github.com/amphp/http-server.git",
+                "reference": "6906c78040d4ce8d4e3a19118f47f2697ed3ba48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/amphp-http-server/zipball/e27b36c4eb7f510dcec9d6b3cc7a4d06494d3edd",
-                "reference": "e27b36c4eb7f510dcec9d6b3cc7a4d06494d3edd",
+                "url": "https://api.github.com/repos/amphp/http-server/zipball/6906c78040d4ce8d4e3a19118f47f2697ed3ba48",
+                "reference": "6906c78040d4ce8d4e3a19118f47f2697ed3ba48",
                 "shasum": ""
             },
             "require": {
@@ -508,31 +508,16 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Amp\\Http\\Server\\": "src"
-                },
                 "files": [
                     "src/Driver/functions.php",
                     "src/Middleware/functions.php",
                     "src/functions.php"
-                ]
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Amp\\Http\\Server\\Test\\": "test"
-                },
-                "files": [
-                    "test/functions.php"
-                ]
-            },
-            "scripts": {
-                "test": [
-                    "@php -dzend.assertions=1 -dassert.exception=1 ./vendor/bin/phpunit"
                 ],
-                "code-style": [
-                    "@php ./vendor/bin/php-cs-fixer fix"
-                ]
+                "psr-4": {
+                    "Amp\\Http\\Server\\": "src"
+                }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -564,9 +549,16 @@
                 "server"
             ],
             "support": {
-                "source": "https://github.com/cspray/amphp-http-server/tree/task/add-http-server-methods"
+                "issues": "https://github.com/amphp/http-server/issues",
+                "source": "https://github.com/amphp/http-server/tree/v3.0.0-beta.3"
             },
-            "time": "2022-08-14T00:01:29+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-06-25T17:35:53+00:00"
         },
         {
             "name": "amphp/log",
@@ -4826,16 +4818,16 @@
         },
         {
             "name": "sebastian/type",
-            "version": "3.0.0",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/type.git",
-                "reference": "b233b84bc4465aff7b57cf1c4bc75c86d00d6dad"
+                "reference": "fb44e1cc6e557418387ad815780360057e40753e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/b233b84bc4465aff7b57cf1c4bc75c86d00d6dad",
-                "reference": "b233b84bc4465aff7b57cf1c4bc75c86d00d6dad",
+                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/fb44e1cc6e557418387ad815780360057e40753e",
+                "reference": "fb44e1cc6e557418387ad815780360057e40753e",
                 "shasum": ""
             },
             "require": {
@@ -4847,7 +4839,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0-dev"
+                    "dev-master": "3.1-dev"
                 }
             },
             "autoload": {
@@ -4870,7 +4862,7 @@
             "homepage": "https://github.com/sebastianbergmann/type",
             "support": {
                 "issues": "https://github.com/sebastianbergmann/type/issues",
-                "source": "https://github.com/sebastianbergmann/type/tree/3.0.0"
+                "source": "https://github.com/sebastianbergmann/type/tree/3.1.0"
             },
             "funding": [
                 {
@@ -4878,7 +4870,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-03-15T09:54:48+00:00"
+            "time": "2022-08-29T06:55:37+00:00"
         },
         {
             "name": "sebastian/version",
@@ -5043,7 +5035,7 @@
     "aliases": [],
     "minimum-stability": "beta",
     "stability-flags": {
-        "amphp/http-server": 20,
+        "amphp/http-server": 10,
         "cspray/annotated-container": 20,
         "cspray/labrador-async-event": 20,
         "amphp/log": 10,
