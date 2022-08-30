@@ -4,6 +4,7 @@ namespace Cspray\Labrador\Http\DependencyInjection;
 
 use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
+use Cspray\AnnotatedContainer\AnnotatedContainerVersion;
 use Cspray\AnnotatedContainer\Bootstrap\Observer;
 use Cspray\AnnotatedContainer\ContainerDefinition;
 use Cspray\AnnotatedContainer\Definition\ServiceDefinition;
@@ -21,6 +22,7 @@ use Psr\Log\LoggerInterface;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use function Amp\ByteStream\getStdout;
 use function Cspray\AnnotatedContainer\autowiredParams;
 use function Cspray\AnnotatedContainer\rawParam;
 
@@ -41,6 +43,11 @@ class AutowireObserver implements Observer {
     public function afterContainerCreation(ContainerDefinition $containerDefinition, AnnotatedContainer $container) : void {
         /** @var LoggerInterface $logger */
         $logger = $container->get(LoggerInterface::class);
+
+        getStdout()->write(file_get_contents(__DIR__ . '/../../resources/ascii/labrador.txt') . PHP_EOL);
+        getStdout()->write('Labrador HTTP Version: dev-main' . PHP_EOL);
+        getStdout()->write('Annotated Container Version: ' . AnnotatedContainerVersion::getVersion() . PHP_EOL);
+        getStdout()->write('Amp HTTP Server Version: v3.0.0-beta.3' . PHP_EOL . PHP_EOL);
 
         $logger->info('Container created, beginning to autowire services.');
 
