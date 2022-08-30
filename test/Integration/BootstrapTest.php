@@ -150,11 +150,7 @@ class BootstrapTest extends TestCase {
 
         $bootstrap->bootstrapApplication()->container;
 
-        $logLines = explode(PHP_EOL, trim(StreamBuffer::getBuffer()));
-
-        self::assertGreaterThan(1, count($logLines));
-
-        self::assertStringContainsString('Container created, beginning to autowire services.', $logLines[0]);
+        self::assertStringContainsString('Container created, beginning to autowire services.', StreamBuffer::getBuffer());
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
