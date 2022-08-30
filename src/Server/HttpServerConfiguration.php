@@ -13,11 +13,4 @@ interface HttpServerConfiguration {
      */
     public function getUnencryptedInternetAddresses() : array;
 
-    /**
-     * @return list<InternetAddress>
-     */
-    public function getEncryptedInternetAddresses() : array;
-
-    public function getTlsCertificatePath() : ?string;
-
 }

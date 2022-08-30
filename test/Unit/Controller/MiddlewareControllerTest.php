@@ -19,7 +19,7 @@ class MiddlewareControllerTest extends TestCase {
         ];
         $subject = new MiddlewareController($controller, ...$middlewares);
 
-        $expected = 'TheController<%s, %s>';
+        $expected = 'MiddlewareHandler<TheController, %s, %s>';
         $expected = sprintf($expected, RequestDecoratorMiddleware::class, ResponseDecoratorMiddleware::class);
         $actual = $subject->toString();
         $this->assertSame($expected, $actual);
