@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Event;
+namespace Labrador\Http\Event;
 
-use Cspray\Labrador\AsyncEvent\Event;
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\RequestAttribute;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\RequestAttribute;
 use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 

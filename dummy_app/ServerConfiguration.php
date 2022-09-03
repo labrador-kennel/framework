@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp;
+namespace Labrador\HttpDummyApp;
 
 use Amp\Socket\InternetAddress;
 use Cspray\AnnotatedContainer\Attribute\Inject;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Cspray\Labrador\Http\Server\HttpServerConfiguration;
+use Labrador\Http\Server\HttpServerConfiguration;
 
 #[Service]
 class ServerConfiguration implements HttpServerConfiguration {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Event;
+namespace Labrador\Http\Test\Unit\Event;
 
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Event\WillInvokeControllerEvent;
-use Cspray\Labrador\Http\RequestAttribute;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\RequestAttribute;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;

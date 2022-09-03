@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Controller;
+namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;

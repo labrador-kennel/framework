@@ -1,33 +1,34 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\Controller;
+namespace Labrador\HttpDummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
-use Cspray\Labrador\Http\Controller\Dto\Body;
-use Cspray\Labrador\Http\Controller\Dto\Delete;
-use Cspray\Labrador\Http\Controller\Dto\Dto;
-use Cspray\Labrador\Http\Controller\Dto\DtoController;
-use Cspray\Labrador\Http\Controller\Dto\Get;
-use Cspray\Labrador\Http\Controller\Dto\Header;
-use Cspray\Labrador\Http\Controller\Dto\Headers;
-use Cspray\Labrador\Http\Controller\Dto\Method;
-use Cspray\Labrador\Http\Controller\Dto\Post;
-use Cspray\Labrador\Http\Controller\Dto\Put;
-use Cspray\Labrador\Http\Controller\Dto\QueryParams;
-use Cspray\Labrador\Http\Controller\Dto\RouteParam;
-use Cspray\Labrador\Http\Controller\Dto\Url;
-use Cspray\Labrador\HttpDummyApp\CountingService;
-use Cspray\Labrador\HttpDummyApp\Middleware\ControllerSpecificMiddleware;
-use Cspray\Labrador\HttpDummyApp\Model\Widget;
+use Labrador\Http\Controller\Dto\Body;
+use Labrador\Http\Controller\Dto\Delete;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\ControllerActions;
+use Labrador\Http\Controller\Dto\Get;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\Post;
+use Labrador\Http\Controller\Dto\Put;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Controller\DtoController;
+use Labrador\HttpDummyApp\CountingService;
+use Labrador\HttpDummyApp\Middleware\ControllerSpecificMiddleware;
+use Labrador\HttpDummyApp\Model\Widget;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
 use Psr\Http\Message\UriInterface;
 use Ramsey\Uuid\UuidInterface;
 
-#[DtoController]
-class CheckDtoController {
+#[ControllerActions]
+class CheckDtoController implements DtoController {
 
     #[Get('/dto/headers')]
     public function checkHeaders(#[Headers] array $requestHeaders) : Response {

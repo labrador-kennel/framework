@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Http\Test\Unit\Controller;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
@@ -8,11 +8,11 @@ use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Amp\PHPUnit\AsyncTestCase;
 use Amp\Promise;
-use Cspray\Labrador\Http\Test\Stub\NonResponseReturningHandleHookableControllerStub;
-use Cspray\Labrador\Http\Test\Unit\Stub\AfterActionResponseDecoratorHookableControllerStub;
-use Cspray\Labrador\Http\Test\Unit\Stub\BeforeActionResponseHookableControllerStub;
-use Cspray\Labrador\Http\Test\Unit\Stub\OnlyHandlerHookableControllerStub;
-use Cspray\Labrador\Http\Test\Unit\Stub\SequenceHookableControllerStub;
+use Labrador\Http\Test\Stub\NonResponseReturningHandleHookableControllerStub;
+use Labrador\Http\Test\Unit\Stub\AfterActionResponseDecoratorHookableControllerStub;
+use Labrador\Http\Test\Unit\Stub\BeforeActionResponseHookableControllerStub;
+use Labrador\Http\Test\Unit\Stub\OnlyHandlerHookableControllerStub;
+use Labrador\Http\Test\Unit\Stub\SequenceHookableControllerStub;
 use League\Uri\Http;
 
 class HookableControllerTest extends AsyncTestCase {

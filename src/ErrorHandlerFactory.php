@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http;
+namespace Labrador\Http;
 
 use Amp\Http\Server\ErrorHandler;
 use Cspray\AnnotatedContainer\Attribute\Service;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\DependencyInjection;
+namespace Labrador\Http\DependencyInjection;
 
 use Amp\Http\Server\HttpServer;
 use Cspray\AnnotatedContainer\Compile\ContainerDefinitionBuilderContext;

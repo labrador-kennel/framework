@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http;
+namespace Labrador\Http;
 
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServer;
@@ -10,18 +10,18 @@ use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Cspray\Labrador\AsyncEvent\EventEmitter;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Event\AddRoutesEvent;
-use Cspray\Labrador\Http\Event\ApplicationStartedEvent;
-use Cspray\Labrador\Http\Event\ApplicationStoppedEvent;
-use Cspray\Labrador\Http\Event\ReceivingConnectionsEvent;
-use Cspray\Labrador\Http\Event\RequestReceivedEvent;
-use Cspray\Labrador\Http\Event\ResponseSentEvent;
-use Cspray\Labrador\Http\Event\WillInvokeControllerEvent;
-use Cspray\Labrador\Http\Middleware\Priority;
-use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\Http\Router\RoutingResolutionReason;
+use Labrador\AsyncEvent\EventEmitter;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Event\AddRoutesEvent;
+use Labrador\Http\Event\ApplicationStartedEvent;
+use Labrador\Http\Event\ApplicationStoppedEvent;
+use Labrador\Http\Event\ReceivingConnectionsEvent;
+use Labrador\Http\Event\RequestReceivedEvent;
+use Labrador\Http\Event\ResponseSentEvent;
+use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\Middleware\Priority;
+use Labrador\Http\Router\Router;
+use Labrador\Http\Router\RoutingResolutionReason;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 

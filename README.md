@@ -36,19 +36,19 @@ It's best to show a Controller implementing this functionality.
 ```php
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\HttpDemo;
+namespace Labrador\HttpDemo;
 
 use Amp\Http\Server\Response;
-use Cspray\Labrador\Http\Controller\Dto\Dto;
-use Cspray\Labrador\Http\Controller\Dto\DtoController;
-use Cspray\Labrador\Http\Controller\Dto\Get;
-use Cspray\Labrador\Http\Controller\Dto\Post;
-use Cspray\Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\ControllerActions;
+use Labrador\Http\Controller\Dto\Get;
+use Labrador\Http\Controller\Dto\Post;
+use Labrador\Http\Controller\Dto\RouteParam;
 use League\Uri\Components\Query;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\UuidInterface;
 
-#[DtoController]
+#[ControllerActions]
 final class WidgetController {
 
     // The $logger will be a Monolog logger that sends output to stdout using amphp/log
@@ -87,23 +87,23 @@ Labrador HTTP also provides the ability to get specific parts of the Request usi
 ```php
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\HttpDemo;
+namespace Labrador\HttpDemo;
 
 use Amp\Http\Server\RequestBody;use Amp\Http\Server\Response;
-use Cspray\Labrador\Http\Controller\Dto\Body;use Cspray\Labrador\Http\Controller\Dto\DtoController;
-use Cspray\Labrador\Http\Controller\Dto\Get;
-use Cspray\Labrador\Http\Controller\Dto\Header;
-use Cspray\Labrador\Http\Controller\Dto\Headers;
-use Cspray\Labrador\Http\Controller\Dto\Method;
-use Cspray\Labrador\Http\Controller\Dto\Post;
-use Cspray\Labrador\Http\Controller\Dto\QueryParams;
-use Cspray\Labrador\Http\Controller\Dto\RouteParam;
-use Cspray\Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Controller\Dto\Body;use Labrador\Http\Controller\Dto\ControllerActions;
+use Labrador\Http\Controller\Dto\Get;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\Post;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
 use Psr\Http\Message\UriInterface;
 
-#[DtoController]
+#[ControllerActions]
 class RequestInjectionController {
 
     #[Get('/headers')]

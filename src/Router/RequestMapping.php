@@ -1,9 +1,9 @@
 <?php
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
-use Cspray\Labrador\Http\ContentType;
-use Cspray\Labrador\Http\HttpMethod;
+use Labrador\Http\ContentType;
+use Labrador\Http\HttpMethod;
 
 final class RequestMapping {
 

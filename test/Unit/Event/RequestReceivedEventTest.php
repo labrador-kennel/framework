@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Event;
+namespace Labrador\Http\Test\Unit\Event;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Event\RequestReceivedEvent;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Event\RequestReceivedEvent;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 

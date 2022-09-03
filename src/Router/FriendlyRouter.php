@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\HttpMethod;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\HttpMethod;
 
 /**
  * A Router that acts as a decorator over other Router implementations and provides convenience methods for defining

@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller;
+namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\Middleware;
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
-use Cspray\Labrador\Http\HttpMethod;
+use Labrador\Http\HttpMethod;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 final class HttpController implements ServiceAttribute, RouteMappingAttribute {

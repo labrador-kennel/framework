@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Event;
+namespace Labrador\Http\Event;
 
-use Cspray\Labrador\AsyncEvent\Event;
-use Cspray\Labrador\AsyncEvent\StandardEvent;
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Router\Router;
+use Labrador\AsyncEvent\Event;
+use Labrador\AsyncEvent\StandardEvent;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Router\Router;
 use DateTimeImmutable;
 
 final class AddRoutesEvent implements Event {

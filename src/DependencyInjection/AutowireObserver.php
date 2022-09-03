@@ -1,46 +1,34 @@
 <?php
 
-namespace Cspray\Labrador\Http\DependencyInjection;
+namespace Labrador\Http\DependencyInjection;
 
 use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\AnnotatedContainerVersion;
-use Cspray\AnnotatedContainer\Bootstrap\Observer;
-use Cspray\AnnotatedContainer\ContainerDefinition;
-use Cspray\AnnotatedContainer\Definition\ServiceDefinition;
-use Cspray\Labrador\Http\Application;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Controller\Dto\DtoController;
-use Cspray\Labrador\Http\Controller\DtoControllerHandler;
-use Cspray\Labrador\Http\Controller\HttpController;
-use Cspray\Labrador\Http\Controller\RouteMappingAttribute;
-use Cspray\Labrador\Http\Middleware\ApplicationMiddleware;
-use Cspray\Labrador\Http\Router\RequestMapping;
-use Cspray\Labrador\Http\Router\Route;
-use Cspray\Labrador\Http\Router\Router;
+use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
+use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
+use Labrador\Http\Application;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\DtoController;
+use Labrador\Http\Controller\DtoControllerHandler;
+use Labrador\Http\Controller\HttpController;
+use Labrador\Http\Controller\RouteMappingAttribute;
+use Labrador\Http\Middleware\ApplicationMiddleware;
+use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\Route;
+use Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionObject;
 use function Amp\ByteStream\getStdout;
 use function Cspray\AnnotatedContainer\autowiredParams;
 use function Cspray\AnnotatedContainer\rawParam;
 
-class AutowireObserver implements Observer {
+class AutowireObserver extends ServiceWiringObserver {
 
-    public function beforeCompilation() : void {
-        // noop
-    }
-
-    public function afterCompilation(ContainerDefinition $containerDefinition) : void {
-        // noop
-    }
-
-    public function beforeContainerCreation(ContainerDefinition $containerDefinition) : void {
-        // noop
-    }
-
-    public function afterContainerCreation(ContainerDefinition $containerDefinition, AnnotatedContainer $container) : void {
+    public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
         /** @var LoggerInterface $logger */
         $logger = $container->get(LoggerInterface::class);
 
@@ -56,39 +44,19 @@ class AutowireObserver implements Observer {
         /** @var Router $router */
         $router = $container->get(Router::class);
 
-        foreach ($containerDefinition->getServiceDefinitions() as $serviceDefinition) {
-            if ($serviceDefinition->isAbstract()) {
-                continue;
-            }
+        foreach ($gatherer->getServicesForType(Controller::class) as $controller) {
+            assert($controller instanceof Controller);
+            $this->handlePotentialHttpController($container, $controller, $logger, $router);
+        }
 
-            /** @var class-string $serviceType */
-            $serviceType = $serviceDefinition->getType()->getName();
-            if (is_a($serviceType, Controller::class, true)) {
-                $this->handleController($container, $logger, $router, $serviceDefinition);
-            } else if (is_a($serviceType, Middleware::class, true)) {
-                $this->handleMiddleware($container, $logger, $app, $serviceDefinition);
-            } else {
-                $reflection = new ReflectionClass($serviceType);
-                $attr = $reflection->getAttributes(DtoController::class);
-                if ($attr !== []) {
-                    $dtoController = $container->get($serviceType);
-                    assert(is_object($dtoController));
-                    foreach ($reflection->getMethods() as $reflectionMethod) {
-                        $routeMappingAttributes = $reflectionMethod->getAttributes(RouteMappingAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
-                        foreach ($routeMappingAttributes as $routeMappingAttribute) {
-                            $routeMapping = $routeMappingAttribute->newInstance();
-                            assert($routeMapping instanceof RouteMappingAttribute);
+        foreach ($gatherer->getServicesForType(Middleware::class) as $middleware) {
+            assert($middleware instanceof Middleware);
+            $this->handleApplicationMiddleware($logger, $app, $middleware);
+        }
 
-                            $route = $router->addRoute(
-                                RequestMapping::fromMethodAndPath($routeMapping->getHttpMethod(), $routeMapping->getPath()),
-                                $this->createDtoHandler($container, $dtoController, $reflectionMethod),
-                                ...$this->getMiddlewareFromRouteMappingAttribute($container, $routeMapping)
-                            );
-                            $this->logAddedRoute($route, $logger);
-                        }
-                    }
-                }
-            }
+        foreach ($gatherer->getServicesForType(DtoController::class) as $dtoController) {
+            assert($dtoController instanceof DtoController);
+            $this->handleDtoController($container, $dtoController, $logger, $router);
         }
     }
 
@@ -111,21 +79,43 @@ class AutowireObserver implements Observer {
         return $handler;
     }
 
-    private function handleController(
+    private function handlePotentialHttpController(
         AnnotatedContainer $container,
+        Controller $controller,
         LoggerInterface $logger,
         Router $router,
-        ServiceDefinition $serviceDefinition
     ) : void {
         /** @var class-string $serviceType */
-        $serviceType = $serviceDefinition->getType()->getName();
-        $reflection = new ReflectionClass($serviceType);
+        $reflection = new ReflectionClass($controller);
         $httpAttributes = $reflection->getAttributes(HttpController::class);
 
         if ($httpAttributes !== []) {
             $this->handleHttpController(
-                $container, $router, $logger, $httpAttributes[0]->newInstance(), $serviceDefinition
+                $container, $router, $logger, $httpAttributes[0]->newInstance(), $controller
             );
+        }
+    }
+
+    private function handleDtoController(
+        AnnotatedContainer $container,
+        DtoController $controller,
+        LoggerInterface $logger,
+        Router $router
+    ) : void {
+        $reflection = new ReflectionObject($controller);
+        foreach ($reflection->getMethods() as $reflectionMethod) {
+            $routeMappingAttributes = $reflectionMethod->getAttributes(RouteMappingAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
+            foreach ($routeMappingAttributes as $routeMappingAttribute) {
+                $routeMapping = $routeMappingAttribute->newInstance();
+                assert($routeMapping instanceof RouteMappingAttribute);
+
+                $route = $router->addRoute(
+                    RequestMapping::fromMethodAndPath($routeMapping->getHttpMethod(), $routeMapping->getPath()),
+                    $this->createDtoHandler($container, $controller, $reflectionMethod),
+                    ...$this->getMiddlewareFromRouteMappingAttribute($container, $routeMapping)
+                );
+                $this->logAddedRoute($route, $logger);
+            }
         }
     }
 
@@ -134,11 +124,8 @@ class AutowireObserver implements Observer {
         Router $router,
         LoggerInterface $logger,
         HttpController $httpController,
-        ServiceDefinition $serviceDefinition
+        Controller $controller
     ) : void {
-        $controller = $container->get($serviceDefinition->getType()->getName());
-        assert($controller instanceof Controller);
-
         $route = $router->addRoute(
             RequestMapping::fromMethodAndPath($httpController->getHttpMethod(), $httpController->getPath()),
             $controller,
@@ -158,15 +145,13 @@ class AutowireObserver implements Observer {
         );
     }
 
-    private function handleMiddleware(
-        AnnotatedContainer $container,
+    private function handleApplicationMiddleware(
         LoggerInterface $logger,
         Application $application,
-        ServiceDefinition $serviceDefinition
+        Middleware $middleware
     ) : void {
         /** @var class-string $serviceType */
-        $serviceType = $serviceDefinition->getType()->getName();
-        $reflection = new ReflectionClass($serviceType);
+        $reflection = new ReflectionClass($middleware);
         $attributes = $reflection->getAttributes(ApplicationMiddleware::class);
 
         if ($attributes === []) {
@@ -174,9 +159,6 @@ class AutowireObserver implements Observer {
         }
 
         $appMiddleware = $attributes[0]->newInstance();
-        $middleware = $container->get($serviceDefinition->getType()->getName());
-
-        assert($middleware instanceof Middleware);
 
         $application->addMiddleware(
             $middleware,
@@ -186,7 +168,7 @@ class AutowireObserver implements Observer {
         $logger->info(
             'Adding {middleware} to application with {priority} priority.',
             [
-                'middleware' => $serviceDefinition->getType()->getName(),
+                'middleware' => $middleware::class,
                 'priority' => $appMiddleware->getPriority()->name
             ]
         );

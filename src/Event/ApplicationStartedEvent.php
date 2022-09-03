@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Event;
+namespace Labrador\Http\Event;
 
-use Cspray\Labrador\AsyncEvent\Event;
-use Cspray\Labrador\Http\Application;
-use Cspray\Labrador\Http\ApplicationEvent;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\Application;
+use Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
 
 class ApplicationStartedEvent implements Event {

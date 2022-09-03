@@ -1,12 +1,12 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\Controller;
+namespace Labrador\HttpDummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Controller\HttpController;
-use Cspray\Labrador\Http\HttpMethod;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\HttpController;
+use Labrador\Http\HttpMethod;
 
 #[HttpController(HttpMethod::Get, '/hello/world')]
 class HelloWorldController implements Controller {

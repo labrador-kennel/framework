@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
 enum RoutingResolutionReason {
     case RequestMatched;

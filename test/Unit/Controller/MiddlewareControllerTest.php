@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
 
-namespace Cspray\Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Http\Test\Unit\Controller;
 
-use Cspray\Labrador\Http\Controller\MiddlewareController;
-use Cspray\Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
-use Cspray\Labrador\Http\Test\Unit\Stub\ResponseDecoratorMiddleware;
-use Cspray\Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Http\Controller\MiddlewareController;
+use Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
+use Labrador\Http\Test\Unit\Stub\ResponseDecoratorMiddleware;
+use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use PHPUnit\Framework\TestCase;
 
 class MiddlewareControllerTest extends TestCase {

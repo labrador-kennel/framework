@@ -1,10 +1,10 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Event;
+namespace Labrador\Http\Test\Unit\Event;
 
-use Cspray\Labrador\Http\Application;
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Event\ApplicationStartedEvent;
+use Labrador\Http\Application;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Event\ApplicationStartedEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

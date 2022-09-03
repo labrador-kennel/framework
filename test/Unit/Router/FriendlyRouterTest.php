@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Test\Unit\Router;
+namespace Labrador\Http\Test\Unit\Router;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Controller\MiddlewareController;
-use Cspray\Labrador\Http\HttpMethod;
-use Cspray\Labrador\Http\Router\FastRouteRouter;
-use Cspray\Labrador\Http\Router\FriendlyRouter;
-use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\Http\Router\RoutingResolution;
-use Cspray\Labrador\Http\Router\RoutingResolutionReason;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\MiddlewareController;
+use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\FriendlyRouter;
+use Labrador\Http\Router\Router;
+use Labrador\Http\Router\RoutingResolution;
+use Labrador\Http\Router\RoutingResolutionReason;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Middleware;
+namespace Labrador\Http\Middleware;
 
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;

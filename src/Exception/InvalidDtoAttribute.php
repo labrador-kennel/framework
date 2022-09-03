@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Exception;
+namespace Labrador\Http\Exception;
 
 class InvalidDtoAttribute extends Exception {
 

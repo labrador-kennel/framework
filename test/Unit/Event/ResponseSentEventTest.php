@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Event;
+namespace Labrador\Http\Test\Unit\Event;
 
 use Amp\Http\Server\Response;
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Event\ResponseSentEvent;
-use Cspray\Labrador\Http\RequestAttribute;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Event\ResponseSentEvent;
+use Labrador\Http\RequestAttribute;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;

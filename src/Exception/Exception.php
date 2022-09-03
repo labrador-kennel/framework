@@ -7,12 +7,12 @@ declare(strict_types=1);
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Exception;
+namespace Labrador\Http\Exception;
 
-use Cspray\Labrador\Exception\Exception as LabradorException;
+use Exception as PhpException;
 use Throwable;
 
-class Exception extends LabradorException {
+class Exception extends PhpException {
 
     final protected function __construct(string $message = "", int $code = 0, ?Throwable $previous = null) {
         parent::__construct($message, $code, $previous);

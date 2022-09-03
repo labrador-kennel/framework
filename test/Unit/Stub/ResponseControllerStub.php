@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-namespace Cspray\Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Http\Test\Unit\Stub;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Promise;
 use Amp\Success;
-use Cspray\Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\Controller;
 
 class ResponseControllerStub implements Controller {
 

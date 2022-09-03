@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Server;
+namespace Labrador\Http\Server;
 
 use Amp\Socket\InternetAddress;
 use Cspray\AnnotatedContainer\Attribute\Service;

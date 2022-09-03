@@ -1,8 +1,8 @@
 <?php
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
-use Cspray\Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\Controller;
 
 final class RoutingResolution {
 

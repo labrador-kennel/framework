@@ -1,19 +1,19 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Http\Test\Unit\Stub;
 
-use Cspray\Labrador\Http\Controller\Dto\Body;
-use Cspray\Labrador\Http\Controller\Dto\Dto;
-use Cspray\Labrador\Http\Controller\Dto\DtoController;
-use Cspray\Labrador\Http\Controller\Dto\Get;
-use Cspray\Labrador\Http\Controller\Dto\Header;
-use Cspray\Labrador\Http\Controller\Dto\Headers;
-use Cspray\Labrador\Http\Controller\Dto\Method;
-use Cspray\Labrador\Http\Controller\Dto\QueryParams;
-use Cspray\Labrador\Http\Controller\Dto\RouteParam;
-use Cspray\Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Controller\Dto\Body;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\ControllerActions;
+use Labrador\Http\Controller\Dto\Get;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
 
-#[DtoController]
+#[ControllerActions]
 final class BadDtoController {
 
     #[Get('/bad-dto/implicit-headers')]

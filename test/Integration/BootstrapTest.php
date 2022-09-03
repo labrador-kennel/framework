@@ -1,27 +1,26 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Integration;
+namespace Labrador\Http\Test\Integration;
 
 use Amp\Http\Server\DefaultErrorHandler;
-use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\SocketHttpServer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
-use Cspray\Labrador\AsyncEvent\AmpEventEmitter;
-use Cspray\Labrador\AsyncEvent\EventEmitter;
-use Cspray\Labrador\Http\Bootstrap;
-use Cspray\Labrador\Http\ErrorHandlerFactory;
-use Cspray\Labrador\Http\Router\FastRouteRouter;
-use Cspray\Labrador\Http\Router\Route;
-use Cspray\Labrador\Http\Router\Router;
-use Cspray\Labrador\Http\Test\BootstrapAwareTestTrait;
-use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
-use Cspray\Labrador\Http\Test\Helper\VfsDirectoryResolver;
-use Cspray\Labrador\HttpDummyApp\Middleware\BarMiddleware;
-use Cspray\Labrador\HttpDummyApp\Middleware\BazMiddleware;
-use Cspray\Labrador\HttpDummyApp\Middleware\FooMiddleware;
-use Cspray\Labrador\HttpDummyApp\Middleware\QuxMiddleware;
-use Cspray\Labrador\HttpDummyApp\Controller\CheckDtoController;
+use Labrador\AsyncEvent\AmpEventEmitter;
+use Labrador\AsyncEvent\EventEmitter;
+use Labrador\Http\Bootstrap;
+use Labrador\Http\ErrorHandlerFactory;
+use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\Route;
+use Labrador\Http\Router\Router;
+use Labrador\Http\Test\BootstrapAwareTestTrait;
+use Labrador\Http\Test\Helper\StreamBuffer;
+use Labrador\Http\Test\Helper\VfsDirectoryResolver;
+use Labrador\HttpDummyApp\Middleware\BarMiddleware;
+use Labrador\HttpDummyApp\Middleware\BazMiddleware;
+use Labrador\HttpDummyApp\Middleware\FooMiddleware;
+use Labrador\HttpDummyApp\Middleware\QuxMiddleware;
+use Labrador\HttpDummyApp\Controller\CheckDtoController;
 use Monolog\Logger;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
@@ -44,21 +43,14 @@ class BootstrapTest extends TestCase {
 
     protected function setUp() : void {
         parent::setUp();
+        StreamBuffer::register();
         $this->vfs = VirtualFilesystem::setup();
-        if (!in_array('test.stream.buffer', stream_get_filters())) {
-            self::assertTrue(stream_filter_register('test.stream.buffer', StreamBuffer::class));
-        }
-        $this->streamFilter = stream_filter_append(STDOUT, 'test.stream.buffer');
-        self::assertIsResource($this->streamFilter);
-        self::assertEmpty(StreamBuffer::getBuffer());
-
         $this->containerBootstrap = new AnnotatedContainerBootstrap(directoryResolver: new VfsDirectoryResolver());
     }
 
     protected function tearDown() : void {
         parent::tearDown();
-        StreamBuffer::clearBuffer();
-        self::assertTrue(stream_filter_remove($this->streamFilter));
+        StreamBuffer::unregister();
     }
 
     private function configureAnnotatedContainer() : void {

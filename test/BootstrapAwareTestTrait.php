@@ -1,12 +1,12 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test;
+namespace Labrador\Http\Test;
 
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
 use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
-use Cspray\Labrador\Http\Bootstrap;
-use Cspray\Labrador\Http\Test\Helper\VfsDirectoryResolver;
+use Labrador\Http\Bootstrap;
+use Labrador\Http\Test\Helper\VfsDirectoryResolver;
 
 trait BootstrapAwareTestTrait {
 
@@ -18,14 +18,14 @@ trait BootstrapAwareTestTrait {
         <source>
             <dir>src</dir>
             <dir>dummy_app</dir>
-            <dir>vendor/cspray/labrador-async-event/src</dir>
+            <dir>vendor/labrador-kennel/async-event/src</dir>
         </source>
     </scanDirectories>
     <containerDefinitionBuilderContextConsumer>
-        Cspray\Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
+        Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
     </containerDefinitionBuilderContextConsumer>
     <observers>
-        <fqcn>Cspray\Labrador\Http\DependencyInjection\AutowireObserver</fqcn>
+        <fqcn>Labrador\Http\DependencyInjection\AutowireObserver</fqcn>
     </observers>
 </annotatedContainer>
 XML;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Controller\Dto;
 
 use Amp\Http\Server\Middleware;
 use Attribute;
-use Cspray\Labrador\Http\Controller\RouteMappingAttribute;
-use Cspray\Labrador\Http\HttpMethod;
+use Labrador\Http\Controller\RouteMappingAttribute;
+use Labrador\Http\HttpMethod;
 
 #[Attribute(Attribute::TARGET_METHOD)]
 final class Delete implements RouteMappingAttribute {
