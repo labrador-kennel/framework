@@ -121,9 +121,9 @@ architecture.** It should be assumed that most items below will represent a brea
 
 - Initial launch
 - Add Engine implementation for handling an HTTP request.
-- Interface to handle request matching `Cspray\Labrador\Http\Router\Router` with a 
+- Interface to handle request matching `Labrador\Http\Router\Router` with a 
   default implementation proxying all functionality to FastRoute.
-- Interface to convert a handler into a callable, `Cspray\Labrador\Http\HandlerResolver\HandlerResolver`. 
+- Interface to convert a handler into a callable, `Labrador\Http\HandlerResolver\HandlerResolver`. 
   Includes the following implementations:
     - CallableResolver that will match a handler that is a callable.
     - ControllerActionResolver will attempt to match a handler that has a `#` delimiter by creating an 

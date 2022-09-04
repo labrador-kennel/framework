@@ -8,9 +8,9 @@ declare(strict_types=1);
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
-use Cspray\Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\Controller;
 
 final class Route {
 

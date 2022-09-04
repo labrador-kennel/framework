@@ -1,9 +1,9 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Http\Test\Unit\Stub;
 
 use Amp\Http\Server\ErrorHandler;
-use Cspray\Labrador\Http\ErrorHandlerFactory;
+use Labrador\Http\ErrorHandlerFactory;
 
 final class ErrorHandlerFactoryStub implements ErrorHandlerFactory {
 

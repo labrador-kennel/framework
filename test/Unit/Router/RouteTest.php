@@ -7,12 +7,12 @@
  * @since   1.0
  */
 
-namespace Cspray\Labrador\Http\Test\Unit\Router;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Cspray\Labrador\Http\HttpMethod;
-use Cspray\Labrador\Http\Router\RequestMapping;
-use Cspray\Labrador\Http\Router\Route;
-use Cspray\Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\Route;
+use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use PHPUnit\Framework\TestCase;
 
 class RouteTest extends TestCase {

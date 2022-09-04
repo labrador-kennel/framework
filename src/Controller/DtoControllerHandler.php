@@ -1,24 +1,24 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller;
+namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Closure;
-use Cspray\AnnotatedContainer\AutowireableInvoker;
-use Cspray\Labrador\Http\Controller\Dto\Body;
-use Cspray\Labrador\Http\Controller\Dto\Dto;
-use Cspray\Labrador\Http\Controller\Dto\DtoFactory;
-use Cspray\Labrador\Http\Controller\Dto\DtoInjectionAttribute;
-use Cspray\Labrador\Http\Controller\Dto\Header;
-use Cspray\Labrador\Http\Controller\Dto\Headers;
-use Cspray\Labrador\Http\Controller\Dto\Method;
-use Cspray\Labrador\Http\Controller\Dto\QueryParams;
-use Cspray\Labrador\Http\Controller\Dto\RouteParam;
-use Cspray\Labrador\Http\Controller\Dto\Url;
-use Cspray\Labrador\Http\Exception\InvalidDtoAttribute;
-use Cspray\Labrador\Http\Exception\InvalidType;
+use Cspray\AnnotatedContainer\Autowire\AutowireableInvoker;
+use Labrador\Http\Controller\Dto\Body;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\DtoFactory;
+use Labrador\Http\Controller\Dto\DtoInjectionAttribute;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Exception\InvalidDtoAttribute;
+use Labrador\Http\Exception\InvalidType;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
 use Psr\Http\Message\UriInterface;

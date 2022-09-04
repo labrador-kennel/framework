@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
 
-namespace Cspray\Labrador\Http\Event;
+namespace Labrador\Http\Event;
 
-use Cspray\Labrador\AsyncEvent\Event;
-use Cspray\Labrador\AsyncEvent\StandardEvent;
-use Cspray\Labrador\Http\AmpApplication;
-use Cspray\Labrador\Http\Application;
-use Cspray\Labrador\Http\ApplicationEvent;
+use Labrador\AsyncEvent\Event;
+use Labrador\AsyncEvent\StandardEvent;
+use Labrador\Http\AmpApplication;
+use Labrador\Http\Application;
+use Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
 
 class ApplicationStoppedEvent implements Event {

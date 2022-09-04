@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Http\Test\Unit\Stub;
 
-use Cspray\Labrador\AsyncEvent\Event;
-use Cspray\Labrador\AsyncEvent\EventEmitter;
-use Cspray\Labrador\AsyncEvent\Listener;
-use Cspray\Labrador\AsyncEvent\ListenerRegistration;
+use Labrador\AsyncEvent\Event;
+use Labrador\AsyncEvent\EventEmitter;
+use Labrador\AsyncEvent\Listener;
+use Labrador\AsyncEvent\ListenerRegistration;
 use Labrador\CompositeFuture\CompositeFuture;
 
 final class EventEmitterStub implements EventEmitter {

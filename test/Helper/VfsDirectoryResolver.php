@@ -1,8 +1,8 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Helper;
+namespace Labrador\Http\Test\Helper;
 
-use Cspray\AnnotatedContainer\BootstrappingDirectoryResolver;
+use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
 
 class VfsDirectoryResolver implements BootstrappingDirectoryResolver {
 

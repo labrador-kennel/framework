@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Http\Test\Unit\Stub;
 
 use Amp\CompositeException;
 use Amp\Http\Server\ErrorHandler;

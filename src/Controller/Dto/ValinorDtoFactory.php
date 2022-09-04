@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Controller\Dto;
 
 use Amp\Http\Server\Request;
 use Cspray\AnnotatedContainer\Attribute\Service;

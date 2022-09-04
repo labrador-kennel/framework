@@ -1,19 +1,19 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Http\Test\Unit\Controller;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
-use Cspray\Labrador\Http\Controller\DtoControllerHandler;
-use Cspray\Labrador\Http\Exception\InvalidDtoAttribute;
-use Cspray\Labrador\Http\Exception\InvalidType;
-use Cspray\Labrador\Http\HttpMethod;
-use Cspray\Labrador\Http\Test\BootstrapAwareTestTrait;
-use Cspray\Labrador\Http\Test\Helper\StreamBuffer;
-use Cspray\Labrador\Http\Test\Unit\Stub\BadDtoController;
-use Cspray\Labrador\HttpDummyApp\Controller\CheckDtoController;
+use Labrador\Http\Controller\DtoControllerHandler;
+use Labrador\Http\Exception\InvalidDtoAttribute;
+use Labrador\Http\Exception\InvalidType;
+use Labrador\Http\HttpMethod;
+use Labrador\Http\Test\BootstrapAwareTestTrait;
+use Labrador\Http\Test\Helper\StreamBuffer;
+use Labrador\Http\Test\Unit\Stub\BadDtoController;
+use Labrador\HttpDummyApp\Controller\CheckDtoController;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
 use League\Uri\Http;
@@ -35,12 +35,7 @@ final class DtoControllerHandlerTest extends TestCase {
     private $streamFilter;
 
     protected function setUp() : void {
-        if (!in_array('test.stream.buffer', stream_get_filters())) {
-            self::assertTrue(stream_filter_register('test.stream.buffer', StreamBuffer::class));
-        }
-        $this->streamFilter = stream_filter_append(STDOUT, 'test.stream.buffer');
-        self::assertIsResource($this->streamFilter);
-        self::assertEmpty(StreamBuffer::getBuffer());
+        StreamBuffer::register();
         $this->vfs = VirtualFilesystem::setup();
         VirtualFilesystem::newFile('annotated-container.xml')
             ->withContent(self::getDefaultConfiguration())
@@ -50,8 +45,7 @@ final class DtoControllerHandlerTest extends TestCase {
 
     protected function tearDown() : void {
         parent::tearDown();
-        StreamBuffer::clearBuffer();
-        self::assertTrue(stream_filter_remove($this->streamFilter));
+        StreamBuffer::unregister();
     }
 
     private function subject(\Closure $closure, string $description) : DtoControllerHandler {

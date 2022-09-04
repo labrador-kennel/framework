@@ -1,10 +1,10 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Router;
+namespace Labrador\Http\Test\Unit\Router;
 
-use Cspray\Labrador\Http\ContentType;
-use Cspray\Labrador\Http\HttpMethod;
-use Cspray\Labrador\Http\Router\RequestMapping;
+use Labrador\Http\ContentType;
+use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\RequestMapping;
 use PHPUnit\Framework\TestCase;
 
 class RequestMappingTest extends TestCase {

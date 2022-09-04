@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http;
+namespace Labrador\Http;
 
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\ErrorHandler;

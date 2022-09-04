@@ -1,11 +1,11 @@
 <?php
 
-namespace Cspray\Labrador\Http;
+namespace Labrador\Http;
 
 use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Cspray\Labrador\Http\Middleware\Priority;
-use Cspray\Labrador\Http\Router\Router;
+use Labrador\Http\Middleware\Priority;
+use Labrador\Http\Router\Router;
 
 #[Service]
 interface Application {

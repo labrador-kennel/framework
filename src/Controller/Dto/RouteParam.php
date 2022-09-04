@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Controller\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 class RouteParam implements DtoInjectionAttribute {

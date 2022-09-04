@@ -1,12 +1,12 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\Middleware;
+namespace Labrador\HttpDummyApp\Middleware;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Cspray\Labrador\Http\Middleware\RouteMiddleware;
+use Labrador\Http\Middleware\RouteMiddleware;
 
 #[RouteMiddleware]
 class ControllerSpecificMiddleware implements Middleware {

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Controller;
+namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
@@ -34,11 +34,10 @@ final class MiddlewareController implements Controller {
     }
 
     public function toString() : string {
-        $string = $this->controller->toString() . '<';
-        $string .= implode(', ', array_map(function(Middleware $middleware) {
+        $middlewareDescription = implode(', ', array_map(function(Middleware $middleware) {
             return get_class($middleware);
         }, $this->middlewares));
-        $string .= '>';
-        return $string;
+
+        return sprintf('MiddlewareHandler<%s, %s>', $this->controller->toString(), $middlewareDescription);
     }
 }

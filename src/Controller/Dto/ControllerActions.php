@@ -1,12 +1,12 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Controller\Dto;
 
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final class DtoController implements ServiceAttribute {
+final class ControllerActions implements ServiceAttribute {
 
     public function __construct(
         /**

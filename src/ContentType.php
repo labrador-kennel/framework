@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http;
+namespace Labrador\Http;
 
 enum ContentType : string {
     case All = '*/*';

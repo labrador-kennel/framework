@@ -6,7 +6,7 @@ declare(strict_types=1);
  * @license See LICENSE in source root
  */
 
-namespace Cspray\Labrador\Http\Controller;
+namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\RequestHandler;
 use Cspray\AnnotatedContainer\Attribute\Service;

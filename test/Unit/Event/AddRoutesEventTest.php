@@ -1,10 +1,10 @@
 <?php
 
-namespace Cspray\Labrador\Http\Test\Unit\Event;
+namespace Labrador\Http\Test\Unit\Event;
 
-use Cspray\Labrador\Http\ApplicationEvent;
-use Cspray\Labrador\Http\Event\AddRoutesEvent;
-use Cspray\Labrador\Http\Router\Router;
+use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Event\AddRoutesEvent;
+use Labrador\Http\Router\Router;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Cspray\Labrador\Http\Controller;
+namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\Middleware;
-use Cspray\Labrador\Http\HttpMethod;
+use Labrador\Http\HttpMethod;
 
 interface RouteMappingAttribute {
 

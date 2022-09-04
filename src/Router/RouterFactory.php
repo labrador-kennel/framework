@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;

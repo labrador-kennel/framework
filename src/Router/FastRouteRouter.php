@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Cspray\Labrador\Http\Router;
+namespace Labrador\Http\Router;
 
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Controller\MiddlewareController;
-use Cspray\Labrador\Http\Exception\InvalidType;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\MiddlewareController;
+use Labrador\Http\Exception\InvalidType;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;

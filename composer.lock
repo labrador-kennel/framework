@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc888cd8a03f00242a86bb67432453e4",
+    "content-hash": "725dbd2462d290ccfb0b1791408bc752",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1250,16 +1250,16 @@
         },
         {
             "name": "cspray/annotated-container",
-            "version": "v2.x-dev",
+            "version": "v2.0.0-beta2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container.git",
-                "reference": "8aca84f3327bdf002be2d36a01de926b2fbfe0ce"
+                "reference": "19874889674544fed311f6fcb9964bd06242d893"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/8aca84f3327bdf002be2d36a01de926b2fbfe0ce",
-                "reference": "8aca84f3327bdf002be2d36a01de926b2fbfe0ce",
+                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/19874889674544fed311f6fcb9964bd06242d893",
+                "reference": "19874889674544fed311f6fcb9964bd06242d893",
                 "shasum": ""
             },
             "require": {
@@ -1293,7 +1293,6 @@
             "autoload": {
                 "files": [
                     "src/Function/auto-wired-parameters.php",
-                    "src/Function/class-alias.php",
                     "src/Function/definitions.php"
                 ],
                 "psr-4": {
@@ -1320,9 +1319,9 @@
             ],
             "support": {
                 "issues": "https://github.com/cspray/annotated-container/issues",
-                "source": "https://github.com/cspray/annotated-container/tree/v2"
+                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-beta2"
             },
-            "time": "2022-08-21T23:02:47+00:00"
+            "time": "2022-09-04T17:03:15+00:00"
         },
         {
             "name": "cspray/annotated-target",
@@ -1418,151 +1417,6 @@
                 "source": "https://github.com/cspray/architectural-decision/tree/v1.1.0"
             },
             "time": "2022-08-11T13:32:57+00:00"
-        },
-        {
-            "name": "cspray/labrador-async-event",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/labrador-kennel/async-event.git",
-                "reference": "e13a6b0f455b5b5cb04155c99c6c3d5f1881d69a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/e13a6b0f455b5b5cb04155c99c6c3d5f1881d69a",
-                "reference": "e13a6b0f455b5b5cb04155c99c6c3d5f1881d69a",
-                "shasum": ""
-            },
-            "require": {
-                "amphp/amp": "~v3.0.0-beta.4",
-                "cspray/annotated-container": "^v2.x-dev",
-                "cspray/labrador-composite-future": "^1.1",
-                "cspray/labrador-exceptions": "^1.2",
-                "php": "^8.1"
-            },
-            "require-dev": {
-                "amphp/phpunit-util": "v3.0.0-beta.3",
-                "cspray/labrador-coding-standard": "0.2.0",
-                "phpunit/phpunit": "^9.5",
-                "rdlowrey/auryn": "^1.4"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cspray\\Labrador\\AsyncEvent\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Charles Sprayberry",
-                    "email": "contact@labrador-kennel.io",
-                    "homepage": "https://labrador-kennel.io",
-                    "role": "Project Maintainer"
-                }
-            ],
-            "description": "Trigger semantic application events powered by Amp Event Loop",
-            "keywords": [
-                "amphp",
-                "emitter",
-                "event",
-                "labrador-kennel"
-            ],
-            "support": {
-                "issues": "https://github.com/labrador-kennel/async-event/issues",
-                "source": "https://github.com/labrador-kennel/async-event/tree/main"
-            },
-            "time": "2022-08-22T10:53:18+00:00"
-        },
-        {
-            "name": "cspray/labrador-composite-future",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/labrador-kennel/composite-future.git",
-                "reference": "3d4ca01d9fad5c7d47d52ddb8924be3887685fca"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/composite-future/zipball/3d4ca01d9fad5c7d47d52ddb8924be3887685fca",
-                "reference": "3d4ca01d9fad5c7d47d52ddb8924be3887685fca",
-                "shasum": ""
-            },
-            "require": {
-                "amphp/amp": "3.0.0-beta.9"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^9.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Labrador\\CompositeFuture\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Charles Sprayberry",
-                    "email": "me@cspray.io"
-                }
-            ],
-            "description": "Compose Amp Futures and await them however you want with a type-safe CompositeFuture object.",
-            "support": {
-                "issues": "https://github.com/labrador-kennel/composite-future/issues",
-                "source": "https://github.com/labrador-kennel/composite-future/tree/1.1.0"
-            },
-            "time": "2022-08-13T15:58:01+00:00"
-        },
-        {
-            "name": "cspray/labrador-exceptions",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/labrador-kennel/exception.git",
-                "reference": "e8c2bcbc87ae7229c9f7c305e2abd72bf6304078"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/exception/zipball/e8c2bcbc87ae7229c9f7c305e2abd72bf6304078",
-                "reference": "e8c2bcbc87ae7229c9f7c305e2abd72bf6304078",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Cspray\\Labrador\\Exception\\": [
-                        "src/"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Charles Sprayberry",
-                    "email": "cspray+labrador@gmail.com",
-                    "homepage": "http://labrador.cspray.net",
-                    "role": "Benevolent Dictator For Life"
-                }
-            ],
-            "support": {
-                "issues": "https://github.com/labrador-kennel/exception/issues",
-                "source": "https://github.com/labrador-kennel/exception/tree/1.2.0"
-            },
-            "time": "2021-03-19T21:46:48+00:00"
         },
         {
             "name": "cspray/typiphy",
@@ -1911,6 +1765,108 @@
                 "source": "https://github.com/kelunik/certificate/tree/v1.1.2"
             },
             "time": "2019-05-29T19:02:31+00:00"
+        },
+        {
+            "name": "labrador-kennel/async-event",
+            "version": "3.0.0-beta3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/labrador-kennel/async-event.git",
+                "reference": "bf841da40a87296d54070868bce95e8f6cb52336"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/bf841da40a87296d54070868bce95e8f6cb52336",
+                "reference": "bf841da40a87296d54070868bce95e8f6cb52336",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "~v3.0.0-beta.9",
+                "cspray/annotated-container": "^v2.0.0-beta2",
+                "labrador-kennel/composite-future": "^1.2",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "amphp/phpunit-util": "v3.0.0-beta.3",
+                "cspray/labrador-coding-standard": "0.2.0",
+                "phpunit/phpunit": "^9.5",
+                "psalm/phar": "^4.26",
+                "rdlowrey/auryn": "^1.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Labrador\\AsyncEvent\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Charles Sprayberry",
+                    "email": "contact@labrador-kennel.io",
+                    "homepage": "https://labrador-kennel.io",
+                    "role": "Project Maintainer"
+                }
+            ],
+            "description": "Trigger semantic application events powered by Amp Event Loop",
+            "keywords": [
+                "amphp",
+                "annotated-container",
+                "event-emitter",
+                "labrador-kennel"
+            ],
+            "support": {
+                "issues": "https://github.com/labrador-kennel/async-event/issues",
+                "source": "https://github.com/labrador-kennel/async-event/tree/3.0.0-beta3"
+            },
+            "time": "2022-09-04T21:08:53+00:00"
+        },
+        {
+            "name": "labrador-kennel/composite-future",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/labrador-kennel/composite-future.git",
+                "reference": "72daae975f6719da5f194ec8db5b0d6e32df1f83"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/labrador-kennel/composite-future/zipball/72daae975f6719da5f194ec8db5b0d6e32df1f83",
+                "reference": "72daae975f6719da5f194ec8db5b0d6e32df1f83",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "3.0.0-beta.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "psalm/phar": "^4.27"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Labrador\\CompositeFuture\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Charles Sprayberry",
+                    "email": "me@cspray.io"
+                }
+            ],
+            "description": "Compose Amp Futures and await them however you want with a type-safe CompositeFuture object.",
+            "support": {
+                "issues": "https://github.com/labrador-kennel/composite-future/issues",
+                "source": "https://github.com/labrador-kennel/composite-future/tree/1.2.0"
+            },
+            "time": "2022-09-03T12:51:44+00:00"
         },
         {
             "name": "league/uri",
@@ -2326,16 +2282,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.14.0",
+            "version": "v4.15.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "34bea19b6e03d8153165d8f30bba4c3be86184c1"
+                "reference": "0ef6c55a3f47f89d7a374e6f835197a0b5fcf900"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/34bea19b6e03d8153165d8f30bba4c3be86184c1",
-                "reference": "34bea19b6e03d8153165d8f30bba4c3be86184c1",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/0ef6c55a3f47f89d7a374e6f835197a0b5fcf900",
+                "reference": "0ef6c55a3f47f89d7a374e6f835197a0b5fcf900",
                 "shasum": ""
             },
             "require": {
@@ -2376,9 +2332,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.14.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.1"
             },
-            "time": "2022-05-31T20:59:12+00:00"
+            "time": "2022-09-04T07:30:47+00:00"
         },
         {
             "name": "psr/cache",
@@ -3512,16 +3468,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.16",
+            "version": "9.2.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "2593003befdcc10db5e213f9f28814f5aa8ac073"
+                "reference": "aa94dc41e8661fe90c7316849907cba3007b10d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2593003befdcc10db5e213f9f28814f5aa8ac073",
-                "reference": "2593003befdcc10db5e213f9f28814f5aa8ac073",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/aa94dc41e8661fe90c7316849907cba3007b10d8",
+                "reference": "aa94dc41e8661fe90c7316849907cba3007b10d8",
                 "shasum": ""
             },
             "require": {
@@ -3577,7 +3533,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.16"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.17"
             },
             "funding": [
                 {
@@ -3585,7 +3541,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-20T05:26:47+00:00"
+            "time": "2022-08-30T12:24:04+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -3830,16 +3786,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.23",
+            "version": "9.5.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "888556852e7e9bbeeedb9656afe46118765ade34"
+                "reference": "d0aa6097bef9fd42458a9b3c49da32c6ce6129c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/888556852e7e9bbeeedb9656afe46118765ade34",
-                "reference": "888556852e7e9bbeeedb9656afe46118765ade34",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d0aa6097bef9fd42458a9b3c49da32c6ce6129c5",
+                "reference": "d0aa6097bef9fd42458a9b3c49da32c6ce6129c5",
                 "shasum": ""
             },
             "require": {
@@ -3868,7 +3824,7 @@
                 "sebastian/global-state": "^5.0.1",
                 "sebastian/object-enumerator": "^4.0.3",
                 "sebastian/resource-operations": "^3.0.3",
-                "sebastian/type": "^3.0",
+                "sebastian/type": "^3.1",
                 "sebastian/version": "^3.0.2"
             },
             "suggest": {
@@ -3912,7 +3868,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.23"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.24"
             },
             "funding": [
                 {
@@ -3924,7 +3880,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-22T14:01:36+00:00"
+            "time": "2022-08-30T07:42:16+00:00"
         },
         {
             "name": "psalm/phar",
@@ -5036,9 +4992,9 @@
     "minimum-stability": "beta",
     "stability-flags": {
         "amphp/http-server": 10,
-        "cspray/annotated-container": 20,
-        "cspray/labrador-async-event": 20,
         "amphp/log": 10,
+        "cspray/annotated-container": 10,
+        "labrador-kennel/async-event": 10,
         "amphp/http-client": 10,
         "amphp/phpunit-util": 10,
         "psalm/phar": 10

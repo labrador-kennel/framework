@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\Http\Logging;
+namespace Labrador\Http\Logging;
 
 use Amp\Log\ConsoleFormatter;
 use Amp\Log\StreamHandler;

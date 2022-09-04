@@ -1,6 +1,6 @@
 <?php
 
-namespace Cspray\Labrador\HttpDummyApp\Model;
+namespace Labrador\HttpDummyApp\Model;
 
 use DateTimeImmutable;
 use JsonSerializable;

@@ -7,23 +7,23 @@
  * @since   1.0
  */
 
-namespace Cspray\Labrador\Http\Test\Unit\Router;
+namespace Labrador\Http\Test\Unit\Router;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\PHPUnit\AsyncTestCase;
-use Cspray\Labrador\Http\Controller\Controller;
-use Cspray\Labrador\Http\Exception\InvalidType;
-use Cspray\Labrador\Http\HttpMethod;
-use Cspray\Labrador\Http\Router\FastRouteRouter;
-use Cspray\Labrador\Http\Router\RequestMapping;
-use Cspray\Labrador\Http\Router\Route;
-use Cspray\Labrador\Http\Router\RoutingResolutionReason;
-use Cspray\Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
-use Cspray\Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
-use Cspray\Labrador\Http\Test\Unit\Stub\ResponseDecoratorMiddleware;
-use Cspray\Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Http\Controller\Controller;
+use Labrador\Http\Exception\InvalidType;
+use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\Route;
+use Labrador\Http\Router\RoutingResolutionReason;
+use Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
+use Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
+use Labrador\Http\Test\Unit\Stub\ResponseDecoratorMiddleware;
+use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;

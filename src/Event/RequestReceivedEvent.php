@@ -1,10 +1,10 @@
 <?php
 
-namespace Cspray\Labrador\Http\Event;
+namespace Labrador\Http\Event;
 
 use Amp\Http\Server\Request;
-use Cspray\Labrador\AsyncEvent\Event;
-use Cspray\Labrador\Http\ApplicationEvent;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
 
 final class RequestReceivedEvent implements Event {
