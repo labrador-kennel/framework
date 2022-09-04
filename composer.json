@@ -1,6 +1,7 @@
 {
   "name": "labrador-kennel/http",
   "description": "A web framework for building applications with Amp and Annotated Container.",
+  "license": "MIT",
   "scripts": {
     "code-lint": "vendor/bin/labrador-cs src/ test/",
     "test": "vendor/bin/phpunit",
