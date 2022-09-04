@@ -6,7 +6,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Closure;
-use Cspray\AnnotatedContainer\AutowireableInvoker;
+use Cspray\AnnotatedContainer\Autowire\AutowireableInvoker;
 use Labrador\Http\Controller\Dto\Body;
 use Labrador\Http\Controller\Dto\Dto;
 use Labrador\Http\Controller\Dto\DtoFactory;

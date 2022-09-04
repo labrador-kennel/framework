@@ -5,6 +5,7 @@ namespace Labrador\Http\DependencyInjection;
 use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\AnnotatedContainerVersion;
+use Cspray\AnnotatedContainer\Bootstrap\ServiceFromServiceDefinition;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
 use Labrador\Http\Application;
@@ -45,17 +46,14 @@ class AutowireObserver extends ServiceWiringObserver {
         $router = $container->get(Router::class);
 
         foreach ($gatherer->getServicesForType(Controller::class) as $controller) {
-            assert($controller instanceof Controller);
             $this->handlePotentialHttpController($container, $controller, $logger, $router);
         }
 
         foreach ($gatherer->getServicesForType(Middleware::class) as $middleware) {
-            assert($middleware instanceof Middleware);
             $this->handleApplicationMiddleware($logger, $app, $middleware);
         }
 
         foreach ($gatherer->getServicesForType(DtoController::class) as $dtoController) {
-            assert($dtoController instanceof DtoController);
             $this->handleDtoController($container, $dtoController, $logger, $router);
         }
     }
@@ -81,27 +79,29 @@ class AutowireObserver extends ServiceWiringObserver {
 
     private function handlePotentialHttpController(
         AnnotatedContainer $container,
-        Controller $controller,
+        ServiceFromServiceDefinition $controllerAndDefinition,
         LoggerInterface $logger,
         Router $router,
     ) : void {
-        /** @var class-string $serviceType */
-        $reflection = new ReflectionClass($controller);
-        $httpAttributes = $reflection->getAttributes(HttpController::class);
+        $controller = $controllerAndDefinition->getService();
+        assert($controller instanceof Controller);
+        $attr = $controllerAndDefinition->getDefinition()->getAttribute();
 
-        if ($httpAttributes !== []) {
+        if ($attr instanceof HttpController) {
             $this->handleHttpController(
-                $container, $router, $logger, $httpAttributes[0]->newInstance(), $controller
+                $container, $router, $logger, $attr, $controller
             );
         }
     }
 
     private function handleDtoController(
         AnnotatedContainer $container,
-        DtoController $controller,
+        ServiceFromServiceDefinition $controllerAndDefinition,
         LoggerInterface $logger,
         Router $router
     ) : void {
+        $controller = $controllerAndDefinition->getService();
+        assert(is_object($controller));
         $reflection = new ReflectionObject($controller);
         foreach ($reflection->getMethods() as $reflectionMethod) {
             $routeMappingAttributes = $reflectionMethod->getAttributes(RouteMappingAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
@@ -148,30 +148,27 @@ class AutowireObserver extends ServiceWiringObserver {
     private function handleApplicationMiddleware(
         LoggerInterface $logger,
         Application $application,
-        Middleware $middleware
+        ServiceFromServiceDefinition $middlewareAndDefinition
     ) : void {
-        /** @var class-string $serviceType */
-        $reflection = new ReflectionClass($middleware);
-        $attributes = $reflection->getAttributes(ApplicationMiddleware::class);
+        $middleware = $middlewareAndDefinition->getService();
+        assert($middleware instanceof Middleware);
 
-        if ($attributes === []) {
-            return;
+        $attr = $middlewareAndDefinition->getDefinition()->getAttribute();
+
+        if ($attr instanceof ApplicationMiddleware) {
+            $application->addMiddleware(
+                $middleware,
+                $attr->getPriority()
+            );
+            $logger->info(
+                'Adding {middleware} to application with {priority} priority.',
+                [
+                    'middleware' => $middleware::class,
+                    'priority' => $attr->getPriority()->name
+                ]
+            );
         }
 
-        $appMiddleware = $attributes[0]->newInstance();
-
-        $application->addMiddleware(
-            $middleware,
-            $appMiddleware->getPriority()
-        );
-
-        $logger->info(
-            'Adding {middleware} to application with {priority} priority.',
-            [
-                'middleware' => $middleware::class,
-                'priority' => $appMiddleware->getPriority()->name
-            ]
-        );
     }
 
     /**
