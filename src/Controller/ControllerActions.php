@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Controller;
 
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;

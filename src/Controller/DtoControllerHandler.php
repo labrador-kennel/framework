@@ -7,16 +7,16 @@ use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Closure;
 use Cspray\AnnotatedContainer\Autowire\AutowireableInvoker;
-use Labrador\Http\Controller\Dto\Body;
-use Labrador\Http\Controller\Dto\Dto;
-use Labrador\Http\Controller\Dto\DtoFactory;
-use Labrador\Http\Controller\Dto\DtoInjectionAttribute;
-use Labrador\Http\Controller\Dto\Header;
-use Labrador\Http\Controller\Dto\Headers;
-use Labrador\Http\Controller\Dto\Method;
-use Labrador\Http\Controller\Dto\QueryParams;
-use Labrador\Http\Controller\Dto\RouteParam;
-use Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Dto\Body;
+use Labrador\Http\Dto\Dto;
+use Labrador\Http\Dto\DtoFactory;
+use Labrador\Http\Dto\DtoInjectionAttribute;
+use Labrador\Http\Dto\Header;
+use Labrador\Http\Dto\Headers;
+use Labrador\Http\Dto\Method;
+use Labrador\Http\Dto\QueryParams;
+use Labrador\Http\Dto\RouteParam;
+use Labrador\Http\Dto\Url;
 use Labrador\Http\Exception\InvalidDtoAttribute;
 use Labrador\Http\Exception\InvalidType;
 use League\Uri\Components\Query;
@@ -56,6 +56,7 @@ final class DtoControllerHandler implements Controller {
     public function handleRequest(Request $request) : Response {
         $params = [];
         foreach ($this->paramFactoryMap as $paramName => $paramFactory) {
+            // TODO The $paramFactory closure could return any object type, if the type is a Response then that will be used and additional processing should stop
             $params[] = rawParam($paramName, $paramFactory($request));
         }
 
@@ -90,6 +91,7 @@ final class DtoControllerHandler implements Controller {
                     if ($parameterType === 'array') {
                         return fn(Request $request) => $request->getHeaderArray($attr->name);
                     } else if ($parameterType === 'string') {
+                        // TODO DtoInjectionErrorHandler::fromMissingHeader(string $headerName) : Response
                         return fn(Request $request) => $request->getHeader($attr->name);
                     } else {
                         throw InvalidType::fromHeaderAttributeInvalidTypeHint($this->description, $parameterName);
@@ -115,6 +117,7 @@ final class DtoControllerHandler implements Controller {
                 case RouteParam::class:
                     $attr = $parameterAttribute->newInstance();
                     assert($attr instanceof RouteParam);
+                    // TODO DotInjectionErrorHandler::fromMissingRequestAttribute(string $name) : Response
                     if ($parameterType === UuidInterface::class) {
                         return fn(Request $request) => Uuid::fromString((string) $request->getAttribute($attr->name));
                     } else if ($parameterType === 'string') {

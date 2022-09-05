@@ -4,7 +4,7 @@ namespace Labrador\Http\Test\Unit\Controller\Dto;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Labrador\Http\Controller\Dto\ValinorDtoFactory;
+use Labrador\Http\Dto\ValinorDtoFactory;
 use Labrador\HttpDummyApp\Model\Author;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;

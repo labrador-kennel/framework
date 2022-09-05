@@ -1,13 +1,13 @@
 <?php
 
-namespace Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Dto;
 
 use Amp\Http\Server\Middleware;
 use Labrador\Http\Controller\RouteMappingAttribute;
 use Labrador\Http\HttpMethod;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-final class Post implements RouteMappingAttribute {
+final class Put implements RouteMappingAttribute {
 
     public function __construct(
         private readonly string $path,
@@ -18,7 +18,7 @@ final class Post implements RouteMappingAttribute {
     ) {}
 
     public function getHttpMethod() : HttpMethod {
-        return HttpMethod::Post;
+        return HttpMethod::Put;
     }
 
     public function getPath() : string {

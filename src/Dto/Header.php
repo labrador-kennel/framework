@@ -1,9 +1,9 @@
 <?php
 
-namespace Labrador\Http\Controller\Dto;
+namespace Labrador\Http\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
-class RouteParam implements DtoInjectionAttribute {
+final class Header implements DtoInjectionAttribute {
 
     public function __construct(
         public readonly string $name
