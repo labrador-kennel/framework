@@ -25,7 +25,7 @@ use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\Controller\RouteMappingAttribute;
 use Labrador\Http\Middleware\ApplicationMiddleware;
-use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\MethodAndPathRequestMapping;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
@@ -131,7 +131,7 @@ class AutowireObserver extends ServiceWiringObserver {
                 assert($routeMapping instanceof RouteMappingAttribute);
 
                 $route = $router->addRoute(
-                    RequestMapping::fromMethodAndPath($routeMapping->getHttpMethod(), $routeMapping->getPath()),
+                    MethodAndPathRequestMapping::fromMethodAndPath($routeMapping->getHttpMethod(), $routeMapping->getPath()),
                     $this->createDtoHandler($container, $controller, $reflectionMethod),
                     ...$this->getMiddlewareFromRouteMappingAttribute($container, $routeMapping)
                 );
@@ -148,7 +148,7 @@ class AutowireObserver extends ServiceWiringObserver {
         Controller $controller
     ) : void {
         $route = $router->addRoute(
-            RequestMapping::fromMethodAndPath($httpController->getHttpMethod(), $httpController->getPath()),
+            MethodAndPathRequestMapping::fromMethodAndPath($httpController->getHttpMethod(), $httpController->getPath()),
             $controller,
             ...$this->getMiddlewareFromRouteMappingAttribute($container, $httpController)
         );
@@ -159,8 +159,8 @@ class AutowireObserver extends ServiceWiringObserver {
         $logger->info(
             'Autowiring route {method} {path} to {controller} controller.',
             [
-                'method' => $route->requestMapping->method->value,
-                'path' => $route->requestMapping->pathPattern,
+                'method' => $route->requestMapping->getHttpMethod()->value,
+                'path' => $route->requestMapping->getPath(),
                 'controller' => $route->controller->toString()
             ]
         );

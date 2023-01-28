@@ -177,7 +177,7 @@ class BootstrapTest extends TestCase {
 
         self::assertInstanceOf(Router::class, $router);
 
-        $routes = array_filter($router->getRoutes(), fn(Route $route) => $route->requestMapping->pathPattern === '/dto/headers');
+        $routes = array_filter($router->getRoutes(), fn(Route $route) => $route->requestMapping->getPath() === '/dto/headers');
 
         self::assertCount(1, $routes);
 

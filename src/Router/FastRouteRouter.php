@@ -29,7 +29,7 @@ final class FastRouteRouter implements Router {
     /**
      * We ask for a callback instead of the object itself to work around needing
      * the list of routes at FastRoute dispatcher instantiation. The $dispatcherCb is
-     * invoked when Router::match is called and it should expect an array of data
+     * invoked when Router::match is called, and it should expect an array of data
      * in the same format as $collector->getData().
      *
      * @param RouteCollector $collector
@@ -42,7 +42,7 @@ final class FastRouteRouter implements Router {
 
     public function addRoute(
         RequestMapping $requestMapping,
-        Controller     $controller,
+        Controller                  $controller,
         Middleware ...$middlewares
     ) : Route {
         if (count($middlewares) > 0) {
@@ -51,8 +51,8 @@ final class FastRouteRouter implements Router {
         $route = new Route($requestMapping, $controller);
         $this->routes[] = $route;
         $this->collector->addRoute(
-            $requestMapping->method->value,
-            $requestMapping->pathPattern,
+            $requestMapping->getHttpMethod()->value,
+            $requestMapping->getPath(),
             $route
         );
 

@@ -21,7 +21,7 @@ use Labrador\Http\HttpMethod;
 use Labrador\Http\Middleware\Priority;
 use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\FastRouteRouter;
-use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\MethodAndPathRequestMapping;
 use Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
 use Labrador\Http\Test\Unit\Stub\EventEmitterStub;
 use Labrador\Http\Test\Unit\Stub\HttpServerStub;
@@ -99,7 +99,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
             new ResponseControllerStub($response = new Response())
         );
 
@@ -124,7 +124,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
             new ResponseControllerStub($response = new Response())
         );
 
@@ -178,7 +178,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
             new ResponseControllerStub($response = new Response())
         );
 
@@ -256,7 +256,7 @@ final class AmpApplicationTest extends TestCase {
         $this->emitter->clearEmittedEvents();
 
         $this->router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Post, '/'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/'),
             new ResponseControllerStub(new Response(body: ''))
         );
 
@@ -294,7 +294,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
             new ResponseControllerStub(new Response())
         );
 

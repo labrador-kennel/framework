@@ -10,7 +10,7 @@
 namespace Labrador\Http\Test\Unit\Router;
 
 use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\MethodAndPathRequestMapping;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +20,7 @@ class RouteTest extends TestCase {
     public function routeProvider() {
         return [
             [new Route(
-                RequestMapping::fromMethodAndPath(
+                MethodAndPathRequestMapping::fromMethodAndPath(
                     HttpMethod::Get,
                     '/handler-string',
                 ),

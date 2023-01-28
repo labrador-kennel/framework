@@ -17,7 +17,7 @@ use Labrador\Http\Controller\Controller;
 use Labrador\Http\Exception\InvalidType;
 use Labrador\Http\HttpMethod;
 use Labrador\Http\Router\FastRouteRouter;
-use Labrador\Http\Router\RequestMapping;
+use Labrador\Http\Router\MethodAndPathRequestMapping;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\RoutingResolutionReason;
 use Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
@@ -80,8 +80,8 @@ class FastRouteRouterTest extends AsyncTestCase {
         $router = $this->getRouter();
         $request = $this->getRequest('POST', 'http://labrador.dev/foo');
         $mock = $this->createMock(Controller::class);
-        $router->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo'), $mock);
-        $router->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo'), $mock);
+        $router->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo'), $mock);
+        $router->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo'), $mock);
 
         $resolution = $router->match($request);
 
@@ -94,7 +94,7 @@ class FastRouteRouterTest extends AsyncTestCase {
 
         $request = $this->getRequest('GET', 'http://labrador.dev/foo');
         $router->addRoute(
-            RequestMapping::fromMethodAndPath( HttpMethod::Get, '/foo'),
+            MethodAndPathRequestMapping::fromMethodAndPath( HttpMethod::Get, '/foo'),
             $controller = $this->createMock(Controller::class)
         );
 
@@ -109,7 +109,7 @@ class FastRouteRouterTest extends AsyncTestCase {
 
         $request = $this->getRequest('POST', 'http://www.sprog.dev/foo/bar/qux');
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/{name}/{id}'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/{name}/{id}'),
             $this->createMock(Controller::class)
         );
 
@@ -123,30 +123,30 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testGetRoutesWithJustOne() {
         $router = $this->getRouter();
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo'),
             new ToStringControllerStub('foo_get')
         );
 
         $routes = $router->getRoutes();
         self::assertCount(1, $routes);
         self::assertInstanceOf(Route::class, $routes[0]);
-        self::assertSame('/foo', $routes[0]->requestMapping->pathPattern);
-        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->method);
+        self::assertSame('/foo', $routes[0]->requestMapping->getPath());
+        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->getHttpMethod());
         self::assertSame('foo_get', $routes[0]->controller->toString());
     }
 
     public function testGetRoutesWithOnePatternSupportingMultipleMethods() {
         $router = $this->getRouter();
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/bar'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/bar'),
             new ToStringControllerStub('foo_bar_get')
         );
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/bar'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/bar'),
             new ToStringControllerStub('foo_bar_post')
         );
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo/bar'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo/bar'),
             new ToStringControllerStub('foo_bar_put')
         );
 
@@ -160,7 +160,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         $routes = $router->getRoutes();
         foreach ($routes as $route) {
             self::assertInstanceOf(Route::class, $route);
-            $actual[] = [$route->requestMapping->method, $route->requestMapping->pathPattern, $route->controller->toString()];
+            $actual[] = [$route->requestMapping->getHttpMethod(), $route->requestMapping->getPath(), $route->controller->toString()];
         }
 
         self::assertSame($expected, $actual);
@@ -169,19 +169,19 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testGetRoutesWithStaticAndVariable() {
         $router = $this->getRouter();
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/bar/{id}'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/bar/{id}'),
             new ToStringControllerStub('foo_bar_show_get')
         );
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/baz/{name}'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/baz/{name}'),
             new ToStringControllerStub('foo_bar_show_name_get')
         );
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/baz'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/baz'),
             new ToStringControllerStub('foo_baz_post')
         );
         $router->addRoute(
-            RequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo/quz'),
+            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo/quz'),
             new ToStringControllerStub('foo_quz_put')
         );
 
@@ -195,7 +195,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         $routes = $router->getRoutes();
         foreach ($routes as $route) {
             $this->assertInstanceOf(Route::class, $route);
-            $actual[] = [$route->requestMapping->method, $route->requestMapping->pathPattern, $route->controller->toString()];
+            $actual[] = [$route->requestMapping->getHttpMethod(), $route->requestMapping->getPath(), $route->controller->toString()];
         }
 
         $this->assertSame($expected, $actual);
@@ -206,7 +206,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         $request = $this->getRequest('GET', 'http://example.com/foo%20bar');
         $router = $this->getRouter();
         $mock = $this->createMock(Controller::class);
-        $router->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Get, '/{param}'), $mock);
+        $router->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/{param}'), $mock);
         $router->match($request);
 
         $this->assertSame('foo bar', $request->getAttribute('param'));
@@ -235,7 +235,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         $router = $this->getRouter();
         $responseController = new ResponseControllerStub(new Response(200, [], 'decorated value:'));
         $router->addRoute(
-            RequestMapping::fromMethodAndPath($httpMethod, '/foo'),
+            MethodAndPathRequestMapping::fromMethodAndPath($httpMethod, '/foo'),
             $responseController,
             ...$this->defaultMiddlewares()
         );

@@ -97,6 +97,7 @@ final class DtoController implements Controller {
     }
 
     public function toString() : string {
+        assert($this->description !== '');
         return $this->description;
     }
 }

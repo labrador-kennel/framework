@@ -2,25 +2,14 @@
 
 namespace Labrador\Http\Router;
 
-use Labrador\Http\ContentType;
 use Labrador\Http\HttpMethod;
 
-final class RequestMapping {
+interface RequestMapping {
 
-    private function __construct(
-        public readonly HttpMethod $method,
-        public readonly string $pathPattern
-    ) {}
+    public function getHttpMethod() : HttpMethod;
 
-    public static function fromMethodAndPath(HttpMethod $method, string $path) : self {
-        return new self($method, $path);
-    }
+    public function getPath() : string;
 
-    public function withPath(string $path) : self {
-        return new self(
-            $this->method,
-            $path,
-        );
-    }
+    public function withPath(string $path) : RequestMapping;
 
 }

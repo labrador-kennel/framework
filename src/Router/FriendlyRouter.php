@@ -34,7 +34,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function get(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Get, $pattern), $controller, ...$middlewares);
+        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -47,7 +47,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function post(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Post, $pattern), $controller, ...$middlewares);
+        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -60,7 +60,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function put(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Put, $pattern), $controller, ...$middlewares);
+        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -73,7 +73,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function delete(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(RequestMapping::fromMethodAndPath(HttpMethod::Delete, $pattern), $controller, ...$middlewares);
+        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Delete, $pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -109,11 +109,11 @@ final class FriendlyRouter implements Router {
 
     public function addRoute(
         RequestMapping $requestMapping,
-        Controller     $controller,
+        Controller                  $controller,
         Middleware ...$middlewares
     ) : Route {
         if ($this->isMounted()) {
-            $pattern = implode('', $this->mounts['prefix']) . $requestMapping->pathPattern;
+            $pattern = implode('', $this->mounts['prefix']) . $requestMapping->getPath();
             $requestMapping = $requestMapping->withPath($pattern);
             $middlewares = array_merge([], $this->mounts['middleware'], $middlewares);
         }

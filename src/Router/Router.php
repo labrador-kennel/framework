@@ -21,7 +21,7 @@ interface Router {
      */
     public function addRoute(
         RequestMapping $requestMapping,
-        Controller     $controller,
+        Controller                  $controller,
         Middleware... $middlewares
     ) : Route;
 
