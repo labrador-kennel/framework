@@ -10,8 +10,6 @@ use Labrador\Http\Controller\Controller;
 /**
  * An interface that is responsible for matching a given Request by HTTP method and URL to a Controller instance and an
  * optional set of Middleware.
- *
- * @license See LICENSE in source root
  */
 #[Service]
 interface Router {

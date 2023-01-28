@@ -6,19 +6,18 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Labrador\Http\Controller\ControllerActions;
-use Labrador\Http\Controller\DtoController;
-use Labrador\Http\Dto\Body;
-use Labrador\Http\Dto\Delete;
-use Labrador\Http\Dto\Dto;
-use Labrador\Http\Dto\Get;
-use Labrador\Http\Dto\Header;
-use Labrador\Http\Dto\Headers;
-use Labrador\Http\Dto\Method;
-use Labrador\Http\Dto\Post;
-use Labrador\Http\Dto\Put;
-use Labrador\Http\Dto\QueryParams;
-use Labrador\Http\Dto\RouteParam;
-use Labrador\Http\Dto\Url;
+use Labrador\Http\Controller\Delete;
+use Labrador\Http\Controller\Dto\Body;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Controller\Get;
+use Labrador\Http\Controller\Post;
+use Labrador\Http\Controller\Put;
 use Labrador\HttpDummyApp\CountingService;
 use Labrador\HttpDummyApp\Middleware\ControllerSpecificMiddleware;
 use Labrador\HttpDummyApp\Model\Widget;
@@ -28,7 +27,7 @@ use Psr\Http\Message\UriInterface;
 use Ramsey\Uuid\UuidInterface;
 
 #[ControllerActions]
-class CheckDtoController implements DtoController {
+class CheckDtoController {
 
     #[Get('/dto/headers')]
     public function checkHeaders(#[Headers] array $requestHeaders) : Response {

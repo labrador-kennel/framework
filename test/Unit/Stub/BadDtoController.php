@@ -3,15 +3,15 @@
 namespace Labrador\Http\Test\Unit\Stub;
 
 use Labrador\Http\Controller\ControllerActions;
-use Labrador\Http\Dto\Body;
-use Labrador\Http\Dto\Dto;
-use Labrador\Http\Dto\Get;
-use Labrador\Http\Dto\Header;
-use Labrador\Http\Dto\Headers;
-use Labrador\Http\Dto\Method;
-use Labrador\Http\Dto\QueryParams;
-use Labrador\Http\Dto\RouteParam;
-use Labrador\Http\Dto\Url;
+use Labrador\Http\Controller\Dto\Body;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Controller\Get;
 
 #[ControllerActions]
 final class BadDtoController {

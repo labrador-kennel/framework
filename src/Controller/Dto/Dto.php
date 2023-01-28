@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Dto;
+namespace Labrador\Http\Controller\Dto;
 
 use Attribute;
 

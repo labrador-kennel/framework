@@ -4,7 +4,7 @@ namespace Labrador\Http\Test\Unit\Controller\Dto;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Labrador\Http\Dto\ValinorDtoFactory;
+use Labrador\Http\Controller\Dto\ValinorDtoFactory;
 use Labrador\HttpDummyApp\Model\Author;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +21,7 @@ class DtoFactoryTest extends TestCase {
                 'name' => 'cspray',
                 'email' => 'cspray@example.com',
                 'website' => null
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
         $author = $subject->create(Author::class, $request);
 

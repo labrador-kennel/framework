@@ -10,8 +10,18 @@ use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
 use Labrador\Http\Application;
 use Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\ControllerActions;
+use Labrador\Http\Controller\Dto\DtoInjectionHandler;
+use Labrador\Http\Controller\Dto\DtoInjectionManager;
+use Labrador\Http\Controller\Dto\InjectionHandler\BodyHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\DtoHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\HeaderHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\HeadersHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\MethodHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\QueryParamsHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\RouteParamHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\UrlHandler;
 use Labrador\Http\Controller\DtoController;
-use Labrador\Http\Controller\DtoControllerHandler;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\Controller\RouteMappingAttribute;
 use Labrador\Http\Middleware\ApplicationMiddleware;
@@ -20,10 +30,8 @@ use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
 use ReflectionAttribute;
-use ReflectionClass;
 use ReflectionMethod;
 use ReflectionObject;
-use function Amp\ByteStream\getStdout;
 use function Cspray\AnnotatedContainer\autowiredParams;
 use function Cspray\AnnotatedContainer\rawParam;
 
@@ -33,17 +41,30 @@ class AutowireObserver extends ServiceWiringObserver {
         /** @var LoggerInterface $logger */
         $logger = $container->get(LoggerInterface::class);
 
-        getStdout()->write(file_get_contents(__DIR__ . '/../../resources/ascii/labrador.txt') . PHP_EOL);
-        getStdout()->write('Labrador HTTP Version: dev-main' . PHP_EOL);
-        getStdout()->write('Annotated Container Version: ' . AnnotatedContainerVersion::getVersion() . PHP_EOL);
-        getStdout()->write('Amp HTTP Server Version: v3.0.0-beta.3' . PHP_EOL . PHP_EOL);
-
         $logger->info('Container created, beginning to autowire services.');
 
         /** @var Application $app */
         $app = $container->get(Application::class);
         /** @var Router $router */
         $router = $container->get(Router::class);
+        /** @var DtoInjectionManager $dtoManager */
+        $dtoManager = $container->get(DtoInjectionManager::class);
+
+        $dtoHandlers = [
+            BodyHandler::class,
+            DtoHandler::class,
+            HeaderHandler::class,
+            HeadersHandler::class,
+            MethodHandler::class,
+            QueryParamsHandler::class,
+            RouteParamHandler::class,
+            UrlHandler::class,
+        ];
+        foreach ($dtoHandlers as $dtoHandler) {
+            $handler = $container->make($dtoHandler);
+            assert($handler instanceof DtoInjectionHandler);
+            $dtoManager->addHandler($handler);
+        }
 
         foreach ($gatherer->getServicesForType(Controller::class) as $controller) {
             $this->handlePotentialHttpController($container, $controller, $logger, $router);
@@ -53,7 +74,7 @@ class AutowireObserver extends ServiceWiringObserver {
             $this->handleApplicationMiddleware($logger, $app, $middleware);
         }
 
-        foreach ($gatherer->getServicesForType(DtoController::class) as $dtoController) {
+        foreach ($gatherer->getServicesWithAttribute(ControllerActions::class) as $dtoController) {
             $this->handleDtoController($container, $dtoController, $logger, $router);
         }
     }
@@ -62,17 +83,17 @@ class AutowireObserver extends ServiceWiringObserver {
         AnnotatedContainer $container,
         object $dtoController,
         ReflectionMethod $reflectionMethod
-    ) : DtoControllerHandler {
+    ) : DtoController {
         $description = sprintf('DtoHandler<%s::%s>', $reflectionMethod->getDeclaringClass()->getName(), $reflectionMethod->getName());
 
         $handler = $container->make(
-            DtoControllerHandler::class,
+            DtoController::class,
             autowiredParams(
                 rawParam('closure', $reflectionMethod->getClosure($dtoController)),
                 rawParam('description', $description),
             )
         );
-        assert($handler instanceof DtoControllerHandler);
+        assert($handler instanceof DtoController);
 
         return $handler;
     }

@@ -21,11 +21,11 @@ trait BootstrapAwareTestTrait {
             <dir>vendor/labrador-kennel/async-event/src</dir>
         </source>
     </scanDirectories>
-    <containerDefinitionBuilderContextConsumer>
+    <definitionProvider>
         Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
-    </containerDefinitionBuilderContextConsumer>
+    </definitionProvider>
     <observers>
-        <fqcn>Labrador\Http\DependencyInjection\AutowireObserver</fqcn>
+        <observer>Labrador\Http\DependencyInjection\AutowireObserver</observer>
     </observers>
 </annotatedContainer>
 XML;

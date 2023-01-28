@@ -10,6 +10,15 @@ declare(strict_types=1);
 namespace Labrador\Http\Exception;
 
 use Amp\Http\Server\RequestBody;
+use Labrador\Http\Controller\Dto\Body;
+use Labrador\Http\Controller\Dto\Dto;
+use Labrador\Http\Controller\Dto\DtoInjectionAttribute;
+use Labrador\Http\Controller\Dto\Header;
+use Labrador\Http\Controller\Dto\Headers;
+use Labrador\Http\Controller\Dto\Method;
+use Labrador\Http\Controller\Dto\QueryParams;
+use Labrador\Http\Controller\Dto\RouteParam;
+use Labrador\Http\Controller\Dto\Url;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
 use Psr\Http\Message\UriInterface;
@@ -22,7 +31,20 @@ class InvalidType extends Exception {
         return new self($msg);
     }
 
-    public static function fromRouteParamAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    public static function fromDtoInjectAttributeInvalidTypeHint(DtoInjectionAttribute $attribute, string $classMethod, string $parameterName) : self {
+        return match($attribute::class) {
+            RouteParam::class => self::fromRouteParamAttributeInvalidTypeHint($classMethod, $parameterName),
+            Headers::class => self::fromHeadersAttributeInvalidTypeHint($classMethod, $parameterName),
+            Header::class => self::fromHeaderAttributeInvalidTypeHint($classMethod, $parameterName),
+            Method::class => self::fromMethodAttributeInvalidTypeHint($classMethod, $parameterName),
+            Dto::class => self::fromDtoAttributeInvalidTypeHint($classMethod, $parameterName),
+            Body::class => self::fromBodyAttributeInvalidTypeHint($classMethod, $parameterName),
+            Url::class => self::fromUrlAttributeInvalidTypeHint($classMethod, $parameterName),
+            QueryParams::class => self::fromQueryParamsAttributeInvalidTypeHint($classMethod, $parameterName)
+        };
+    }
+
+    private static function fromRouteParamAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[RouteParam] Attribute but is not type-hinted as a string or %s.',
@@ -33,7 +55,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromHeadersAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromHeadersAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[Headers] Attribute but is not type-hinted as an array.',
@@ -43,7 +65,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromMethodAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromMethodAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[Method] Attribute but is not type-hinted as a string.',
@@ -53,7 +75,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromHeaderAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromHeaderAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[Header] Attribute but is not type-hinted as an array or string.',
@@ -63,7 +85,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromUrlAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromUrlAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[Url] Attribute but is not type-hinted as a %s.',
@@ -74,7 +96,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromQueryParamsAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromQueryParamsAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[QueryParams] Attribute but is not type-hinted as a string, %s, or %s.',
@@ -86,7 +108,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromBodyAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromBodyAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[Body] Attribute but is not type-hinted as a string or %s.',
@@ -97,7 +119,7 @@ class InvalidType extends Exception {
         );
     }
 
-    public static function fromDtoAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
+    private static function fromDtoAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
         return new self(
             sprintf(
                 'The parameter "%s" on %s is marked with a #[Dto] Attribute but is not type-hinted with a class type.',

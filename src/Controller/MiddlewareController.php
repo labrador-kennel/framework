@@ -27,17 +27,19 @@ final class MiddlewareController implements Controller {
     /**
      * @param Request $request
      *
-     * @return \Amp\Http\Server\Response
+     * @return Response
      */
     public function handleRequest(Request $request) : Response {
         return $this->stack->handleRequest($request);
     }
 
     public function toString() : string {
-        $middlewareDescription = implode(', ', array_map(function(Middleware $middleware) {
+        $middlewareDescription = implode(', ', array_map(static function(Middleware $middleware) {
             return get_class($middleware);
         }, $this->middlewares));
 
-        return sprintf('MiddlewareHandler<%s, %s>', $this->controller->toString(), $middlewareDescription);
+        $toString = sprintf('MiddlewareHandler<%s, %s>', $this->controller->toString(), $middlewareDescription);
+        assert($toString !== '');
+        return $toString;
     }
 }

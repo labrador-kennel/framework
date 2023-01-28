@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Dto;
+namespace Labrador\Http\Controller\Dto;
 
 use Amp\Http\Server\Request;
 use Cspray\AnnotatedContainer\Attribute\Service;
@@ -13,8 +13,8 @@ class ValinorDtoFactory implements DtoFactory {
 
     private readonly TreeMapper $mapper;
 
-    public function __construct() {
-        $this->mapper = (new MapperBuilder())->mapper();
+    public function __construct(TreeMapper $treeMapper = null) {
+        $this->mapper = $treeMapper ?? (new MapperBuilder())->mapper();
     }
 
     public function create(string $dtoType, Request $request) : object {
