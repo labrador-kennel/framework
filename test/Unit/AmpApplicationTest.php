@@ -21,7 +21,9 @@ use Labrador\Http\HttpMethod;
 use Labrador\Http\Middleware\Priority;
 use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\GetMapping;
 use Labrador\Http\Router\MethodAndPathRequestMapping;
+use Labrador\Http\Router\PostMapping;
 use Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
 use Labrador\Http\Test\Unit\Stub\EventEmitterStub;
 use Labrador\Http\Test\Unit\Stub\HttpServerStub;
@@ -99,7 +101,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            new GetMapping('/'),
             new ResponseControllerStub($response = new Response())
         );
 
@@ -124,7 +126,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            new GetMapping('/'),
             new ResponseControllerStub($response = new Response())
         );
 
@@ -178,7 +180,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            new GetMapping('/'),
             new ResponseControllerStub($response = new Response())
         );
 
@@ -256,7 +258,7 @@ final class AmpApplicationTest extends TestCase {
         $this->emitter->clearEmittedEvents();
 
         $this->router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/'),
+            new PostMapping('/'),
             new ResponseControllerStub(new Response(body: ''))
         );
 
@@ -294,7 +296,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/'),
+            new GetMapping('/'),
             new ResponseControllerStub(new Response())
         );
 

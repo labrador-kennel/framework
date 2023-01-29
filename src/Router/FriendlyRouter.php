@@ -34,7 +34,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function get(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, $pattern), $controller, ...$middlewares);
+        $this->addRoute(new GetMapping($pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -47,7 +47,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function post(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, $pattern), $controller, ...$middlewares);
+        $this->addRoute(new PostMapping($pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -60,7 +60,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function put(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, $pattern), $controller, ...$middlewares);
+        $this->addRoute(new PutMapping($pattern), $controller, ...$middlewares);
         return $this;
     }
 
@@ -73,7 +73,7 @@ final class FriendlyRouter implements Router {
      * @return $this
      */
     public function delete(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Delete, $pattern), $controller, ...$middlewares);
+        $this->addRoute(new DeleteMapping($pattern), $controller, ...$middlewares);
         return $this;
     }
 

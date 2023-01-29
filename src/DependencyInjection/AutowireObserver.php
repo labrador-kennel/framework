@@ -131,7 +131,7 @@ class AutowireObserver extends ServiceWiringObserver {
                 assert($routeMapping instanceof RouteMappingAttribute);
 
                 $route = $router->addRoute(
-                    MethodAndPathRequestMapping::fromMethodAndPath($routeMapping->getHttpMethod(), $routeMapping->getPath()),
+                    $routeMapping->getRequestMapping(),
                     $this->createDtoHandler($container, $controller, $reflectionMethod),
                     ...$this->getMiddlewareFromRouteMappingAttribute($container, $routeMapping)
                 );
@@ -148,7 +148,7 @@ class AutowireObserver extends ServiceWiringObserver {
         Controller $controller
     ) : void {
         $route = $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath($httpController->getHttpMethod(), $httpController->getPath()),
+            $httpController->getRequestMapping(),
             $controller,
             ...$this->getMiddlewareFromRouteMappingAttribute($container, $httpController)
         );

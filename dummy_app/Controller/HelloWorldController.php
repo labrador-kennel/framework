@@ -7,8 +7,9 @@ use Amp\Http\Server\Response;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\GetMapping;
 
-#[HttpController(HttpMethod::Get, '/hello/world')]
+#[HttpController(new GetMapping('/hello/world'))]
 class HelloWorldController implements Controller {
 
     public function handleRequest(Request $request) : Response {

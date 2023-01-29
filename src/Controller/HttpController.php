@@ -6,13 +6,13 @@ use Amp\Http\Server\Middleware;
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\RequestMapping;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 final class HttpController implements ServiceAttribute, RouteMappingAttribute {
 
     public function __construct(
-        private readonly HttpMethod $method,
-        private readonly string $pattern,
+        private readonly RequestMapping $requestMapping,
         /**
          * @var list<class-string<Middleware>> $middleware
          */
@@ -23,12 +23,8 @@ final class HttpController implements ServiceAttribute, RouteMappingAttribute {
         private readonly array $profiles = []
     ) {}
 
-    public function getHttpMethod() : HttpMethod {
-        return $this->method;
-    }
-
-    public function getPath() : string {
-        return $this->pattern;
+    public function getRequestMapping() : RequestMapping {
+        return $this->requestMapping;
     }
 
     /**

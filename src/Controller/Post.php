@@ -4,9 +4,14 @@ namespace Labrador\Http\Controller;
 
 use Amp\Http\Server\Middleware;
 use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\MethodAndPathRequestMapping;
+use Labrador\Http\Router\PostMapping;
+use Labrador\Http\Router\RequestMapping;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
 final class Post implements RouteMappingAttribute {
+
+    private readonly RequestMapping $requestMapping;
 
     public function __construct(
         private readonly string $path,
@@ -14,17 +19,16 @@ final class Post implements RouteMappingAttribute {
          * @var list<class-string<Middleware>> $middleware
          */
         private readonly array $middleware = []
-    ) {}
-
-    public function getHttpMethod() : HttpMethod {
-        return HttpMethod::Post;
+    ) {
+        $this->requestMapping = new PostMapping($this->path);
     }
 
-    public function getPath() : string {
-        return $this->path;
-    }
 
     public function getMiddleware() : array {
         return $this->middleware;
+    }
+
+    public function getRequestMapping() : RequestMapping {
+        return $this->requestMapping;
     }
 }

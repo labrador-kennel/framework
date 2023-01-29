@@ -17,7 +17,10 @@ use Labrador\Http\Controller\Controller;
 use Labrador\Http\Exception\InvalidType;
 use Labrador\Http\HttpMethod;
 use Labrador\Http\Router\FastRouteRouter;
-use Labrador\Http\Router\MethodAndPathRequestMapping;
+use Labrador\Http\Router\GetMapping;
+use Labrador\Http\Router\PostMapping;
+use Labrador\Http\Router\PutMapping;
+use Labrador\Http\Router\RequestMapping;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\RoutingResolutionReason;
 use Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
@@ -80,8 +83,8 @@ class FastRouteRouterTest extends AsyncTestCase {
         $router = $this->getRouter();
         $request = $this->getRequest('POST', 'http://labrador.dev/foo');
         $mock = $this->createMock(Controller::class);
-        $router->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo'), $mock);
-        $router->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo'), $mock);
+        $router->addRoute(new GetMapping('/foo'), $mock);
+        $router->addRoute(new PutMapping('/foo'), $mock);
 
         $resolution = $router->match($request);
 
@@ -94,7 +97,7 @@ class FastRouteRouterTest extends AsyncTestCase {
 
         $request = $this->getRequest('GET', 'http://labrador.dev/foo');
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath( HttpMethod::Get, '/foo'),
+            new GetMapping('/foo'),
             $controller = $this->createMock(Controller::class)
         );
 
@@ -109,7 +112,7 @@ class FastRouteRouterTest extends AsyncTestCase {
 
         $request = $this->getRequest('POST', 'http://www.sprog.dev/foo/bar/qux');
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/{name}/{id}'),
+            new PostMapping('/foo/{name}/{id}'),
             $this->createMock(Controller::class)
         );
 
@@ -123,7 +126,7 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testGetRoutesWithJustOne() {
         $router = $this->getRouter();
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo'),
+            new GetMapping('/foo'),
             new ToStringControllerStub('foo_get')
         );
 
@@ -138,15 +141,15 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testGetRoutesWithOnePatternSupportingMultipleMethods() {
         $router = $this->getRouter();
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/bar'),
+            new GetMapping('/foo/bar'),
             new ToStringControllerStub('foo_bar_get')
         );
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/bar'),
+            new PostMapping('/foo/bar'),
             new ToStringControllerStub('foo_bar_post')
         );
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo/bar'),
+            new PutMapping('/foo/bar'),
             new ToStringControllerStub('foo_bar_put')
         );
 
@@ -169,19 +172,19 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testGetRoutesWithStaticAndVariable() {
         $router = $this->getRouter();
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/bar/{id}'),
+            new GetMapping('/foo/bar/{id}'),
             new ToStringControllerStub('foo_bar_show_get')
         );
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/foo/baz/{name}'),
+            new GetMapping('/foo/baz/{name}'),
             new ToStringControllerStub('foo_bar_show_name_get')
         );
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Post, '/foo/baz'),
+            new PostMapping('/foo/baz'),
             new ToStringControllerStub('foo_baz_post')
         );
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Put, '/foo/quz'),
+            new PutMapping('/foo/quz'),
             new ToStringControllerStub('foo_quz_put')
         );
 
@@ -206,7 +209,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         $request = $this->getRequest('GET', 'http://example.com/foo%20bar');
         $router = $this->getRouter();
         $mock = $this->createMock(Controller::class);
-        $router->addRoute(MethodAndPathRequestMapping::fromMethodAndPath(HttpMethod::Get, '/{param}'), $mock);
+        $router->addRoute(new GetMapping('/{param}'), $mock);
         $router->match($request);
 
         $this->assertSame('foo bar', $request->getAttribute('param'));
@@ -222,7 +225,8 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function routerRouteMethodProvider() {
         $args = [];
         foreach (HttpMethod::cases() as $method) {
-            $args[$method->value] = [$method];
+            $mappingClass = 'Labrador\\Http\\Router\\' . $method->name . 'Mapping';
+            $args[$method->value] = [new $mappingClass('/foo')];
         }
         return $args;
     }
@@ -230,12 +234,12 @@ class FastRouteRouterTest extends AsyncTestCase {
     /**
      * @dataProvider routerRouteMethodProvider
      */
-    public function testAddingMiddlewareToSingleRoute(HttpMethod $httpMethod) {
-        $request = $this->getRequest($httpMethod->value, 'http://example.com/foo');
+    public function testAddingMiddlewareToSingleRoute(RequestMapping $requestMapping) {
+        $request = $this->getRequest($requestMapping->getHttpMethod()->value, 'http://example.com' . $requestMapping->getPath());
         $router = $this->getRouter();
         $responseController = new ResponseControllerStub(new Response(200, [], 'decorated value:'));
         $router->addRoute(
-            MethodAndPathRequestMapping::fromMethodAndPath($httpMethod, '/foo'),
+            $requestMapping,
             $responseController,
             ...$this->defaultMiddlewares()
         );
