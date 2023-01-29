@@ -21,7 +21,7 @@ class DtoFactoryTest extends TestCase {
                 'name' => 'cspray',
                 'email' => 'cspray@example.com',
                 'website' => null
-            ])
+            ], JSON_THROW_ON_ERROR)
         );
         $author = $subject->create(Author::class, $request);
 

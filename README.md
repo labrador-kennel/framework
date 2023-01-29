@@ -38,15 +38,7 @@ It's best to show a Controller implementing this functionality.
 
 namespace Labrador\HttpDemo;
 
-use Amp\Http\Server\Response;
-use Labrador\Http\Controller\Dto\Dto;
-use Labrador\Http\Controller\Dto\ControllerActions;
-use Labrador\Http\Controller\Dto\Get;
-use Labrador\Http\Controller\Dto\Post;
-use Labrador\Http\Controller\Dto\RouteParam;
-use League\Uri\Components\Query;
-use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\UuidInterface;
+use Amp\Http\Server\Response;use Labrador\Http\Controller\ControllerActions;use Labrador\Http\Controller\Dto\Dto;use Labrador\Http\Controller\Dto\RouteParam;use Labrador\Http\Controller\Get;use Labrador\Http\Controller\Post;use League\Uri\Components\Query;use Psr\Log\LoggerInterface;use Ramsey\Uuid\UuidInterface;
 
 #[ControllerActions]
 final class WidgetController {
@@ -89,19 +81,7 @@ Labrador HTTP also provides the ability to get specific parts of the Request usi
 
 namespace Labrador\HttpDemo;
 
-use Amp\Http\Server\RequestBody;use Amp\Http\Server\Response;
-use Labrador\Http\Controller\Dto\Body;use Labrador\Http\Controller\Dto\ControllerActions;
-use Labrador\Http\Controller\Dto\Get;
-use Labrador\Http\Controller\Dto\Header;
-use Labrador\Http\Controller\Dto\Headers;
-use Labrador\Http\Controller\Dto\Method;
-use Labrador\Http\Controller\Dto\Post;
-use Labrador\Http\Controller\Dto\QueryParams;
-use Labrador\Http\Controller\Dto\RouteParam;
-use Labrador\Http\Controller\Dto\Url;
-use League\Uri\Components\Query;
-use League\Uri\Contracts\QueryInterface;
-use Psr\Http\Message\UriInterface;
+use Amp\Http\Server\RequestBody;use Amp\Http\Server\Response;use Labrador\Http\Controller\ControllerActions;use Labrador\Http\Controller\Dto\Body;use Labrador\Http\Controller\Dto\Header;use Labrador\Http\Controller\Dto\Headers;use Labrador\Http\Controller\Dto\Method;use Labrador\Http\Controller\Dto\QueryParams;use Labrador\Http\Controller\Dto\RouteParam;use Labrador\Http\Controller\Dto\Url;use Labrador\Http\Controller\Get;use Labrador\Http\Controller\Post;use League\Uri\Components\Query;use League\Uri\Contracts\QueryInterface;use Psr\Http\Message\UriInterface;
 
 #[ControllerActions]
 class RequestInjectionController {

@@ -6,7 +6,7 @@ use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
-use Labrador\Http\Controller\DtoControllerHandler;
+use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Exception\InvalidDtoAttribute;
 use Labrador\Http\Exception\InvalidType;
 use Labrador\Http\HttpMethod;
@@ -48,15 +48,15 @@ final class DtoControllerHandlerTest extends TestCase {
         StreamBuffer::unregister();
     }
 
-    private function subject(\Closure $closure, string $description) : DtoControllerHandler {
+    private function subject(\Closure $closure, string $description) : DtoController {
         $handler = $this->container->make(
-            DtoControllerHandler::class,
+            DtoController::class,
             autowiredParams(
                 rawParam('closure', $closure),
                 rawParam('description', $description),
             )
         );
-        assert($handler instanceof DtoControllerHandler);
+        assert($handler instanceof DtoController);
         return $handler;
     }
 
@@ -364,8 +364,8 @@ final class DtoControllerHandlerTest extends TestCase {
                     'email' => 'author@example.com',
                     'website' => 'https://author.example.com'
                 ],
-                'created_at' => '2022-01-01 13:00:00'
-            ])
+                'created_at' => '2022-01-01T13:00:00+00:00'
+            ], JSON_THROW_ON_ERROR)
         );
 
         $response = $subject->handleRequest($request);
@@ -396,8 +396,8 @@ final class DtoControllerHandlerTest extends TestCase {
     public function testInvokeObjectWithBadHeaders() : void {
         $controller = new BadDtoController();
 
-        self::expectException(InvalidType::class);
-        self::expectExceptionMessage('The parameter "headers" on ' . BadDtoController::class . '::checkImplicitHeadersDto is marked with a #[Headers] Attribute but is not type-hinted as an array.');
+        $this->expectException(InvalidType::class);
+        $this->expectExceptionMessage('The parameter "headers" on ' . BadDtoController::class . '::checkImplicitHeadersDto is marked with a #[Headers] Attribute but is not type-hinted as an array.');
 
         $this->subject($controller->checkImplicitHeadersDto(...), BadDtoController::class . '::checkImplicitHeadersDto');
     }
@@ -405,8 +405,8 @@ final class DtoControllerHandlerTest extends TestCase {
     public function testInvokeObjectWithBadMethod() : void {
         $controller = new BadDtoController();
 
-        self::expectException(InvalidType::class);
-        self::expectExceptionMessage('The parameter "method" on ' . BadDtoController::class . '::checkMethodInt is marked with a #[Method] Attribute but is not type-hinted as a string.');
+        $this->expectException(InvalidType::class);
+        $this->expectExceptionMessage('The parameter "method" on ' . BadDtoController::class . '::checkMethodInt is marked with a #[Method] Attribute but is not type-hinted as a string.');
 
         $this->subject($controller->checkMethodInt(...), BadDtoController::class . '::checkMethodInt');
     }
@@ -414,8 +414,8 @@ final class DtoControllerHandlerTest extends TestCase {
     public function testInvokeObjectWithBadHeader() : void {
         $controller = new BadDtoController();
 
-        self::expectException(InvalidType::class);
-        self::expectExceptionMessage('The parameter "token" on ' . BadDtoController::class . '::checkSingleHeaderNotArrayOrString is marked with a #[Header] Attribute but is not type-hinted as an array or string.');
+        $this->expectException(InvalidType::class);
+        $this->expectExceptionMessage('The parameter "token" on ' . BadDtoController::class . '::checkSingleHeaderNotArrayOrString is marked with a #[Header] Attribute but is not type-hinted as an array or string.');
 
         $this->subject($controller->checkSingleHeaderNotArrayOrString(...), BadDtoController::class . '::checkSingleHeaderNotArrayOrString');
     }

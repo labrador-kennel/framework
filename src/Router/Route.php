@@ -16,14 +16,14 @@ final class Route {
 
     public function __construct(
         public readonly RequestMapping $requestMapping,
-        public readonly Controller     $controller
+        public readonly Controller                  $controller
     ) {}
 
     public function toString() : string {
         return sprintf(
             "%s\t%s\t\t%s",
-            $this->requestMapping->method->value,
-            $this->requestMapping->pathPattern,
+            $this->requestMapping->getHttpMethod()->value,
+            $this->requestMapping->getPath(),
             $this->controller->toString()
         );
     }

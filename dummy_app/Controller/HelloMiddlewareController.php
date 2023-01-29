@@ -7,11 +7,11 @@ use Amp\Http\Server\Response;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\HttpMethod;
+use Labrador\Http\Router\GetMapping;
 use Labrador\HttpDummyApp\Middleware\ControllerSpecificMiddleware;
 
 #[HttpController(
-    method: HttpMethod::Get,
-    pattern: '/hello/middleware',
+    requestMapping: new GetMapping('/hello/middleware'),
     middleware: [ControllerSpecificMiddleware::class]
 )]
 class HelloMiddlewareController implements Controller {

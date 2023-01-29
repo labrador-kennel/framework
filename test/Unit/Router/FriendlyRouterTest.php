@@ -48,12 +48,12 @@ class FriendlyRouterTest extends TestCase {
 
         self::assertCount(2, $routes);
 
-        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->method);
-        self::assertSame('/prefix/foo', $routes[0]->requestMapping->pathPattern);
+        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->getHttpMethod());
+        self::assertSame('/prefix/foo', $routes[0]->requestMapping->getPath());
         self::assertSame($mountedController, $routes[0]->controller);
 
-        self::assertSame(HttpMethod::Get, $routes[1]->requestMapping->method);
-        self::assertSame('/noprefix', $routes[1]->requestMapping->pathPattern);
+        self::assertSame(HttpMethod::Get, $routes[1]->requestMapping->getHttpMethod());
+        self::assertSame('/noprefix', $routes[1]->requestMapping->getPath());
         self::assertSame($unmountedController, $routes[1]->controller);
     }
 
@@ -78,16 +78,16 @@ class FriendlyRouterTest extends TestCase {
         $routes = $router->getRoutes();
         self::assertCount(3, $routes);
 
-        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->method);
-        self::assertSame('/foo/foo-get', $routes[0]->requestMapping->pathPattern);
+        self::assertSame(HttpMethod::Get, $routes[0]->requestMapping->getHttpMethod());
+        self::assertSame('/foo/foo-get', $routes[0]->requestMapping->getPath());
         self::assertSame($fooGetController, $routes[0]->controller);
 
-        self::assertSame(HttpMethod::Post, $routes[1]->requestMapping->method);
-        self::assertSame('/foo/bar/bar-post', $routes[1]->requestMapping->pathPattern);
+        self::assertSame(HttpMethod::Post, $routes[1]->requestMapping->getHttpMethod());
+        self::assertSame('/foo/bar/bar-post', $routes[1]->requestMapping->getPath());
         self::assertSame($barPostController, $routes[1]->controller);
 
-        self::assertSame(HttpMethod::Put, $routes[2]->requestMapping->method);
-        self::assertSame('/foo/bar/baz/baz-put', $routes[2]->requestMapping->pathPattern);
+        self::assertSame(HttpMethod::Put, $routes[2]->requestMapping->getHttpMethod());
+        self::assertSame('/foo/bar/baz/baz-put', $routes[2]->requestMapping->getPath());
         self::assertSame($bazPutController, $routes[2]->controller);
     }
 

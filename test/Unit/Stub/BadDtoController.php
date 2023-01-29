@@ -2,16 +2,16 @@
 
 namespace Labrador\Http\Test\Unit\Stub;
 
+use Labrador\Http\Controller\ControllerActions;
 use Labrador\Http\Controller\Dto\Body;
 use Labrador\Http\Controller\Dto\Dto;
-use Labrador\Http\Controller\Dto\ControllerActions;
-use Labrador\Http\Controller\Dto\Get;
 use Labrador\Http\Controller\Dto\Header;
 use Labrador\Http\Controller\Dto\Headers;
 use Labrador\Http\Controller\Dto\Method;
 use Labrador\Http\Controller\Dto\QueryParams;
 use Labrador\Http\Controller\Dto\RouteParam;
 use Labrador\Http\Controller\Dto\Url;
+use Labrador\Http\Controller\Get;
 
 #[ControllerActions]
 final class BadDtoController {
