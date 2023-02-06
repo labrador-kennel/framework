@@ -12,7 +12,7 @@ use Amp\Http\Server\Response;
  *
  * @license See LICENSE in source root.
  */
-abstract class HookableController implements Controller {
+abstract class HookableController extends SelfDescribingController implements Controller {
 
     /**
      * The entry point for Amp\Http\Server to start the execution of a Request; this method delegates processing to the
