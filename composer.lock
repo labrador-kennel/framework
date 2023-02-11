@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "39e31048e474da5e88a0d808f65e1d0e",
+    "content-hash": "489fd46d2318d38e4b508ad1f873a71e",
     "packages": [
         {
             "name": "amphp/amp",
@@ -389,16 +389,16 @@
         },
         {
             "name": "amphp/http",
-            "version": "2.x-dev",
+            "version": "v2.0.0-beta.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http.git",
-                "reference": "9c53bd482445ffa29365bcc2bf01fcb6fe2ce2b1"
+                "reference": "66680c665a2d62970da4a11bbd8fc4fbc0f0d0ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http/zipball/9c53bd482445ffa29365bcc2bf01fcb6fe2ce2b1",
-                "reference": "9c53bd482445ffa29365bcc2bf01fcb6fe2ce2b1",
+                "url": "https://api.github.com/repos/amphp/http/zipball/66680c665a2d62970da4a11bbd8fc4fbc0f0d0ed",
+                "reference": "66680c665a2d62970da4a11bbd8fc4fbc0f0d0ed",
                 "shasum": ""
             },
             "require": {
@@ -411,7 +411,6 @@
                 "phpunit/phpunit": "^9",
                 "psalm/phar": "^5.4"
             },
-            "default-branch": true,
             "type": "library",
             "autoload": {
                 "files": [
@@ -435,7 +434,7 @@
             "description": "Basic HTTP primitives which can be shared by servers and clients.",
             "support": {
                 "issues": "https://github.com/amphp/http/issues",
-                "source": "https://github.com/amphp/http/tree/2.x"
+                "source": "https://github.com/amphp/http/tree/v2.0.0-beta.1"
             },
             "funding": [
                 {
@@ -443,20 +442,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-21T16:54:23+00:00"
+            "time": "2023-02-08T00:38:05+00:00"
         },
         {
             "name": "amphp/http-server",
-            "version": "3.x-dev",
+            "version": "v3.0.0-beta.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-server.git",
-                "reference": "61ca5c67f62286fdb08d642d6c55d5605556d6af"
+                "reference": "a2f94d055ba5907e4c60502b5380da075dbd9b92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server/zipball/61ca5c67f62286fdb08d642d6c55d5605556d6af",
-                "reference": "61ca5c67f62286fdb08d642d6c55d5605556d6af",
+                "url": "https://api.github.com/repos/amphp/http-server/zipball/a2f94d055ba5907e4c60502b5380da075dbd9b92",
+                "reference": "a2f94d055ba5907e4c60502b5380da075dbd9b92",
                 "shasum": ""
             },
             "require": {
@@ -488,7 +487,6 @@
             "suggest": {
                 "ext-zlib": "Allows GZip compression of response bodies"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -538,7 +536,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-server/issues",
-                "source": "https://github.com/amphp/http-server/tree/3.x"
+                "source": "https://github.com/amphp/http-server/tree/v3.0.0-beta.7"
             },
             "funding": [
                 {
@@ -546,7 +544,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-02T00:53:17+00:00"
+            "time": "2023-02-02T00:45:44+00:00"
         },
         {
             "name": "amphp/log",
@@ -1194,16 +1192,16 @@
         },
         {
             "name": "cspray/annotated-container",
-            "version": "v2.0.0-rc1",
+            "version": "v2.0.0-rc2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container.git",
-                "reference": "379b0d7834c1e73c6debd473d9bbd40e421e39ce"
+                "reference": "60a7af450527101575842e03425e29f80c99028c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/379b0d7834c1e73c6debd473d9bbd40e421e39ce",
-                "reference": "379b0d7834c1e73c6debd473d9bbd40e421e39ce",
+                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/60a7af450527101575842e03425e29f80c99028c",
+                "reference": "60a7af450527101575842e03425e29f80c99028c",
                 "shasum": ""
             },
             "require": {
@@ -1219,7 +1217,7 @@
                 "psr/log": "^2 || ^3"
             },
             "require-dev": {
-                "cspray/phinal": "dev-main",
+                "cspray/phinal": "^1.0",
                 "mikey179/vfsstream": "^1.6",
                 "php-di/php-di": "^7.0",
                 "phpunit/phpunit": "^9.5",
@@ -1264,9 +1262,9 @@
             ],
             "support": {
                 "issues": "https://github.com/cspray/annotated-container/issues",
-                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-rc1"
+                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-rc2"
             },
-            "time": "2023-01-26T17:46:04+00:00"
+            "time": "2023-02-11T20:27:13+00:00"
         },
         {
             "name": "cspray/annotated-target",
@@ -1399,16 +1397,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "c463f7dee12fec5a839ef0c730b1aea8832355f5"
+                "reference": "d49784828d93f678fa6a102a630f27c1b22d90c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/c463f7dee12fec5a839ef0c730b1aea8832355f5",
-                "reference": "c463f7dee12fec5a839ef0c730b1aea8832355f5",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/d49784828d93f678fa6a102a630f27c1b22d90c8",
+                "reference": "d49784828d93f678fa6a102a630f27c1b22d90c8",
                 "shasum": ""
             },
             "require": {
@@ -1460,7 +1458,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.2.0"
+                "source": "https://github.com/CuyZ/Valinor/tree/1.3.0"
             },
             "funding": [
                 {
@@ -1468,7 +1466,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-09T12:55:12+00:00"
+            "time": "2023-02-08T09:39:37+00:00"
         },
         {
             "name": "daverandom/libdns",
@@ -1574,21 +1572,21 @@
         },
         {
             "name": "labrador-kennel/async-event",
-            "version": "3.0.0-rc1",
+            "version": "3.0.0-rc2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/async-event.git",
-                "reference": "1f9b7ea78a8bc70ea546f4d512b24f0a645eeb96"
+                "reference": "8495dd23585068f6370a7807ad89ea000beb7a08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/1f9b7ea78a8bc70ea546f4d512b24f0a645eeb96",
-                "reference": "1f9b7ea78a8bc70ea546f4d512b24f0a645eeb96",
+                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/8495dd23585068f6370a7807ad89ea000beb7a08",
+                "reference": "8495dd23585068f6370a7807ad89ea000beb7a08",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "~v3.0",
-                "cspray/annotated-container": "^v2.0.0-rc1",
+                "cspray/annotated-container": "^v2.0.0-rc2",
                 "labrador-kennel/composite-future": "^1.2",
                 "php": "^8.1"
             },
@@ -1627,9 +1625,9 @@
             ],
             "support": {
                 "issues": "https://github.com/labrador-kennel/async-event/issues",
-                "source": "https://github.com/labrador-kennel/async-event/tree/3.0.0-rc1"
+                "source": "https://github.com/labrador-kennel/async-event/tree/3.0.0-rc2"
             },
-            "time": "2023-01-26T19:06:12+00:00"
+            "time": "2023-02-11T20:38:05+00:00"
         },
         {
             "name": "labrador-kennel/composite-future",
@@ -1999,16 +1997,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "2.9.0",
+            "version": "2.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "e1c0ae1528ce313a450e5e1ad782765c4a8dd3cb"
+                "reference": "f259e2b15fb95494c83f52d3caad003bbf5ffaa1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/e1c0ae1528ce313a450e5e1ad782765c4a8dd3cb",
-                "reference": "e1c0ae1528ce313a450e5e1ad782765c4a8dd3cb",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/f259e2b15fb95494c83f52d3caad003bbf5ffaa1",
+                "reference": "f259e2b15fb95494c83f52d3caad003bbf5ffaa1",
                 "shasum": ""
             },
             "require": {
@@ -2085,7 +2083,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/2.9.0"
+                "source": "https://github.com/Seldaek/monolog/tree/2.9.1"
             },
             "funding": [
                 {
@@ -2097,7 +2095,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-05T13:07:32+00:00"
+            "time": "2023-02-06T13:44:46+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -2262,16 +2260,16 @@
         },
         {
             "name": "php-di/php-di",
-            "version": "7.0.1",
+            "version": "7.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/PHP-DI.git",
-                "reference": "1c7f1cc9cf6f51ff7f5f44bb1fa59243fcb7474a"
+                "reference": "5d1a8664e24f23b25e0426bbcb1288287fb49181"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/1c7f1cc9cf6f51ff7f5f44bb1fa59243fcb7474a",
-                "reference": "1c7f1cc9cf6f51ff7f5f44bb1fa59243fcb7474a",
+                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/5d1a8664e24f23b25e0426bbcb1288287fb49181",
+                "reference": "5d1a8664e24f23b25e0426bbcb1288287fb49181",
                 "shasum": ""
             },
             "require": {
@@ -2319,7 +2317,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/PHP-DI/issues",
-                "source": "https://github.com/PHP-DI/PHP-DI/tree/7.0.1"
+                "source": "https://github.com/PHP-DI/PHP-DI/tree/7.0.2"
             },
             "funding": [
                 {
@@ -2331,7 +2329,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-13T22:30:45+00:00"
+            "time": "2023-02-07T17:34:03+00:00"
         },
         {
             "name": "psr/container",
@@ -3739,12 +3737,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "90538aab13dced1209eb1b30e169308fea0fd783"
+                "reference": "c0e29643df152bd7fbe3de189f6c2c16c7d4c2a2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/90538aab13dced1209eb1b30e169308fea0fd783",
-                "reference": "90538aab13dced1209eb1b30e169308fea0fd783",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c0e29643df152bd7fbe3de189f6c2c16c7d4c2a2",
+                "reference": "c0e29643df152bd7fbe3de189f6c2c16c7d4c2a2",
                 "shasum": ""
             },
             "conflict": {
@@ -3802,6 +3800,7 @@
                 "catfan/medoo": "<1.7.5",
                 "centreon/centreon": "<22.10-beta.1",
                 "cesnet/simplesamlphp-module-proxystatistics": "<3.1",
+                "cockpit-hq/cockpit": "<2.3.8",
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
                 "codeigniter/framework": "<=3.0.6",
                 "codeigniter4/framework": "<4.2.11",
@@ -3824,6 +3823,7 @@
                 "datadog/dd-trace": ">=0.30,<0.30.2",
                 "david-garcia/phpwhois": "<=4.3.1",
                 "dbrisinajumi/d2files": "<1",
+                "derhansen/fe_change_pwd": "<2.0.5|>=3,<3.0.3",
                 "derhansen/sf_event_mgt": "<4.3.1|>=5,<5.1.1",
                 "directmailteam/direct-mail": "<5.2.4",
                 "doctrine/annotations": ">=1,<1.2.7",
@@ -3836,7 +3836,7 @@
                 "doctrine/mongodb-odm-bundle": ">=2,<3.0.1",
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<16|>=16.0.1,<16.0.3|= 12.0.5|>= 3.3.beta1, < 13.0.2",
-                "dompdf/dompdf": "<2.0.2",
+                "dompdf/dompdf": "<2.0.2|= 2.0.2",
                 "drupal/core": ">=7,<7.91|>=8,<9.3.19|>=9.4,<9.4.3",
                 "drupal/drupal": ">=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
                 "dweeves/magmi": "<=0.7.24",
@@ -3874,6 +3874,8 @@
                 "fenom/fenom": "<=2.12.1",
                 "filegator/filegator": "<7.8",
                 "firebase/php-jwt": "<2",
+                "fixpunkt/fp-masterquiz": "<2.2.1|>=3,<3.5.2",
+                "fixpunkt/fp-newsletter": "<1.1.1|>=2,<2.1.2|>=2.2,<3.2.6",
                 "flarum/core": "<1.6.3",
                 "flarum/mentions": "<1.6.3",
                 "flarum/sticky": ">=0.1-beta.14,<=0.1-beta.15",
@@ -3926,7 +3928,7 @@
                 "illuminate/encryption": ">=4,<=4.0.11|>=4.1,<=4.1.31|>=4.2,<=4.2.22|>=5,<=5.0.35|>=5.1,<=5.1.46|>=5.2,<=5.2.45|>=5.3,<=5.3.31|>=5.4,<=5.4.36|>=5.5,<5.5.40|>=5.6,<5.6.15",
                 "illuminate/view": "<6.20.42|>=7,<7.30.6|>=8,<8.75",
                 "impresscms/impresscms": "<=1.4.3",
-                "in2code/femanager": "<5.5.2|>=6,<6.3.3|>=7,<7.0.1",
+                "in2code/femanager": "<5.5.3|>=6,<6.3.4|>=7,<7.1",
                 "in2code/lux": "<17.6.1|>=18,<24.0.2",
                 "innologi/typo3-appointments": "<2.0.6",
                 "intelliants/subrion": "<=4.2.1",
@@ -4194,9 +4196,9 @@
                 "truckersmp/phpwhois": "<=4.3.1",
                 "ttskch/pagination-service-provider": "<1",
                 "twig/twig": "<1.44.7|>=2,<2.15.3|>=3,<3.4.3",
-                "typo3/cms": "<2.0.5|>=3,<3.0.3|>=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.38|>=9,<9.5.29|>=10,<10.4.33|>=11,<11.5.20|>=12,<12.1.1",
+                "typo3/cms": "<2.0.5|>=3,<3.0.3|>=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.38|>=9,<9.5.29|>=10,<10.4.35|>=11,<11.5.23|>=12,<12.2",
                 "typo3/cms-backend": ">=7,<=7.6.50|>=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.13|>=11,<=11.1",
-                "typo3/cms-core": "<8.7.49|>=9,<9.5.38|>=10,<10.4.33|>=11,<11.5.20|>=12,<12.1.1",
+                "typo3/cms-core": "<8.7.51|>=9,<9.5.40|>=10,<10.4.36|>=11,<11.5.23|>=12,<12.2",
                 "typo3/cms-form": ">=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.13|>=11,<=11.1",
                 "typo3/flow": ">=1,<1.0.4|>=1.1,<1.1.1|>=2,<2.0.1|>=2.3,<2.3.16|>=3,<3.0.12|>=3.1,<3.1.10|>=3.2,<3.2.13|>=3.3,<3.3.13|>=4,<4.0.6",
                 "typo3/html-sanitizer": ">=1,<1.5|>=2,<2.1.1",
@@ -4213,7 +4215,7 @@
                 "vova07/yii2-fileapi-widget": "<0.1.9",
                 "vrana/adminer": "<4.8.1",
                 "wallabag/tcpdf": "<6.2.22",
-                "wallabag/wallabag": ">=2-alpha.1,<2.5.3",
+                "wallabag/wallabag": "<2.5.4",
                 "wanglelecc/laracms": "<=1.0.3",
                 "web-auth/webauthn-framework": ">=3.3,<3.3.4",
                 "webcoast/deferred-image-processing": "<1.0.2",
@@ -4227,6 +4229,7 @@
                 "wpanel/wpanel4-cms": "<=4.3.1",
                 "wwbn/avideo": "<12.4",
                 "xataface/xataface": "<3",
+                "xpressengine/xpressengine": "<3.0.15",
                 "yeswiki/yeswiki": "<4.1",
                 "yetiforce/yetiforce-crm": "<=6.4",
                 "yidashi/yii2cmf": "<=2",
@@ -4303,7 +4306,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-04T01:32:15+00:00"
+            "time": "2023-02-09T20:04:23+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -5379,8 +5382,8 @@
     "aliases": [],
     "minimum-stability": "beta",
     "stability-flags": {
-        "amphp/http": 20,
-        "amphp/http-server": 20,
+        "amphp/http": 10,
+        "amphp/http-server": 10,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
