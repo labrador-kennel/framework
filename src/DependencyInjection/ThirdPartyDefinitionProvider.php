@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use function Cspray\AnnotatedContainer\service;
 use function Cspray\Typiphy\objectType;
 
-class ThirdPartyServicesProvider implements DefinitionProvider {
+class ThirdPartyDefinitionProvider implements DefinitionProvider {
 
     public function consume(DefinitionProviderContext $context) : void {
         service($context, objectType(HttpServer::class));
