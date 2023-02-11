@@ -21,9 +21,9 @@ trait BootstrapAwareTestTrait {
             <dir>vendor/labrador-kennel/async-event/src</dir>
         </source>
     </scanDirectories>
-    <definitionProvider>
-        Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
-    </definitionProvider>
+    <definitionProviders>
+        <definitionProvider>Labrador\Http\DependencyInjection\ThirdPartyDefinitionProvider</definitionProvider>
+    </definitionProviders>
     <observers>
         <observer>Labrador\Http\DependencyInjection\AutowireObserver</observer>
     </observers>
