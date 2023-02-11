@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 namespace Labrador\Http\DependencyInjection;
+
 use Cspray\AnnotatedContainer\Bootstrap\ThirdPartyInitializer;
 
 final class HttpInitializer extends ThirdPartyInitializer {

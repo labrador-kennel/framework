@@ -14,8 +14,8 @@
     "amphp/http": "v2.0.0-beta.1",
     "amphp/http-server": "v3.0.0-beta.7",
     "amphp/log": "^v2.0",
-    "cspray/annotated-container": "v2.0.0-rc2",
-    "labrador-kennel/async-event": "3.0.0-rc2",
+    "cspray/annotated-container": "v2.0.0-rc3",
+    "labrador-kennel/async-event": "3.0.0-rc3",
     "cuyz/valinor": "^1.2",
     "league/uri": "^6.7",
     "league/uri-components": "^2.4",
@@ -42,6 +42,13 @@
     "psr-4": {
       "Labrador\\Http\\Test\\": "test",
       "Labrador\\HttpDummyApp\\": "dummy_app"
+    }
+  },
+  "extra": {
+    "$annotatedContainer": {
+      "initializers": [
+        "Labrador\\Http\\DependencyInjection\\HttpInitializer"
+      ]
     }
   }
 }
