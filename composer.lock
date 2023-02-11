@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "489fd46d2318d38e4b508ad1f873a71e",
+    "content-hash": "7a15d6d09111c1b624df3fb8e442d8a7",
     "packages": [
         {
             "name": "amphp/amp",
@@ -1192,16 +1192,16 @@
         },
         {
             "name": "cspray/annotated-container",
-            "version": "v2.0.0-rc2",
+            "version": "v2.0.0-rc3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container.git",
-                "reference": "60a7af450527101575842e03425e29f80c99028c"
+                "reference": "f4a7e1cfd01a70c7c5eff2254ae3deebdceaaed4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/60a7af450527101575842e03425e29f80c99028c",
-                "reference": "60a7af450527101575842e03425e29f80c99028c",
+                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/f4a7e1cfd01a70c7c5eff2254ae3deebdceaaed4",
+                "reference": "f4a7e1cfd01a70c7c5eff2254ae3deebdceaaed4",
                 "shasum": ""
             },
             "require": {
@@ -1262,9 +1262,9 @@
             ],
             "support": {
                 "issues": "https://github.com/cspray/annotated-container/issues",
-                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-rc2"
+                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-rc3"
             },
-            "time": "2023-02-11T20:27:13+00:00"
+            "time": "2023-02-11T22:10:17+00:00"
         },
         {
             "name": "cspray/annotated-target",
@@ -1572,21 +1572,21 @@
         },
         {
             "name": "labrador-kennel/async-event",
-            "version": "3.0.0-rc2",
+            "version": "3.0.0-rc3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/async-event.git",
-                "reference": "8495dd23585068f6370a7807ad89ea000beb7a08"
+                "reference": "3871553cbbbe52dd6baad7eec7ab4344bec06405"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/8495dd23585068f6370a7807ad89ea000beb7a08",
-                "reference": "8495dd23585068f6370a7807ad89ea000beb7a08",
+                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/3871553cbbbe52dd6baad7eec7ab4344bec06405",
+                "reference": "3871553cbbbe52dd6baad7eec7ab4344bec06405",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "~v3.0",
-                "cspray/annotated-container": "^v2.0.0-rc2",
+                "cspray/annotated-container": "^v2.0.0-rc3",
                 "labrador-kennel/composite-future": "^1.2",
                 "php": "^8.1"
             },
@@ -1599,6 +1599,13 @@
                 "roave/security-advisories": "dev-latest"
             },
             "type": "library",
+            "extra": {
+                "$annotatedContainer": {
+                    "initializers": [
+                        "Labrador\\AsyncEvent\\DependencyInjection\\AsyncEventInitializer"
+                    ]
+                }
+            },
             "autoload": {
                 "psr-4": {
                     "Labrador\\AsyncEvent\\": "src/"
@@ -1625,9 +1632,9 @@
             ],
             "support": {
                 "issues": "https://github.com/labrador-kennel/async-event/issues",
-                "source": "https://github.com/labrador-kennel/async-event/tree/3.0.0-rc2"
+                "source": "https://github.com/labrador-kennel/async-event/tree/3.0.0-rc3"
             },
-            "time": "2023-02-11T20:38:05+00:00"
+            "time": "2023-02-11T22:54:24+00:00"
         },
         {
             "name": "labrador-kennel/composite-future",
