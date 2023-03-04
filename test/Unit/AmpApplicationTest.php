@@ -9,7 +9,6 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Status;
 use Labrador\Http\AmpApplication;
-use Labrador\Http\DefaultErrorHandlerFactory;
 use Labrador\Http\Event\AddRoutesEvent;
 use Labrador\Http\Event\ApplicationStartedEvent;
 use Labrador\Http\Event\ApplicationStoppedEvent;
@@ -18,11 +17,9 @@ use Labrador\Http\Event\RequestReceivedEvent;
 use Labrador\Http\Event\ResponseSentEvent;
 use Labrador\Http\Event\WillInvokeControllerEvent;
 use Labrador\Http\HttpMethod;
-use Labrador\Http\Middleware\Priority;
 use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\FastRouteRouter;
 use Labrador\Http\Router\GetMapping;
-use Labrador\Http\Router\MethodAndPathRequestMapping;
 use Labrador\Http\Router\PostMapping;
 use Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
 use Labrador\Http\Test\Unit\Stub\EventEmitterStub;
@@ -36,11 +33,11 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
+use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LogLevel;
 use Ramsey\Uuid\UuidInterface;
 
 final class AmpApplicationTest extends TestCase {
@@ -203,7 +200,7 @@ final class AmpApplicationTest extends TestCase {
                 'url' => 'http://example.com',
                 'requestId' => $id
             ],
-            LogLevel::INFO
+            Level::Info
         ));
         self::assertTrue($this->testHandler->hasRecord(
             [
@@ -211,14 +208,14 @@ final class AmpApplicationTest extends TestCase {
                 'controller' => ResponseControllerStub::class,
                 'requestId' => $id
             ],
-            LogLevel::INFO
+            Level::Info
         ));
         self::assertTrue($this->testHandler->hasRecord(
             [
                 'message' => 'Finished processing Request id: ' . $id . '.',
                 'requestId' => $id
             ],
-            LogLevel::INFO
+            Level::Info
         ));
     }
 
@@ -248,7 +245,7 @@ final class AmpApplicationTest extends TestCase {
                 'message' => 'Did not find matching controller for Request id: ' . $id . '.',
                 'requestId' => $id->toString()
             ],
-            LogLevel::NOTICE
+            Level::Notice
         ));
     }
 
@@ -285,7 +282,7 @@ final class AmpApplicationTest extends TestCase {
                 'path' => '/',
                 'requestId' => $id->toString()
             ],
-            LogLevel::NOTICE
+            Level::Notice
         ));
 
         self::assertCount(2, $this->emitter->getQueuedEvents());

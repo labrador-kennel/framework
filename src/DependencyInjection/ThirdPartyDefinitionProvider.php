@@ -3,10 +3,8 @@
 namespace Labrador\Http\DependencyInjection;
 
 use Amp\Http\Server\HttpServer;
-use Cspray\AnnotatedContainer\Compile\ContainerDefinitionBuilderContext;
-use Cspray\AnnotatedContainer\Compile\ContainerDefinitionBuilderContextConsumer;
-use Cspray\AnnotatedContainer\Compile\DefinitionProvider;
-use Cspray\AnnotatedContainer\Compile\DefinitionProviderContext;
+use Cspray\AnnotatedContainer\StaticAnalysis\DefinitionProvider;
+use Cspray\AnnotatedContainer\StaticAnalysis\DefinitionProviderContext;
 use Psr\Log\LoggerInterface;
 use function Cspray\AnnotatedContainer\service;
 use function Cspray\Typiphy\objectType;

@@ -4,7 +4,6 @@ namespace Labrador\Http\DependencyInjection;
 
 use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
-use Cspray\AnnotatedContainer\AnnotatedContainerVersion;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceFromServiceDefinition;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
@@ -25,7 +24,6 @@ use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\Controller\RouteMappingAttribute;
 use Labrador\Http\Middleware\ApplicationMiddleware;
-use Labrador\Http\Router\MethodAndPathRequestMapping;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
