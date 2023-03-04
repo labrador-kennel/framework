@@ -1192,22 +1192,23 @@
         },
         {
             "name": "cspray/annotated-container",
-            "version": "v2.0.0-rc3",
+            "version": "v2.0.0-rc4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container.git",
-                "reference": "f4a7e1cfd01a70c7c5eff2254ae3deebdceaaed4"
+                "reference": "232d0b05d9f2253979652b094e90edeb27c99f9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/f4a7e1cfd01a70c7c5eff2254ae3deebdceaaed4",
-                "reference": "f4a7e1cfd01a70c7c5eff2254ae3deebdceaaed4",
+                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/232d0b05d9f2253979652b094e90edeb27c99f9d",
+                "reference": "232d0b05d9f2253979652b094e90edeb27c99f9d",
                 "shasum": ""
             },
             "require": {
                 "brick/varexporter": "^0.3.7",
+                "cspray/annotated-container-adr": "^1.0",
+                "cspray/annotated-container-attribute": "^1.0",
                 "cspray/annotated-target": "^0.2",
-                "cspray/architectural-decision": "^1.0",
                 "cspray/typiphy": "^0.2",
                 "ext-dom": "*",
                 "ext-libxml": "*",
@@ -1262,9 +1263,76 @@
             ],
             "support": {
                 "issues": "https://github.com/cspray/annotated-container/issues",
-                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-rc3"
+                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0-rc4"
             },
-            "time": "2023-02-11T22:10:17+00:00"
+            "time": "2023-03-04T14:10:24+00:00"
+        },
+        {
+            "name": "cspray/annotated-container-adr",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cspray/annotated-container-adr.git",
+                "reference": "96093b036b94da28333533c4cbe83cffa084b07a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cspray/annotated-container-adr/zipball/96093b036b94da28333533c4cbe83cffa084b07a",
+                "reference": "96093b036b94da28333533c4cbe83cffa084b07a",
+                "shasum": ""
+            },
+            "require": {
+                "cspray/architectural-decision": "^1.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cspray\\AnnotatedContainer\\ArchitecturalDecisionRecords\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "Architectural Decision Records for Annotated Container and its associated libraries.",
+            "support": {
+                "issues": "https://github.com/cspray/annotated-container-adr/issues",
+                "source": "https://github.com/cspray/annotated-container-adr/tree/1.0.0"
+            },
+            "time": "2023-02-24T21:20:31+00:00"
+        },
+        {
+            "name": "cspray/annotated-container-attribute",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cspray/annotated-container-attribute.git",
+                "reference": "6cfa0e15e7567a5ea4dba56693b3f74a41b97637"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cspray/annotated-container-attribute/zipball/6cfa0e15e7567a5ea4dba56693b3f74a41b97637",
+                "reference": "6cfa0e15e7567a5ea4dba56693b3f74a41b97637",
+                "shasum": ""
+            },
+            "require": {
+                "cspray/annotated-container-adr": "^1.0",
+                "php": "^8.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cspray\\AnnotatedContainer\\Attribute\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Attributes used by Annotated Container, to configure an autowired PSR-11 dependency injection container.",
+            "support": {
+                "issues": "https://github.com/cspray/annotated-container-attribute/issues",
+                "source": "https://github.com/cspray/annotated-container-attribute/tree/1.0.0"
+            },
+            "time": "2023-02-26T15:01:53+00:00"
         },
         {
             "name": "cspray/annotated-target",
