@@ -5,6 +5,7 @@ namespace Labrador\HttpDummyApp\Controller;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\Session;
 use Labrador\Http\Controller\ControllerActions;
 use Labrador\Http\Controller\Delete;
 use Labrador\Http\Controller\Dto\Body;
@@ -12,9 +13,7 @@ use Labrador\Http\Controller\Dto\Dto;
 use Labrador\Http\Controller\Dto\Header;
 use Labrador\Http\Controller\Dto\Headers;
 use Labrador\Http\Controller\Dto\Method;
-use Labrador\Http\Controller\Dto\QueryParams;
 use Labrador\Http\Controller\Dto\RouteParam;
-use Labrador\Http\Controller\Dto\Url;
 use Labrador\Http\Controller\Get;
 use Labrador\Http\Controller\Post;
 use Labrador\Http\Controller\Put;
@@ -55,27 +54,22 @@ class CheckDtoController {
     }
 
     #[Put('/dto/url')]
-    public function checkUrl(#[Url] UriInterface $url) : Response {
+    public function checkUrl(UriInterface $url) : Response {
         return new Response(body: 'Received UriInterface ' . $url);
     }
 
     #[Get('/dto/method-and-url')]
-    public function getMethodAndUrl(#[Method] string $method, #[Url] UriInterface $uri) : Response {
+    public function getMethodAndUrl(#[Method] string $method, UriInterface $uri) : Response {
         return new Response(body: 'Received ' . $method . ' and ' . $uri);
     }
 
-    #[Get('/dto/query')]
-    public function getQueryAsString(#[QueryParams] string $query) : Response {
-        return new Response(body: 'Received query as string ' . $query);
-    }
-
     #[Get('/dto/query-interface')]
-    public function checkQueryInterface(#[QueryParams] QueryInterface $query) : Response {
+    public function checkQueryInterface(QueryInterface $query) : Response {
         return new Response(body: 'Received query as QueryInterface ' . $query);
     }
 
     #[Get('/dto/query-component')]
-    public function checkQueryComponent(#[QueryParams] Query $query) : Response {
+    public function checkQueryComponent(Query $query) : Response {
         return new Response(body: 'Received query as Query ' . $query);
     }
 
@@ -153,6 +147,13 @@ class CheckDtoController {
                 $method,
                 $request->getAttribute('labrador.http-dummy-app.routeMiddleware')
             )
+        );
+    }
+
+    #[Get('/dto/session-by-type')]
+    public function checkSessionByType(Session $session) : Response {
+        return new Response(
+            body: 'Able to access session'
         );
     }
 

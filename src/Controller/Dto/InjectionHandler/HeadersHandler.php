@@ -11,16 +11,12 @@ use ReflectionType;
 
 final class HeadersHandler implements DtoInjectionHandler {
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : array {
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : array {
         return $request->getHeaders();
     }
 
-    public function isValidType(ReflectionType $type) : bool {
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
         $parameterType = $type instanceof ReflectionNamedType ? $type->getName() : null;
-        return $parameterType === 'array';
-    }
-
-    public function getDtoAttributeType() : string {
-        return Headers::class;
+        return $attribute instanceof Headers && $parameterType === 'array';
     }
 }

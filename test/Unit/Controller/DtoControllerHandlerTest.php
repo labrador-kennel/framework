@@ -5,13 +5,18 @@ namespace Labrador\Http\Test\Unit\Controller;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
+use Amp\Http\Server\Session\DefaultSessionIdGenerator;
+use Amp\Http\Server\Session\LocalSessionStorage;
+use Amp\Http\Server\Session\Session;
+use Amp\Sync\LocalKeyedMutex;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
+use Cspray\StreamBufferIntercept\BufferIdentifier;
+use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Exception\InvalidDtoAttribute;
 use Labrador\Http\Exception\InvalidType;
 use Labrador\Http\HttpMethod;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
-use Labrador\Http\Test\Helper\StreamBuffer;
 use Labrador\Http\Test\Unit\Stub\BadDtoController;
 use Labrador\HttpDummyApp\Controller\CheckDtoController;
 use League\Uri\Components\Query;
@@ -34,8 +39,17 @@ final class DtoControllerHandlerTest extends TestCase {
     private VirtualDirectory $vfs;
     private $streamFilter;
 
-    protected function setUp() : void {
+    private BufferIdentifier $stdout;
+
+    private BufferIdentifier $stderr;
+
+    public static function setUpBeforeClass() : void {
         StreamBuffer::register();
+    }
+
+    protected function setUp() : void {
+        $this->stdout = StreamBuffer::intercept(STDOUT);
+        $this->stderr = StreamBuffer::intercept(STDERR);
         $this->vfs = VirtualFilesystem::setup();
         VirtualFilesystem::newFile('annotated-container.xml')
             ->withContent(self::getDefaultConfiguration())
@@ -44,8 +58,8 @@ final class DtoControllerHandlerTest extends TestCase {
     }
 
     protected function tearDown() : void {
-        parent::tearDown();
-        StreamBuffer::unregister();
+        StreamBuffer::stopIntercepting($this->stdout);
+        StreamBuffer::stopIntercepting($this->stderr);
     }
 
     private function subject(\Closure $closure, string $description) : DtoController {
@@ -165,22 +179,6 @@ final class DtoControllerHandlerTest extends TestCase {
 
         self::assertSame(200, $response->getStatus());
         self::assertSame('Received UriInterface http://example.com', $response->getBody()->read());
-    }
-
-    public function testInvokeObjectQueryStringDto() : void {
-        $controller = new CheckDtoController();
-        $subject = $this->subject($controller->getQueryAsString(...), 'getQueryAsString');
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com?foo=bar&bar=baz'),
-        );
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame(200, $response->getStatus());
-        self::assertSame('Received query as string foo=bar&bar=baz', $response->getBody()->read());
     }
 
     public function testInvokeObjectQueryQueryInterfaceDto() : void {
@@ -391,6 +389,28 @@ final class DtoControllerHandlerTest extends TestCase {
         self::assertSame('Received Request instance for /some/path', $response->getBody()->read());
     }
 
+    public function testCheckSessionByType() : void {
+        $controller = new CheckDtoController();
+        $subject = $this->subject($controller->checkSessionByType(...), 'checkSession');
+
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/some/path')
+        );
+        $request->setAttribute(Session::class, new Session(
+            new LocalKeyedMutex(),
+            new LocalSessionStorage(),
+            new DefaultSessionIdGenerator(),
+            null
+        ));
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame(200, $response->getStatus());
+        self::assertSame('Able to access session', $response->getBody()->read());
+    }
+
     // ========================================== Test Bad Attributes ==================================================
 
     public function testInvokeObjectWithBadHeaders() : void {
@@ -418,24 +438,6 @@ final class DtoControllerHandlerTest extends TestCase {
         $this->expectExceptionMessage('The parameter "token" on ' . BadDtoController::class . '::checkSingleHeaderNotArrayOrString is marked with a #[Header] Attribute but is not type-hinted as an array or string.');
 
         $this->subject($controller->checkSingleHeaderNotArrayOrString(...), BadDtoController::class . '::checkSingleHeaderNotArrayOrString');
-    }
-
-    public function testInvokeObjectWithBadUrl() : void {
-        $controller = new BadDtoController();
-
-        self::expectException(InvalidType::class);
-        self::expectExceptionMessage('The parameter "requestUrl" on ' . BadDtoController::class . '::checkUriArray is marked with a #[Url] Attribute but is not type-hinted as a ' . UriInterface::class . '.');
-
-        $this->subject($controller->checkUriArray(...), BadDtoController::class . '::checkUriArray');
-    }
-
-    public function testInvokeObjectWithBadQuery() : void {
-        $controller = new BadDtoController();
-
-        self::expectException(InvalidType::class);
-        self::expectExceptionMessage('The parameter "query" on ' . BadDtoController::class . '::checkQueryFloat is marked with a #[QueryParams] Attribute but is not type-hinted as a string, ' . QueryInterface::class . ', or ' . Query::class . '.');
-
-        $this->subject($controller->checkQueryFloat(...), BadDtoController::class . '::checkQueryFloat');
     }
 
     public function testInvokeObjectWithBadRouteParam() : void {

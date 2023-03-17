@@ -15,18 +15,17 @@ final class DtoHandler implements DtoInjectionHandler {
         private readonly DtoFactory $factory
     ) {}
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : object {
         $parameterType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
         assert($parameterType !== null);
         return $this->factory->create($parameterType, $request);
     }
 
-    public function isValidType(ReflectionType $type) : bool {
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
+        if ($attribute === null) {
+            return false;
+        }
         $parameterType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
-        return $parameterType !== null && class_exists($parameterType);
-    }
-
-    public function getDtoAttributeType() : string {
-        return Dto::class;
+        return $attribute instanceof Dto && $parameterType !== null && class_exists($parameterType);
     }
 }

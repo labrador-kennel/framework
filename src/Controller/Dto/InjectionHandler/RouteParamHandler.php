@@ -12,7 +12,7 @@ use ReflectionType;
 
 final class RouteParamHandler implements DtoInjectionHandler {
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
         assert($attribute instanceof RouteParam);
         $parameterType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
         if ($parameterType === UuidInterface::class) {
@@ -22,12 +22,9 @@ final class RouteParamHandler implements DtoInjectionHandler {
         }
     }
 
-    public function isValidType(ReflectionType $type) : bool {
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
         $parameterType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
-        return in_array($parameterType, [UuidInterface::class, 'string']);
+        return $attribute instanceof RouteParam && in_array($parameterType, [UuidInterface::class, 'string']);
     }
 
-    public function getDtoAttributeType() : string {
-        return RouteParam::class;
-    }
 }

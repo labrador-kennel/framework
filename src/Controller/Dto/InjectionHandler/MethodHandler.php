@@ -11,15 +11,11 @@ use ReflectionType;
 
 final class MethodHandler implements DtoInjectionHandler {
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : string {
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : string {
         return $request->getMethod();
     }
 
-    public function isValidType(ReflectionType $type) : bool {
-        return $type instanceof ReflectionNamedType && $type->getName() === 'string';
-    }
-
-    public function getDtoAttributeType() : string {
-        return Method::class;
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
+        return $attribute instanceof Method && $type instanceof ReflectionNamedType && $type->getName() === 'string';
     }
 }

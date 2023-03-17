@@ -6,6 +6,8 @@ use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\SocketHttpServer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
+use Cspray\StreamBufferIntercept\BufferIdentifier;
+use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\AsyncEvent\AmpEventEmitter;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\Bootstrap;
@@ -14,7 +16,6 @@ use Labrador\Http\Router\FastRouteRouter;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
-use Labrador\Http\Test\Helper\StreamBuffer;
 use Labrador\Http\Test\Helper\VfsDirectoryResolver;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\Middleware\BazMiddleware;
@@ -33,7 +34,7 @@ use Psr\Log\LoggerInterface;
  */
 class BootstrapTest extends TestCase {
 
-    private const ExpectedControllerCount = 28;
+    private const ExpectedControllerCount = 32;
 
     use BootstrapAwareTestTrait;
 
@@ -41,16 +42,24 @@ class BootstrapTest extends TestCase {
 
     private AnnotatedContainerBootstrap $containerBootstrap;
 
+    private BufferIdentifier $stdout;
+    private BufferIdentifier $stderr;
+
+    public static function setUpBeforeClass() : void {
+        StreamBuffer::register();
+    }
+
     protected function setUp() : void {
         parent::setUp();
-        StreamBuffer::register();
         $this->vfs = VirtualFilesystem::setup();
+        $this->stdout = StreamBuffer::intercept(STDOUT);
+        $this->stderr = StreamBuffer::intercept(STDERR);
         $this->containerBootstrap = new AnnotatedContainerBootstrap(directoryResolver: new VfsDirectoryResolver());
     }
 
     protected function tearDown() : void {
-        parent::tearDown();
-        StreamBuffer::unregister();
+        StreamBuffer::stopIntercepting($this->stdout);
+        StreamBuffer::stopIntercepting($this->stderr);
     }
 
     private function configureAnnotatedContainer() : void {
@@ -71,7 +80,7 @@ class BootstrapTest extends TestCase {
         self::assertInstanceOf(Logger::class, $logger);
 
         $logger->info('This is a test message');
-        self::assertStringContainsString('This is a test message', StreamBuffer::getBuffer());
+        self::assertStringContainsString('This is a test message', StreamBuffer::output($this->stdout));
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsRouter() : void {
@@ -142,7 +151,7 @@ class BootstrapTest extends TestCase {
 
         $bootstrap->bootstrapApplication()->container;
 
-        self::assertStringContainsString('Container created, beginning to autowire services.', StreamBuffer::getBuffer());
+        self::assertStringContainsString('Container created, beginning to autowire services.', StreamBuffer::output($this->stdout));
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
@@ -152,7 +161,7 @@ class BootstrapTest extends TestCase {
 
         $bootstrap->bootstrapApplication()->container;
 
-        self::assertStringContainsString('Autowiring route GET /hello/world to HelloWorld controller.', StreamBuffer::getBuffer());
+        self::assertStringContainsString('Autowiring route GET /hello/world to HelloWorld controller.', StreamBuffer::output($this->stdout));
     }
 
     public function testApplicationAutowiringApplicationMiddlewareLogged() : void {
@@ -161,10 +170,10 @@ class BootstrapTest extends TestCase {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
-        self::assertStringContainsString('Adding ' . BarMiddleware::class . ' to application with Low priority.', StreamBuffer::getBuffer());
-        self::assertStringContainsString('Adding ' . BazMiddleware::class . ' to application with Medium priority.', StreamBuffer::getBuffer());
-        self::assertStringContainsString('Adding ' . FooMiddleware::class . ' to application with High priority.', StreamBuffer::getBuffer());
-        self::assertStringContainsString('Adding ' . QuxMiddleware::class . ' to application with Critical priority.', StreamBuffer::getBuffer());
+        self::assertStringContainsString('Adding ' . BarMiddleware::class . ' to application with Low priority.', StreamBuffer::output($this->stdout));
+        self::assertStringContainsString('Adding ' . BazMiddleware::class . ' to application with Medium priority.', StreamBuffer::output($this->stdout));
+        self::assertStringContainsString('Adding ' . FooMiddleware::class . ' to application with High priority.', StreamBuffer::output($this->stdout));
+        self::assertStringContainsString('Adding ' . QuxMiddleware::class . ' to application with Critical priority.', StreamBuffer::output($this->stdout));
     }
 
     public function testDtoControllerRoutedWithCorrectControllerDescription() : void {
@@ -197,7 +206,7 @@ class BootstrapTest extends TestCase {
                 'labrador-http.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
                 CheckDtoController::class
             ),
-            StreamBuffer::getBuffer()
+            StreamBuffer::output($this->stdout)
         );
     }
 
@@ -212,7 +221,7 @@ class BootstrapTest extends TestCase {
                 'labrador-http.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
                 CheckDtoController::class
             ),
-            StreamBuffer::getBuffer()
+            StreamBuffer::output($this->stdout)
         );
     }
 
@@ -227,7 +236,7 @@ class BootstrapTest extends TestCase {
                 'labrador-http.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
                 CheckDtoController::class
             ),
-            StreamBuffer::getBuffer()
+            StreamBuffer::output($this->stdout)
         );
     }
 
@@ -242,7 +251,7 @@ class BootstrapTest extends TestCase {
                 'labrador-http.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
                 CheckDtoController::class
             ),
-            StreamBuffer::getBuffer()
+            StreamBuffer::output($this->stdout)
         );
     }
 }
