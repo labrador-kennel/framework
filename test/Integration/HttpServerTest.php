@@ -4,15 +4,16 @@ namespace Labrador\Http\Test\Integration;
 
 use Amp\Http\Client\HttpClientBuilder;
 use Amp\Http\Client\Request;
+use Amp\Http\Cookie\ResponseCookie;
 use Amp\Http\Status;
 use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
-use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
+use Cspray\StreamBufferIntercept\BufferIdentifier;
+use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\Http\Application;
-use Labrador\Http\Bootstrap;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
-use Labrador\Http\Test\Helper\StreamBuffer;
 use Labrador\Http\Test\Helper\VfsDirectoryResolver;
+use Labrador\HttpDummyApp\Controller\SessionDtoController;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\Middleware\BazMiddleware;
 use Labrador\HttpDummyApp\Middleware\FooMiddleware;
@@ -32,8 +33,13 @@ class HttpServerTest extends AsyncTestCase {
     private static Application $app;
     private static VirtualDirectory $vfs;
 
+    private static BufferIdentifier $stdout;
+    private static BufferIdentifier $stderr;
+
     public static function setUpBeforeClass() : void {
         StreamBuffer::register();
+        self::$stdout = StreamBuffer::intercept(STDOUT);
+        self::$stderr = StreamBuffer::intercept(STDERR);
         self::$vfs = VirtualFilesystem::setup();
         self::writeStandardConfigurationFile();
 
@@ -52,12 +58,10 @@ class HttpServerTest extends AsyncTestCase {
     public static function tearDownAfterClass() : void {
         self::$app->stop();
         VirtualStream::unregister();
-        StreamBuffer::unregister();
     }
 
     protected function setUp() : void {
         parent::setUp();
-        StreamBuffer::clearBuffer();
         self::$container->get(MiddlewareCallRegistry::class)->reset();
     }
 
@@ -206,4 +210,45 @@ class HttpServerTest extends AsyncTestCase {
         self::assertSame($method . ' - Universe', $response->getBody()->buffer());
     }
 
+    public function testDtoActionsHaveSessionAccessWhenDefinedOnClass() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/controller-session/write');
+        $response = $client->request($request);
+
+        self::assertSame(200, $response->getStatus());
+
+        $cookie = ResponseCookie::fromHeader($response->getHeader('Set-Cookie'));
+
+        self::assertSame('session', $cookie->getName());
+        self::assertNotEmpty($cookie->getValue());
+
+        $request = new Request('http://localhost:4200/dto/controller-session/read');
+        $request->setHeader('Cookie', 'session=' . $cookie->getValue());
+
+        $response = $client->request($request);
+
+        self::assertSame(SessionDtoController::class . '::write', $response->getBody()->read());
+    }
+
+    public function testDtoActionsHaveSessionAccessWhenDefinedOnMethods() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/dto/action-session/write');
+        $response = $client->request($request);
+
+        self::assertSame(200, $response->getStatus());
+
+        $cookie = ResponseCookie::fromHeader($response->getHeader('Set-Cookie'));
+
+        self::assertSame('session', $cookie->getName());
+        self::assertNotEmpty($cookie->getValue());
+
+        $request = new Request('http://localhost:4200/dto/action-session/read');
+        $request->setHeader('Cookie', 'session=' . $cookie->getValue());
+
+        $response = $client->request($request);
+
+        self::assertSame('Known Session Value', $response->getBody()->read());
+    }
 }

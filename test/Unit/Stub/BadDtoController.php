@@ -10,7 +10,6 @@ use Labrador\Http\Controller\Dto\Headers;
 use Labrador\Http\Controller\Dto\Method;
 use Labrador\Http\Controller\Dto\QueryParams;
 use Labrador\Http\Controller\Dto\RouteParam;
-use Labrador\Http\Controller\Dto\Url;
 use Labrador\Http\Controller\Get;
 
 #[ControllerActions]
@@ -28,16 +27,6 @@ final class BadDtoController {
 
     #[Get('/bad-dto/bool-single-header')]
     public function checkSingleHeaderNotArrayOrString(#[Header('Authorization')] bool $token) {
-        throw new \BadMethodCallException('Not expected to be called');
-    }
-
-    #[Get('/bad-dto/array-uri')]
-    public function checkUriArray(#[Url] array $requestUrl) {
-        throw new \BadMethodCallException('Not expected to be called');
-    }
-
-    #[Get('/bad-dto/float-query')]
-    public function checkQueryFloat(#[QueryParams] float $query) {
         throw new \BadMethodCallException('Not expected to be called');
     }
 

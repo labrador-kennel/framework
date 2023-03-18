@@ -18,18 +18,20 @@ use Labrador\Http\Controller\Dto\InjectionHandler\HeaderHandler;
 use Labrador\Http\Controller\Dto\InjectionHandler\HeadersHandler;
 use Labrador\Http\Controller\Dto\InjectionHandler\MethodHandler;
 use Labrador\Http\Controller\Dto\InjectionHandler\QueryParamsHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\RequestHandler;
 use Labrador\Http\Controller\Dto\InjectionHandler\RouteParamHandler;
+use Labrador\Http\Controller\Dto\InjectionHandler\SessionHandler;
 use Labrador\Http\Controller\Dto\InjectionHandler\UrlHandler;
 use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\Controller\RouteMappingAttribute;
+use Labrador\Http\Internal\ReflectionCache;
 use Labrador\Http\Middleware\ApplicationMiddleware;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
 use ReflectionAttribute;
 use ReflectionMethod;
-use ReflectionObject;
 use function Cspray\AnnotatedContainer\autowiredParams;
 use function Cspray\AnnotatedContainer\rawParam;
 
@@ -55,7 +57,9 @@ class AutowireObserver extends ServiceWiringObserver {
             HeadersHandler::class,
             MethodHandler::class,
             QueryParamsHandler::class,
+            RequestHandler::class,
             RouteParamHandler::class,
+            SessionHandler::class,
             UrlHandler::class,
         ];
         foreach ($dtoHandlers as $dtoHandler) {
@@ -121,7 +125,7 @@ class AutowireObserver extends ServiceWiringObserver {
     ) : void {
         $controller = $controllerAndDefinition->getService();
         assert(is_object($controller));
-        $reflection = new ReflectionObject($controller);
+        $reflection = ReflectionCache::reflectionClass($controller);
         foreach ($reflection->getMethods() as $reflectionMethod) {
             $routeMappingAttributes = $reflectionMethod->getAttributes(RouteMappingAttribute::class, ReflectionAttribute::IS_INSTANCEOF);
             foreach ($routeMappingAttributes as $routeMappingAttribute) {

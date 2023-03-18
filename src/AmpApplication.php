@@ -8,10 +8,16 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\Session;
+use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Status;
+use Closure;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\Controller\Controller;
+use Labrador\Http\Controller\DtoController;
+use Labrador\Http\Controller\RequireSession;
+use Labrador\Http\Controller\SessionAccess;
 use Labrador\Http\Event\AddRoutesEvent;
 use Labrador\Http\Event\ApplicationStartedEvent;
 use Labrador\Http\Event\ApplicationStoppedEvent;
@@ -19,28 +25,123 @@ use Labrador\Http\Event\ReceivingConnectionsEvent;
 use Labrador\Http\Event\RequestReceivedEvent;
 use Labrador\Http\Event\ResponseSentEvent;
 use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\Exception\SessionNotEnabled;
+use Labrador\Http\Internal\ReflectionCache;
 use Labrador\Http\Middleware\Priority;
 use Labrador\Http\Router\Router;
 use Labrador\Http\Router\RoutingResolutionReason;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use ReflectionClass;
+use ReflectionMethod;
 
 #[Service]
 final class AmpApplication implements Application, RequestHandler {
+
+    private readonly Middleware $controllerSessionMiddleware;
 
     /**
      * @var array<string, Middleware[]>
      */
     private array $middleware = [];
+
     private ?ErrorHandler $errorHandler = null;
+
+    private bool $isSessionSupported;
 
     public function __construct(
         private readonly HttpServer                 $httpServer,
         private readonly ErrorHandlerFactory $errorHandlerFactory,
         private readonly Router                     $router,
         private readonly EventEmitter               $emitter,
-        private readonly LoggerInterface            $logger
-    ) {}
+        private readonly LoggerInterface            $logger,
+        private readonly ApplicationFeatures        $features,
+    ) {
+        $this->handleApplicationFeaturesSetup();
+        $this->controllerSessionMiddleware =  new class($this->isSessionSupported) implements Middleware {
+
+            public function __construct(
+                private readonly bool $isSessionSupported
+            ) {}
+
+            public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
+                if (!$requestHandler instanceof Controller) {
+                    throw new \RuntimeException(
+                        'An internal error within Labrador has occurred. Please ensure the Controller Session handling Middleware is executed last.'
+                    );
+                }
+
+                $sessionAccess = $this->getControllerSessionAccess($requestHandler);
+                if (!$this->isSessionSupported && $sessionAccess !== null) {
+                    throw SessionNotEnabled::fromSessionAccessRequired($requestHandler, $sessionAccess);
+                }
+
+                if ($this->isSessionSupported) {
+                    $session = $request->getAttribute(Session::class);
+                    assert($session instanceof Session);
+                    if ($sessionAccess === SessionAccess::Read) {
+                        $session->read();
+                    } else if ($sessionAccess === SessionAccess::Write) {
+                        $session->open();
+                    }
+                }
+
+                $response = $requestHandler->handleRequest($request);
+
+                if ($this->isSessionSupported) {
+                    $sessionWrite = $request->getAttribute(Session::class);
+                    assert($sessionWrite instanceof Session);
+                    if ($sessionAccess === SessionAccess::Write) {
+                        $sessionWrite->save();
+                    }
+                }
+
+                return $response;
+            }
+
+            private function getControllerSessionAccess(Controller $controller) : ?SessionAccess {
+                $method = null;
+                if ($controller instanceof DtoController) {
+                    [$controller, $method] = explode(
+                        '::',
+                        str_replace(['DtoHandler<', '>'], '', $controller->toString())
+                    );
+                }
+
+                assert(is_object($controller) || class_exists($controller));
+
+                $reflection = ReflectionCache::reflectionClass($controller);
+                $sessionAccess = $this->getSessionAccessFromReflection($reflection);
+
+                if ($sessionAccess === null && $method !== null) {
+                    $sessionAccess = $this->getSessionAccessFromReflection($reflection->getMethod($method));
+                }
+
+                return $sessionAccess;
+            }
+
+            private function getSessionAccessFromReflection(ReflectionClass|ReflectionMethod $reflection) : ?SessionAccess {
+                $requireSessionAttributes = $reflection->getAttributes(RequireSession::class, \ReflectionAttribute::IS_INSTANCEOF);
+                $sessionAccess = null;
+                if ($requireSessionAttributes !== []) {
+                    $requireSession = $requireSessionAttributes[0]->newInstance();
+                    $sessionAccess = $requireSession->access;
+                }
+
+                return $sessionAccess;
+            }
+        };
+    }
+
+    private function handleApplicationFeaturesSetup() : void {
+        $sessionFactory = $this->features->getSessionFactory();
+        if ($this->isSessionSupported = ($sessionFactory !== null)) {
+            $this->addMiddleware(
+                new SessionMiddleware($sessionFactory),
+                Priority::Critical
+            );
+        }
+    }
 
     public function getRouter() : Router {
         return $this->router;
@@ -130,6 +231,9 @@ final class AmpApplication implements Application, RequestHandler {
                     $middlewares[] = $middleware;
                 }
             }
+
+            // It is CRITICAL that this middleware runs last to ensure any Session attributes are handled properly
+            $middlewares[] = $this->controllerSessionMiddleware;
 
             $response = Middleware\stack($controller, ...$middlewares)->handleRequest($request);
         }

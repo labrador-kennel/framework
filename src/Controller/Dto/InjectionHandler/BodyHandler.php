@@ -11,21 +11,20 @@ use ReflectionType;
 
 final class BodyHandler implements DtoInjectionHandler {
 
-    public function isValidType(ReflectionType $type) : bool {
-        $parameterType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
-        return in_array($parameterType, [RequestBody::class, 'string']);
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
+        $actualType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
+        if ($attribute === null) {
+            return $actualType === RequestBody::class;
+        }
+        return $attribute instanceof Body && in_array($actualType, [RequestBody::class, 'string'], true);
     }
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : RequestBody|string {
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : RequestBody|string {
         $parameterType = $type instanceof \ReflectionNamedType ? $type->getName() : null;
         if ($parameterType === RequestBody::class) {
             return $request->getBody();
-        } else {
-            return $request->getBody()->buffer();
         }
-    }
 
-    public function getDtoAttributeType() : string {
-        return Body::class;
+        return $request->getBody()->buffer();
     }
 }

@@ -5,6 +5,7 @@ namespace Labrador\Http\Controller;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\Session;
 use Closure;
 use Cspray\AnnotatedContainer\Autowire\AutowireableInvoker;
 use Labrador\Http\Controller\Dto\DtoInjectionAttribute;
@@ -66,31 +67,43 @@ final class DtoController implements Controller {
 
         if (count($dtoInjectionAttributes) === 1) {
             $attribute = $dtoInjectionAttributes[0]->newInstance();
-            if ($parameterType === null || !$this->dtoInjectionManager->isValidTypeForAttribute($attribute, $parameterType)) {
+            if ($parameterType === null || !$this->dtoInjectionManager->hasHandlerForAttributeAndType($attribute, $parameterType)) {
                 throw InvalidType::fromDtoInjectAttributeInvalidTypeHint($attribute, $this->description, $reflectionParameter->getName());
             }
-            return fn(Request $request) : mixed => $this->dtoInjectionManager->createDtoObject($request, $attribute, $parameterType);
+            return fn(Request $request) : mixed => $this->dtoInjectionManager->createDtoValue($request, $attribute, $parameterType);
         }
 
         return null;
     }
 
     private function getParamFactoryFromType(?ReflectionType $type) : ?Closure {
+        if ($type === null) {
+            return null;
+        }
+        /**
         $parameterType = $type instanceof ReflectionNamedType ? $type->getName() : null;
         if ($parameterType === UriInterface::class) {
-            return fn(Request $request) => $request->getUri();
+            return static fn(Request $request) => $request->getUri();
         }
 
         if (in_array($parameterType, [QueryInterface::class, Query::class], true)) {
-            return fn(Request $request) => Query::createFromUri($request->getUri());
+            return static fn(Request $request) => Query::createFromUri($request->getUri());
         }
 
         if ($parameterType === RequestBody::class) {
-            return fn(Request $request) => $request->getBody();
+            return static fn(Request $request) => $request->getBody();
         }
 
         if ($parameterType === Request::class) {
-            return fn(Request $request) => $request;
+            return static fn(Request $request) => $request;
+        }
+
+        if ($parameterType === Session::class) {
+            return static fn(Request $request) => $request->getAttribute(Session::class);
+        }
+         */
+        if ($this->dtoInjectionManager->hasHandlerForType($type)) {
+            return fn(Request $request) : mixed => $this->dtoInjectionManager->createDtoValue($request, null, $type);
         }
 
         return null;

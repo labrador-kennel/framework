@@ -13,21 +13,18 @@ use ReflectionType;
 
 final class QueryParamsHandler implements DtoInjectionHandler {
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
         $parameterType = $type instanceof ReflectionNamedType ? $type->getName() : null;
         if (in_array($parameterType, [QueryInterface::class, Query::class], true)) {
             return Query::createFromUri($request->getUri());
-        } else {
-            return $request->getUri()->getQuery();
         }
+
+        return $request->getUri()->getQuery();
     }
 
-    public function isValidType(ReflectionType $type) : bool {
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
         $parameterType = $type instanceof ReflectionNamedType ? $type->getName() : null;
-        return in_array($parameterType, [QueryInterface::class, Query::class, 'string']);
-    }
 
-    public function getDtoAttributeType() : string {
-        return QueryParams::class;
+        return $attribute === null && in_array($parameterType, [QueryInterface::class, Query::class], true);
     }
 }

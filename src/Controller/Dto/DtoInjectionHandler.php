@@ -7,10 +7,8 @@ use ReflectionType;
 
 interface DtoInjectionHandler {
 
-    public function isValidType(ReflectionType $type) : bool;
+    public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool;
 
-    public function createDtoValue(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : mixed;
-
-    public function getDtoAttributeType() : string;
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : mixed;
 
 }

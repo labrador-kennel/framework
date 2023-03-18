@@ -9,19 +9,41 @@ use ReflectionType;
 #[Service]
 final class DtoInjectionManager {
 
-    /** @var array<string, DtoInjectionHandler> */
+    /** @var list<DtoInjectionHandler> */
     private array $handlers = [];
 
     public function addHandler(DtoInjectionHandler $handler) : void {
-        $this->handlers[$handler->getDtoAttributeType()] = $handler;
+        $this->handlers[] = $handler;
     }
 
-    public function isValidTypeForAttribute(DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
-        return $this->handlers[$attribute::class]->isValidType($type);
+    public function hasHandlerForAttributeAndType(DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
+        foreach ($this->handlers as $handler) {
+            if ($handler->canCreateDtoValue($attribute, $type)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public function createDtoObject(Request $request, DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
-        return $this->handlers[$attribute::class]->createDtoValue($request, $attribute, $type);
+    public function hasHandlerForType(ReflectionType $type) : bool {
+        foreach ($this->handlers as $handler) {
+            if ($handler->canCreateDtoValue(null, $type)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function createDtoValue(Request $request, ?DtoInjectionAttribute $attribute, ReflectionType $type) : mixed {
+        foreach ($this->handlers as $handler) {
+            if ($handler->canCreateDtoValue($attribute, $type)) {
+                return $handler->createDtoValue($request, $attribute, $type);
+            }
+        }
+
+        return null;
     }
 
 }

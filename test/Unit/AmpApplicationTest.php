@@ -2,13 +2,23 @@
 
 namespace Labrador\Http\Test\Unit;
 
+use Amp\Http\Cookie\RequestCookie;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServerStatus;
+use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\LocalSessionStorage;
+use Amp\Http\Server\Session\Session;
+use Amp\Http\Server\Session\SessionFactory;
+use Amp\Http\Server\Session\SessionStorage;
 use Amp\Http\Status;
+use Amp\Sync\LocalKeyedMutex;
 use Labrador\Http\AmpApplication;
+use Labrador\Http\ApplicationFeatures;
+use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Event\AddRoutesEvent;
 use Labrador\Http\Event\ApplicationStartedEvent;
 use Labrador\Http\Event\ApplicationStoppedEvent;
@@ -16,7 +26,10 @@ use Labrador\Http\Event\ReceivingConnectionsEvent;
 use Labrador\Http\Event\RequestReceivedEvent;
 use Labrador\Http\Event\ResponseSentEvent;
 use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\Exception\SessionNotEnabled;
 use Labrador\Http\HttpMethod;
+use Labrador\Http\Middleware\Priority;
+use Labrador\Http\NoApplicationFeatures;
 use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\FastRouteRouter;
 use Labrador\Http\Router\GetMapping;
@@ -24,7 +37,11 @@ use Labrador\Http\Router\PostMapping;
 use Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
 use Labrador\Http\Test\Unit\Stub\EventEmitterStub;
 use Labrador\Http\Test\Unit\Stub\HttpServerStub;
+use Labrador\Http\Test\Unit\Stub\RequireAccessReadSessionController;
+use Labrador\Http\Test\Unit\Stub\RequireAccessWriteSessionController;
 use Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
+use Labrador\Http\Test\Unit\Stub\SessionGatheringController;
+use Labrador\HttpDummyApp\Controller\SessionActionDtoController;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
@@ -36,6 +53,7 @@ use Monolog\Handler\TestHandler;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\UuidInterface;
@@ -64,7 +82,8 @@ final class AmpApplicationTest extends TestCase {
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
             $this->emitter,
-            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()])
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            new NoApplicationFeatures()
         );
     }
 
@@ -291,7 +310,6 @@ final class AmpApplicationTest extends TestCase {
     public function testMiddlewaresCalled() : void {
         $this->subject->start();
 
-        $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
             new GetMapping('/'),
             new ResponseControllerStub(new Response())
@@ -338,6 +356,253 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertCount(1, $this->emitter->getEmittedEvents());
         self::assertInstanceOf(ApplicationStoppedEvent::class, $this->emitter->getEmittedEvents()[0]);
+    }
+
+    public function testSessionFactoryPresentInAppFeaturesSetsSessionOnRequest() : void {
+        $controller = new SessionGatheringController();
+        $this->router->addRoute(
+            new GetMapping('/session-test'),
+            $controller
+        );
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/session-test')
+        );
+
+        $features = new class implements ApplicationFeatures {
+            public function getSessionFactory() : ?SessionFactory {
+                return new SessionFactory(
+                    new LocalKeyedMutex(),
+                    new LocalSessionStorage(),
+                );
+            }
+        };
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            $features
+        );
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame('OK', $response->getBody()->read());
+        self::assertNotNull($controller->getSession());
+    }
+
+    public function testSessionMiddlewareSetToCriticalLevelAndRunFirst() : void {
+        $controller = new SessionGatheringController();
+        $this->router->addRoute(
+            new GetMapping('/session-test'),
+            $controller
+        );
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/session-test')
+        );
+
+        $features = new class implements ApplicationFeatures {
+            public function getSessionFactory() : ?SessionFactory {
+                return new SessionFactory(
+                    new LocalKeyedMutex(),
+                    new LocalSessionStorage(),
+                );
+            }
+        };
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            $features
+        );
+
+        $middleware = new class implements Middleware {
+            public ?Session $session = null;
+
+            public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
+                if ($request->hasAttribute(Session::class)) {
+                    $this->session = $request->getAttribute(Session::class);
+                }
+
+                return $requestHandler->handleRequest($request);
+            }
+        };
+        $subject->addMiddleware($middleware, Priority::Critical);
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame('OK', $response->getBody()->read());
+        self::assertNotNull($middleware->session);
+        self::assertNotNull($controller->getSession());
+    }
+
+    public function testControllerRequireSessionReadAccess() : void {
+        $controller = new RequireAccessReadSessionController();
+        $this->router->addRoute(
+            new GetMapping('/session-test'),
+            $controller
+        );
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/session-test')
+        );
+
+        $features = new class implements ApplicationFeatures {
+
+            public function __construct(
+            ) {}
+
+            public function getSessionFactory() : ?SessionFactory {
+                return new SessionFactory(
+                    new LocalKeyedMutex(),
+                    new LocalSessionStorage()
+                );
+            }
+        };
+
+        $middleware = new class implements Middleware {
+            public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
+                $session = $request->getAttribute(Session::class);
+                assert($session instanceof Session);
+                $session->open()->set('known-session-path', 'my known value');
+                $session->save();
+
+                return $requestHandler->handleRequest($request);
+            }
+        };
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            $features
+        );
+
+        $subject->addMiddleware($middleware);
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame('OK', $response->getBody()->read());
+        self::assertSame('my known value', $controller->getSessionValue());
+    }
+
+    public function testControllerRequireSessionWriteAccess() : void {
+        $controller = new RequireAccessWriteSessionController();
+        $this->router->addRoute(
+            new GetMapping('/session-test'),
+            $controller
+        );
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/session-test')
+        );
+
+        $id = Base64UrlSafe::encode(\random_bytes(36));
+        $request->setCookie(new RequestCookie('session', $id));
+
+        $storage = new LocalSessionStorage();
+        $features = new class($storage) implements ApplicationFeatures {
+
+            public function __construct(
+                private readonly SessionStorage $storage
+            ) {}
+
+            public function getSessionFactory() : ?SessionFactory {
+                return new SessionFactory(
+                    new LocalKeyedMutex(),
+                    $this->storage
+                );
+            }
+        };
+
+        $middleware = new class implements Middleware {
+
+            private ?string $sessionValue = null;
+
+            public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
+                $session = $request->getAttribute(Session::class);
+                assert($session instanceof Session);
+
+                $session->open()->set('known-session-path', 'my known value');
+                $session->save();
+
+                $session->unlockAll();
+
+                $response = $requestHandler->handleRequest($request);
+
+                $this->sessionValue = $session->get('known-session-path');
+
+                return $response;
+            }
+
+            public function getSessionValue() : ?string {
+                return $this->sessionValue;
+            }
+        };
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            $features
+        );
+
+        $subject->addMiddleware($middleware);
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame('OK', $response->getBody()->read());
+        self::assertSame('prefixed_my known value', $middleware->getSessionValue());
+        self::assertSame([
+            'known-session-path' => 'prefixed_my known value'
+        ], $storage->read($id));
+    }
+
+    public function testRequiresSessionReadSessionFactoryNotProvidedThrowsException() : void {
+        $controller = new RequireAccessReadSessionController();
+        $this->router->addRoute(
+            new GetMapping('/'),
+            $controller
+        );
+
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/')
+        );
+
+        $this->subject->start();
+
+        $this->expectException(SessionNotEnabled::class);
+        $this->expectExceptionMessage(sprintf(
+            'The Controller "%s" requires Read Session access but Session support has not been enabled. Please ensure ' .
+            'that you have configured a SessionFactory in your implemented ApplicationFeatures.',
+            $controller->toString()
+        ));
+
+        $this->subject->handleRequest($request);
     }
 
 }
