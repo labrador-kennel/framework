@@ -47,7 +47,7 @@ final class AmpApplication implements Application, RequestHandler {
 
     private ?ErrorHandler $errorHandler = null;
 
-    private readonly bool $isSessionSupported;
+    private bool $isSessionSupported;
 
     public function __construct(
         private readonly HttpServer                 $httpServer,
@@ -76,16 +76,24 @@ final class AmpApplication implements Application, RequestHandler {
                     throw SessionNotEnabled::fromSessionAccessRequired($requestHandler, $sessionAccess);
                 }
 
-                if ($sessionAccess === SessionAccess::Read) {
-                    $request->getAttribute(Session::class)->read();
-                } else if ($sessionAccess === SessionAccess::Write) {
-                    $request->getAttribute(Session::class)->open();
+                if ($this->isSessionSupported) {
+                    $session = $request->getAttribute(Session::class);
+                    assert($session instanceof Session);
+                    if ($sessionAccess === SessionAccess::Read) {
+                        $session->read();
+                    } else if ($sessionAccess === SessionAccess::Write) {
+                        $session->open();
+                    }
                 }
 
                 $response = $requestHandler->handleRequest($request);
 
-                if ($sessionAccess === SessionAccess::Write) {
-                    $request->getAttribute(Session::class)->save();
+                if ($this->isSessionSupported) {
+                    $sessionWrite = $request->getAttribute(Session::class);
+                    assert($sessionWrite instanceof Session);
+                    if ($sessionAccess === SessionAccess::Write) {
+                        $sessionWrite->save();
+                    }
                 }
 
                 return $response;
@@ -99,6 +107,8 @@ final class AmpApplication implements Application, RequestHandler {
                         str_replace(['DtoHandler<', '>'], '', $controller->toString())
                     );
                 }
+
+                assert(is_object($controller) || class_exists($controller));
 
                 $reflection = ReflectionCache::reflectionClass($controller);
                 $sessionAccess = $this->getSessionAccessFromReflection($reflection);
@@ -115,7 +125,6 @@ final class AmpApplication implements Application, RequestHandler {
                 $sessionAccess = null;
                 if ($requireSessionAttributes !== []) {
                     $requireSession = $requireSessionAttributes[0]->newInstance();
-                    assert($requireSession instanceof RequireSession);
                     $sessionAccess = $requireSession->access;
                 }
 

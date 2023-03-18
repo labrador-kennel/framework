@@ -25,10 +25,6 @@ final class QueryParamsHandler implements DtoInjectionHandler {
     public function canCreateDtoValue(?DtoInjectionAttribute $attribute, ReflectionType $type) : bool {
         $parameterType = $type instanceof ReflectionNamedType ? $type->getName() : null;
 
-        if ($attribute === null) {
-            return in_array($parameterType, [QueryInterface::class, Query::class], true);
-        }
-
-        return $attribute instanceof QueryParams && in_array($parameterType, [QueryInterface::class, Query::class, 'string'], true);
+        return $attribute === null && in_array($parameterType, [QueryInterface::class, Query::class], true);
     }
 }

@@ -9,7 +9,7 @@ use ReflectionType;
 #[Service]
 final class DtoInjectionManager {
 
-    /** @var array<string, DtoInjectionHandler> */
+    /** @var list<DtoInjectionHandler> */
     private array $handlers = [];
 
     public function addHandler(DtoInjectionHandler $handler) : void {

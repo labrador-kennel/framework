@@ -103,7 +103,7 @@ final class DtoController implements Controller {
         }
          */
         if ($this->dtoInjectionManager->hasHandlerForType($type)) {
-            return fn(Request $request) => $this->dtoInjectionManager->createDtoValue($request, null, $type);
+            return fn(Request $request) : mixed => $this->dtoInjectionManager->createDtoValue($request, null, $type);
         }
 
         return null;

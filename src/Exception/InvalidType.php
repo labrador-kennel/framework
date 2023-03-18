@@ -39,8 +39,6 @@ class InvalidType extends Exception {
             Method::class => self::fromMethodAttributeInvalidTypeHint($classMethod, $parameterName),
             Dto::class => self::fromDtoAttributeInvalidTypeHint($classMethod, $parameterName),
             Body::class => self::fromBodyAttributeInvalidTypeHint($classMethod, $parameterName),
-            Url::class => self::fromUrlAttributeInvalidTypeHint($classMethod, $parameterName),
-            QueryParams::class => self::fromQueryParamsAttributeInvalidTypeHint($classMethod, $parameterName)
         };
     }
 
@@ -81,29 +79,6 @@ class InvalidType extends Exception {
                 'The parameter "%s" on %s is marked with a #[Header] Attribute but is not type-hinted as an array or string.',
                 $parameterName,
                 $classMethod
-            )
-        );
-    }
-
-    private static function fromUrlAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
-        return new self(
-            sprintf(
-                'The parameter "%s" on %s is marked with a #[Url] Attribute but is not type-hinted as a %s.',
-                $parameterName,
-                $classMethod,
-                UriInterface::class
-            )
-        );
-    }
-
-    private static function fromQueryParamsAttributeInvalidTypeHint(string $classMethod, string $parameterName) : self {
-        return new self(
-            sprintf(
-                'The parameter "%s" on %s is marked with a #[QueryParams] Attribute but is not type-hinted as a string, %s, or %s.',
-                $parameterName,
-                $classMethod,
-                QueryInterface::class,
-                Query::class
             )
         );
     }
