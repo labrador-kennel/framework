@@ -4,19 +4,19 @@ namespace Labrador\Http\Test\Unit\Event;
 
 use Labrador\Http\Application;
 use Labrador\Http\ApplicationEvent;
-use Labrador\Http\Event\ApplicationStartedEvent;
+use Labrador\Http\Event\ApplicationStarted;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ApplicationStartedEventTest extends TestCase {
 
     private Application&MockObject $app;
-    private ApplicationStartedEvent $subject;
+    private ApplicationStarted $subject;
 
     protected function setUp() : void {
         parent::setUp();
         $this->app = $this->getMockBuilder(Application::class)->getMock();
-        $this->subject = new ApplicationStartedEvent($this->app);
+        $this->subject = new ApplicationStarted($this->app);
     }
 
     public function testGetName() : void {

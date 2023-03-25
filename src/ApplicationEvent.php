@@ -2,12 +2,20 @@
 
 namespace Labrador\Http;
 
+use Labrador\Http\Event\AddRoutes;
+use Labrador\Http\Event\ApplicationStarted;
+use Labrador\Http\Event\ApplicationStopped;
+use Labrador\Http\Event\ReceivingConnections;
+use Labrador\Http\Event\RequestReceived;
+use Labrador\Http\Event\ResponseSent;
+use Labrador\Http\Event\WillInvokeController;
+
 enum ApplicationEvent : string {
-    case ApplicationStarted = 'labrador.http.appStarted';
-    case AddRoutes = 'labrador.http.addRoutes';
-    case ReceivingConnections = 'labrador.http.receivingConnections';
-    case RequestReceived = 'labrador.http.requestReceived';
-    case WillInvokeController = 'labrador.http.willInvokeController';
-    case ResponseSent = 'labrador.http.responseSent';
-    case ApplicationStopped = 'labrador.http.appStopped';
+    case ApplicationStarted = ApplicationStarted::class;
+    case AddRoutes = AddRoutes::class;
+    case ReceivingConnections = ReceivingConnections::class;
+    case RequestReceived = RequestReceived::class;
+    case WillInvokeController = WillInvokeController::class;
+    case ResponseSent = ResponseSent::class;
+    case ApplicationStopped = ApplicationStopped::class;
 }

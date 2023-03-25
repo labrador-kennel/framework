@@ -2,37 +2,33 @@
 
 namespace Labrador\Http\Event;
 
-use Amp\Http\Server\Response;
 use Labrador\AsyncEvent\Event;
+use Labrador\AsyncEvent\StandardEvent;
 use Labrador\Http\ApplicationEvent;
-use Labrador\Http\RequestAttribute;
+use Labrador\Http\Router\Router;
 use DateTimeImmutable;
-use Ramsey\Uuid\UuidInterface;
 
-final class ResponseSentEvent implements Event {
+final class AddRoutes implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 
     public function __construct(
-        private readonly Response $response,
-        private readonly UuidInterface $requestId,
+        private readonly Router $router,
         DateTimeImmutable $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
     public function getName() : string {
-        return ApplicationEvent::ResponseSent->value;
+        return ApplicationEvent::AddRoutes->value;
     }
 
-    public function getTarget() : Response {
-        return $this->response;
+    public function getTarget() : Router {
+        return $this->router;
     }
 
     public function getData() : array {
-        return [
-            RequestAttribute::RequestId->value => $this->requestId
-        ];
+        return [];
     }
 
     public function getCreatedAt() : DateTimeImmutable {

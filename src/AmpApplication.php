@@ -18,13 +18,13 @@ use Labrador\Http\Controller\Controller;
 use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Controller\RequireSession;
 use Labrador\Http\Controller\SessionAccess;
-use Labrador\Http\Event\AddRoutesEvent;
-use Labrador\Http\Event\ApplicationStartedEvent;
-use Labrador\Http\Event\ApplicationStoppedEvent;
-use Labrador\Http\Event\ReceivingConnectionsEvent;
-use Labrador\Http\Event\RequestReceivedEvent;
-use Labrador\Http\Event\ResponseSentEvent;
-use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\Event\AddRoutes;
+use Labrador\Http\Event\ApplicationStarted;
+use Labrador\Http\Event\ApplicationStopped;
+use Labrador\Http\Event\ReceivingConnections;
+use Labrador\Http\Event\RequestReceived;
+use Labrador\Http\Event\ResponseSent;
+use Labrador\Http\Event\WillInvokeController;
 use Labrador\Http\Exception\SessionNotEnabled;
 use Labrador\Http\Internal\ReflectionCache;
 use Labrador\Http\Middleware\Priority;
@@ -157,20 +157,20 @@ final class AmpApplication implements Application, RequestHandler {
 
     public function start() : void {
         $this->logger->info('Labrador HTTP application starting up.');
-        $this->emitter->emit(new ApplicationStartedEvent($this))->await();
+        $this->emitter->emit(new ApplicationStarted($this))->await();
         $this->logger->info('Allowing routes to be added through event system.');
-        $this->emitter->emit(new AddRoutesEvent($this->router))->await();
+        $this->emitter->emit(new AddRoutes($this->router))->await();
 
         $this->httpServer->start($this, $this->getErrorHandler());
 
         $this->logger->info('Application server is responding to requests.');
-        $this->emitter->emit(new ReceivingConnectionsEvent($this->httpServer))->await();
+        $this->emitter->emit(new ReceivingConnections($this->httpServer))->await();
     }
 
     public function stop() : void {
         $this->httpServer->stop();
 
-        $this->emitter->emit(new ApplicationStoppedEvent($this))->await();
+        $this->emitter->emit(new ApplicationStopped($this))->await();
 
         $this->logger->info('Labrador HTTP application stopping.');
     }
@@ -187,7 +187,7 @@ final class AmpApplication implements Application, RequestHandler {
             ]
         );
 
-        $this->emitter->queue(new RequestReceivedEvent($request));
+        $this->emitter->queue(new RequestReceived($request));
         $routingResolution = $this->router->match($request);
 
         if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
@@ -222,7 +222,7 @@ final class AmpApplication implements Application, RequestHandler {
                 ]
             );
 
-            $this->emitter->queue(new WillInvokeControllerEvent($controller, $requestId));
+            $this->emitter->queue(new WillInvokeController($controller, $requestId));
 
             $middlewares = [];
             foreach (Priority::cases() as $priority) {
@@ -238,7 +238,7 @@ final class AmpApplication implements Application, RequestHandler {
             $response = Middleware\stack($controller, ...$middlewares)->handleRequest($request);
         }
 
-        $this->emitter->queue(new ResponseSentEvent($response, $requestId));
+        $this->emitter->queue(new ResponseSent($response, $requestId));
         $this->logger->info(
             'Finished processing Request id: {requestId}.',
             [
