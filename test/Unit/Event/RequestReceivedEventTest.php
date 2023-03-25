@@ -5,19 +5,19 @@ namespace Labrador\Http\Test\Unit\Event;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Labrador\Http\ApplicationEvent;
-use Labrador\Http\Event\RequestReceivedEvent;
+use Labrador\Http\Event\RequestReceived;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 
 class RequestReceivedEventTest extends TestCase {
 
     private Request $request;
-    private RequestReceivedEvent $subject;
+    private RequestReceived $subject;
 
     protected function setUp() : void {
         parent::setUp();
         $this->request = new Request($this->getMockBuilder(Client::class)->getMock(), 'GET', Http::createFromString('http://example.com'));
-        $this->subject = new RequestReceivedEvent($this->request);
+        $this->subject = new RequestReceived($this->request);
     }
 
     public function testGetName() : void {

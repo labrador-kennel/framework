@@ -4,19 +4,19 @@ namespace Labrador\Http\Test\Unit\Event;
 
 use Amp\Http\Server\HttpServer;
 use Labrador\Http\ApplicationEvent;
-use Labrador\Http\Event\ReceivingConnectionsEvent;
+use Labrador\Http\Event\ReceivingConnections;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ReceivingConnectionsEventTest extends TestCase {
 
     private HttpServer&MockObject $server;
-    private ReceivingConnectionsEvent $subject;
+    private ReceivingConnections $subject;
 
     protected function setUp() : void {
         parent::setUp();
         $this->server = $this->getMockBuilder(HttpServer::class)->getMock();
-        $this->subject = new ReceivingConnectionsEvent($this->server);
+        $this->subject = new ReceivingConnections($this->server);
     }
 
     public function testGetName() : void {

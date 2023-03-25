@@ -4,7 +4,7 @@ namespace Labrador\Http\Test\Unit\Event;
 
 use Amp\Http\Server\Response;
 use Labrador\Http\ApplicationEvent;
-use Labrador\Http\Event\ResponseSentEvent;
+use Labrador\Http\Event\ResponseSent;
 use Labrador\Http\RequestAttribute;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -13,14 +13,14 @@ use Ramsey\Uuid\UuidInterface;
 class ResponseSentEventTest extends TestCase {
 
     private Response $response;
-    private ResponseSentEvent $subject;
+    private ResponseSent $subject;
     private UuidInterface $uuid;
 
     protected function setUp() : void {
         parent::setUp();
         $this->response = new Response();
         $this->uuid = Uuid::uuid6();
-        $this->subject = new ResponseSentEvent($this->response, $this->uuid);
+        $this->subject = new ResponseSent($this->response, $this->uuid);
     }
 
     public function testGetName() : void {

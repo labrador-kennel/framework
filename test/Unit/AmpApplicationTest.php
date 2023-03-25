@@ -19,13 +19,13 @@ use Amp\Sync\LocalKeyedMutex;
 use Labrador\Http\AmpApplication;
 use Labrador\Http\ApplicationFeatures;
 use Labrador\Http\Controller\DtoController;
-use Labrador\Http\Event\AddRoutesEvent;
-use Labrador\Http\Event\ApplicationStartedEvent;
-use Labrador\Http\Event\ApplicationStoppedEvent;
-use Labrador\Http\Event\ReceivingConnectionsEvent;
-use Labrador\Http\Event\RequestReceivedEvent;
-use Labrador\Http\Event\ResponseSentEvent;
-use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\Event\AddRoutes;
+use Labrador\Http\Event\ApplicationStarted;
+use Labrador\Http\Event\ApplicationStopped;
+use Labrador\Http\Event\ReceivingConnections;
+use Labrador\Http\Event\RequestReceived;
+use Labrador\Http\Event\ResponseSent;
+use Labrador\Http\Event\WillInvokeController;
 use Labrador\Http\Exception\SessionNotEnabled;
 use Labrador\Http\HttpMethod;
 use Labrador\Http\Middleware\Priority;
@@ -97,9 +97,9 @@ final class AmpApplicationTest extends TestCase {
         $events = $this->emitter->getEmittedEvents();
 
         self::assertCount(3, $events);
-        self::assertInstanceOf(ApplicationStartedEvent::class, $events[0]);
-        self::assertInstanceOf(AddRoutesEvent::class, $events[1]);
-        self::assertInstanceOf(ReceivingConnectionsEvent::class, $events[2]);
+        self::assertInstanceOf(ApplicationStarted::class, $events[0]);
+        self::assertInstanceOf(AddRoutes::class, $events[1]);
+        self::assertInstanceOf(ReceivingConnections::class, $events[2]);
     }
 
     public function testHttpServerStartedWhenReceivingConnectionsEventSent() : void {
@@ -108,7 +108,7 @@ final class AmpApplicationTest extends TestCase {
         $events = $this->emitter->getEmittedEvents();
 
         self::assertCount(3, $events);
-        self::assertInstanceOf(ReceivingConnectionsEvent::class, $events[2]);
+        self::assertInstanceOf(ReceivingConnections::class, $events[2]);
         self::assertSame(HttpServerStatus::Started, $events[2]->getTarget()->getStatus());
     }
 
@@ -132,9 +132,9 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertSame($response, $actual);
         self::assertCount(3, $events);
-        self::assertInstanceOf(RequestReceivedEvent::class, $events[0]);
-        self::assertInstanceOf(WillInvokeControllerEvent::class, $events[1]);
-        self::assertInstanceOf(ResponseSentEvent::class, $events[2]);
+        self::assertInstanceOf(RequestReceived::class, $events[0]);
+        self::assertInstanceOf(WillInvokeController::class, $events[1]);
+        self::assertInstanceOf(ResponseSent::class, $events[2]);
     }
 
     public function testRequestHasRequestId() : void {
@@ -355,7 +355,7 @@ final class AmpApplicationTest extends TestCase {
         $this->subject->stop();
 
         self::assertCount(1, $this->emitter->getEmittedEvents());
-        self::assertInstanceOf(ApplicationStoppedEvent::class, $this->emitter->getEmittedEvents()[0]);
+        self::assertInstanceOf(ApplicationStopped::class, $this->emitter->getEmittedEvents()[0]);
     }
 
     public function testSessionFactoryPresentInAppFeaturesSetsSessionOnRequest() : void {

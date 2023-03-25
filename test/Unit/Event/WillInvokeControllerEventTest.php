@@ -4,7 +4,7 @@ namespace Labrador\Http\Test\Unit\Event;
 
 use Labrador\Http\ApplicationEvent;
 use Labrador\Http\Controller\Controller;
-use Labrador\Http\Event\WillInvokeControllerEvent;
+use Labrador\Http\Event\WillInvokeController;
 use Labrador\Http\RequestAttribute;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -14,14 +14,14 @@ use Ramsey\Uuid\UuidInterface;
 class WillInvokeControllerEventTest extends TestCase {
 
     private Controller&MockObject $controller;
-    private WillInvokeControllerEvent $subject;
+    private WillInvokeController $subject;
     private UuidInterface $uuid;
 
     protected function setUp() : void {
         parent::setUp();
         $this->controller = $this->getMockBuilder(Controller::class)->getMock();
         $this->uuid = Uuid::uuid6();
-        $this->subject = new WillInvokeControllerEvent($this->controller, $this->uuid);
+        $this->subject = new WillInvokeController($this->controller, $this->uuid);
     }
 
     public function testGetName() : void {

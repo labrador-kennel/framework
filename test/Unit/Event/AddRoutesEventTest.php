@@ -3,7 +3,7 @@
 namespace Labrador\Http\Test\Unit\Event;
 
 use Labrador\Http\ApplicationEvent;
-use Labrador\Http\Event\AddRoutesEvent;
+use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Router\Router;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -11,12 +11,12 @@ use PHPUnit\Framework\TestCase;
 class AddRoutesEventTest extends TestCase {
 
     private Router&MockObject $router;
-    private AddRoutesEvent $subject;
+    private AddRoutes $subject;
 
     protected function setUp() : void {
         parent::setUp();
         $this->router = $this->getMockBuilder(Router::class)->getMock();
-        $this->subject = new AddRoutesEvent($this->router);
+        $this->subject = new AddRoutes($this->router);
     }
 
     public function testGetName() : void {

@@ -9,7 +9,7 @@ use Labrador\Http\RequestAttribute;
 use DateTimeImmutable;
 use Ramsey\Uuid\UuidInterface;
 
-final class WillInvokeControllerEvent implements Event {
+final class WillInvokeController implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 

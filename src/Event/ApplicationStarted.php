@@ -1,29 +1,29 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Labrador\Http\Event;
 
-use Amp\Http\Server\HttpServer;
 use Labrador\AsyncEvent\Event;
+use Labrador\Http\Application;
 use Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
 
-class ReceivingConnectionsEvent implements Event {
+class ApplicationStarted implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 
     public function __construct(
-        private readonly HttpServer $server,
-        DateTimeImmutable $createdAt = null
+        private readonly Application $application,
+        DateTimeImmutable               $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
-    public function getName() : string {
-        return ApplicationEvent::ReceivingConnections->value;
+    public function getTarget() : Application {
+        return $this->application;
     }
 
-    public function getTarget() : HttpServer {
-        return $this->server;
+    public function getName() : string {
+        return ApplicationEvent::ApplicationStarted->value;
     }
 
     public function getData() : array {
