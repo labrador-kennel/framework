@@ -5,6 +5,7 @@ namespace Labrador\Http\Test\Unit\Stub;
 use Labrador\AsyncEvent\Event;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\AsyncEvent\Listener;
+use Labrador\AsyncEvent\ListenerProvider;
 use Labrador\AsyncEvent\ListenerRegistration;
 use Labrador\CompositeFuture\CompositeFuture;
 
@@ -13,7 +14,7 @@ final class EventEmitterStub implements EventEmitter {
     private array $events = [];
     private array $queuedEvents = [];
 
-    public function register(Listener $listener) : ListenerRegistration {
+    public function register(Listener|ListenerProvider $listener) : ListenerRegistration {
         throw new \RuntimeException('You should not register listeners to this stub.');
     }
 
