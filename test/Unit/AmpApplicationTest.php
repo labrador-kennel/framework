@@ -13,6 +13,7 @@ use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\Session\SessionFactory;
+use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Server\Session\SessionStorage;
 use Amp\Http\Status;
 use Amp\Sync\LocalKeyedMutex;
@@ -358,6 +359,24 @@ final class AmpApplicationTest extends TestCase {
         self::assertInstanceOf(ApplicationStopped::class, $this->emitter->getEmittedEvents()[0]);
     }
 
+    private function getApplicationFeaturesWithSessionMiddleware(?SessionStorage $storage = null) : ApplicationFeatures {
+        return new class($storage) implements ApplicationFeatures {
+
+            public function __construct(
+                private readonly ?SessionStorage $storage
+            ) {}
+
+            public function getSessionMiddleware() : ?SessionMiddleware {
+                return new SessionMiddleware(
+                    new SessionFactory(
+                        new LocalKeyedMutex(),
+                        $this->storage ?? new LocalSessionStorage(),
+                    )
+                );
+            }
+        };
+    }
+
     public function testSessionFactoryPresentInAppFeaturesSetsSessionOnRequest() : void {
         $controller = new SessionGatheringController();
         $this->router->addRoute(
@@ -370,14 +389,6 @@ final class AmpApplicationTest extends TestCase {
             Http::createFromString('http://example.com/session-test')
         );
 
-        $features = new class implements ApplicationFeatures {
-            public function getSessionFactory() : ?SessionFactory {
-                return new SessionFactory(
-                    new LocalKeyedMutex(),
-                    new LocalSessionStorage(),
-                );
-            }
-        };
 
         $subject = new AmpApplication(
             $this->httpServer,
@@ -385,7 +396,7 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $features
+            $this->getApplicationFeaturesWithSessionMiddleware()
         );
 
         $subject->start();
@@ -408,22 +419,13 @@ final class AmpApplicationTest extends TestCase {
             Http::createFromString('http://example.com/session-test')
         );
 
-        $features = new class implements ApplicationFeatures {
-            public function getSessionFactory() : ?SessionFactory {
-                return new SessionFactory(
-                    new LocalKeyedMutex(),
-                    new LocalSessionStorage(),
-                );
-            }
-        };
-
         $subject = new AmpApplication(
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $features
+            $this->getApplicationFeaturesWithSessionMiddleware()
         );
 
         $middleware = new class implements Middleware {
@@ -460,19 +462,6 @@ final class AmpApplicationTest extends TestCase {
             Http::createFromString('http://example.com/session-test')
         );
 
-        $features = new class implements ApplicationFeatures {
-
-            public function __construct(
-            ) {}
-
-            public function getSessionFactory() : ?SessionFactory {
-                return new SessionFactory(
-                    new LocalKeyedMutex(),
-                    new LocalSessionStorage()
-                );
-            }
-        };
-
         $middleware = new class implements Middleware {
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
                 $session = $request->getAttribute(Session::class);
@@ -490,7 +479,7 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $features
+            $this->getApplicationFeaturesWithSessionMiddleware()
         );
 
         $subject->addMiddleware($middleware);
@@ -519,19 +508,6 @@ final class AmpApplicationTest extends TestCase {
         $request->setCookie(new RequestCookie('session', $id));
 
         $storage = new LocalSessionStorage();
-        $features = new class($storage) implements ApplicationFeatures {
-
-            public function __construct(
-                private readonly SessionStorage $storage
-            ) {}
-
-            public function getSessionFactory() : ?SessionFactory {
-                return new SessionFactory(
-                    new LocalKeyedMutex(),
-                    $this->storage
-                );
-            }
-        };
 
         $middleware = new class implements Middleware {
 
@@ -564,7 +540,7 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $features
+            $this->getApplicationFeaturesWithSessionMiddleware($storage)
         );
 
         $subject->addMiddleware($middleware);

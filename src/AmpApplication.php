@@ -134,10 +134,10 @@ final class AmpApplication implements Application, RequestHandler {
     }
 
     private function handleApplicationFeaturesSetup() : void {
-        $sessionFactory = $this->features->getSessionFactory();
-        if ($this->isSessionSupported = ($sessionFactory !== null)) {
+        $sessionMiddleware = $this->features->getSessionMiddleware();
+        if ($this->isSessionSupported = ($sessionMiddleware !== null)) {
             $this->addMiddleware(
-                new SessionMiddleware($sessionFactory),
+                $sessionMiddleware,
                 Priority::Critical
             );
         }
