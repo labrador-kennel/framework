@@ -3,6 +3,7 @@
 namespace Labrador\Http;
 
 use Amp\Http\Server\Session\SessionFactory;
+use Amp\Http\Server\Session\SessionMiddleware;
 use Cspray\AnnotatedContainer\Attribute\Service;
 
 /**
@@ -11,6 +12,6 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 #[Service]
 interface ApplicationFeatures {
 
-    public function getSessionFactory() : ?SessionFactory;
+    public function getSessionMiddleware() : ?SessionMiddleware;
 
 }

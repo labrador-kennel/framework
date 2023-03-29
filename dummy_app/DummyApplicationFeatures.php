@@ -2,8 +2,10 @@
 
 namespace Labrador\HttpDummyApp;
 
+use Amp\Http\Cookie\CookieAttributes;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\SessionFactory;
+use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Sync\LocalKeyedMutex;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Http\ApplicationFeatures;
@@ -11,10 +13,12 @@ use Labrador\Http\ApplicationFeatures;
 #[Service(primary: true)]
 final class DummyApplicationFeatures implements ApplicationFeatures {
 
-    public function getSessionFactory() : ?SessionFactory {
-        return new SessionFactory(
-            new LocalKeyedMutex(),
-            new LocalSessionStorage()
+    public function getSessionMiddleware() : ?SessionMiddleware {
+        return new SessionMiddleware(
+            new SessionFactory(
+                new LocalKeyedMutex(),
+                new LocalSessionStorage()
+            )
         );
     }
 }
