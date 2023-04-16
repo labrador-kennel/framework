@@ -5,7 +5,7 @@ namespace Labrador\Http\Test\Integration;
 use Amp\Http\Client\HttpClientBuilder;
 use Amp\Http\Client\Request;
 use Amp\Http\Cookie\ResponseCookie;
-use Amp\Http\Status;
+use Amp\Http\HttpStatus;
 use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
@@ -70,7 +70,7 @@ class HttpServerTest extends AsyncTestCase {
 
         $response = $client->request(new Request('http://localhost:4200/hello/world'));
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Hello, world!', $response->getBody()->buffer());
     }
 
@@ -79,7 +79,7 @@ class HttpServerTest extends AsyncTestCase {
 
         $response = $client->request(new Request('http://localhost:4200/hello/world'));
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
 
         /** @var MiddlewareCallRegistry $callRegistry */
         $callRegistry = self::$container->get(MiddlewareCallRegistry::class);
@@ -101,7 +101,7 @@ class HttpServerTest extends AsyncTestCase {
         $request->setHeader('Custom-Header', 'my-header-val');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
 
         $expectedHeaders = [
             'custom-header' => ['my-header-val'],
@@ -119,7 +119,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/method', 'POST');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Received method POST', $response->getBody()->buffer());
     }
 
@@ -129,7 +129,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/url', 'PUT');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Received UriInterface http://localhost:4200/dto/url', $response->getBody()->buffer());
     }
 
@@ -139,7 +139,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/method-and-url');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Received GET and http://localhost:4200/dto/method-and-url', $response->getBody()->buffer());
     }
 
@@ -151,7 +151,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/widget/' . $id->toString(), 'POST');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Received widget id as UuidInterface ' . $id->toString(), $response->getBody()->buffer());
     }
 
@@ -163,7 +163,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/widget/' . $id->toString(), 'DELETE');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Received request to delete widget with id ' . $id->toString(), $response->getBody()->buffer());
     }
 
@@ -173,7 +173,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/counting-service', 'GET');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Received method and called service GET', $response->getBody()->buffer());
         self::assertSame(1, self::$container->get(CountingService::class)->getIt());
     }
@@ -184,7 +184,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/middleware', 'GET');
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Hello, Universe!', $response->getBody()->buffer());
     }
 
@@ -206,7 +206,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/dto/middleware', $method);
         $response = $client->request($request);
 
-        self::assertSame(Status::OK, $response->getStatus());
+        self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame($method . ' - Universe', $response->getBody()->buffer());
     }
 

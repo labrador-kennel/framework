@@ -9,9 +9,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Amp\Http\Server\Session\SessionMiddleware;
-use Amp\Http\Status;
-use Closure;
+use Amp\Http\HttpStatus;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\Controller\Controller;
@@ -191,7 +189,7 @@ final class AmpApplication implements Application, RequestHandler {
         $routingResolution = $this->router->match($request);
 
         if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
-            $response = $this->getErrorHandler()->handleError(Status::NOT_FOUND, 'Not Found', $request);
+            $response = $this->getErrorHandler()->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
             $this->logger->notice(
                 'Did not find matching controller for Request id: {requestId}.',
                 [
@@ -199,7 +197,7 @@ final class AmpApplication implements Application, RequestHandler {
                 ]
             );
         } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
-            $response = $this->getErrorHandler()->handleError(Status::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
+            $response = $this->getErrorHandler()->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
             $path = $request->getUri()->getPath() === '' ? '/' : $request->getUri()->getPath();
             $this->logger->notice(
                 'Method {method} is not allowed on path {path} for Request id: {requestId}.',

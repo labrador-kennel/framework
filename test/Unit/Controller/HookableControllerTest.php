@@ -5,10 +5,8 @@ namespace Labrador\Http\Test\Unit\Controller;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Amp\Http\Status;
+use Amp\Http\HttpStatus;
 use Amp\PHPUnit\AsyncTestCase;
-use Amp\Promise;
-use Labrador\Http\Test\Stub\NonResponseReturningHandleHookableControllerStub;
 use Labrador\Http\Test\Unit\Stub\AfterActionResponseDecoratorHookableControllerStub;
 use Labrador\Http\Test\Unit\Stub\BeforeActionResponseHookableControllerStub;
 use Labrador\Http\Test\Unit\Stub\OnlyHandlerHookableControllerStub;
@@ -38,7 +36,7 @@ class HookableControllerTest extends AsyncTestCase {
         $response = $subject->handleRequest($request);
         $body = $response->getBody()->read();
 
-        $this->assertSame(Status::OK, $response->getStatus());
+        $this->assertSame(HttpStatus::OK, $response->getStatus());
         $this->assertSame('From beforeAction', $body);
     }
 
@@ -49,7 +47,7 @@ class HookableControllerTest extends AsyncTestCase {
         $response = $subject->handleRequest($request);
         $body = $response->getBody()->read();
 
-        $this->assertSame(Status::OK, $response->getStatus());
+        $this->assertSame(HttpStatus::OK, $response->getStatus());
         $this->assertSame('A-OK', $body);
     }
 
@@ -62,7 +60,7 @@ class HookableControllerTest extends AsyncTestCase {
 
         $body = $response->getBody()->read();
 
-        $this->assertSame(Status::OK, $response->getStatus());
+        $this->assertSame(HttpStatus::OK, $response->getStatus());
         $this->assertSame('From Only Handler', $body);
     }
 }

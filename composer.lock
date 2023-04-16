@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b2fe99d0f41defecb3a281d9da72a86",
+    "content-hash": "401dde877f91d967ea4e884221611fb5",
     "packages": [
         {
             "name": "amphp/amp",
@@ -389,25 +389,28 @@
         },
         {
             "name": "amphp/http",
-            "version": "v2.0.0-beta.1",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http.git",
-                "reference": "66680c665a2d62970da4a11bbd8fc4fbc0f0d0ed"
+                "reference": "f8bb94a2b079aa8e30ad78b5374df787a2122dfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http/zipball/66680c665a2d62970da4a11bbd8fc4fbc0f0d0ed",
-                "reference": "66680c665a2d62970da4a11bbd8fc4fbc0f0d0ed",
+                "url": "https://api.github.com/repos/amphp/http/zipball/f8bb94a2b079aa8e30ad78b5374df787a2122dfe",
+                "reference": "f8bb94a2b079aa8e30ad78b5374df787a2122dfe",
                 "shasum": ""
             },
             "require": {
                 "amphp/hpack": "^3",
                 "amphp/parser": "^1.1",
-                "php": ">=8.1"
+                "league/uri-components": "^2.4",
+                "php": ">=8.1",
+                "psr/http-message": "^1 || ^2"
             },
             "require-dev": {
                 "amphp/php-cs-fixer-config": "^2",
+                "league/uri": "^6.8",
                 "phpunit/phpunit": "^9",
                 "psalm/phar": "^5.4"
             },
@@ -429,12 +432,16 @@
                 {
                     "name": "Niklas Keller",
                     "email": "me@kelunik.com"
+                },
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
                 }
             ],
             "description": "Basic HTTP primitives which can be shared by servers and clients.",
             "support": {
                 "issues": "https://github.com/amphp/http/issues",
-                "source": "https://github.com/amphp/http/tree/v2.0.0-beta.1"
+                "source": "https://github.com/amphp/http/tree/v2.0.0"
             },
             "funding": [
                 {
@@ -442,20 +449,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-08T00:38:05+00:00"
+            "time": "2023-04-12T19:20:53+00:00"
         },
         {
             "name": "amphp/http-server",
-            "version": "v3.0.0-beta.7",
+            "version": "3.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-server.git",
-                "reference": "a2f94d055ba5907e4c60502b5380da075dbd9b92"
+                "reference": "d416c118cdf2efaeb5fcdbb05b0af6326909a863"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server/zipball/a2f94d055ba5907e4c60502b5380da075dbd9b92",
-                "reference": "a2f94d055ba5907e4c60502b5380da075dbd9b92",
+                "url": "https://api.github.com/repos/amphp/http-server/zipball/d416c118cdf2efaeb5fcdbb05b0af6326909a863",
+                "reference": "d416c118cdf2efaeb5fcdbb05b0af6326909a863",
                 "shasum": ""
             },
             "require": {
@@ -463,7 +470,7 @@
                 "amphp/byte-stream": "^2",
                 "amphp/cache": "^2",
                 "amphp/hpack": "^3",
-                "amphp/http": "^2-dev",
+                "amphp/http": "^2",
                 "amphp/pipeline": "^1",
                 "amphp/socket": "^2",
                 "amphp/sync": "^2",
@@ -475,24 +482,20 @@
                 "revolt/event-loop": "^1"
             },
             "require-dev": {
-                "amphp/http-client": "^5-dev",
+                "amphp/http-client": "^5",
                 "amphp/log": "^2",
-                "amphp/php-cs-fixer-config": "^2-dev",
+                "amphp/php-cs-fixer-config": "^2",
                 "amphp/phpunit-util": "^3",
                 "league/uri-components": "^2",
-                "monolog/monolog": "^2 || ^1.23",
+                "monolog/monolog": "^3",
                 "phpunit/phpunit": "^9",
                 "psalm/phar": "^5.4"
             },
             "suggest": {
                 "ext-zlib": "Allows GZip compression of response bodies"
             },
+            "default-branch": true,
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
             "autoload": {
                 "files": [
                     "src/Driver/functions.php",
@@ -536,7 +539,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-server/issues",
-                "source": "https://github.com/amphp/http-server/tree/v3.0.0-beta.7"
+                "source": "https://github.com/amphp/http-server/tree/3.x"
             },
             "funding": [
                 {
@@ -544,20 +547,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-02T00:45:44+00:00"
+            "time": "2023-04-14T03:46:50+00:00"
         },
         {
             "name": "amphp/http-server-session",
-            "version": "v3.x-dev",
+            "version": "dev-bug/http-v2-upgrade",
             "source": {
                 "type": "git",
-                "url": "https://github.com/amphp/http-server-session.git",
-                "reference": "7fb3f9f35a6af8a04c18aacb2de7893ea45c46bd"
+                "url": "https://github.com/cspray/http-server-session.git",
+                "reference": "02595269130fb593f3cd40ce1f490b83a927fe8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server-session/zipball/7fb3f9f35a6af8a04c18aacb2de7893ea45c46bd",
-                "reference": "7fb3f9f35a6af8a04c18aacb2de7893ea45c46bd",
+                "url": "https://api.github.com/repos/cspray/http-server-session/zipball/02595269130fb593f3cd40ce1f490b83a927fe8a",
+                "reference": "02595269130fb593f3cd40ce1f490b83a927fe8a",
                 "shasum": ""
             },
             "require": {
@@ -590,7 +593,19 @@
                     "Amp\\Http\\Server\\Session\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Amp\\Http\\Server\\Session\\Test\\": "test"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "@php -dzend.assertions=1 -dassert.exception=1 ./vendor/bin/phpunit"
+                ],
+                "code-style": [
+                    "@php ./vendor/bin/php-cs-fixer fix"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -611,16 +626,9 @@
             "description": "Session management for Amp's HTTP server.",
             "homepage": "https://github.com/amphp/http-server-session",
             "support": {
-                "issues": "https://github.com/amphp/http-server-session/issues",
-                "source": "https://github.com/amphp/http-server-session/tree/v3"
+                "source": "https://github.com/cspray/http-server-session/tree/bug/http-v2-upgrade"
             },
-            "funding": [
-                {
-                    "url": "https://github.com/amphp",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-02-02T05:37:12+00:00"
+            "time": "2023-04-16T15:38:21+00:00"
         },
         {
             "name": "amphp/log",
@@ -953,16 +961,16 @@
         },
         {
             "name": "amphp/socket",
-            "version": "v2.0.0",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/socket.git",
-                "reference": "d43bbbe10164ebf2ecd96f1084a63af0ac4d1a69"
+                "reference": "70a72fb8b4fbc0117b65c6fb927651ecb8a4b325"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/socket/zipball/d43bbbe10164ebf2ecd96f1084a63af0ac4d1a69",
-                "reference": "d43bbbe10164ebf2ecd96f1084a63af0ac4d1a69",
+                "url": "https://api.github.com/repos/amphp/socket/zipball/70a72fb8b4fbc0117b65c6fb927651ecb8a4b325",
+                "reference": "70a72fb8b4fbc0117b65c6fb927651ecb8a4b325",
                 "shasum": ""
             },
             "require": {
@@ -1024,7 +1032,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/socket/issues",
-                "source": "https://github.com/amphp/socket/tree/v2.0.0"
+                "source": "https://github.com/amphp/socket/tree/v2.1.0"
             },
             "funding": [
                 {
@@ -1032,7 +1040,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-31T20:58:10+00:00"
+            "time": "2023-04-06T16:56:35+00:00"
         },
         {
             "name": "amphp/sync",
@@ -1163,26 +1171,25 @@
         },
         {
             "name": "brick/math",
-            "version": "0.10.2",
+            "version": "0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brick/math.git",
-                "reference": "459f2781e1a08d52ee56b0b1444086e038561e3f"
+                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brick/math/zipball/459f2781e1a08d52ee56b0b1444086e038561e3f",
-                "reference": "459f2781e1a08d52ee56b0b1444086e038561e3f",
+                "url": "https://api.github.com/repos/brick/math/zipball/0ad82ce168c82ba30d1c01ec86116ab52f589478",
+                "reference": "0ad82ce168c82ba30d1c01ec86116ab52f589478",
                 "shasum": ""
             },
             "require": {
-                "ext-json": "*",
-                "php": "^7.4 || ^8.0"
+                "php": "^8.0"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.2",
                 "phpunit/phpunit": "^9.0",
-                "vimeo/psalm": "4.25.0"
+                "vimeo/psalm": "5.0.0"
             },
             "type": "library",
             "autoload": {
@@ -1207,7 +1214,7 @@
             ],
             "support": {
                 "issues": "https://github.com/brick/math/issues",
-                "source": "https://github.com/brick/math/tree/0.10.2"
+                "source": "https://github.com/brick/math/tree/0.11.0"
             },
             "funding": [
                 {
@@ -1215,7 +1222,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-10T22:54:19+00:00"
+            "time": "2023-01-15T23:15:59+00:00"
         },
         {
             "name": "brick/varexporter",
@@ -2712,25 +2719,25 @@
         },
         {
             "name": "psr/http-message",
-            "version": "1.0.1",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363"
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/f6561bf28d520154e4b0ec72be95418abe6d9363",
-                "reference": "f6561bf28d520154e4b0ec72be95418abe6d9363",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": "^7.2 || ^8.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -2759,9 +2766,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/master"
+                "source": "https://github.com/php-fig/http-message/tree/1.1"
             },
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2023-04-04T09:50:52+00:00"
         },
         {
             "name": "psr/log",
@@ -2955,20 +2962,20 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "4.7.3",
+            "version": "4.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "433b2014e3979047db08a17a205f410ba3869cf2"
+                "reference": "60a4c63ab724854332900504274f6150ff26d286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/433b2014e3979047db08a17a205f410ba3869cf2",
-                "reference": "433b2014e3979047db08a17a205f410ba3869cf2",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/60a4c63ab724854332900504274f6150ff26d286",
+                "reference": "60a4c63ab724854332900504274f6150ff26d286",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.8.8 || ^0.9 || ^0.10",
+                "brick/math": "^0.8.8 || ^0.9 || ^0.10 || ^0.11",
                 "ext-json": "*",
                 "php": "^8.0",
                 "ramsey/collection": "^1.2 || ^2.0"
@@ -3031,7 +3038,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ramsey/uuid/issues",
-                "source": "https://github.com/ramsey/uuid/tree/4.7.3"
+                "source": "https://github.com/ramsey/uuid/tree/4.7.4"
             },
             "funding": [
                 {
@@ -3043,20 +3050,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-01-12T18:13:24+00:00"
+            "time": "2023-04-15T23:01:58+00:00"
         },
         {
             "name": "revolt/event-loop",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/revoltphp/event-loop.git",
-                "reference": "81dd825a0a7fa7a39cae25ef731bb944f3e18295"
+                "reference": "9ac31d36635c60a9b28bb2a476384c5ec55c95cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/revoltphp/event-loop/zipball/81dd825a0a7fa7a39cae25ef731bb944f3e18295",
-                "reference": "81dd825a0a7fa7a39cae25ef731bb944f3e18295",
+                "url": "https://api.github.com/repos/revoltphp/event-loop/zipball/9ac31d36635c60a9b28bb2a476384c5ec55c95cc",
+                "reference": "9ac31d36635c60a9b28bb2a476384c5ec55c95cc",
                 "shasum": ""
             },
             "require": {
@@ -3113,43 +3120,44 @@
             ],
             "support": {
                 "issues": "https://github.com/revoltphp/event-loop/issues",
-                "source": "https://github.com/revoltphp/event-loop/tree/v1.0.0"
+                "source": "https://github.com/revoltphp/event-loop/tree/v1.0.1"
             },
-            "time": "2022-11-02T21:46:22+00:00"
+            "time": "2023-04-02T16:25:26+00:00"
         }
     ],
     "packages-dev": [
         {
             "name": "amphp/http-client",
-            "version": "v5.0.0-beta.8",
+            "version": "v5.0.0-beta.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-client.git",
-                "reference": "2043047f4554e3b0b090423f81f743c5f746b854"
+                "reference": "0fd30c4ff2231b044ead0e7a5d3aedafcbca59b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-client/zipball/2043047f4554e3b0b090423f81f743c5f746b854",
-                "reference": "2043047f4554e3b0b090423f81f743c5f746b854",
+                "url": "https://api.github.com/repos/amphp/http-client/zipball/0fd30c4ff2231b044ead0e7a5d3aedafcbca59b1",
+                "reference": "0fd30c4ff2231b044ead0e7a5d3aedafcbca59b1",
                 "shasum": ""
             },
             "require": {
                 "amphp/amp": "^3",
                 "amphp/byte-stream": "^2",
                 "amphp/hpack": "^3",
-                "amphp/http": "^2-dev",
+                "amphp/http": "^2",
                 "amphp/pipeline": "^1",
                 "amphp/socket": "^2",
                 "amphp/sync": "^2",
                 "league/uri": "^6",
+                "league/uri-components": "^2.4",
                 "php": ">=8.1",
                 "psr/http-message": "^1",
-                "revolt/event-loop": "^1 || ^0.2.4"
+                "revolt/event-loop": "^1"
             },
             "require-dev": {
-                "amphp/file": "^3-dev",
+                "amphp/file": "^3",
                 "amphp/http-server": "^3-dev",
-                "amphp/php-cs-fixer-config": "^2-dev",
+                "amphp/php-cs-fixer-config": "^2",
                 "amphp/phpunit-util": "^3",
                 "ext-json": "*",
                 "kelunik/link-header-rfc5988": "^1",
@@ -3206,7 +3214,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-client/issues",
-                "source": "https://github.com/amphp/http-client/tree/v5.0.0-beta.8"
+                "source": "https://github.com/amphp/http-client/tree/v5.0.0-beta.11"
             },
             "funding": [
                 {
@@ -3214,7 +3222,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-01T00:39:02+00:00"
+            "time": "2023-04-13T05:19:15+00:00"
         },
         {
             "name": "amphp/phpunit-util",
@@ -3959,16 +3967,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.6.5",
+            "version": "9.6.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "86e761949019ae83f49240b2f2123fb5ab3b2fc5"
+                "reference": "c993f0d3b0489ffc42ee2fe0bd645af1538a63b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/86e761949019ae83f49240b2f2123fb5ab3b2fc5",
-                "reference": "86e761949019ae83f49240b2f2123fb5ab3b2fc5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c993f0d3b0489ffc42ee2fe0bd645af1538a63b2",
+                "reference": "c993f0d3b0489ffc42ee2fe0bd645af1538a63b2",
                 "shasum": ""
             },
             "require": {
@@ -4041,7 +4049,8 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.5"
+                "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.6.7"
             },
             "funding": [
                 {
@@ -4057,20 +4066,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-09T06:34:10+00:00"
+            "time": "2023-04-14T08:58:40+00:00"
         },
         {
             "name": "psalm/phar",
-            "version": "5.8.0",
+            "version": "5.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "6473ecb1ea109a96e69c98b93310eace0d583cc7"
+                "reference": "5bb492553ca2e2a1be60922693f3b23ecacd3cae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/6473ecb1ea109a96e69c98b93310eace0d583cc7",
-                "reference": "6473ecb1ea109a96e69c98b93310eace0d583cc7",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/5bb492553ca2e2a1be60922693f3b23ecacd3cae",
+                "reference": "5bb492553ca2e2a1be60922693f3b23ecacd3cae",
                 "shasum": ""
             },
             "require": {
@@ -4090,9 +4099,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/5.8.0"
+                "source": "https://github.com/psalm/phar/tree/5.9.0"
             },
-            "time": "2023-03-10T03:53:59+00:00"
+            "time": "2023-03-30T06:06:28+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -4100,12 +4109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ca6f1d633e0a8d82bd27376fe7e27a92500417f1"
+                "reference": "9edb62ebe942c2b9bb8416a19fc8655cb78a7a91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ca6f1d633e0a8d82bd27376fe7e27a92500417f1",
-                "reference": "ca6f1d633e0a8d82bd27376fe7e27a92500417f1",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9edb62ebe942c2b9bb8416a19fc8655cb78a7a91",
+                "reference": "9edb62ebe942c2b9bb8416a19fc8655cb78a7a91",
                 "shasum": ""
             },
             "conflict": {
@@ -4123,9 +4132,10 @@
                 "amphp/http-client": ">=4,<4.4",
                 "anchorcms/anchor-cms": "<=0.12.7",
                 "andreapollastri/cipi": "<=3.1.15",
+                "andrewhaine/silverstripe-form-capture": ">=0.2,<=0.2.3|>=1,<=1.0.1|>=2,<=2.2.4",
                 "apereo/phpcas": "<1.6",
                 "api-platform/core": ">=2.2,<2.2.10|>=2.3,<2.3.6|>=2.6,<2.7.10|>=3,<3.0.12|>=3.1,<3.1.3",
-                "appwrite/server-ce": "<0.11.1|>=0.12,<0.12.2",
+                "appwrite/server-ce": "<=1.2.1",
                 "arc/web": "<3",
                 "area17/twill": "<1.2.5|>=2,<2.5.3",
                 "asymmetricrypt/asymmetricrypt": ">=0,<9.9.99",
@@ -4141,6 +4151,7 @@
                 "barzahlen/barzahlen-php": "<2.0.1",
                 "baserproject/basercms": "<4.7.5",
                 "bassjobsen/bootstrap-3-typeahead": ">4.0.2",
+                "bigfork/silverstripe-form-capture": ">=3,<=3.1",
                 "billz/raspap-webgui": "<=2.6.6",
                 "bk2k/bootstrap-package": ">=7.1,<7.1.2|>=8,<8.0.8|>=9,<9.0.4|>=9.1,<9.1.3|>=10,<10.0.10|>=11,<11.0.3",
                 "bmarshall511/wordpress_zero_spam": "<5.2.13",
@@ -4224,7 +4235,7 @@
                 "ezsystems/ezplatform-graphql": ">=1-rc.1,<1.0.13|>=2-beta.1,<2.3.12",
                 "ezsystems/ezplatform-kernel": "<1.2.5.1|>=1.3,<1.3.26",
                 "ezsystems/ezplatform-rest": ">=1.2,<=1.2.2|>=1.3,<1.3.8",
-                "ezsystems/ezplatform-richtext": ">=2.3,<=2.3.7",
+                "ezsystems/ezplatform-richtext": ">=2.3,<2.3.7.1",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2|>=7,<7.5.30",
                 "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.3.5.1",
@@ -4272,7 +4283,7 @@
                 "gos/web-socket-bundle": "<1.10.4|>=2,<2.6.1|>=3,<3.3",
                 "gree/jose": "<2.2.1",
                 "gregwar/rst": "<1.0.3",
-                "grumpydictator/firefly-iii": "<5.8",
+                "grumpydictator/firefly-iii": "<6",
                 "guzzlehttp/guzzle": "<6.5.8|>=7,<7.4.5",
                 "guzzlehttp/psr7": "<1.8.4|>=2,<2.1.1",
                 "harvesthq/chosen": "<1.8.7",
@@ -4317,7 +4328,7 @@
                 "kimai/kimai": "<1.1",
                 "kitodo/presentation": "<3.1.2",
                 "klaviyo/magento2-extension": ">=1,<3",
-                "knplabs/knp-snappy": "<=1.4.1",
+                "knplabs/knp-snappy": "<1.4.2",
                 "krayin/laravel-crm": "<1.2.2",
                 "kreait/firebase-php": ">=3.2,<3.8.1",
                 "la-haute-societe/tcpdf": "<6.2.22",
@@ -4357,7 +4368,7 @@
                 "melisplatform/melis-front": "<5.0.1",
                 "mezzio/mezzio-swoole": "<3.7|>=4,<4.3",
                 "mgallegos/laravel-jqgrid": "<=1.3",
-                "microweber/microweber": "<=1.3.2",
+                "microweber/microweber": "<1.3.3",
                 "miniorange/miniorange-saml": "<1.4.3",
                 "mittwald/typo3_forum": "<1.2.1",
                 "mobiledetect/mobiledetectlib": "<2.8.32",
@@ -4376,7 +4387,7 @@
                 "netgen/tagsbundle": ">=3.4,<3.4.11|>=4,<4.0.15",
                 "nette/application": ">=2,<2.0.19|>=2.1,<2.1.13|>=2.2,<2.2.10|>=2.3,<2.3.14|>=2.4,<2.4.16|>=3,<3.0.6",
                 "nette/nette": ">=2,<2.0.19|>=2.1,<2.1.13",
-                "nilsteampassnet/teampass": "<3.0.0.23",
+                "nilsteampassnet/teampass": "<3.0.3",
                 "notrinos/notrinos-erp": "<=0.7",
                 "noumo/easyii": "<=0.9",
                 "nukeviet/nukeviet": "<4.5.2",
@@ -4419,12 +4430,14 @@
                 "phpoffice/phpspreadsheet": "<1.16",
                 "phpseclib/phpseclib": "<2.0.31|>=3,<3.0.19",
                 "phpservermon/phpservermon": "<=3.5.2",
+                "phpsysinfo/phpsysinfo": "<3.2.5",
                 "phpunit/phpunit": ">=4.8.19,<4.8.28|>=5,<5.6.3",
                 "phpwhois/phpwhois": "<=4.2.5",
                 "phpxmlrpc/extras": "<0.6.1",
                 "phpxmlrpc/phpxmlrpc": "<4.9.2",
                 "pimcore/data-hub": "<1.2.4",
-                "pimcore/pimcore": "<11",
+                "pimcore/perspective-editor": "<1.5.1",
+                "pimcore/pimcore": "<10.5.20",
                 "pixelfed/pixelfed": "<=0.11.4",
                 "pocketmine/bedrock-protocol": "<8.0.2",
                 "pocketmine/pocketmine-mp": "<4.12.5|>= 4.0.0-BETA5, < 4.4.2",
@@ -4450,6 +4463,7 @@
                 "rainlab/debugbar-plugin": "<3.1",
                 "rankmath/seo-by-rank-math": "<=1.0.95",
                 "react/http": ">=0.7,<1.7",
+                "really-simple-plugins/complianz-gdpr": "<6.4.2",
                 "remdex/livehelperchat": "<3.99",
                 "rmccue/requests": ">=1.6,<1.8",
                 "robrichards/xmlseclibs": "<3.0.4",
@@ -4491,8 +4505,9 @@
                 "simplesamlphp/simplesamlphp-module-openid": "<1",
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
                 "simplito/elliptic-php": "<1.0.6",
+                "sitegeist/fluid-components": "<3.5",
                 "slim/slim": "<2.6",
-                "smarty/smarty": "<3.1.47|>=4,<4.2.1",
+                "smarty/smarty": "<3.1.48|>=4,<4.3.1",
                 "snipe/snipe-it": "<=6.0.14|>= 6.0.0-RC-1, <= 6.0.0-RC-5",
                 "socalnick/scn-social-auth": "<1.15.2",
                 "socialiteproviders/steam": "<1.1",
@@ -4558,7 +4573,7 @@
                 "thelia/thelia": ">=2.1-beta.1,<2.1.3",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "thinkcmf/thinkcmf": "<=5.1.7",
-                "thorsten/phpmyfaq": "<3.1.11",
+                "thorsten/phpmyfaq": "<3.1.12",
                 "tinymce/tinymce": "<5.10.7|>=6,<6.3.1",
                 "tinymighty/wiki-seo": "<1.2.2",
                 "titon/framework": ">=0,<9.9.99",
@@ -4584,7 +4599,7 @@
                 "unisharp/laravel-filemanager": "<=2.5.1",
                 "userfrosting/userfrosting": ">=0.3.1,<4.6.3",
                 "usmanhalalit/pixie": "<1.0.3|>=2,<2.0.2",
-                "uvdesk/community-skeleton": "<1.1",
+                "uvdesk/community-skeleton": "<=1.1.1",
                 "vanilla/safecurl": "<0.9.2",
                 "verot/class.upload.php": "<=1.0.3|>=2,<=2.0.4",
                 "vova07/yii2-fileapi-widget": "<0.1.9",
@@ -4686,7 +4701,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-24T00:14:17+00:00"
+            "time": "2023-04-13T17:04:11+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -5763,6 +5778,7 @@
     "aliases": [],
     "minimum-stability": "beta",
     "stability-flags": {
+        "amphp/http-server": 20,
         "amphp/http-server-session": 20,
         "labrador-kennel/async-event-autowire": 20,
         "roave/security-advisories": 20

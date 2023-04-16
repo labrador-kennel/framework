@@ -7,13 +7,19 @@
     "test": "vendor/bin/phpunit",
     "test-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html ./build/coverage"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/cspray/http-server-session"
+    }
+  ],
   "minimum-stability": "beta",
   "require": {
     "php": "^8.1",
     "ext-json": "*",
     "amphp/http": "^v2.0",
-    "amphp/http-server": "^v3.0",
-    "amphp/http-server-session": "^v3.x-dev",
+    "amphp/http-server": "^v3.x-dev",
+    "amphp/http-server-session": "dev-bug/http-v2-upgrade",
     "amphp/log": "^v2.0",
     "cspray/annotated-container": "^v2.0",
     "cuyz/valinor": "^1.2",
