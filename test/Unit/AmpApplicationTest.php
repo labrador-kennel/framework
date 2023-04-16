@@ -15,11 +15,10 @@ use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Server\Session\SessionStorage;
-use Amp\Http\Status;
+use Amp\Http\HttpStatus;
 use Amp\Sync\LocalKeyedMutex;
 use Labrador\Http\AmpApplication;
 use Labrador\Http\ApplicationFeatures;
-use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Event\ApplicationStarted;
 use Labrador\Http\Event\ApplicationStopped;
@@ -252,7 +251,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->errorHandler->expects($this->once())
             ->method('handleError')
-            ->with(Status::NOT_FOUND, 'Not Found', $request)
+            ->with(HttpStatus::NOT_FOUND, 'Not Found', $request)
             ->willReturn($response = new Response());
 
         $actual = $this->subject->handleRequest($request);
@@ -287,7 +286,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->errorHandler->expects($this->once())
             ->method('handleError')
-            ->with(Status::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request)
+            ->with(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request)
             ->willReturn($response = new Response());
 
         $actual = $this->subject->handleRequest($request);
