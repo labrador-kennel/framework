@@ -25,7 +25,8 @@ final class HttpServerFactory {
             ),
             new ConnectionLimitingClientFactory(
                 new SocketClientFactory($logger),
-                $logger
+                $logger,
+                $serverConfiguration->getClientConnectionLimitPerIpAddress()
             )
         );
 

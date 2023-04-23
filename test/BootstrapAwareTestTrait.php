@@ -18,14 +18,15 @@ trait BootstrapAwareTestTrait {
         <source>
             <dir>src</dir>
             <dir>dummy_app</dir>
-            <dir>vendor/labrador-kennel/async-event/src</dir>
         </source>
     </scanDirectories>
     <definitionProviders>
-        <definitionProvider>Labrador\Http\DependencyInjection\ThirdPartyDefinitionProvider</definitionProvider>
+        <definitionProvider>Labrador\Http\Autowire\DefinitionProvider</definitionProvider>
+        <definitionProvider>Labrador\AsyncEvent\Autowire\DefinitionProvider</definitionProvider>
     </definitionProviders>
     <observers>
-        <observer>Labrador\Http\DependencyInjection\AutowireObserver</observer>
+        <observer>Labrador\Http\Autowire\Observer</observer>
+        <observer>Labrador\AsyncEvent\Autowire\Observer</observer>
     </observers>
 </annotatedContainer>
 XML;

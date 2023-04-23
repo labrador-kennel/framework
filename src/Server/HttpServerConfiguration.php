@@ -13,4 +13,6 @@ interface HttpServerConfiguration {
      */
     public function getUnencryptedInternetAddresses() : array;
 
+    public function getClientConnectionLimitPerIpAddress() : int;
+
 }

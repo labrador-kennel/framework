@@ -57,7 +57,7 @@
   "extra": {
     "$annotatedContainer": {
       "initializers": [
-        "Labrador\\Http\\DependencyInjection\\HttpInitializer"
+        "Labrador\\Http\\Autowire\\Initializer"
       ]
     }
   }
