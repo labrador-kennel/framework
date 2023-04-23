@@ -195,7 +195,11 @@ class Observer extends ServiceWiringObserver {
     }
 
     /**
-     * @return Middleware
+     * @param AnnotatedContainer $container
+     * @param RouteMappingAttribute $attr
+     * @return list<Middleware>
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     private function getMiddlewareFromRouteMappingAttribute(AnnotatedContainer $container, RouteMappingAttribute $attr) : array {
         $middleware = [];
