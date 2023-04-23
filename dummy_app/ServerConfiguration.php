@@ -21,4 +21,7 @@ class ServerConfiguration implements HttpServerConfiguration {
         return $this->httpAddresses;
     }
 
+    public function getClientConnectionLimitPerIpAddress() : int {
+        return 10;
+    }
 }

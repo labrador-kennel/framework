@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\DependencyInjection;
+namespace Labrador\Http\Autowire;
 
 use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
@@ -35,7 +35,7 @@ use ReflectionMethod;
 use function Cspray\AnnotatedContainer\autowiredParams;
 use function Cspray\AnnotatedContainer\rawParam;
 
-class AutowireObserver extends ServiceWiringObserver {
+class Observer extends ServiceWiringObserver {
 
     public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
         /** @var LoggerInterface $logger */
@@ -195,7 +195,7 @@ class AutowireObserver extends ServiceWiringObserver {
     }
 
     /**
-     * @return list<Middleware>
+     * @return Middleware
      */
     private function getMiddlewareFromRouteMappingAttribute(AnnotatedContainer $container, RouteMappingAttribute $attr) : array {
         $middleware = [];

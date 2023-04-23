@@ -457,12 +457,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/amphp/http-server.git",
-                "reference": "d416c118cdf2efaeb5fcdbb05b0af6326909a863"
+                "reference": "b86f0d43418dc8141ad4bf5f821a23f7d3abf639"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amphp/http-server/zipball/d416c118cdf2efaeb5fcdbb05b0af6326909a863",
-                "reference": "d416c118cdf2efaeb5fcdbb05b0af6326909a863",
+                "url": "https://api.github.com/repos/amphp/http-server/zipball/b86f0d43418dc8141ad4bf5f821a23f7d3abf639",
+                "reference": "b86f0d43418dc8141ad4bf5f821a23f7d3abf639",
                 "shasum": ""
             },
             "require": {
@@ -472,7 +472,7 @@
                 "amphp/hpack": "^3",
                 "amphp/http": "^2",
                 "amphp/pipeline": "^1",
-                "amphp/socket": "^2",
+                "amphp/socket": "^2.1",
                 "amphp/sync": "^2",
                 "league/uri": "^6",
                 "league/uri-interfaces": "^2.3",
@@ -539,7 +539,7 @@
             ],
             "support": {
                 "issues": "https://github.com/amphp/http-server/issues",
-                "source": "https://github.com/amphp/http-server/tree/3.x"
+                "source": "https://github.com/amphp/http-server/tree/v3.0.0-beta.8"
             },
             "funding": [
                 {
@@ -547,7 +547,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-04-14T03:46:50+00:00"
+            "time": "2023-04-22T14:22:35+00:00"
         },
         {
             "name": "amphp/http-server-session",
@@ -1548,16 +1548,16 @@
         },
         {
             "name": "cuyz/valinor",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "eebd3141d89b1a5a7b6bd5388159bf736c89c8c6"
+                "reference": "229098184cf5877ec01305461cdcb8a73379bf5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/eebd3141d89b1a5a7b6bd5388159bf736c89c8c6",
-                "reference": "eebd3141d89b1a5a7b6bd5388159bf736c89c8c6",
+                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/229098184cf5877ec01305461cdcb8a73379bf5b",
+                "reference": "229098184cf5877ec01305461cdcb8a73379bf5b",
                 "shasum": ""
             },
             "require": {
@@ -1609,7 +1609,7 @@
             ],
             "support": {
                 "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.3.1"
+                "source": "https://github.com/CuyZ/Valinor/tree/1.4.0"
             },
             "funding": [
                 {
@@ -1617,7 +1617,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-13T05:55:55+00:00"
+            "time": "2023-04-17T11:25:01+00:00"
         },
         {
             "name": "daverandom/libdns",
@@ -1723,16 +1723,16 @@
         },
         {
             "name": "labrador-kennel/async-event",
-            "version": "v3.0.0-rc4",
+            "version": "3.0.0-rc5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/async-event.git",
-                "reference": "11f4f104dd8d49717f248d14f3c8884a80fb53ab"
+                "reference": "786c9cf4194170b34a01b32975ae0ef87e506516"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/11f4f104dd8d49717f248d14f3c8884a80fb53ab",
-                "reference": "11f4f104dd8d49717f248d14f3c8884a80fb53ab",
+                "url": "https://api.github.com/repos/labrador-kennel/async-event/zipball/786c9cf4194170b34a01b32975ae0ef87e506516",
+                "reference": "786c9cf4194170b34a01b32975ae0ef87e506516",
                 "shasum": ""
             },
             "require": {
@@ -1748,13 +1748,6 @@
                 "roave/security-advisories": "dev-latest"
             },
             "type": "library",
-            "extra": {
-                "$annotatedContainer": {
-                    "initializers": [
-                        "Labrador\\AsyncEvent\\DependencyInjection\\AsyncEventInitializer"
-                    ]
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Labrador\\AsyncEvent\\": "src/"
@@ -1775,15 +1768,14 @@
             "description": "Trigger semantic application events powered by Amp Event Loop",
             "keywords": [
                 "amphp",
-                "annotated-container",
                 "event-emitter",
                 "labrador-kennel"
             ],
             "support": {
                 "issues": "https://github.com/labrador-kennel/async-event/issues",
-                "source": "https://github.com/labrador-kennel/async-event/tree/v3.0.0-rc4"
+                "source": "https://github.com/labrador-kennel/async-event/tree/3.0.0-rc5"
             },
-            "time": "2023-03-25T12:27:17+00:00"
+            "time": "2023-04-23T11:43:48+00:00"
         },
         {
             "name": "labrador-kennel/async-event-autowire",
@@ -1791,12 +1783,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/labrador-kennel/async-event-autowire.git",
-                "reference": "f0f46be2cab97f385468c91bc9298bdf03892255"
+                "reference": "3e769c3ddd441e794fe1ab5dad7c13ea9ca2f351"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/labrador-kennel/async-event-autowire/zipball/f0f46be2cab97f385468c91bc9298bdf03892255",
-                "reference": "f0f46be2cab97f385468c91bc9298bdf03892255",
+                "url": "https://api.github.com/repos/labrador-kennel/async-event-autowire/zipball/3e769c3ddd441e794fe1ab5dad7c13ea9ca2f351",
+                "reference": "3e769c3ddd441e794fe1ab5dad7c13ea9ca2f351",
                 "shasum": ""
             },
             "require": {
@@ -1832,7 +1824,7 @@
                 "issues": "https://github.com/labrador-kennel/async-event-autowire/issues",
                 "source": "https://github.com/labrador-kennel/async-event-autowire/tree/main"
             },
-            "time": "2023-03-25T19:05:36+00:00"
+            "time": "2023-04-23T12:44:30+00:00"
         },
         {
             "name": "labrador-kennel/composite-future",
@@ -4109,12 +4101,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "9edb62ebe942c2b9bb8416a19fc8655cb78a7a91"
+                "reference": "6b458abe955f78a76ebe1ab22c8739ae625221f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9edb62ebe942c2b9bb8416a19fc8655cb78a7a91",
-                "reference": "9edb62ebe942c2b9bb8416a19fc8655cb78a7a91",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6b458abe955f78a76ebe1ab22c8739ae625221f8",
+                "reference": "6b458abe955f78a76ebe1ab22c8739ae625221f8",
                 "shasum": ""
             },
             "conflict": {
@@ -4142,6 +4134,7 @@
                 "automad/automad": "<1.8",
                 "awesome-support/awesome-support": "<=6.0.7",
                 "aws/aws-sdk-php": ">=3,<3.2.1",
+                "azuracast/azuracast": "<0.18",
                 "backdrop/backdrop": "<=1.23",
                 "badaso/core": "<2.7",
                 "bagisto/bagisto": "<0.1.5",
@@ -4268,7 +4261,7 @@
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
                 "friendsoftypo3/mediace": ">=7.6.2,<7.6.5",
                 "froala/wysiwyg-editor": "<3.2.7",
-                "froxlor/froxlor": "<2.0.13",
+                "froxlor/froxlor": "<2.0.14",
                 "fuel/core": "<1.8.1",
                 "funadmin/funadmin": "<=3.2",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
@@ -4285,13 +4278,14 @@
                 "gregwar/rst": "<1.0.3",
                 "grumpydictator/firefly-iii": "<6",
                 "guzzlehttp/guzzle": "<6.5.8|>=7,<7.4.5",
-                "guzzlehttp/psr7": "<1.8.4|>=2,<2.1.1",
+                "guzzlehttp/psr7": "<1.9.1|>=2,<2.4.5",
                 "harvesthq/chosen": "<1.8.7",
                 "helloxz/imgurl": "= 2.31|<=2.31",
                 "hillelcoren/invoice-ninja": "<5.3.35",
                 "himiklab/yii2-jqgrid-widget": "<1.0.8",
                 "hjue/justwriting": "<=1",
                 "hov/jobfair": "<1.0.13|>=2,<2.0.2",
+                "httpsoft/http-message": "<1.0.12",
                 "hyn/multi-tenant": ">=5.6,<5.7.2",
                 "ibexa/admin-ui": ">=4.2,<4.2.3",
                 "ibexa/core": ">=4,<4.0.7|>=4.1,<4.1.4|>=4.2,<4.2.3",
@@ -4391,6 +4385,7 @@
                 "notrinos/notrinos-erp": "<=0.7",
                 "noumo/easyii": "<=0.9",
                 "nukeviet/nukeviet": "<4.5.2",
+                "nyholm/psr7": "<1.6.1",
                 "nystudio107/craft-seomatic": "<3.4.12",
                 "nzo/url-encryptor-bundle": ">=4,<4.3.2|>=5,<5.0.1",
                 "october/backend": "<1.1.2",
@@ -4421,6 +4416,7 @@
                 "personnummer/personnummer": "<3.0.2",
                 "phanan/koel": "<5.1.4",
                 "php-mod/curl": "<2.3.2",
+                "phpbb/phpbb": ">=3.2,<3.2.10|>=3.3,<3.3.1",
                 "phpfastcache/phpfastcache": "<6.1.5|>=7,<7.1.2|>=8,<8.0.7",
                 "phpmailer/phpmailer": "<6.5",
                 "phpmussel/phpmussel": ">=1,<1.6",
@@ -4476,8 +4472,8 @@
                 "scheb/two-factor-bundle": ">=0,<3.26|>=4,<4.11",
                 "sensiolabs/connect": "<4.2.3",
                 "serluck/phpwhois": "<=4.2.6",
-                "shopware/core": "<=6.4.18",
-                "shopware/platform": "<=6.4.18",
+                "shopware/core": "<=6.4.20",
+                "shopware/platform": "<=6.4.20",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<=5.7.14",
                 "shopware/storefront": "<=6.4.8.1",
@@ -4506,6 +4502,7 @@
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
                 "simplito/elliptic-php": "<1.0.6",
                 "sitegeist/fluid-components": "<3.5",
+                "slim/psr7": "<1.6.1",
                 "slim/slim": "<2.6",
                 "smarty/smarty": "<3.1.48|>=4,<4.3.1",
                 "snipe/snipe-it": "<=6.0.14|>= 6.0.0-RC-1, <= 6.0.0-RC-5",
@@ -4701,7 +4698,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-04-13T17:04:11+00:00"
+            "time": "2023-04-21T22:04:02+00:00"
         },
         {
             "name": "sebastian/cli-parser",
