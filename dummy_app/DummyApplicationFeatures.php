@@ -21,4 +21,8 @@ final class DummyApplicationFeatures implements ApplicationFeatures {
             )
         );
     }
+
+    public function autoRedirectHttpToHttps() : bool {
+        return false;
+    }
 }

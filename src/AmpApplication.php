@@ -174,6 +174,13 @@ final class AmpApplication implements Application, RequestHandler {
     }
 
     public function handleRequest(Request $request) : Response {
+        if ($this->features->autoRedirectHttpToHttps() && $request->getUri()->getScheme() === 'http') {
+            return new Response(
+                status: HttpStatus::SEE_OTHER,
+                headers: ['Location' => (string) $request->getUri()->withScheme('https')]
+            );
+        }
+
         $requestId = Uuid::uuid6();
         $request->setAttribute(RequestAttribute::RequestId->value, $requestId);
         $this->logger->info(

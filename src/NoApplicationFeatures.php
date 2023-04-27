@@ -12,4 +12,8 @@ class NoApplicationFeatures implements ApplicationFeatures {
     public function getSessionMiddleware() : ?SessionMiddleware {
         return null;
     }
+
+    public function autoRedirectHttpToHttps() : bool {
+        return false;
+    }
 }

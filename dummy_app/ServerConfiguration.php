@@ -24,4 +24,16 @@ class ServerConfiguration implements HttpServerConfiguration {
     public function getClientConnectionLimitPerIpAddress() : int {
         return 10;
     }
+
+    public function getEncryptedInternetAddresses() : array {
+        return [];
+    }
+
+    public function getTlsCertificateFile() : ?string {
+        return null;
+    }
+
+    public function getTotalClientConnectionLimit() : int {
+        return 1000;
+    }
 }
