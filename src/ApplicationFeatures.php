@@ -14,4 +14,6 @@ interface ApplicationFeatures {
 
     public function getSessionMiddleware() : ?SessionMiddleware;
 
+    public function autoRedirectHttpToHttps() : bool;
+
 }

@@ -41,7 +41,6 @@ use Labrador\Http\Test\Unit\Stub\RequireAccessReadSessionController;
 use Labrador\Http\Test\Unit\Stub\RequireAccessWriteSessionController;
 use Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
 use Labrador\Http\Test\Unit\Stub\SessionGatheringController;
-use Labrador\HttpDummyApp\Controller\SessionActionDtoController;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
@@ -373,6 +372,23 @@ final class AmpApplicationTest extends TestCase {
                     )
                 );
             }
+
+            public function autoRedirectHttpToHttps() : bool {
+                return false;
+            }
+        };
+    }
+
+    private function getApplicationFeaturesWithHttpToHttpsRedirect() : ApplicationFeatures {
+        return new class implements ApplicationFeatures {
+
+            public function getSessionMiddleware() : ?SessionMiddleware {
+                return null;
+            }
+
+            public function autoRedirectHttpToHttps() : bool {
+                return true;
+            }
         };
     }
 
@@ -578,6 +594,36 @@ final class AmpApplicationTest extends TestCase {
         ));
 
         $this->subject->handleRequest($request);
+    }
+
+    public function testApplicationFeaturesRedirectHttpToHttps() {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/tls-test?foo=bar')
+        );
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            $this->getApplicationFeaturesWithHttpToHttpsRedirect()
+        );
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame(
+            HttpStatus::SEE_OTHER,
+            $response->getStatus()
+        );
+        self::assertSame(
+            ['location' => ['https://example.com/tls-test?foo=bar']],
+            $response->getHeaders()
+        );
     }
 
 }

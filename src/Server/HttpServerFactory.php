@@ -7,6 +7,9 @@ use Amp\Http\Server\Driver\ConnectionLimitingServerSocketFactory;
 use Amp\Http\Server\Driver\SocketClientFactory;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\SocketHttpServer;
+use Amp\Socket\BindContext;
+use Amp\Socket\Certificate;
+use Amp\Socket\ServerTlsContext;
 use Amp\Sync\LocalSemaphore;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Psr\Log\LoggerInterface;
@@ -21,7 +24,7 @@ final class HttpServerFactory {
         $socketServer = new SocketHttpServer(
             $logger,
             new ConnectionLimitingServerSocketFactory(
-                new LocalSemaphore(100)
+                new LocalSemaphore($serverConfiguration->getTotalClientConnectionLimit())
             ),
             new ConnectionLimitingClientFactory(
                 new SocketClientFactory($logger),
@@ -32,6 +35,23 @@ final class HttpServerFactory {
 
         foreach ($serverConfiguration->getUnencryptedInternetAddresses() as $address) {
             $socketServer->expose($address);
+        }
+
+        $tlsContext = null;
+        if (($tlsCert = $serverConfiguration->getTlsCertificateFile()) !== null) {
+            $certificate = new Certificate($tlsCert);
+            $tlsContext = (new BindContext())
+                ->withTlsContext((new ServerTlsContext())
+                ->withDefaultCertificate($certificate));
+        }
+
+        $encryptedAddresses = $serverConfiguration->getEncryptedInternetAddresses();
+        if (count($encryptedAddresses) > 0 && $tlsContext === null) {
+            throw new \RuntimeException();
+        }
+
+        foreach ($encryptedAddresses as $encryptedAddress) {
+            $socketServer->expose($encryptedAddress, $tlsContext);
         }
 
         return $socketServer;
