@@ -203,7 +203,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
+                'labrador.app.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)
@@ -218,7 +218,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
+                'labrador.app.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)
@@ -233,7 +233,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
+                'labrador.app.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)
@@ -248,7 +248,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
+                'labrador.app.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)

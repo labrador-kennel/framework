@@ -10,15 +10,15 @@ use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\Http\Application;
+use Labrador\Http\Application\Application;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
 use Labrador\Http\Test\Helper\VfsDirectoryResolver;
 use Labrador\HttpDummyApp\Controller\SessionDtoController;
+use Labrador\HttpDummyApp\CountingService;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\Middleware\BazMiddleware;
 use Labrador\HttpDummyApp\Middleware\FooMiddleware;
 use Labrador\HttpDummyApp\Middleware\QuxMiddleware;
-use Labrador\HttpDummyApp\CountingService;
 use Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
@@ -57,12 +57,16 @@ class HttpServerTest extends AsyncTestCase {
 
     public static function tearDownAfterClass() : void {
         self::$app->stop();
+        StreamBuffer::stopIntercepting(self::$stdout);
+        StreamBuffer::stopIntercepting(self::$stderr);
         VirtualStream::unregister();
     }
 
     protected function setUp() : void {
         parent::setUp();
         self::$container->get(MiddlewareCallRegistry::class)->reset();
+        StreamBuffer::reset(self::$stdout);
+        StreamBuffer::reset(self::$stderr);
     }
 
     public function testMakingHelloWorldCall() : void {

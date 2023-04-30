@@ -3,9 +3,9 @@
 namespace Labrador\Http\Event;
 
 use Amp\Http\Server\HttpServer;
-use Labrador\AsyncEvent\Event;
-use Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\Application\ApplicationEvent;
 
 class ReceivingConnections implements Event {
 

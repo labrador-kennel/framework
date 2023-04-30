@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http;
+namespace Labrador\Http\Application;
 
-use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Cspray\AnnotatedContainer\Attribute\Service;
 

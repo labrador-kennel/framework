@@ -1,0 +1,81 @@
+<?php declare(strict_types=1);
+
+namespace Labrador\Http\Test\Unit\Logging;
+
+use Labrador\Http\Logging\LoggerType;
+use Labrador\Http\Logging\MonologLoggerFactory;
+use Labrador\Http\Logging\MonologLoggerInitializer;
+use Labrador\Http\Logging\StdoutMonologLoggerInitializer;
+use Monolog\Logger;
+use Monolog\Processor\PsrLogMessageProcessor;
+use Monolog\Test\TestCase;
+
+class LoggerFactoryTest extends TestCase {
+
+    private MonologLoggerInitializer $nullInitializer;
+    private MonologLoggerInitializer $mockInitializer;
+
+    protected function setUp() : void {
+        $this->nullInitializer = new class implements MonologLoggerInitializer {
+
+            public function initialize(Logger $logger, LoggerType $loggerType) : void {
+                // TODO: Implement initialize() method.
+            }
+        };
+        $this->mockInitializer = $this->getMockBuilder(MonologLoggerInitializer::class)->getMock();
+    }
+
+    public static function loggerTypeProvider() : array {
+        return [
+            LoggerType::Application->name => [LoggerType::Application],
+            LoggerType::Router->name => [LoggerType::Router],
+            LoggerType::WebServer->name => [LoggerType::WebServer],
+            LoggerType::Worker->name => [LoggerType::Worker],
+        ];
+    }
+
+    /**
+     * @dataProvider loggerTypeProvider
+     */
+    public function testLoggerReturnedWithCorrectName(LoggerType $loggerType) : void {
+        $subject = new MonologLoggerFactory($this->nullInitializer);
+        $logger = $subject->createLogger($loggerType);
+
+        self::assertInstanceOf(Logger::class, $logger);
+
+        self::assertSame($loggerType->value, $logger->getName());
+    }
+
+    /**
+     * @dataProvider loggerTypeProvider
+     */
+    public function testLoggerReturnedWithPsrLogMessageProcessor(LoggerType $loggerType) : void {
+        $subject = new MonologLoggerFactory($this->nullInitializer);
+        $logger = $subject->createLogger($loggerType);
+
+        self::assertInstanceOf(Logger::class, $logger);
+
+        self::assertCount(1,  $logger->getProcessors());
+        self::assertInstanceOf(PsrLogMessageProcessor::class, $logger->getProcessors()[0]);
+    }
+
+    /**
+     * @dataProvider loggerTypeProvider
+     */
+    public function testLoggerPassedToInitializer(LoggerType $loggerType) : void {
+        $subject = new MonologLoggerFactory($this->mockInitializer);
+        $this->mockInitializer->expects($this->once())
+            ->method('initialize')
+            ->with(
+                $this->callback(static function (Logger $logger) use ($loggerType) : bool {
+                    return $logger->getName() === $loggerType->value;
+                }),
+                $loggerType
+            );
+
+        $logger = $subject->createLogger($loggerType);
+
+        self::assertInstanceOf(Logger::class, $logger);
+    }
+
+}

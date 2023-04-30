@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http;
+namespace Labrador\Http\Application;
 
+use Amp\Http\HttpStatus;
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\Middleware;
@@ -9,13 +10,12 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Amp\Http\HttpStatus;
-use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Controller\RequireSession;
 use Labrador\Http\Controller\SessionAccess;
+use Labrador\Http\ErrorHandlerFactory;
 use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Event\ApplicationStarted;
 use Labrador\Http\Event\ApplicationStopped;
@@ -26,6 +26,7 @@ use Labrador\Http\Event\WillInvokeController;
 use Labrador\Http\Exception\SessionNotEnabled;
 use Labrador\Http\Internal\ReflectionCache;
 use Labrador\Http\Middleware\Priority;
+use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\Router;
 use Labrador\Http\Router\RoutingResolutionReason;
 use Psr\Log\LoggerInterface;
@@ -33,7 +34,6 @@ use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 use ReflectionMethod;
 
-#[Service]
 final class AmpApplication implements Application, RequestHandler {
 
     private readonly Middleware $controllerSessionMiddleware;

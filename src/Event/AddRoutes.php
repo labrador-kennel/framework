@@ -2,11 +2,10 @@
 
 namespace Labrador\Http\Event;
 
-use Labrador\AsyncEvent\Event;
-use Labrador\AsyncEvent\StandardEvent;
-use Labrador\Http\ApplicationEvent;
-use Labrador\Http\Router\Router;
 use DateTimeImmutable;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\Application\ApplicationEvent;
+use Labrador\Http\Router\Router;
 
 final class AddRoutes implements Event {
 

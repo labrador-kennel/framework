@@ -2,7 +2,7 @@
 
 namespace Labrador\Http\Test\Unit\Event;
 
-use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Application\ApplicationEvent;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Event\WillInvokeController;
 use Labrador\Http\RequestAttribute;

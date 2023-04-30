@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http;
+namespace Labrador\Http\Application;
 
 use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Event\ApplicationStarted;

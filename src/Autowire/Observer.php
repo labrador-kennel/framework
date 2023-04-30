@@ -7,7 +7,7 @@ use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceFromServiceDefinition;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
-use Labrador\Http\Application;
+use Labrador\Http\Application\Application;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Controller\ControllerActions;
 use Labrador\Http\Controller\Dto\DtoInjectionHandler;

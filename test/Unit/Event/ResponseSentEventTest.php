@@ -3,7 +3,7 @@
 namespace Labrador\Http\Test\Unit\Event;
 
 use Amp\Http\Server\Response;
-use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Application\ApplicationEvent;
 use Labrador\Http\Event\ResponseSent;
 use Labrador\Http\RequestAttribute;
 use PHPUnit\Framework\TestCase;

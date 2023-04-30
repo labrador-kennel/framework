@@ -2,9 +2,8 @@
 
 namespace Labrador\Http;
 
-use Amp\Http\Server\ErrorHandler;
-use Cspray\AnnotatedContainer\AnnotatedContainerVersion;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
+use Labrador\Http\Application\Application;
 use PackageVersions\Versions;
 use function Amp\ByteStream\getStdout;
 

@@ -12,7 +12,7 @@ use Labrador\AsyncEvent\AmpEventEmitter;
 use Labrador\AsyncEvent\Event;
 use Labrador\AsyncEvent\ListenerProvider;
 use Labrador\CompositeFuture\CompositeFuture;
-use Labrador\Http\Application;
+use Labrador\Http\Application\Application;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Event\AddRoutesListener;

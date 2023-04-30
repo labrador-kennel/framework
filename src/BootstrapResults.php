@@ -3,6 +3,7 @@
 namespace Labrador\Http;
 
 use Cspray\AnnotatedContainer\AnnotatedContainer;
+use Labrador\Http\Application\Application;
 
 class BootstrapResults {
 
