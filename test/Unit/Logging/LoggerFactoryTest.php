@@ -78,4 +78,17 @@ class LoggerFactoryTest extends TestCase {
         self::assertInstanceOf(Logger::class, $logger);
     }
 
+    /**
+     * @dataProvider loggerTypeProvider
+     */
+    public function testCreatingLoggerOfSameTypeReturnsSameInstance(LoggerType $loggerType) : void {
+        $subject = new MonologLoggerFactory($this->nullInitializer);
+
+        $a = $subject->createLogger($loggerType);
+        $b = $subject->createLogger($loggerType);
+
+        self::assertSame($a, $b);
+    }
+
+
 }

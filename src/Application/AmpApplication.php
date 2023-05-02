@@ -33,6 +33,7 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 use ReflectionMethod;
+use Revolt\EventLoop;
 
 final class AmpApplication implements Application, RequestHandler {
 
@@ -156,7 +157,7 @@ final class AmpApplication implements Application, RequestHandler {
     public function start() : void {
         $this->logger->info('Labrador HTTP application starting up.');
         $this->emitter->emit(new ApplicationStarted($this))->await();
-        $this->logger->info('Allowing routes to be added through event system.');
+        $this->logger->debug('Allowing routes to be added through event system.');
         $this->emitter->emit(new AddRoutes($this->router))->await();
 
         $this->httpServer->start($this, $this->getErrorHandler());
@@ -183,49 +184,19 @@ final class AmpApplication implements Application, RequestHandler {
 
         $requestId = Uuid::uuid6();
         $request->setAttribute(RequestAttribute::RequestId->value, $requestId);
-        $this->logger->info(
-            'Started processing {method} {url} - Request id: {requestId}.',
-            [
-                'method' => $request->getMethod(),
-                'url' => (string) $request->getUri(),
-                'requestId' => $requestId->toString()
-            ]
-        );
 
         $this->emitter->queue(new RequestReceived($request));
         $routingResolution = $this->router->match($request);
 
         if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
             $response = $this->getErrorHandler()->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
-            $this->logger->notice(
-                'Did not find matching controller for Request id: {requestId}.',
-                [
-                    'requestId' => $requestId->toString()
-                ]
-            );
         } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
             $response = $this->getErrorHandler()->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
             $path = $request->getUri()->getPath() === '' ? '/' : $request->getUri()->getPath();
-            $this->logger->notice(
-                'Method {method} is not allowed on path {path} for Request id: {requestId}.',
-                [
-                    'method' => $request->getMethod(),
-                    'path' => $path,
-                    'requestId' => $requestId->toString()
-                ]
-            );
         } else {
             $controller = $routingResolution->controller;
 
             assert($controller instanceof Controller);
-
-            $this->logger->info(
-                'Found matching controller, {controller}, for Request id: {requestId}.',
-                [
-                    'controller' => $controller->toString(),
-                    'requestId' => $requestId->toString()
-                ]
-            );
 
             $this->emitter->queue(new WillInvokeController($controller, $requestId));
 
@@ -244,12 +215,6 @@ final class AmpApplication implements Application, RequestHandler {
         }
 
         $this->emitter->queue(new ResponseSent($response, $requestId));
-        $this->logger->info(
-            'Finished processing Request id: {requestId}.',
-            [
-                'requestId' => $requestId->toString()
-            ]
-        );
 
         return $response;
     }

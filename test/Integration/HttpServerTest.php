@@ -188,6 +188,8 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/middleware', 'GET');
         $response = $client->request($request);
 
+        $output = StreamBuffer::output(self::$stdout);
+
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Hello, Universe!', $response->getBody()->buffer());
     }
@@ -254,5 +256,22 @@ class HttpServerTest extends AsyncTestCase {
         $response = $client->request($request);
 
         self::assertSame('Known Session Value', $response->getBody()->read());
+    }
+
+    public function testCorrectAccessLogOutputSendToStdout() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/hello/world');
+        $client->request($request);
+
+        $expected = <<<TEXT
+%a
+%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
+TEXT;
+
+        self::assertStringMatchesFormat(
+            $expected,
+            StreamBuffer::output(self::$stdout)
+        );
     }
 }

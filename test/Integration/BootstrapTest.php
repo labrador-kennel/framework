@@ -13,8 +13,10 @@ use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\Bootstrap;
 use Labrador\Http\ErrorHandlerFactory;
 use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\LoggingRouter;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
+use Labrador\Http\Server\AccessLoggingHttpServer;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
 use Labrador\Http\Test\Helper\VfsDirectoryResolver;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
@@ -92,7 +94,7 @@ class BootstrapTest extends TestCase {
 
         $router = $container->get(Router::class);
 
-        self::assertInstanceOf(FastRouteRouter::class, $router);
+        self::assertInstanceOf(LoggingRouter::class, $router);
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsEventEmitter() : void {

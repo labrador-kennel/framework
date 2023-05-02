@@ -3,11 +3,13 @@
 namespace Labrador\Http\Application;
 
 use Amp\Http\Server\HttpServer;
+use Amp\Http\Server\Middleware\AccessLoggerMiddleware;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\ErrorHandlerFactory;
 use Labrador\Http\Logging\LoggerFactory;
 use Labrador\Http\Logging\LoggerType;
+use Labrador\Http\Middleware\Priority;
 use Labrador\Http\Router\Router;
 use Psr\Log\LoggerInterface;
 
@@ -22,7 +24,7 @@ final class ApplicationFactory {
         LoggerFactory              $loggerFactory,
         ApplicationFeatures        $features,
     ) : Application {
-        return new AmpApplication(
+        $app = new AmpApplication(
             $httpServer,
             $errorHandlerFactory,
             $router,
@@ -30,6 +32,14 @@ final class ApplicationFactory {
             $loggerFactory->createLogger(LoggerType::Application),
             $features
         );
+
+        $accessLoggingMiddleware = new AccessLoggerMiddleware(
+            $loggerFactory->createLogger(LoggerType::WebServer)
+        );
+
+        $app->addMiddleware($accessLoggingMiddleware, Priority::Critical);
+
+        return $app;
     }
 
 }

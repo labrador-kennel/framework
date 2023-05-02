@@ -2,17 +2,24 @@
 
 namespace Labrador\HttpDummyApp;
 
+use Amp\Log\StreamHandler;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Labrador\Http\Logging\LoggerFactory;
-use Labrador\Http\Logging\LoggerType;
+use Monolog\Logger;
+use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
+use function Amp\ByteStream\getStdout;
 
 final class DummyLoggerFactory {
 
     #[ServiceDelegate]
-    public static function createLogger(LoggerFactory $loggerFactory) : LoggerInterface {
-        return $loggerFactory->createLogger(LoggerType::Application);
+    public static function createLogger() : LoggerInterface {
+        $handler = new StreamHandler(getStdout());
+        return new Logger(
+            'dummy-app',
+            [$handler],
+            [new PsrLogMessageProcessor()]
+        );
     }
 
 }

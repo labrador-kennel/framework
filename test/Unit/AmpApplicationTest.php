@@ -174,7 +174,7 @@ final class AmpApplicationTest extends TestCase {
     public function testApplicationStartedHasAddingRoutesLogs() : void {
         $this->subject->start();
 
-        self::assertTrue($this->testHandler->hasInfoThatContains('Allowing routes to be added through event system.'));
+        self::assertTrue($this->testHandler->hasDebugThatContains('Allowing routes to be added through event system.'));
     }
 
     public function testApplicationStartedHasReceivingConnectionsLogs() : void {
@@ -188,122 +188,6 @@ final class AmpApplicationTest extends TestCase {
         $this->subject->stop();
 
         self::assertTrue($this->testHandler->hasInfoThatContains('Labrador HTTP application stopping.'));
-    }
-
-    public function testApplicationReceivesRequestLogsControllerMatched() : void {
-        $this->subject->start();
-
-        $this->emitter->clearEmittedEvents();
-        $this->router->addRoute(
-            new GetMapping('/'),
-            new ResponseControllerStub($response = new Response())
-        );
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
-        );
-
-        $this->errorHandler->expects($this->never())->method('handleError');
-
-        $this->httpServer->receiveRequest($request);
-
-        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Started processing GET http://example.com - Request id: ' . $id . '.',
-                'method' => 'GET',
-                'url' => 'http://example.com',
-                'requestId' => $id
-            ],
-            Level::Info
-        ));
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Found matching controller, ' . ResponseControllerStub::class . ', for Request id: ' . $id . '.',
-                'controller' => ResponseControllerStub::class,
-                'requestId' => $id
-            ],
-            Level::Info
-        ));
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Finished processing Request id: ' . $id . '.',
-                'requestId' => $id
-            ],
-            Level::Info
-        ));
-    }
-
-    public function testRouteNotFoundCallsErrorHandlerAndIsLogged() : void {
-        $this->subject->start();
-
-        $this->emitter->clearEmittedEvents();
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
-        );
-
-        $this->errorHandler->expects($this->once())
-            ->method('handleError')
-            ->with(HttpStatus::NOT_FOUND, 'Not Found', $request)
-            ->willReturn($response = new Response());
-
-        $actual = $this->subject->handleRequest($request);
-
-        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertSame($response, $actual);
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Did not find matching controller for Request id: ' . $id . '.',
-                'requestId' => $id->toString()
-            ],
-            Level::Notice
-        ));
-    }
-
-    public function testRouteMethodNotAllowedCallsErrorHandlerAndIsLogged() : void {
-        $this->subject->start();
-
-        $this->emitter->clearEmittedEvents();
-
-        $this->router->addRoute(
-            new PostMapping('/'),
-            new ResponseControllerStub(new Response(body: ''))
-        );
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
-        );
-
-        $this->errorHandler->expects($this->once())
-            ->method('handleError')
-            ->with(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request)
-            ->willReturn($response = new Response());
-
-        $actual = $this->subject->handleRequest($request);
-
-        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertSame($response, $actual);
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Method GET is not allowed on path / for Request id: ' . $id . '.',
-                'method' => 'GET',
-                'path' => '/',
-                'requestId' => $id->toString()
-            ],
-            Level::Notice
-        ));
-
-        self::assertCount(2, $this->emitter->getQueuedEvents());
     }
 
     public function testMiddlewaresCalled() : void {
