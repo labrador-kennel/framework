@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Application;
 
 use Amp\Http\Cookie\RequestCookie;
 use Amp\Http\HttpStatus;
@@ -37,7 +37,6 @@ use Labrador\Http\Middleware\Priority;
 use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\FastRouteRouter;
 use Labrador\Http\Router\GetMapping;
-use Labrador\Http\Router\PostMapping;
 use Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
 use Labrador\Http\Test\Unit\Stub\EventEmitterStub;
 use Labrador\Http\Test\Unit\Stub\HttpServerStub;
@@ -49,7 +48,6 @@ use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
-use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use ParagonIE\ConstantTime\Base64UrlSafe;
@@ -508,6 +506,10 @@ final class AmpApplicationTest extends TestCase {
             ['location' => ['https://example.com/tls-test?foo=bar']],
             $response->getHeaders()
         );
+    }
+
+    public function testNormalProcessingHasCorrectRequestAnalyticsQueued() : void {
+
     }
 
 }

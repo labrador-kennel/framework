@@ -192,7 +192,6 @@ final class AmpApplication implements Application, RequestHandler {
             $response = $this->getErrorHandler()->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
         } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
             $response = $this->getErrorHandler()->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
-            $path = $request->getUri()->getPath() === '' ? '/' : $request->getUri()->getPath();
         } else {
             $controller = $routingResolution->controller;
 
