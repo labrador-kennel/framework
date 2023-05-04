@@ -10,6 +10,9 @@ use Psr\Log\LoggerInterface;
 #[Service]
 final class MonologLoggerFactory implements LoggerFactory {
 
+    /**
+     * @var array<non-empty-string, LoggerInterface>
+     */
     private array $cache = [];
 
     public function __construct(

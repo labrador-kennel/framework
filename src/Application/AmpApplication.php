@@ -163,7 +163,7 @@ final class AmpApplication implements Application, RequestHandler {
             $analytics = $benchmark->exceptionThrown($throwable);
             $this->analyticsQueue->queue($analytics);
 
-            return $this->errorHandler->handleError(
+            return $this->getErrorHandler()->handleError(
                 HttpStatus::INTERNAL_SERVER_ERROR,
                 'Internal Server Error',
                 $request

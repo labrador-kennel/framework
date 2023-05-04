@@ -53,7 +53,7 @@ final class LoggingRouter implements Router {
                 [
                     'method' => $request->getMethod(),
                     'path' => $request->getUri()->getPath(),
-                    'controller' => $resolution->controller->toString()
+                    'controller' => $resolution->controller?->toString()
                 ]
             );
         }

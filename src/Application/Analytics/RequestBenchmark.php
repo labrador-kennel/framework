@@ -13,19 +13,19 @@ final class RequestBenchmark {
 
     private readonly int|float $startTime;
 
-    private int|float $routingStarted;
+    private int|float|null $routingStarted = null;
 
-    private int|float $routingCompleted;
+    private int|float|null $routingCompleted = null;
 
-    private RoutingResolutionReason $routingResolutionReason;
+    private ?RoutingResolutionReason $routingResolutionReason = null;
 
-    private int|float $middlewareStarted;
+    private int|float|null $middlewareStarted = null;
 
-    private int|float $middlewareCompleted;
+    private int|float|null $middlewareCompleted = null;
 
-    private int|float $controllerStarted;
+    private int|float|null $controllerStarted = null;
 
-    private string $controllerName;
+    private ?string $controllerName = null;
 
     private function __construct(
         private readonly Request $request,
