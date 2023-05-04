@@ -2,9 +2,12 @@
 
 namespace Labrador\Http\Application\Analytics;
 
+use Cspray\AnnotatedContainer\Attribute\Service;
+
+#[Service]
 class HighResolutionPreciseTime implements PreciseTime {
 
     public function now() : int|float {
-        // TODO: Implement now() method.
+        return hrtime(true);
     }
 }

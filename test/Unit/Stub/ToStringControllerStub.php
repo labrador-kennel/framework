@@ -16,11 +16,6 @@ class ToStringControllerStub implements Controller {
         $this->string = $string;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Promise<\Amp\Http\Server\Response>
-     */
     public function handleRequest(Request $request): Response {
         return new Response();
     }

@@ -6,6 +6,8 @@ use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\Middleware\AccessLoggerMiddleware;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Labrador\AsyncEvent\EventEmitter;
+use Labrador\Http\Application\Analytics\PreciseTime;
+use Labrador\Http\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Http\ErrorHandlerFactory;
 use Labrador\Http\Logging\LoggerFactory;
 use Labrador\Http\Logging\LoggerType;
@@ -23,6 +25,8 @@ final class ApplicationFactory {
         EventEmitter               $emitter,
         LoggerFactory              $loggerFactory,
         ApplicationFeatures        $features,
+        RequestAnalyticsQueue      $analyticsQueue,
+        PreciseTime                $preciseTime,
     ) : Application {
         $app = new AmpApplication(
             $httpServer,
@@ -30,7 +34,9 @@ final class ApplicationFactory {
             $router,
             $emitter,
             $loggerFactory->createLogger(LoggerType::Application),
-            $features
+            $features,
+            $analyticsQueue,
+            $preciseTime
         );
 
         $accessLoggingMiddleware = new AccessLoggerMiddleware(

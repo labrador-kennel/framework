@@ -2,6 +2,9 @@
 
 namespace Labrador\Http\Application\Analytics;
 
+use Cspray\AnnotatedContainer\Attribute\Service;
+
+#[Service]
 interface PreciseTime {
 
     public function now() : int|float;
