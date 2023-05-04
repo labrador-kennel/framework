@@ -140,7 +140,11 @@ final class RequestBenchmark {
         $totalTimeSpent = $finishTime - $this->startTime;
         $timeSpentRouting = $this->routingCompleted - $this->routingStarted;
         $timeSpentProcessingMiddleware = $this->middlewareCompleted - $this->middlewareStarted;
-        $timeSpentProcessingController = $finishTime - $this->controllerStarted;
+        if (isset($this->controllerStarted)) {
+            $timeSpentProcessingController = $finishTime - $this->controllerStarted;
+        } else {
+            $timeSpentProcessingController = 0;
+        }
         return new class(
             $this->request,
             $this->controllerName,
