@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.9.0@8b9ad1eb9e8b7d3101f949291da2b9f7767cd163">
   <file src="src/Application/Analytics/RequestBenchmark.php">
-    <PossiblyNullArgument>
-      <code><![CDATA[$this->controllerName]]></code>
-      <code><![CDATA[$this->routingResolutionReason]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$this->controllerStarted]]></code>
       <code><![CDATA[$this->middlewareCompleted]]></code>
