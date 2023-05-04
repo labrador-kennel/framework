@@ -157,7 +157,7 @@ final class RequestBenchmark {
                 private readonly ?string $controllerName,
                 private readonly int|float $totalTimeSpent,
                 private readonly int|float $timeSpentRouting,
-                private readonly RoutingResolutionReason $resolutionReason,
+                private readonly ?RoutingResolutionReason $resolutionReason,
                 private readonly int|float $timeSpentProcessingMiddleware,
                 private readonly int|float $timeSpentProcessingController,
                 private readonly int $responseStatusCode,
@@ -167,7 +167,7 @@ final class RequestBenchmark {
                 return $this->request;
             }
 
-            public function getRoutingResolutionReason() : RoutingResolutionReason {
+            public function getRoutingResolutionReason() : ?RoutingResolutionReason {
                 return $this->resolutionReason;
             }
 
