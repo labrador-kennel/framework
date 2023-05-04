@@ -284,7 +284,7 @@ TEXT;
 
         $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
         $expected = <<<TEXT
-%A
+%a
 %a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
 TEXT;
 
