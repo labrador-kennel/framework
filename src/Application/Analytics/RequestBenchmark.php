@@ -154,7 +154,7 @@ final class RequestBenchmark {
 
             public function __construct(
                 private readonly Request $request,
-                private readonly string $controllerName,
+                private readonly ?string $controllerName,
                 private readonly int|float $totalTimeSpent,
                 private readonly int|float $timeSpentRouting,
                 private readonly RoutingResolutionReason $resolutionReason,
