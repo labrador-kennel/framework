@@ -141,8 +141,7 @@ final class AmpApplication implements Application, RequestHandler {
 
             $this->emitter->queue(new ResponseSent($response, $requestId));
 
-            $analytics = $benchmark->responseSent($response);
-            $this->analyticsQueue->queue($analytics);
+            $this->analyticsQueue->queue($benchmark->responseSent($response));
 
             return $response;
         } catch (Throwable $throwable) {
@@ -160,8 +159,7 @@ final class AmpApplication implements Application, RequestHandler {
                 ]
             );
 
-            $analytics = $benchmark->exceptionThrown($throwable);
-            $this->analyticsQueue->queue($analytics);
+            $this->analyticsQueue->queue($benchmark->exceptionThrown($throwable));
 
             return $this->getErrorHandler()->handleError(
                 HttpStatus::INTERNAL_SERVER_ERROR,

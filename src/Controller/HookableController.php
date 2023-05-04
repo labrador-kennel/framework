@@ -43,8 +43,6 @@ abstract class HookableController extends SelfDescribingController implements Co
      * If you resolve the returned Promise with a Response it will be sent back to the user and neither the handle()
      * method nor the afterAction() will be executed. If you resolve the Promise with any other value it will be
      * ignored.
-     *
-     * @param Request $request
      */
     protected function beforeAction(Request $request) : ?Response {
         return null;
@@ -56,10 +54,6 @@ abstract class HookableController extends SelfDescribingController implements Co
      *
      * If you resolve the returned Promise with a Response it will be sent back to the user in place of the Response
      * from the handle() method. If you resolve the Promise with any other value it will be ignored.
-     *
-     * @param Request $request
-     * @param Response $response
-     * @return Response|null
      */
     protected function afterAction(Request $request, Response $response) : ?Response {
         return null;

@@ -676,4 +676,31 @@ final class AmpApplicationTest extends TestCase {
         self::assertSame(1, $analytics->getTimeSpentProcessingControllerInNanoseconds());
     }
 
+    public function testRouterResolutionNotFoundHasControllerProcessingTime() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('https://example.com')
+        );
+
+        $this->subject->start();
+
+        $response = $this->subject->handleRequest($request);
+
+        self::assertSame(HttpStatus::NOT_FOUND, $response->getStatus());
+        self::assertCount(1, $this->analyticsQueue->getQueuedRequestAnalytics());
+
+        $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
+
+        self::assertInstanceOf(RequestAnalytics::class, $analytics);
+        self::assertSame($request, $analytics->getRequest());
+        self::assertNull($analytics->getControllerName());
+        self::assertSame(RoutingResolutionReason::NotFound, $analytics->getRoutingResolutionReason());
+        self::assertNull($analytics->getThrownException());
+        self::assertSame(3, $analytics->getTotalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
+        self::assertSame(0, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(0, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+    }
+
 }
