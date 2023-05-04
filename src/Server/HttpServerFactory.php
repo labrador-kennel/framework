@@ -12,6 +12,8 @@ use Amp\Socket\Certificate;
 use Amp\Socket\ServerTlsContext;
 use Amp\Sync\LocalSemaphore;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
+use Labrador\Http\Logging\LoggerFactory;
+use Labrador\Http\Logging\LoggerType;
 use Psr\Log\LoggerInterface;
 
 final class HttpServerFactory {
@@ -19,8 +21,9 @@ final class HttpServerFactory {
     #[ServiceDelegate]
     public static function createServer(
         HttpServerConfiguration $serverConfiguration,
-        LoggerInterface $logger
+        LoggerFactory $loggerFactory
     ) : HttpServer {
+        $logger = $loggerFactory->createLogger(LoggerType::WebServer);
         $socketServer = new SocketHttpServer(
             $logger,
             new ConnectionLimitingServerSocketFactory(

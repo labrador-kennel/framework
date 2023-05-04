@@ -2,24 +2,22 @@
 
 namespace Labrador\Http\Test\Unit\Stub;
 
-use Amp\Failure;
 use Amp\Http\Server\Request;
-use Amp\Promise;
-use Amp\Success;
+use Amp\Http\Server\Response;
 use Labrador\Http\Controller\Controller;
+use Throwable;
 
 class ErrorThrowingController implements Controller {
+
+    public function __construct(
+        private readonly Throwable $throwable
+    ) {}
 
     public function toString(): string {
         return self::class;
     }
 
-    /**
-     * @param Request $request
-     *
-     * @return Promise<\Amp\Http\Server\Response>
-     */
-    public function handleRequest(Request $request): Promise {
-        return new Failure(new \Exception('Controller thrown exception'));
+    public function handleRequest(Request $request) : Response {
+        throw $this->throwable;
     }
 }

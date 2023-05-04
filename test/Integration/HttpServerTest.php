@@ -10,15 +10,15 @@ use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\Http\Application;
+use Labrador\Http\Application\Application;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
 use Labrador\Http\Test\Helper\VfsDirectoryResolver;
 use Labrador\HttpDummyApp\Controller\SessionDtoController;
+use Labrador\HttpDummyApp\CountingService;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\Middleware\BazMiddleware;
 use Labrador\HttpDummyApp\Middleware\FooMiddleware;
 use Labrador\HttpDummyApp\Middleware\QuxMiddleware;
-use Labrador\HttpDummyApp\CountingService;
 use Labrador\HttpDummyApp\MiddlewareCallRegistry;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
@@ -57,12 +57,16 @@ class HttpServerTest extends AsyncTestCase {
 
     public static function tearDownAfterClass() : void {
         self::$app->stop();
+        StreamBuffer::stopIntercepting(self::$stdout);
+        StreamBuffer::stopIntercepting(self::$stderr);
         VirtualStream::unregister();
     }
 
     protected function setUp() : void {
         parent::setUp();
         self::$container->get(MiddlewareCallRegistry::class)->reset();
+        StreamBuffer::reset(self::$stdout);
+        StreamBuffer::reset(self::$stderr);
     }
 
     public function testMakingHelloWorldCall() : void {
@@ -184,6 +188,8 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/middleware', 'GET');
         $response = $client->request($request);
 
+        $output = StreamBuffer::output(self::$stdout);
+
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Hello, Universe!', $response->getBody()->buffer());
     }
@@ -250,5 +256,41 @@ class HttpServerTest extends AsyncTestCase {
         $response = $client->request($request);
 
         self::assertSame('Known Session Value', $response->getBody()->read());
+    }
+
+    public function testCorrectAccessLogOutputSendToStdout() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/hello/world');
+        $client->request($request);
+
+        $expected = <<<TEXT
+%a
+%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
+%a
+TEXT;
+
+        self::assertStringMatchesFormat(
+            $expected,
+            StreamBuffer::output(self::$stdout)
+        );
+    }
+
+    public function testExceptionThrowHasCorrectLogOutputSentToStdout() : void {
+        $client = (new HttpClientBuilder())->build();
+
+        $request = new Request('http://localhost:4200/exception');
+        $client->request($request);
+
+        $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
+        $expected = <<<TEXT
+%a
+%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
+TEXT;
+
+        self::assertStringMatchesFormat(
+            $expected,
+            StreamBuffer::output(self::$stdout)
+        );
     }
 }

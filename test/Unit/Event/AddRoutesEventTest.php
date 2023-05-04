@@ -2,7 +2,7 @@
 
 namespace Labrador\Http\Test\Unit\Event;
 
-use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Application\ApplicationEvent;
 use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Router\Router;
 use PHPUnit\Framework\MockObject\MockObject;

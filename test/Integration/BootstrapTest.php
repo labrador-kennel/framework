@@ -13,8 +13,10 @@ use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Http\Bootstrap;
 use Labrador\Http\ErrorHandlerFactory;
 use Labrador\Http\Router\FastRouteRouter;
+use Labrador\Http\Router\LoggingRouter;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
+use Labrador\Http\Server\AccessLoggingHttpServer;
 use Labrador\Http\Test\BootstrapAwareTestTrait;
 use Labrador\Http\Test\Helper\VfsDirectoryResolver;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
@@ -92,7 +94,7 @@ class BootstrapTest extends TestCase {
 
         $router = $container->get(Router::class);
 
-        self::assertInstanceOf(FastRouteRouter::class, $router);
+        self::assertInstanceOf(LoggingRouter::class, $router);
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsEventEmitter() : void {
@@ -203,7 +205,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
+                'labrador.app.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)
@@ -218,7 +220,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
+                'labrador.app.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)
@@ -233,7 +235,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
+                'labrador.app.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)
@@ -248,7 +250,7 @@ class BootstrapTest extends TestCase {
 
         self::assertStringContainsString(
             sprintf(
-                'labrador-http.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
+                'labrador.app.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
                 CheckDtoController::class
             ),
             StreamBuffer::output($this->stdout)

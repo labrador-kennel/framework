@@ -3,10 +3,9 @@
 namespace Labrador\Http\Event;
 
 use Amp\Future;
-use Closure;
 use Labrador\AsyncEvent\AbstractListenerProvider;
 use Labrador\CompositeFuture\CompositeFuture;
-use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Application\ApplicationEvent;
 
 abstract class ResponseSentListener extends AbstractListenerProvider {
 

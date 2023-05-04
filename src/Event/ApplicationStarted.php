@@ -2,10 +2,10 @@
 
 namespace Labrador\Http\Event;
 
-use Labrador\AsyncEvent\Event;
-use Labrador\Http\Application;
-use Labrador\Http\ApplicationEvent;
 use DateTimeImmutable;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\Application\Application;
+use Labrador\Http\Application\ApplicationEvent;
 
 class ApplicationStarted implements Event {
 

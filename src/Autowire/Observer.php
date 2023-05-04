@@ -7,7 +7,7 @@ use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceFromServiceDefinition;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
-use Labrador\Http\Application;
+use Labrador\Http\Application\Application;
 use Labrador\Http\Controller\Controller;
 use Labrador\Http\Controller\ControllerActions;
 use Labrador\Http\Controller\Dto\DtoInjectionHandler;
@@ -26,6 +26,8 @@ use Labrador\Http\Controller\DtoController;
 use Labrador\Http\Controller\HttpController;
 use Labrador\Http\Controller\RouteMappingAttribute;
 use Labrador\Http\Internal\ReflectionCache;
+use Labrador\Http\Logging\LoggerFactory;
+use Labrador\Http\Logging\LoggerType;
 use Labrador\Http\Middleware\ApplicationMiddleware;
 use Labrador\Http\Router\Route;
 use Labrador\Http\Router\Router;
@@ -38,8 +40,9 @@ use function Cspray\AnnotatedContainer\rawParam;
 class Observer extends ServiceWiringObserver {
 
     public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
-        /** @var LoggerInterface $logger */
-        $logger = $container->get(LoggerInterface::class);
+        /** @var LoggerFactory $loggerFactory */
+        $loggerFactory = $container->get(LoggerFactory::class);
+        $logger = $loggerFactory->createLogger(LoggerType::Application);
 
         $logger->info('Container created, beginning to autowire services.');
 

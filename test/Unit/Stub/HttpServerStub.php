@@ -9,7 +9,6 @@ use Amp\Http\Server\HttpServerStatus;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Socket\SocketServer;
 use function Amp\async;
 use function Amp\Future\awaitAll;
 
@@ -35,14 +34,6 @@ final class HttpServerStub implements HttpServer {
 
     public function onStop(\Closure $onStop) : void {
         $this->onStop[] = $onStop;
-    }
-
-    public function getServers() : array {
-        return $this->servers;
-    }
-
-    public function setServers(SocketServer... $socketServers) : void {
-        $this->servers = $socketServers;
     }
 
     public function getStatus() : HttpServerStatus {

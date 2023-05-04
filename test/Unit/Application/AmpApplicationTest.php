@@ -1,8 +1,10 @@
 <?php
 
-namespace Labrador\Http\Test\Unit;
+namespace Labrador\Http\Test\Unit\Application;
 
 use Amp\Http\Cookie\RequestCookie;
+use Amp\Http\HttpStatus;
+use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServerStatus;
@@ -15,10 +17,17 @@ use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Server\Session\SessionStorage;
-use Amp\Http\HttpStatus;
 use Amp\Sync\LocalKeyedMutex;
-use Labrador\Http\AmpApplication;
-use Labrador\Http\ApplicationFeatures;
+use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
+use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std as StdRouteParser;
+use Labrador\Http\Application\AmpApplication;
+use Labrador\Http\Application\Analytics\PreciseTime;
+use Labrador\Http\Application\Analytics\RequestAnalytics;
+use Labrador\Http\Application\Analytics\RequestAnalyticsQueue;
+use Labrador\Http\Application\ApplicationFeatures;
+use Labrador\Http\Application\NoApplicationFeatures;
 use Labrador\Http\Event\AddRoutes;
 use Labrador\Http\Event\ApplicationStarted;
 use Labrador\Http\Event\ApplicationStopped;
@@ -29,60 +38,68 @@ use Labrador\Http\Event\WillInvokeController;
 use Labrador\Http\Exception\SessionNotEnabled;
 use Labrador\Http\HttpMethod;
 use Labrador\Http\Middleware\Priority;
-use Labrador\Http\NoApplicationFeatures;
 use Labrador\Http\RequestAttribute;
 use Labrador\Http\Router\FastRouteRouter;
 use Labrador\Http\Router\GetMapping;
-use Labrador\Http\Router\PostMapping;
+use Labrador\Http\Router\RoutingResolutionReason;
 use Labrador\Http\Test\Unit\Stub\ErrorHandlerFactoryStub;
+use Labrador\Http\Test\Unit\Stub\ErrorThrowingController;
+use Labrador\Http\Test\Unit\Stub\ErrorThrowingMiddleware;
+use Labrador\Http\Test\Unit\Stub\ErrorThrowingRouter;
 use Labrador\Http\Test\Unit\Stub\EventEmitterStub;
 use Labrador\Http\Test\Unit\Stub\HttpServerStub;
+use Labrador\Http\Test\Unit\Stub\KnownIncrementPreciseTime;
+use Labrador\Http\Test\Unit\Stub\RequestAnalyticsQueueStub;
 use Labrador\Http\Test\Unit\Stub\RequireAccessReadSessionController;
 use Labrador\Http\Test\Unit\Stub\RequireAccessWriteSessionController;
 use Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
 use Labrador\Http\Test\Unit\Stub\SessionGatheringController;
+use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use Labrador\HttpDummyApp\Middleware\BarMiddleware;
 use Labrador\HttpDummyApp\MiddlewareCallRegistry;
-use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
-use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
-use FastRoute\RouteCollector;
-use FastRoute\RouteParser\Std as StdRouteParser;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
-use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Ramsey\Uuid\UuidInterface;
+use RuntimeException;
 
 final class AmpApplicationTest extends TestCase {
 
     private HttpServerStub $httpServer;
-    private ErrorHandler&MockObject $errorHandler;
+    private ErrorHandler $errorHandler;
     private FastRouteRouter $router;
     private EventEmitterStub $emitter;
     private AmpApplication $subject;
     private TestHandler $testHandler;
+    private RequestAnalyticsQueueStub $analyticsQueue;
+    private PreciseTime $preciseTime;
 
     protected function setUp() : void {
         parent::setUp();
         $this->httpServer = new HttpServerStub();
-        $this->errorHandler = $this->getMockBuilder(ErrorHandler::class)->getMock();
+        $this->errorHandler = new DefaultErrorHandler();
         $this->router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
             function($data) { return new GcbDispatcher($data); }
         );
         $this->emitter = new EventEmitterStub();
         $this->testHandler = new TestHandler();
+        $this->analyticsQueue = new RequestAnalyticsQueueStub();
+        $this->preciseTime = new KnownIncrementPreciseTime(0, 1);
         $this->subject = new AmpApplication(
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            new NoApplicationFeatures()
+            new NoApplicationFeatures(),
+            $this->analyticsQueue,
+            $this->preciseTime
         );
     }
 
@@ -174,7 +191,7 @@ final class AmpApplicationTest extends TestCase {
     public function testApplicationStartedHasAddingRoutesLogs() : void {
         $this->subject->start();
 
-        self::assertTrue($this->testHandler->hasInfoThatContains('Allowing routes to be added through event system.'));
+        self::assertTrue($this->testHandler->hasDebugThatContains('Allowing routes to be added through event system.'));
     }
 
     public function testApplicationStartedHasReceivingConnectionsLogs() : void {
@@ -188,122 +205,6 @@ final class AmpApplicationTest extends TestCase {
         $this->subject->stop();
 
         self::assertTrue($this->testHandler->hasInfoThatContains('Labrador HTTP application stopping.'));
-    }
-
-    public function testApplicationReceivesRequestLogsControllerMatched() : void {
-        $this->subject->start();
-
-        $this->emitter->clearEmittedEvents();
-        $this->router->addRoute(
-            new GetMapping('/'),
-            new ResponseControllerStub($response = new Response())
-        );
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
-        );
-
-        $this->errorHandler->expects($this->never())->method('handleError');
-
-        $this->httpServer->receiveRequest($request);
-
-        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Started processing GET http://example.com - Request id: ' . $id . '.',
-                'method' => 'GET',
-                'url' => 'http://example.com',
-                'requestId' => $id
-            ],
-            Level::Info
-        ));
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Found matching controller, ' . ResponseControllerStub::class . ', for Request id: ' . $id . '.',
-                'controller' => ResponseControllerStub::class,
-                'requestId' => $id
-            ],
-            Level::Info
-        ));
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Finished processing Request id: ' . $id . '.',
-                'requestId' => $id
-            ],
-            Level::Info
-        ));
-    }
-
-    public function testRouteNotFoundCallsErrorHandlerAndIsLogged() : void {
-        $this->subject->start();
-
-        $this->emitter->clearEmittedEvents();
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
-        );
-
-        $this->errorHandler->expects($this->once())
-            ->method('handleError')
-            ->with(HttpStatus::NOT_FOUND, 'Not Found', $request)
-            ->willReturn($response = new Response());
-
-        $actual = $this->subject->handleRequest($request);
-
-        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertSame($response, $actual);
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Did not find matching controller for Request id: ' . $id . '.',
-                'requestId' => $id->toString()
-            ],
-            Level::Notice
-        ));
-    }
-
-    public function testRouteMethodNotAllowedCallsErrorHandlerAndIsLogged() : void {
-        $this->subject->start();
-
-        $this->emitter->clearEmittedEvents();
-
-        $this->router->addRoute(
-            new PostMapping('/'),
-            new ResponseControllerStub(new Response(body: ''))
-        );
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
-        );
-
-        $this->errorHandler->expects($this->once())
-            ->method('handleError')
-            ->with(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request)
-            ->willReturn($response = new Response());
-
-        $actual = $this->subject->handleRequest($request);
-
-        self::assertInstanceOf(UuidInterface::class, $id = $request->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertSame($response, $actual);
-        self::assertTrue($this->testHandler->hasRecord(
-            [
-                'message' => 'Method GET is not allowed on path / for Request id: ' . $id . '.',
-                'method' => 'GET',
-                'path' => '/',
-                'requestId' => $id->toString()
-            ],
-            Level::Notice
-        ));
-
-        self::assertCount(2, $this->emitter->getQueuedEvents());
     }
 
     public function testMiddlewaresCalled() : void {
@@ -411,7 +312,9 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware()
+            $this->getApplicationFeaturesWithSessionMiddleware(),
+            $this->analyticsQueue,
+            $this->preciseTime
         );
 
         $subject->start();
@@ -440,7 +343,9 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware()
+            $this->getApplicationFeaturesWithSessionMiddleware(),
+            $this->analyticsQueue,
+            $this->preciseTime
         );
 
         $middleware = new class implements Middleware {
@@ -494,7 +399,9 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware()
+            $this->getApplicationFeaturesWithSessionMiddleware(),
+            $this->analyticsQueue,
+            $this->preciseTime
         );
 
         $subject->addMiddleware($middleware);
@@ -555,7 +462,9 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware($storage)
+            $this->getApplicationFeaturesWithSessionMiddleware($storage),
+            $this->analyticsQueue,
+            $this->preciseTime,
         );
 
         $subject->addMiddleware($middleware);
@@ -571,7 +480,7 @@ final class AmpApplicationTest extends TestCase {
         ], $storage->read($id));
     }
 
-    public function testRequiresSessionReadSessionFactoryNotProvidedThrowsException() : void {
+    public function testRequiresSessionReadSessionFactoryNotProvidedReturnsCorrectResponse() : void {
         $controller = new RequireAccessReadSessionController();
         $this->router->addRoute(
             new GetMapping('/'),
@@ -586,14 +495,9 @@ final class AmpApplicationTest extends TestCase {
 
         $this->subject->start();
 
-        $this->expectException(SessionNotEnabled::class);
-        $this->expectExceptionMessage(sprintf(
-            'The Controller "%s" requires Read Session access but Session support has not been enabled. Please ensure ' .
-            'that you have configured a SessionFactory in your implemented ApplicationFeatures.',
-            $controller->toString()
-        ));
+        $response = $this->subject->handleRequest($request);
 
-        $this->subject->handleRequest($request);
+        self::assertSame(HttpStatus::INTERNAL_SERVER_ERROR, $response->getStatus());
     }
 
     public function testApplicationFeaturesRedirectHttpToHttps() {
@@ -609,7 +513,9 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithHttpToHttpsRedirect()
+            $this->getApplicationFeaturesWithHttpToHttpsRedirect(),
+            $this->analyticsQueue,
+            $this->preciseTime,
         );
 
         $subject->start();
@@ -624,6 +530,150 @@ final class AmpApplicationTest extends TestCase {
             ['location' => ['https://example.com/tls-test?foo=bar']],
             $response->getHeaders()
         );
+    }
+
+    public function testNormalProcessingHasCorrectRequestAnalyticsQueued() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('https://example.com')
+        );
+
+        $this->router->addRoute(
+            new GetMapping('/'),
+            new ToStringControllerStub('KnownController')
+        );
+
+        $this->subject->start();
+
+        $response = $this->subject->handleRequest($request);
+
+        self::assertSame(HttpStatus::OK, $response->getStatus());
+        self::assertCount(1, $this->analyticsQueue->getQueuedRequestAnalytics());
+
+        $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
+
+        self::assertInstanceOf(RequestAnalytics::class, $analytics);
+        self::assertSame($request, $analytics->getRequest());
+        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->getRoutingResolutionReason());
+        self::assertSame('KnownController', $analytics->getControllerName());
+        self::assertSame(6, $analytics->getTotalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(1, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+        self::assertSame(200, $analytics->getResponseStatusCode());
+    }
+
+    public function testExceptionThrownInRouterHasCorrectRequestAnalytics() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('https://example.com')
+        );
+
+        $this->router->addRoute(
+            new GetMapping('/'),
+            new ToStringControllerStub('KnownController')
+        );
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            new ErrorThrowingRouter($exception = new RuntimeException()),
+            $this->emitter,
+            new NullLogger(),
+            new NoApplicationFeatures(),
+            $this->analyticsQueue,
+            $this->preciseTime
+        );
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame(HttpStatus::INTERNAL_SERVER_ERROR, $response->getStatus());
+        self::assertCount(1, $this->analyticsQueue->getQueuedRequestAnalytics());
+
+        $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
+
+        self::assertInstanceOf(RequestAnalytics::class, $analytics);
+        self::assertSame($request, $analytics->getRequest());
+        self::assertNull($analytics->getControllerName());
+        self::assertNull($analytics->getRoutingResolutionReason());
+        self::assertSame($exception, $analytics->getThrownException());
+        self::assertSame(2, $analytics->getTotalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
+        self::assertSame(0, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(0, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+    }
+
+    public function testExceptionThrownInMiddlewareHasCorrectRequestAnalytics() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('https://example.com')
+        );
+
+        $exception = new RuntimeException();
+
+        $this->router->addRoute(
+            new GetMapping('/'),
+            new ToStringControllerStub('KnownController'),
+        );
+
+        $this->subject->addMiddleware(new ErrorThrowingMiddleware($exception));
+        $this->subject->start();
+
+        $response = $this->subject->handleRequest($request);
+
+        self::assertSame(HttpStatus::INTERNAL_SERVER_ERROR, $response->getStatus());
+        self::assertCount(1, $this->analyticsQueue->getQueuedRequestAnalytics());
+
+        $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
+
+        self::assertInstanceOf(RequestAnalytics::class, $analytics);
+        self::assertSame($request, $analytics->getRequest());
+        self::assertNull($analytics->getControllerName());
+        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->getRoutingResolutionReason());
+        self::assertSame($exception, $analytics->getThrownException());
+        self::assertSame(4, $analytics->getTotalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(0, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+    }
+
+    public function testExceptionThrownInControllerHasCorrectRequestAnalytics() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('https://example.com')
+        );
+
+        $exception = new RuntimeException();
+
+        $this->router->addRoute(
+            new GetMapping('/'),
+            new ErrorThrowingController($exception)
+        );
+
+        $this->subject->start();
+
+        $response = $this->subject->handleRequest($request);
+
+        self::assertSame(HttpStatus::INTERNAL_SERVER_ERROR, $response->getStatus());
+        self::assertCount(1, $this->analyticsQueue->getQueuedRequestAnalytics());
+
+        $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
+
+        self::assertInstanceOf(RequestAnalytics::class, $analytics);
+        self::assertSame($request, $analytics->getRequest());
+        self::assertSame(ErrorThrowingController::class, $analytics->getControllerName());
+        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->getRoutingResolutionReason());
+        self::assertSame($exception, $analytics->getThrownException());
+        self::assertSame(6, $analytics->getTotalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
+        self::assertSame(1, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(1, $analytics->getTimeSpentProcessingControllerInNanoseconds());
     }
 
 }

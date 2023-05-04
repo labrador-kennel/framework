@@ -4,7 +4,7 @@ namespace Labrador\Http\Test\Unit\Event;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Labrador\Http\ApplicationEvent;
+use Labrador\Http\Application\ApplicationEvent;
 use Labrador\Http\Event\RequestReceived;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;

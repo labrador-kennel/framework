@@ -3,10 +3,10 @@
 namespace Labrador\Http\Event;
 
 use Amp\Http\Server\Response;
-use Labrador\AsyncEvent\Event;
-use Labrador\Http\ApplicationEvent;
-use Labrador\Http\RequestAttribute;
 use DateTimeImmutable;
+use Labrador\AsyncEvent\Event;
+use Labrador\Http\Application\ApplicationEvent;
+use Labrador\Http\RequestAttribute;
 use Ramsey\Uuid\UuidInterface;
 
 final class ResponseSent implements Event {
