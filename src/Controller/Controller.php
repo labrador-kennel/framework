@@ -8,7 +8,6 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 /**
  * An interface that adds to Amp's RequestHandler to attach a descriptor for improved logging and debugging.
  */
-#[Service]
 interface Controller extends RequestHandler {
 
     /**

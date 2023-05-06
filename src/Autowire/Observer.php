@@ -44,8 +44,6 @@ class Observer extends ServiceWiringObserver {
         $loggerFactory = $container->get(LoggerFactory::class);
         $logger = $loggerFactory->createLogger(LoggerType::Application);
 
-        $logger->info('Container created, beginning to autowire services.');
-
         /** @var Application $app */
         $app = $container->get(Application::class);
         /** @var Router $router */

@@ -146,16 +146,6 @@ class BootstrapTest extends TestCase {
         self::assertCount(self::ExpectedControllerCount, $router->getRoutes());
     }
 
-    public function testApplicationAutowiringStartedLogged() : void {
-        $this->configureAnnotatedContainer();
-
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-
-        $bootstrap->bootstrapApplication()->container;
-
-        self::assertStringContainsString('Container created, beginning to autowire services.', StreamBuffer::output($this->stdout));
-    }
-
     public function testApplicationAutowiringControllersLogged() : void {
         $this->configureAnnotatedContainer();
 

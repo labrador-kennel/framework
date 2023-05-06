@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotatedContainer xmlns="https://annotated-container.cspray.io/schema/annotated-container.xsd">
+  <scanDirectories>
+    <source>
+      <dir>src</dir>
+    </source>
+    <vendor/>
+  </scanDirectories>
+  <definitionProviders>
+    <definitionProvider>Labrador\Http\Autowire\DefinitionProvider</definitionProvider>
+    <definitionProvider>Labrador\AsyncEvent\Autowire\DefinitionProvider</definitionProvider>
+    <definitionProvider>Labrador\Http\GettingStarted\DefinitionProvider</definitionProvider>
+  </definitionProviders>
+  <observers>
+    <observer>Labrador\Http\Autowire\Observer</observer>
+    <observer>Labrador\AsyncEvent\Autowire\Observer</observer>
+  </observers>
+  <logging>
+    <stdout />
+  </logging>
+  <!-- <cacheDir>.annotated-container-cache</cacheDir> -->
+</annotatedContainer>
