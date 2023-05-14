@@ -1,10 +1,10 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Autowire;
+namespace Labrador\Test\Unit\Autowire;
 
-use Labrador\Http\Autowire\DefinitionProvider;
-use Labrador\Http\Autowire\Initializer;
-use Labrador\Http\Autowire\Observer;
+use Labrador\Web\Autowire\DefinitionProvider;
+use Labrador\Web\Autowire\Initializer;
+use Labrador\Web\Autowire\Observer;
 use PHPUnit\Framework\TestCase;
 
 final class InitializerTest extends TestCase {

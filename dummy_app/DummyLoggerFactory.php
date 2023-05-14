@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\HttpDummyApp;
+namespace Labrador\DummyApp;
 
 use Amp\Log\StreamHandler;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
-use Labrador\Http\Logging\LoggerFactory;
+use Labrador\Logging\LoggerFactory;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Log\LoggerInterface;

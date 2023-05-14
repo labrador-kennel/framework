@@ -1,23 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Cli;
+namespace Labrador\Cli;
 
 use Amp\Log\ConsoleFormatter;
 use Amp\Log\StreamHandler;
-use Amp\Process\Process;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap;
 use Cspray\AnnotatedContainer\Cli\Command;
 use Cspray\AnnotatedContainer\Cli\Input;
 use Cspray\AnnotatedContainer\Cli\TerminalOutput;
-use Labrador\Http\Bootstrap as HttpBootstrap;
-use Monolog\Handler\BufferHandler;
+use Labrador\Web\Bootstrap as HttpBootstrap;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
-use Revolt\EventLoop;
-use function Amp\async;
-use function Amp\ByteStream\getStderr;
 use function Amp\ByteStream\getStdout;
-use function Amp\ByteStream\pipe;
 use function Amp\trapSignal;
 use const SIGILL;
 use const SIGINT;
@@ -49,9 +43,8 @@ final class WebCommand implements Command {
             );
         }
 
-        $containerBootstrap = include $this->labradorContainerBootstrap;
-
-        if (!is_callable($containerBootstrap)) {
+        $containerBootstrapCallable = include $this->labradorContainerBootstrap;
+        if (!is_callable($containerBootstrapCallable)) {
             $output->stderr->write('<bold><fg:red>The Annotated Container bootstrap file MUST return a callable that returns a Cspray\AnnotatedContainer\Bootstrap\Bootstrap instance.</fg:red></bold>');
             return 1;
         }
@@ -60,7 +53,13 @@ final class WebCommand implements Command {
         $handler->setFormatter(new ConsoleFormatter());
         $logger = new Logger('labrador.container', [$handler], [new PsrLogMessageProcessor()]);
 
-        $bootstrap = new HttpBootstrap($containerBootstrap($logger));
+        $containerBootstrap = $containerBootstrapCallable($logger);
+        if (!$containerBootstrap instanceof Bootstrap) {
+            $output->stderr->write('<bold><fg:red>The Annotated Container bootstrap callable MUST return an instance of Cspray\AnnotatedContainer\Bootstrap\Bootstrap.</fg:red></bold>');
+            return 1;
+        }
+
+        $bootstrap = new HttpBootstrap($containerBootstrap);
         $results = $bootstrap->bootstrapApplication();
 
         $results->application->start();

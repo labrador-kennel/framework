@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Integration;
+namespace Labrador\Test\Integration;
 
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\HttpServer;
@@ -10,20 +10,18 @@ use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\AsyncEvent\AmpEventEmitter;
 use Labrador\AsyncEvent\EventEmitter;
-use Labrador\Http\Bootstrap;
-use Labrador\Http\ErrorHandlerFactory;
-use Labrador\Http\Router\FastRouteRouter;
-use Labrador\Http\Router\LoggingRouter;
-use Labrador\Http\Router\Route;
-use Labrador\Http\Router\Router;
-use Labrador\Http\Server\AccessLoggingHttpServer;
-use Labrador\Http\Test\BootstrapAwareTestTrait;
-use Labrador\Http\Test\Helper\VfsDirectoryResolver;
-use Labrador\HttpDummyApp\Middleware\BarMiddleware;
-use Labrador\HttpDummyApp\Middleware\BazMiddleware;
-use Labrador\HttpDummyApp\Middleware\FooMiddleware;
-use Labrador\HttpDummyApp\Middleware\QuxMiddleware;
-use Labrador\HttpDummyApp\Controller\CheckDtoController;
+use Labrador\DummyApp\Controller\CheckDtoController;
+use Labrador\DummyApp\Middleware\BarMiddleware;
+use Labrador\DummyApp\Middleware\BazMiddleware;
+use Labrador\DummyApp\Middleware\FooMiddleware;
+use Labrador\DummyApp\Middleware\QuxMiddleware;
+use Labrador\Test\BootstrapAwareTestTrait;
+use Labrador\Test\Helper\VfsDirectoryResolver;
+use Labrador\Web\Bootstrap;
+use Labrador\Web\ErrorHandlerFactory;
+use Labrador\Web\Router\LoggingRouter;
+use Labrador\Web\Router\Route;
+use Labrador\Web\Router\Router;
 use Monolog\Logger;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Controller\Dto;
+namespace Labrador\Test\Unit\Controller\Dto;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Labrador\Http\Controller\Dto\ValinorDtoFactory;
-use Labrador\HttpDummyApp\Model\Author;
+use Labrador\DummyApp\Model\Author;
+use Labrador\Web\Controller\Dto\ValinorDtoFactory;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 

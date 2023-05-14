@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\GettingStarted;
+namespace Labrador\GettingStarted;
 
 use Cspray\AnnotatedContainer\StaticAnalysis\DefinitionProvider as AnnotatedContainerDefinitionProvider;
 use Cspray\AnnotatedContainer\StaticAnalysis\DefinitionProviderContext;
-use Labrador\Http\GettingStarted\Controller\Home;
-use Labrador\Http\GettingStarted\Event\Routes;
-use Labrador\Http\GettingStarted\Server\Configuration;
+use Labrador\GettingStarted\Controller\Home;
+use Labrador\GettingStarted\Event\Routes;
+use Labrador\GettingStarted\Server\Configuration;
 use function Cspray\AnnotatedContainer\service;
 use function Cspray\Typiphy\objectType;
 

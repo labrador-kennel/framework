@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\GettingStarted\Server;
+namespace Labrador\GettingStarted\Server;
 
 use Amp\Socket\InternetAddress;
-use Labrador\Http\Server\HttpServerConfiguration;
+use Labrador\Web\Server\HttpServerConfiguration;
 
 final class Configuration implements HttpServerConfiguration {
 

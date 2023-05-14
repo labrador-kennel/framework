@@ -1,25 +1,25 @@
 <?php
 
-namespace Labrador\HttpDummyApp\Controller;
+namespace Labrador\DummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestBody;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Labrador\Http\Controller\ControllerActions;
-use Labrador\Http\Controller\Delete;
-use Labrador\Http\Controller\Dto\Body;
-use Labrador\Http\Controller\Dto\Dto;
-use Labrador\Http\Controller\Dto\Header;
-use Labrador\Http\Controller\Dto\Headers;
-use Labrador\Http\Controller\Dto\Method;
-use Labrador\Http\Controller\Dto\RouteParam;
-use Labrador\Http\Controller\Get;
-use Labrador\Http\Controller\Post;
-use Labrador\Http\Controller\Put;
-use Labrador\HttpDummyApp\CountingService;
-use Labrador\HttpDummyApp\Middleware\ControllerSpecificMiddleware;
-use Labrador\HttpDummyApp\Model\Widget;
+use Labrador\DummyApp\CountingService;
+use Labrador\DummyApp\Middleware\ControllerSpecificMiddleware;
+use Labrador\DummyApp\Model\Widget;
+use Labrador\Web\Controller\ControllerActions;
+use Labrador\Web\Controller\Delete;
+use Labrador\Web\Controller\Dto\Body;
+use Labrador\Web\Controller\Dto\Dto;
+use Labrador\Web\Controller\Dto\Header;
+use Labrador\Web\Controller\Dto\Headers;
+use Labrador\Web\Controller\Dto\Method;
+use Labrador\Web\Controller\Dto\RouteParam;
+use Labrador\Web\Controller\Get;
+use Labrador\Web\Controller\Post;
+use Labrador\Web\Controller\Put;
 use League\Uri\Components\Query;
 use League\Uri\Contracts\QueryInterface;
 use Psr\Http\Message\UriInterface;

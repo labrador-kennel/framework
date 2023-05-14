@@ -4,7 +4,7 @@
 use Cspray\AnnotatedContainer\Cli\CommandExecutor;
 use Cspray\AnnotatedContainer\Cli\InputParser;
 use Cspray\AnnotatedContainer\Cli\TerminalOutput;
-use Labrador\Http\Cli\WebCommand;
+use Labrador\Cli\WebCommand;
 
 exit((function($argc, $argv) {
     $root = $labradorRoot = dirname(__DIR__);
@@ -16,7 +16,7 @@ exit((function($argc, $argv) {
 
     $commandExecutor = new CommandExecutor();
 
-    $commandExecutor->addCommand(new WebCommand($labradorRoot . '/src/GettingStarted/container-bootstrap.php'));
+    $commandExecutor->addCommand(new WebCommand($labradorRoot . '/resources/scripts/container-bootstrap.php'));
 
     $input = (new InputParser())->parse($argv);
     $terminalOutput = new TerminalOutput();

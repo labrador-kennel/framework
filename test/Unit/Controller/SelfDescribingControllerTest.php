@@ -1,8 +1,8 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Test\Unit\Controller;
 
-use Labrador\Http\Controller\SelfDescribingController;
+use Labrador\Web\Controller\SelfDescribingController;
 use PHPUnit\Framework\TestCase;
 
 final class SelfDescribingControllerTest extends TestCase {

@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Labrador\Http\Controller\SelfDescribingController;
+use Labrador\Web\Controller\SelfDescribingController;
 
 class SessionGatheringController extends SelfDescribingController {
 

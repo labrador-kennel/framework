@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Application\Analytics;
+namespace Labrador\Test\Unit\Application\Analytics;
 
 use Amp\Http\HttpStatus;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Labrador\Http\Application\Analytics\LoggingRequestAnalyticsQueue;
-use Labrador\Http\Application\Analytics\RequestAnalytics;
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\RoutingResolutionReason;
+use Labrador\Web\Application\Analytics\LoggingRequestAnalyticsQueue;
+use Labrador\Web\Application\Analytics\RequestAnalytics;
+use Labrador\Web\HttpMethod;
+use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;

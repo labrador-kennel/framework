@@ -1,10 +1,10 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Event;
+namespace Labrador\Test\Unit\Event;
 
 use Amp\Http\Server\HttpServer;
-use Labrador\Http\Application\ApplicationEvent;
-use Labrador\Http\Event\ReceivingConnections;
+use Labrador\Web\Application\ApplicationEvent;
+use Labrador\Web\Event\ReceivingConnections;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

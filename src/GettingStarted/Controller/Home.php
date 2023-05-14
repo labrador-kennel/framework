@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\GettingStarted\Controller;
+namespace Labrador\GettingStarted\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Labrador\Http\Controller\SelfDescribingController;
+use Labrador\Web\Controller\SelfDescribingController;
 
 final class Home extends SelfDescribingController {
 

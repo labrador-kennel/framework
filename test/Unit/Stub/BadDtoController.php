@@ -1,16 +1,16 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
-use Labrador\Http\Controller\ControllerActions;
-use Labrador\Http\Controller\Dto\Body;
-use Labrador\Http\Controller\Dto\Dto;
-use Labrador\Http\Controller\Dto\Header;
-use Labrador\Http\Controller\Dto\Headers;
-use Labrador\Http\Controller\Dto\Method;
-use Labrador\Http\Controller\Dto\QueryParams;
-use Labrador\Http\Controller\Dto\RouteParam;
-use Labrador\Http\Controller\Get;
+use Labrador\Controller\Dto\QueryParams;
+use Labrador\Web\Controller\ControllerActions;
+use Labrador\Web\Controller\Dto\Body;
+use Labrador\Web\Controller\Dto\Dto;
+use Labrador\Web\Controller\Dto\Header;
+use Labrador\Web\Controller\Dto\Headers;
+use Labrador\Web\Controller\Dto\Method;
+use Labrador\Web\Controller\Dto\RouteParam;
+use Labrador\Web\Controller\Get;
 
 #[ControllerActions]
 final class BadDtoController {

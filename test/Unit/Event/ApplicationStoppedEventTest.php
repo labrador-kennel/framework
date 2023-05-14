@@ -1,10 +1,10 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Event;
+namespace Labrador\Test\Unit\Event;
 
-use Labrador\Http\Application\Application;
-use Labrador\Http\Application\ApplicationEvent;
-use Labrador\Http\Event\ApplicationStopped;
+use Labrador\Web\Application\Application;
+use Labrador\Web\Application\ApplicationEvent;
+use Labrador\Web\Event\ApplicationStopped;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

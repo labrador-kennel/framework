@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
-use Labrador\Http\Application\Analytics\RequestAnalytics;
-use Labrador\Http\Application\Analytics\RequestAnalyticsQueue;
+use Labrador\Web\Application\Analytics\RequestAnalytics;
+use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 
 final class RequestAnalyticsQueueStub implements RequestAnalyticsQueue {
 

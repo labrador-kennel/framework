@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Labrador\Http\Controller\Controller;
-use Labrador\Http\Router\RequestMapping;
-use Labrador\Http\Router\Route;
-use Labrador\Http\Router\Router;
-use Labrador\Http\Router\RoutingResolution;
+use Labrador\Web\Controller\Controller;
+use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Router\Route;
+use Labrador\Web\Router\Router;
+use Labrador\Web\Router\RoutingResolution;
 use Throwable;
 
 final class ErrorThrowingRouter implements Router {

@@ -7,13 +7,12 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit\Router;
+namespace Labrador\Test\Unit\Router;
 
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\GetMapping;
-use Labrador\Http\Router\MethodAndPathRequestMapping;
-use Labrador\Http\Router\Route;
-use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Router\MethodAndPathRequestMapping;
+use Labrador\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Route;
 use PHPUnit\Framework\TestCase;
 
 class RouteTest extends TestCase {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Labrador\HttpDummyApp\Middleware;
+namespace Labrador\DummyApp\Middleware;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Labrador\Http\Middleware\RouteMiddleware;
+use Labrador\Web\Middleware\RouteMiddleware;
 
 #[RouteMiddleware]
 class ControllerSpecificMiddleware implements Middleware {

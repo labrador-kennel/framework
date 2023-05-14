@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\HttpDummyApp\Controller;
+namespace Labrador\DummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Labrador\Http\Controller\ControllerActions;
-use Labrador\Http\Controller\Get;
-use Labrador\Http\Controller\RequireSession;
-use Labrador\Http\Controller\SessionAccess;
+use Labrador\Web\Controller\ControllerActions;
+use Labrador\Web\Controller\Get;
+use Labrador\Web\Controller\RequireSession;
+use Labrador\Web\Controller\SessionAccess;
 
 #[ControllerActions]
 final class SessionActionDtoController {

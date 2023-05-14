@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;

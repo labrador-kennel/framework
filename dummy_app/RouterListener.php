@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\HttpDummyApp;
+namespace Labrador\DummyApp;
 
 use Amp\Future;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Labrador\AsyncEvent\Autowire\ListenerService;
 use Labrador\CompositeFuture\CompositeFuture;
-use Labrador\Http\Controller\Controller;
-use Labrador\Http\Event\AddRoutes;
-use Labrador\Http\Event\AddRoutesListener;
-use Labrador\Http\Router\GetMapping;
+use Labrador\Web\Controller\Controller;
+use Labrador\Web\Event\AddRoutes;
+use Labrador\Web\Event\AddRoutesListener;
+use Labrador\Web\Router\GetMapping;
 
 #[ListenerService]
 class RouterListener extends AddRoutesListener {
