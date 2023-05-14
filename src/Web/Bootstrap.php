@@ -22,7 +22,7 @@ final class Bootstrap {
         $memoryLimit = ini_get('memory_limit');
         getStdout()->write($this->labradorAscii() . PHP_EOL);
         getStdout()->write('PHP Version: ' . PHP_VERSION . PHP_EOL);
-        getStdout()->write('Labrador HTTP Version: ' . Versions::getVersion('labrador-kennel/http') . PHP_EOL);
+        getStdout()->write('Labrador Framework Version: ' . Versions::getVersion('labrador-kennel/framework')  . PHP_EOL);
         getStdout()->write('Annotated Container Version: ' . Versions::getVersion('cspray/annotated-container') . PHP_EOL);
         getStdout()->write('Amp HTTP Server Version: ' . Versions::getVersion('amphp/http-server') . PHP_EOL);
         getStdout()->write('Revolt Loop Driver: ' . EventLoop::getDriver()::class . PHP_EOL);
