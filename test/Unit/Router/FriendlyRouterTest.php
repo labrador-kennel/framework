@@ -1,22 +1,22 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Router;
+namespace Labrador\Test\Unit\Router;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Labrador\Http\Controller\Controller;
-use Labrador\Http\Controller\MiddlewareController;
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\FastRouteRouter;
-use Labrador\Http\Router\FriendlyRouter;
-use Labrador\Http\Router\Router;
-use Labrador\Http\Router\RoutingResolution;
-use Labrador\Http\Router\RoutingResolutionReason;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
+use Labrador\Web\Controller\Controller;
+use Labrador\Web\Controller\MiddlewareController;
+use Labrador\Web\HttpMethod;
+use Labrador\Web\Router\FastRouteRouter;
+use Labrador\Web\Router\FriendlyRouter;
+use Labrador\Web\Router\Router;
+use Labrador\Web\Router\RoutingResolution;
+use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 

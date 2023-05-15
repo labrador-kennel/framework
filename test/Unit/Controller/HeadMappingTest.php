@@ -1,9 +1,9 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Test\Unit\Controller;
 
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\HeadMapping;
+use Labrador\Web\HttpMethod;
+use Labrador\Web\Router\HeadMapping;
 
 final class HeadMappingTest extends RequestMappingTestCase {
 

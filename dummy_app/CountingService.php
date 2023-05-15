@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\HttpDummyApp;
+namespace Labrador\DummyApp;
 
 use Cspray\AnnotatedContainer\Attribute\Service;
 

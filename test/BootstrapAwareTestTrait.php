@@ -1,12 +1,12 @@
 <?php
 
-namespace Labrador\Http\Test;
+namespace Labrador\Test;
 
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
 use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
-use Labrador\Http\Bootstrap;
-use Labrador\Http\Test\Helper\VfsDirectoryResolver;
+use Labrador\Test\Helper\VfsDirectoryResolver;
+use Labrador\Web\Bootstrap;
 
 trait BootstrapAwareTestTrait {
 
@@ -21,11 +21,11 @@ trait BootstrapAwareTestTrait {
         </source>
     </scanDirectories>
     <definitionProviders>
-        <definitionProvider>Labrador\Http\Autowire\DefinitionProvider</definitionProvider>
+        <definitionProvider>Labrador\Web\Autowire\DefinitionProvider</definitionProvider>
         <definitionProvider>Labrador\AsyncEvent\Autowire\DefinitionProvider</definitionProvider>
     </definitionProviders>
     <observers>
-        <observer>Labrador\Http\Autowire\Observer</observer>
+        <observer>Labrador\Web\Autowire\Observer</observer>
         <observer>Labrador\AsyncEvent\Autowire\Observer</observer>
     </observers>
 </annotatedContainer>

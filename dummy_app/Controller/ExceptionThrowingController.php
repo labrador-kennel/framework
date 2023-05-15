@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\HttpDummyApp\Controller;
+namespace Labrador\DummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Labrador\Http\Controller\SelfDescribingController;
+use Labrador\Web\Controller\SelfDescribingController;
 use RuntimeException;
 
 class ExceptionThrowingController extends SelfDescribingController {

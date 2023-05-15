@@ -7,30 +7,30 @@
  * @since   1.0
  */
 
-namespace Labrador\Http\Test\Unit\Router;
+namespace Labrador\Test\Unit\Router;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\PHPUnit\AsyncTestCase;
-use Labrador\Http\Controller\Controller;
-use Labrador\Http\Exception\InvalidType;
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\FastRouteRouter;
-use Labrador\Http\Router\GetMapping;
-use Labrador\Http\Router\PostMapping;
-use Labrador\Http\Router\PutMapping;
-use Labrador\Http\Router\RequestMapping;
-use Labrador\Http\Router\Route;
-use Labrador\Http\Router\RoutingResolutionReason;
-use Labrador\Http\Test\Unit\Stub\RequestDecoratorMiddleware;
-use Labrador\Http\Test\Unit\Stub\ResponseControllerStub;
-use Labrador\Http\Test\Unit\Stub\ResponseDecoratorMiddleware;
-use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
+use Labrador\Test\Unit\Stub\RequestDecoratorMiddleware;
+use Labrador\Test\Unit\Stub\ResponseControllerStub;
+use Labrador\Test\Unit\Stub\ResponseDecoratorMiddleware;
+use Labrador\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Web\Controller\Controller;
+use Labrador\Web\Exception\InvalidType;
+use Labrador\Web\HttpMethod;
+use Labrador\Web\Router\FastRouteRouter;
+use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\PostMapping;
+use Labrador\Web\Router\PutMapping;
+use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Router\Route;
+use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
 
 class FastRouteRouterTest extends AsyncTestCase {
@@ -225,7 +225,7 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function routerRouteMethodProvider() {
         $args = [];
         foreach (HttpMethod::cases() as $method) {
-            $mappingClass = 'Labrador\\Http\\Router\\' . $method->name . 'Mapping';
+            $mappingClass = 'Labrador\\Web\\Router\\' . $method->name . 'Mapping';
             $args[$method->value] = [new $mappingClass('/foo')];
         }
         return $args;

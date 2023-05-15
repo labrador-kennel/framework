@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
-use Labrador\Http\Application\Analytics\PreciseTime;
+use Labrador\Web\Application\Analytics\PreciseTime;
 
 class KnownIncrementPreciseTime implements PreciseTime {
 

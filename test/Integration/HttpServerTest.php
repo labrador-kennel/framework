@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Integration;
+namespace Labrador\Test\Integration;
 
 use Amp\Http\Client\HttpClientBuilder;
 use Amp\Http\Client\Request;
@@ -10,16 +10,16 @@ use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\Http\Application\Application;
-use Labrador\Http\Test\BootstrapAwareTestTrait;
-use Labrador\Http\Test\Helper\VfsDirectoryResolver;
-use Labrador\HttpDummyApp\Controller\SessionDtoController;
-use Labrador\HttpDummyApp\CountingService;
-use Labrador\HttpDummyApp\Middleware\BarMiddleware;
-use Labrador\HttpDummyApp\Middleware\BazMiddleware;
-use Labrador\HttpDummyApp\Middleware\FooMiddleware;
-use Labrador\HttpDummyApp\Middleware\QuxMiddleware;
-use Labrador\HttpDummyApp\MiddlewareCallRegistry;
+use Labrador\DummyApp\Controller\SessionDtoController;
+use Labrador\DummyApp\CountingService;
+use Labrador\DummyApp\Middleware\BarMiddleware;
+use Labrador\DummyApp\Middleware\BazMiddleware;
+use Labrador\DummyApp\Middleware\FooMiddleware;
+use Labrador\DummyApp\Middleware\QuxMiddleware;
+use Labrador\DummyApp\MiddlewareCallRegistry;
+use Labrador\Test\BootstrapAwareTestTrait;
+use Labrador\Test\Helper\VfsDirectoryResolver;
+use Labrador\Web\Application\Application;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
 use org\bovigo\vfs\vfsStreamWrapper as VirtualStream;

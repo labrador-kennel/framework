@@ -1,13 +1,13 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\HttpDummyApp;
+namespace Labrador\DummyApp;
 
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Sync\LocalKeyedMutex;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Labrador\Http\Application\ApplicationFeatures;
+use Labrador\Web\Application\ApplicationFeatures;
 
 #[Service(primary: true)]
 final class DummyApplicationFeatures implements ApplicationFeatures {

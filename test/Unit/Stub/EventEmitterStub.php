@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Stub;
+namespace Labrador\Test\Unit\Stub;
 
 use Labrador\AsyncEvent\Event;
 use Labrador\AsyncEvent\EventEmitter;

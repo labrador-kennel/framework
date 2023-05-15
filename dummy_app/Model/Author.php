@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\HttpDummyApp\Model;
+namespace Labrador\DummyApp\Model;
 
 class Author {
 

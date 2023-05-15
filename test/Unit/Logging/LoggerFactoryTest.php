@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Logging;
+namespace Labrador\Test\Unit\Logging;
 
-use Labrador\Http\Logging\LoggerType;
-use Labrador\Http\Logging\MonologLoggerFactory;
-use Labrador\Http\Logging\MonologLoggerInitializer;
-use Labrador\Http\Logging\StdoutMonologLoggerInitializer;
+use Labrador\Logging\LoggerType;
+use Labrador\Logging\MonologLoggerFactory;
+use Labrador\Logging\MonologLoggerInitializer;
+use Labrador\Logging\StdoutMonologLoggerInitializer;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Monolog\Test\TestCase;

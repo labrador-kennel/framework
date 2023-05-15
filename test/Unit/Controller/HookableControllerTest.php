@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Test\Unit\Controller;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\HttpStatus;
 use Amp\PHPUnit\AsyncTestCase;
-use Labrador\Http\Test\Unit\Stub\AfterActionResponseDecoratorHookableControllerStub;
-use Labrador\Http\Test\Unit\Stub\BeforeActionResponseHookableControllerStub;
-use Labrador\Http\Test\Unit\Stub\OnlyHandlerHookableControllerStub;
-use Labrador\Http\Test\Unit\Stub\SequenceHookableControllerStub;
+use Labrador\Test\Unit\Stub\AfterActionResponseDecoratorHookableControllerStub;
+use Labrador\Test\Unit\Stub\BeforeActionResponseHookableControllerStub;
+use Labrador\Test\Unit\Stub\OnlyHandlerHookableControllerStub;
+use Labrador\Test\Unit\Stub\SequenceHookableControllerStub;
 use League\Uri\Http;
 
 class HookableControllerTest extends AsyncTestCase {

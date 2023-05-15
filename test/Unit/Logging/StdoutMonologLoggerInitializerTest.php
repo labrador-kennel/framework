@@ -1,14 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Logging;
+namespace Labrador\Test\Unit\Logging;
 
 use Amp\ByteStream\StreamException;
 use Amp\Log\ConsoleFormatter;
 use Amp\Log\StreamHandler;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\Http\Logging\LoggerType;
-use Labrador\Http\Logging\StdoutMonologLoggerInitializer;
+use Labrador\Logging\LoggerType;
+use Labrador\Logging\StdoutMonologLoggerInitializer;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
 

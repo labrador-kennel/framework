@@ -1,6 +1,6 @@
 {
-  "name": "labrador-kennel/http",
-  "description": "A web framework for building applications with Amp and Annotated Container.",
+  "name": "labrador-kennel/framework",
+  "description": "A framework for building asynchronous applications with Amp and Annotated Container.",
   "license": "MIT",
   "scripts": {
     "code-lint": "vendor/bin/labrador-cs src/ test/",
@@ -11,6 +11,7 @@
   "require": {
     "php": "^8.1",
     "ext-json": "*",
+    "ext-pcntl": "*",
     "amphp/http": "^v2.0",
     "amphp/http-server": "^v3.0.0-beta.8",
     "amphp/http-server-session": "^v3.0.0-beta.2",
@@ -39,19 +40,19 @@
   },
   "autoload": {
     "psr-4": {
-      "Labrador\\Http\\": "src"
+      "Labrador\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Labrador\\Http\\Test\\": "test",
-      "Labrador\\HttpDummyApp\\": "dummy_app"
+      "Labrador\\Test\\": "test",
+      "Labrador\\DummyApp\\": "dummy_app"
     }
   },
   "extra": {
     "$annotatedContainer": {
       "initializers": [
-        "Labrador\\Http\\Autowire\\Initializer"
+        "Labrador\\Web\\Autowire\\Initializer"
       ]
     }
   }

@@ -1,19 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Test\Unit\Application\Analytics;
+namespace Labrador\Test\Unit\Application\Analytics;
 
 use Amp\Http\HttpStatus;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Exception;
-use Labrador\Http\Application\Analytics\RequestBenchmark;
-use Labrador\Http\Controller\Controller;
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Router\RoutingResolution;
-use Labrador\Http\Router\RoutingResolutionReason;
-use Labrador\Http\Test\Unit\Stub\KnownIncrementPreciseTime;
-use Labrador\Http\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Test\Unit\Stub\KnownIncrementPreciseTime;
+use Labrador\Test\Unit\Stub\ToStringControllerStub;
+use Labrador\Web\Application\Analytics\RequestBenchmark;
+use Labrador\Web\Controller\Controller;
+use Labrador\Web\HttpMethod;
+use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 

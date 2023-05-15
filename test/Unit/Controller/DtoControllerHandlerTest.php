@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Unit\Controller;
+namespace Labrador\Test\Unit\Controller;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
@@ -12,20 +12,17 @@ use Amp\Sync\LocalKeyedMutex;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\Http\Controller\DtoController;
-use Labrador\Http\Exception\InvalidDtoAttribute;
-use Labrador\Http\Exception\InvalidType;
-use Labrador\Http\HttpMethod;
-use Labrador\Http\Test\BootstrapAwareTestTrait;
-use Labrador\Http\Test\Unit\Stub\BadDtoController;
-use Labrador\HttpDummyApp\Controller\CheckDtoController;
-use League\Uri\Components\Query;
-use League\Uri\Contracts\QueryInterface;
+use Labrador\DummyApp\Controller\CheckDtoController;
+use Labrador\Test\BootstrapAwareTestTrait;
+use Labrador\Test\Unit\Stub\BadDtoController;
+use Labrador\Web\Controller\DtoController;
+use Labrador\Web\Exception\InvalidDtoAttribute;
+use Labrador\Web\Exception\InvalidType;
+use Labrador\Web\HttpMethod;
 use League\Uri\Http;
-use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
-use Psr\Http\Message\UriInterface;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use function Cspray\AnnotatedContainer\autowiredParams;

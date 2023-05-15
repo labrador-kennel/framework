@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Http\Logging;
+namespace Labrador\Logging;
 
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Monolog\Logger;

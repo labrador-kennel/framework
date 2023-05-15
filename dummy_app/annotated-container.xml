@@ -8,6 +8,6 @@
         </source>
     </scanDirectories>
     <containerDefinitionBuilderContextConsumer>
-        Labrador\Http\DependencyInjection\ThirdPartyServicesProvider
+        Labrador\DependencyInjection\ThirdPartyServicesProvider
     </containerDefinitionBuilderContextConsumer>
 </annotatedContainer>

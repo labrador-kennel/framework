@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Http\Test\Helper;
+namespace Labrador\Test\Helper;
 
 use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
 
