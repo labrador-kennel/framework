@@ -1,4 +1,4 @@
-name: 'Unit Tests & Static Analysis'
+name: 'Continuous Integration'
 
 on:
   push:
@@ -13,11 +13,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
       - name: Composer
         uses: php-actions/composer@v6
-      - name: Tests
+        with:
+          php_extensions: pcntl
+
+      - name: Unit Test
         uses: php-actions/phpunit@v3
         with:
           version: "9.5"
+
       - name: Static Analysis
         run: "vendor/bin/psalm.phar --long-progress"
