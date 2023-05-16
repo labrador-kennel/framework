@@ -4,16 +4,14 @@ namespace Labrador\Web\Exception;
 
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\SessionAccess;
+use Labrador\Web\Middleware\OpenSessionMiddleware;
 
 final class SessionNotEnabled extends Exception {
 
-    public static function fromSessionAccessRequired(Controller $controller, SessionAccess $sessionAccess) : self {
+    public static function fromOpenSessionMiddlewareFoundNoSession() : self {
         return new self(sprintf(
-            'The Controller "%s" requires %s Session access but Session support has not been enabled. Please ensure ' .
-            'that you have configured a SessionFactory in your implemented ApplicationFeatures.',
-            $controller->toString(),
-            $sessionAccess->name
+            'The %s was added to a route but no session was found on the request.',
+            OpenSessionMiddleware::class
         ));
     }
-
 }

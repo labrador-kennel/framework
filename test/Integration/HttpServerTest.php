@@ -41,6 +41,7 @@ class HttpServerTest extends AsyncTestCase {
         self::$stdout = StreamBuffer::intercept(STDOUT);
         self::$stderr = StreamBuffer::intercept(STDERR);
         self::$vfs = VirtualFilesystem::setup();
+        VirtualFilesystem::newDirectory('.annotated-container-cache')->at(self::$vfs);
         self::writeStandardConfigurationFile();
 
         self::$container = self::getContainer(['default', 'integration-test'], new VfsDirectoryResolver());
@@ -214,48 +215,6 @@ class HttpServerTest extends AsyncTestCase {
 
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame($method . ' - Universe', $response->getBody()->buffer());
-    }
-
-    public function testDtoActionsHaveSessionAccessWhenDefinedOnClass() : void {
-        $client = (new HttpClientBuilder())->build();
-
-        $request = new Request('http://localhost:4200/dto/controller-session/write');
-        $response = $client->request($request);
-
-        self::assertSame(200, $response->getStatus());
-
-        $cookie = ResponseCookie::fromHeader($response->getHeader('Set-Cookie'));
-
-        self::assertSame('session', $cookie->getName());
-        self::assertNotEmpty($cookie->getValue());
-
-        $request = new Request('http://localhost:4200/dto/controller-session/read');
-        $request->setHeader('Cookie', 'session=' . $cookie->getValue());
-
-        $response = $client->request($request);
-
-        self::assertSame(SessionDtoController::class . '::write', $response->getBody()->read());
-    }
-
-    public function testDtoActionsHaveSessionAccessWhenDefinedOnMethods() : void {
-        $client = (new HttpClientBuilder())->build();
-
-        $request = new Request('http://localhost:4200/dto/action-session/write');
-        $response = $client->request($request);
-
-        self::assertSame(200, $response->getStatus());
-
-        $cookie = ResponseCookie::fromHeader($response->getHeader('Set-Cookie'));
-
-        self::assertSame('session', $cookie->getName());
-        self::assertNotEmpty($cookie->getValue());
-
-        $request = new Request('http://localhost:4200/dto/action-session/read');
-        $request->setHeader('Cookie', 'session=' . $cookie->getValue());
-
-        $response = $client->request($request);
-
-        self::assertSame('Known Session Value', $response->getBody()->read());
     }
 
     public function testCorrectAccessLogOutputSendToStdout() : void {

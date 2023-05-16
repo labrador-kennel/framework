@@ -1,0 +1,30 @@
+<?php declare(strict_types=1);
+
+namespace Labrador\Web\Middleware;
+
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
+use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\Session;
+use Labrador\Web\Exception\SessionNotEnabled;
+
+#[RouteMiddleware]
+final class OpenSessionMiddleware implements Middleware {
+
+    public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
+        if (!$request->hasAttribute('session')) {
+            throw SessionNotEnabled::fromOpenSessionMiddlewareFoundNoSession();
+        }
+
+        $session = $request->getAttribute('session');
+        assert($session instanceof Session);
+        $session->open();
+
+        $response = $requestHandler->handleRequest($request);
+
+        $session->save();
+
+        return $response;
+    }
+}

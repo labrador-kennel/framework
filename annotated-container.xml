@@ -18,5 +18,5 @@
   <logging>
     <stdout />
   </logging>
-  <!-- <cacheDir>.annotated-container-cache</cacheDir> -->
+  <cacheDir>.annotated-container-cache</cacheDir>
 </annotatedContainer>
