@@ -10,7 +10,7 @@ use Amp\Http\Server\Session\Session;
 use Labrador\Web\Exception\SessionNotEnabled;
 
 #[RouteMiddleware]
-final class OpenSessionMiddleware implements Middleware {
+final class OpenSession implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
         if (!$request->hasAttribute('session')) {

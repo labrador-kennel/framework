@@ -13,14 +13,14 @@ use Amp\Http\Server\Session\SessionStorage;
 use Amp\Sync\LocalKeyedMutex;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
 use Labrador\Web\Exception\SessionNotEnabled;
-use Labrador\Web\Middleware\OpenSessionMiddleware;
+use Labrador\Web\Middleware\OpenSession;
 use League\Uri\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class OpenSessionMiddlewareTest extends TestCase {
 
-    private OpenSessionMiddleware $subject;
+    private OpenSession $subject;
 
     private Client&MockObject $client;
 
@@ -31,7 +31,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
     private string $sessionId;
 
     protected function setUp() : void {
-        $this->subject = new OpenSessionMiddleware();
+        $this->subject = new OpenSession();
         $this->client = $this->getMockBuilder(Client::class)->getMock();
     }
 
@@ -40,7 +40,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
         $handler->expects($this->never())->method('handleRequest');
 
         $this->expectException(SessionNotEnabled::class);
-        $this->expectExceptionMessage('The ' . OpenSessionMiddleware::class . ' was added to a route but no session was found on the request.');
+        $this->expectExceptionMessage('The ' . OpenSession::class . ' was added to a route but no session was found on the request.');
 
         $this->subject->handleRequest(
             new Request($this->client, 'GET', Http::createFromString('https://example.com')),

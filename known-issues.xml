@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.11.0@c9b192ab8400fdaf04b2b13d110575adc879aa90">
+  <file src="src/Security/InMemorySecretsSource.php">
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$this->data]]></code>
+      <code>array</code>
+    </MixedReturnTypeCoercion>
+  </file>
+  <file src="src/Security/JsonFileSecretsSource.php">
+    <MixedAssignment>
+      <code><![CDATA[$this->data]]></code>
+    </MixedAssignment>
+    <MixedReturnTypeCoercion>
+      <code><![CDATA[$this->data]]></code>
+      <code>array</code>
+    </MixedReturnTypeCoercion>
+  </file>
   <file src="src/Web/Application/Analytics/RequestBenchmark.php">
     <PossiblyNullOperand>
       <code><![CDATA[$this->middlewareCompleted]]></code>
@@ -18,5 +33,24 @@
     <ArgumentTypeCoercion>
       <code>$k</code>
     </ArgumentTypeCoercion>
+  </file>
+  <file src="src/Web/Security/CsrfTokenManager.php">
+    <MixedArgument>
+      <code>$id</code>
+      <code>$storeIds</code>
+    </MixedArgument>
+    <MixedArrayAssignment>
+      <code>$storeIds[]</code>
+    </MixedArrayAssignment>
+    <MixedAssignment>
+      <code>$id</code>
+      <code>$storeIds</code>
+      <code>$storeIds</code>
+      <code>$token</code>
+    </MixedAssignment>
+    <PossiblyNullArgument>
+      <code><![CDATA[$session->get('csrfStoreIds')]]></code>
+      <code><![CDATA[$session->get('csrfStoreIds')]]></code>
+    </PossiblyNullArgument>
   </file>
 </files>
