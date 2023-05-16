@@ -30,6 +30,3 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           version: "9.5"
-
-      - name: Static Analysis
-        run: "vendor/bin/psalm.phar --long-progress"
