@@ -23,6 +23,7 @@ jobs:
       - name: Composer
         uses: php-actions/composer@v6
         with:
+          php_version: "8.2"
           php_extensions: pcntl
 
       - name: Unit Test
