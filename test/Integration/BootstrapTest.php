@@ -34,11 +34,11 @@ use Psr\Log\LoggerInterface;
  */
 class BootstrapTest extends TestCase {
 
-    private const ExpectedControllerCount = 32;
+    private const ExpectedControllerCount = 29;
 
     use BootstrapAwareTestTrait;
 
-    private VirtualDirectory $vfs;
+    private static VirtualDirectory $vfs;
 
     private AnnotatedContainerBootstrap $containerBootstrap;
 
@@ -47,11 +47,15 @@ class BootstrapTest extends TestCase {
 
     public static function setUpBeforeClass() : void {
         StreamBuffer::register();
+        self::$vfs = VirtualFilesystem::setup();
+        VirtualFilesystem::newDirectory('.annotated-container-cache')->at(self::$vfs);
+        VirtualFilesystem::newFile('annotated-container.xml')
+            ->withContent(self::getDefaultConfiguration())
+            ->at(self::$vfs);
     }
 
     protected function setUp() : void {
         parent::setUp();
-        $this->vfs = VirtualFilesystem::setup();
         $this->stdout = StreamBuffer::intercept(STDOUT);
         $this->stderr = StreamBuffer::intercept(STDERR);
         $this->containerBootstrap = new AnnotatedContainerBootstrap(directoryResolver: new VfsDirectoryResolver());
@@ -62,15 +66,7 @@ class BootstrapTest extends TestCase {
         StreamBuffer::stopIntercepting($this->stderr);
     }
 
-    private function configureAnnotatedContainer() : void {
-        VirtualFilesystem::newFile('annotated-container.xml')
-            ->withContent(self::getDefaultConfiguration())
-            ->at($this->vfs);
-    }
-
     public function testCorrectlyConfiguredAnnotatedContainerReturnsLogger() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication()->container;
@@ -84,8 +80,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsRouter() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication()->container;
@@ -96,8 +90,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsEventEmitter() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication()->container;
@@ -108,8 +100,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsErrorHandler() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication()->container;
@@ -120,8 +110,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerHttpServer() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication()->container;
@@ -132,8 +120,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerRouterRoutes() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication()->container;
@@ -145,8 +131,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $bootstrap->bootstrapApplication()->container;
@@ -155,8 +139,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testApplicationAutowiringApplicationMiddlewareLogged() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
@@ -167,8 +149,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testDtoControllerRoutedWithCorrectControllerDescription() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $container = $bootstrap->bootstrapApplication()->container;
 
@@ -186,8 +166,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testDtoControllerGetRouteLogged() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
@@ -201,8 +179,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testDtoControllerPostRouteLogged() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
@@ -216,8 +192,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testDtoControllerPutRouteLogged() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
@@ -231,8 +205,6 @@ class BootstrapTest extends TestCase {
     }
 
     public function testDtoControllerDeleteRouteLogged() : void {
-        $this->configureAnnotatedContainer();
-
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 

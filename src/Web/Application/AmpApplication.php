@@ -132,6 +132,8 @@ final class AmpApplication implements Application, RequestHandler {
 
                 assert($controller instanceof Controller);
 
+                $request->setAttribute(RequestAttribute::Controller->value, $controller);
+
                 $this->emitter->queue(new WillInvokeController($controller, $requestId));
 
                 $handler = $this->getMiddlewareStack($controller, $benchmark);
@@ -221,67 +223,10 @@ final class AmpApplication implements Application, RequestHandler {
                     );
                 }
 
-                $sessionAccess = $this->getControllerSessionAccess($requestHandler);
-                if (!$this->isSessionSupported && $sessionAccess !== null) {
-                    throw SessionNotEnabled::fromSessionAccessRequired($requestHandler, $sessionAccess);
-                }
-
-                if ($this->isSessionSupported) {
-                    $session = $request->getAttribute(Session::class);
-                    assert($session instanceof Session);
-                    if ($sessionAccess === SessionAccess::Read) {
-                        $session->read();
-                    } else if ($sessionAccess === SessionAccess::Write) {
-                        $session->open();
-                    }
-                }
-
                 $this->benchmark->middlewareProcessingCompleted();
                 $this->benchmark->controllerProcessingStarted($requestHandler);
 
-                $response = $requestHandler->handleRequest($request);
-
-                if ($this->isSessionSupported) {
-                    $sessionWrite = $request->getAttribute(Session::class);
-                    assert($sessionWrite instanceof Session);
-                    if ($sessionAccess === SessionAccess::Write) {
-                        $sessionWrite->save();
-                    }
-                }
-
-                return $response;
-            }
-
-            private function getControllerSessionAccess(Controller $controller) : ?SessionAccess {
-                $method = null;
-                if ($controller instanceof DtoController) {
-                    [$controller, $method] = explode(
-                        '::',
-                        str_replace(['DtoHandler<', '>'], '', $controller->toString())
-                    );
-                }
-
-                assert(is_object($controller) || class_exists($controller));
-
-                $reflection = ReflectionCache::reflectionClass($controller);
-                $sessionAccess = $this->getSessionAccessFromReflection($reflection);
-
-                if ($sessionAccess === null && $method !== null) {
-                    $sessionAccess = $this->getSessionAccessFromReflection($reflection->getMethod($method));
-                }
-
-                return $sessionAccess;
-            }
-
-            private function getSessionAccessFromReflection(ReflectionClass|ReflectionMethod $reflection) : ?SessionAccess {
-                $requireSessionAttributes = $reflection->getAttributes(RequireSession::class, \ReflectionAttribute::IS_INSTANCEOF);
-                $sessionAccess = null;
-                if ($requireSessionAttributes !== []) {
-                    $requireSession = $requireSessionAttributes[0]->newInstance();
-                    $sessionAccess = $requireSession->access;
-                }
-
-                return $sessionAccess;
+                return $requestHandler->handleRequest($request);
             }
         };
     }

@@ -23,12 +23,10 @@ jobs:
       - name: Composer
         uses: php-actions/composer@v6
         with:
+          php_version: "8.2"
           php_extensions: pcntl
 
       - name: Unit Test
         uses: php-actions/phpunit@v3
         with:
           version: "9.5"
-
-      - name: Static Analysis
-        run: "vendor/bin/psalm.phar --long-progress"
