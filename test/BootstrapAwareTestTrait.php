@@ -39,8 +39,7 @@ XML;
         BootstrappingDirectoryResolver $directoryResolver = null
     ) : AnnotatedContainer {
         $containerBootstrap = new AnnotatedContainerBootstrap($directoryResolver ?? new VfsDirectoryResolver());
-        $bootstrap = new Bootstrap($containerBootstrap, profiles: $profiles);
-        return $bootstrap->bootstrapApplication()->container;
+        return $containerBootstrap->bootstrapContainer(profiles: $profiles);
     }
 
 }

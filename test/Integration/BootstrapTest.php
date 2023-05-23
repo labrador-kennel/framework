@@ -5,7 +5,11 @@ namespace Labrador\Test\Integration;
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\SocketHttpServer;
+use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
+use Cspray\AnnotatedContainer\Bootstrap\ContainerCreatedObserver;
+use Cspray\AnnotatedContainer\Definition\ContainerDefinition;
+use Cspray\AnnotatedContainer\Profiles\ActiveProfiles;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\AsyncEvent\AmpEventEmitter;
@@ -42,6 +46,8 @@ class BootstrapTest extends TestCase {
 
     private AnnotatedContainerBootstrap $containerBootstrap;
 
+    private AnnotatedContainer $container;
+
     private BufferIdentifier $stdout;
     private BufferIdentifier $stderr;
 
@@ -59,6 +65,17 @@ class BootstrapTest extends TestCase {
         $this->stdout = StreamBuffer::intercept(STDOUT);
         $this->stderr = StreamBuffer::intercept(STDERR);
         $this->containerBootstrap = new AnnotatedContainerBootstrap(directoryResolver: new VfsDirectoryResolver());
+        $this->containerBootstrap->addObserver(
+            new class(fn(AnnotatedContainer $container) => $this->container = $container) implements ContainerCreatedObserver {
+                public function __construct(
+                    private readonly \Closure $setContainer
+                ) {}
+
+                public function notifyContainerCreated(ActiveProfiles $activeProfiles, ContainerDefinition $containerDefinition, AnnotatedContainer $container) : void {
+                    ($this->setContainer)($container);
+                }
+            }
+        );
     }
 
     protected function tearDown() : void {
@@ -69,9 +86,9 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerReturnsLogger() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication()->container;
+        $bootstrap->bootstrapApplication();
 
-        $logger = $container->get(LoggerInterface::class);
+        $logger = $this->container->get(LoggerInterface::class);
 
         self::assertInstanceOf(Logger::class, $logger);
 
@@ -82,9 +99,9 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerReturnsRouter() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication()->container;
+        $bootstrap->bootstrapApplication();
 
-        $router = $container->get(Router::class);
+        $router = $this->container->get(Router::class);
 
         self::assertInstanceOf(LoggingRouter::class, $router);
     }
@@ -92,9 +109,9 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerReturnsEventEmitter() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication()->container;
+        $bootstrap->bootstrapApplication();
 
-        $emitter = $container->get(EventEmitter::class);
+        $emitter = $this->container->get(EventEmitter::class);
 
         self::assertInstanceOf(AmpEventEmitter::class, $emitter);
     }
@@ -102,9 +119,9 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerReturnsErrorHandler() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication()->container;
+        $bootstrap->bootstrapApplication();
 
-        $errorHandlerFactory = $container->get(ErrorHandlerFactory::class);
+        $errorHandlerFactory = $this->container->get(ErrorHandlerFactory::class);
 
         self::assertInstanceOf(DefaultErrorHandler::class, $errorHandlerFactory->createErrorHandler());
     }
@@ -112,9 +129,9 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerHttpServer() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication()->container;
+        $container = $bootstrap->bootstrapApplication();
 
-        $httpServer = $container->get(HttpServer::class);
+        $httpServer = $this->container->get(HttpServer::class);
 
         self::assertInstanceOf(SocketHttpServer::class, $httpServer);
     }
@@ -122,10 +139,10 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerRouterRoutes() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication()->container;
+        $container = $bootstrap->bootstrapApplication();
 
         /** @var Router $router */
-        $router = $container->get(Router::class);
+        $router = $this->container->get(Router::class);
 
         self::assertCount(self::ExpectedControllerCount, $router->getRoutes());
     }
@@ -133,7 +150,7 @@ class BootstrapTest extends TestCase {
     public function testApplicationAutowiringControllersLogged() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $bootstrap->bootstrapApplication()->container;
+        $bootstrap->bootstrapApplication();
 
         self::assertStringContainsString('Autowiring route GET /hello/world to HelloWorld controller.', StreamBuffer::output($this->stdout));
     }
@@ -150,9 +167,9 @@ class BootstrapTest extends TestCase {
 
     public function testDtoControllerRoutedWithCorrectControllerDescription() : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $container = $bootstrap->bootstrapApplication()->container;
+        $container = $bootstrap->bootstrapApplication();
 
-        $router = $container->get(Router::class);
+        $router = $this->container->get(Router::class);
 
         self::assertInstanceOf(Router::class, $router);
 

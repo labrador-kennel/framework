@@ -18,7 +18,7 @@ final class Bootstrap {
         private readonly array $profiles = ['default'],
     ) {}
 
-    public function bootstrapApplication() : BootstrapResults {
+    public function bootstrapApplication() : Application {
         $memoryLimit = ini_get('memory_limit');
         getStdout()->write($this->labradorAscii() . PHP_EOL);
         getStdout()->write('PHP Version: ' . PHP_VERSION . PHP_EOL);
@@ -39,7 +39,7 @@ final class Bootstrap {
         $app = $container->get(Application::class);
         assert($app instanceof Application);
 
-        return new BootstrapResults($app, $container);
+        return $app;
     }
 
     private function labradorAscii() : string {

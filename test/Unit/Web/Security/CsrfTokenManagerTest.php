@@ -25,8 +25,6 @@ final class CsrfTokenManagerTest extends TestCase {
 
     private readonly TokenGenerator&MockObject $tokenGenerator;
 
-    private readonly Cache $cache;
-
     private readonly Request $request;
 
     private readonly Session $session;
@@ -37,7 +35,6 @@ final class CsrfTokenManagerTest extends TestCase {
 
     protected function setUp() : void {
         $this->tokenGenerator = $this->getMockBuilder(TokenGenerator::class)->getMock();
-        $this->cache = new LocalCache();
         $this->request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             'GET',
@@ -50,7 +47,7 @@ final class CsrfTokenManagerTest extends TestCase {
             $idGenerator,
             $this->sessionId = $idGenerator->generate()
         );
-        $this->subject = new CsrfTokenManager($this->tokenGenerator, $this->cache);
+        $this->subject = new CsrfTokenManager($this->tokenGenerator);
     }
 
     public function testGenerateAndStoreWithoutSessionThrowsException() : void {
@@ -73,36 +70,34 @@ final class CsrfTokenManagerTest extends TestCase {
         $this->session->save();
 
         $data = $this->storage->read($this->sessionId);
-        self::assertArrayHasKey('csrfStoreIds', $data);
-        self::assertJson($data['csrfStoreIds']);
+        self::assertArrayHasKey('csrfTokens', $data);
+        self::assertJson($data['csrfTokens']);
 
-        $storeIds = json_decode($data['csrfStoreIds'], true);
-        self::assertCount(1, $storeIds);
-        self::assertSame('known-token', $this->cache->get($storeIds[0]));
+        $tokens = json_decode($data['csrfTokens'], true);
+        self::assertCount(1, $tokens);
+        self::assertSame('known-token', $tokens[0]);
         self::assertSame('known-token', $token);
     }
 
     public function testGenerateAndStoreWithSessionAndExistingCsrfTokenAddsToStore() : void {
-        $cacheId = Uuid::uuid4()->toString();
         $this->request->setAttribute('session', $this->session);
         $this->tokenGenerator->expects($this->once())
             ->method('generateToken')
             ->willReturn('known-token');
-        $this->cache->set($cacheId, 'existing-token');
-        $this->storage->write($this->sessionId, ['csrfStoreIds' => json_encode([$cacheId])]);
+        $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['existing-token'])]);
 
         $this->session->open();
         $token = $this->subject->generateAndStore($this->request);
         $this->session->save();
 
         $data = $this->storage->read($this->sessionId);
-        self::assertArrayHasKey('csrfStoreIds', $data);
-        self::assertJson($data['csrfStoreIds']);
+        self::assertArrayHasKey('csrfTokens', $data);
+        self::assertJson($data['csrfTokens']);
 
-        $storeIds = json_decode($data['csrfStoreIds'], true);
-        self::assertCount(2, $storeIds);
-        self::assertSame('existing-token', $this->cache->get($storeIds[0]));
-        self::assertSame('known-token', $this->cache->get($storeIds[1]));
+        $tokens = json_decode($data['csrfTokens'], true);
+        self::assertCount(2, $tokens);
+        self::assertSame('existing-token', $tokens[0]);
+        self::assertSame('known-token', $tokens[1]);
         self::assertSame('known-token', $token);
     }
 
@@ -124,64 +119,60 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testValidateAndExpireWithValidTokenInSessionReturnsTrueAndRemovesToken() : void {
-        $id = Uuid::uuid4()->toString();
         $this->request->setAttribute('session', $this->session);
-        $this->storage->write($this->sessionId, ['csrfStoreIds' => json_encode([$id])]);
-        $this->cache->set($id, 'known-token');
+        $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['known-token'])]);
 
         $this->session->open();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
         $this->session->save();
 
         self::assertTrue($valid);
-        self::assertNull($this->cache->get($id));
+        self::assertSame(
+            ['csrfTokens' => '[]'],
+            $this->storage->read($this->sessionId)
+        );
     }
 
     public function testValidateAndExpireWithSessionIdButNoTokensInCacheReturnsFalseAndHasNoStore() : void {
-        $id = Uuid::uuid4()->toString();
         $this->request->setAttribute('session', $this->session);
-        $this->storage->write($this->sessionId, ['csrfStoreIds' => json_encode([$id])]);
 
         $this->session->open();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
         $this->session->save();
 
         self::assertFalse($valid);
-        self::assertNull($this->cache->get($id));
-    }
-
-    public function testValidateAndExpireWithSessionIdHasCsrfStoreIdRemovedFromSession() : void {
-        $id = Uuid::uuid4()->toString();
-        $this->request->setAttribute('session', $this->session);
-        $this->storage->write($this->sessionId, ['csrfStoreIds' => json_encode([$id])]);
-        $this->cache->set($id, 'known-token');
-
-        $this->session->open();
-        $this->subject->validateAndExpire($this->request, 'known-token');
-        $this->session->save();
-
         self::assertSame(
-            ['csrfStoreIds' => json_encode([])],
+            [],
             $this->storage->read($this->sessionId)
         );
     }
 
-    public function testValidateAndExpireWithMultipleStoreIdsHandledCorrectly() : void {
-        $id = Uuid::uuid4()->toString();
+    public function testValidateAndExpireWithSessionIdHasCsrfStoreIdRemovedFromSession() : void {
         $this->request->setAttribute('session', $this->session);
-        $this->storage->write($this->sessionId, ['csrfStoreIds' => json_encode([$existingId = Uuid::uuid4()->toString(), $id])]);
-
-        $this->cache->set($existingId, 'other-existing-token');
-        $this->cache->set($id, 'known-token');
+        $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['known-token'])]);
 
         $this->session->open();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
         $this->session->save();
 
         self::assertTrue($valid);
-        self::assertNull($this->cache->get($id));
         self::assertSame(
-            ['csrfStoreIds' => json_encode([$existingId])],
+            ['csrfTokens' => json_encode([])],
+            $this->storage->read($this->sessionId)
+        );
+    }
+
+    public function testValidateAndExpireWithMultipleStoreIdsHandledCorrectly() : void {
+        $this->request->setAttribute('session', $this->session);
+        $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['other-existing-token', 'known-token'])]);
+
+        $this->session->open();
+        $valid = $this->subject->validateAndExpire($this->request, 'known-token');
+        $this->session->save();
+
+        self::assertTrue($valid);
+        self::assertSame(
+            ['csrfTokens' => json_encode(['other-existing-token'])],
             $this->storage->read($this->sessionId)
         );
     }
