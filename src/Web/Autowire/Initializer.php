@@ -7,7 +7,7 @@ use Cspray\AnnotatedContainer\Bootstrap\ThirdPartyInitializer;
 final class Initializer extends ThirdPartyInitializer {
 
     public function getPackageName() : string {
-        return 'labrador-kennel/http';
+        return 'labrador-kennel/framework';
     }
 
     public function getRelativeScanDirectories() : array {

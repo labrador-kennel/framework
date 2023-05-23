@@ -12,7 +12,7 @@ final class InitializerTest extends TestCase {
     public function testGetPackageName() : void {
         $actual = (new Initializer())->getPackageName();
 
-        self::assertSame('labrador-kennel/http', $actual);
+        self::assertSame('labrador-kennel/framework', $actual);
     }
 
     public function testGetScanDirectories() : void {

@@ -16,14 +16,13 @@ use function Amp\trapSignal;
 use const SIGILL;
 use const SIGINT;
 
-final class WebCommand implements Command {
+final class ServeCommand implements Command {
 
     public function __construct(
-        private readonly string $labradorContainerBootstrap,
     ) {}
 
     public function getName() : string {
-        return 'web';
+        return 'serve';
     }
 
     public function getHelp() : string {
@@ -31,7 +30,8 @@ final class WebCommand implements Command {
     }
 
     public function handle(Input $input, TerminalOutput $output) : int {
-        if (!is_file($this->labradorContainerBootstrap)) {
+        $bootstrap = $input->getOption('bootstrap');
+        if (!is_string($bootstrap) || !is_file($bootstrap)) {
             $output->stderr->write('<bold><fg:red>The provided Annotated Container bootstrap is not a valid file!</fg:red></bold>');
             return 1;
         }
@@ -43,7 +43,7 @@ final class WebCommand implements Command {
             );
         }
 
-        $containerBootstrapCallable = include $this->labradorContainerBootstrap;
+        $containerBootstrapCallable = include $bootstrap;
         if (!is_callable($containerBootstrapCallable)) {
             $output->stderr->write('<bold><fg:red>The Annotated Container bootstrap file MUST return a callable that returns a Cspray\AnnotatedContainer\Bootstrap\Bootstrap instance.</fg:red></bold>');
             return 1;
@@ -60,15 +60,15 @@ final class WebCommand implements Command {
         }
 
         $bootstrap = new HttpBootstrap($containerBootstrap);
-        $results = $bootstrap->bootstrapApplication();
+        $app = $bootstrap->bootstrapApplication();
 
-        $results->application->start();
+        $app->start();
 
         $handler->close();
 
         trapSignal([SIGILL, SIGINT]);
 
-        $results->application->stop();
+        $app->stop();
 
         return 0;
     }
