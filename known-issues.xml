@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.11.0@c9b192ab8400fdaf04b2b13d110575adc879aa90">
+  <file src="src/Cli/ServeCommand.php">
+    <UnresolvableInclude>
+      <code>include $bootstrap</code>
+    </UnresolvableInclude>
+  </file>
   <file src="src/Security/InMemorySecretsSource.php">
     <MixedReturnTypeCoercion>
       <code><![CDATA[$this->data]]></code>
@@ -29,28 +34,35 @@
       <code><![CDATA[$this->profiles]]></code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Web/Controller/StaticAssetController.php">
+    <MixedOperand>
+      <code><![CDATA[$request->getAttribute('path')]]></code>
+    </MixedOperand>
+  </file>
   <file src="src/Web/Router/FastRouteRouter.php">
     <ArgumentTypeCoercion>
       <code>$k</code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Web/Security/CsrfTokenManager.php">
-    <MixedArgument>
-      <code>$id</code>
-      <code>$storeIds</code>
-    </MixedArgument>
+    <MixedArrayAccess>
+      <code>$tokens[$index]</code>
+    </MixedArrayAccess>
     <MixedArrayAssignment>
-      <code>$storeIds[]</code>
+      <code>$tokens[]</code>
     </MixedArrayAssignment>
+    <MixedArrayOffset>
+      <code>$tokens[$index]</code>
+    </MixedArrayOffset>
     <MixedAssignment>
-      <code>$id</code>
-      <code>$storeIds</code>
-      <code>$storeIds</code>
+      <code>$index</code>
       <code>$token</code>
+      <code>$tokens</code>
+      <code>$tokens</code>
     </MixedAssignment>
     <PossiblyNullArgument>
-      <code><![CDATA[$session->get('csrfStoreIds')]]></code>
-      <code><![CDATA[$session->get('csrfStoreIds')]]></code>
+      <code><![CDATA[$session->get('csrfTokens')]]></code>
+      <code><![CDATA[$session->get('csrfTokens')]]></code>
     </PossiblyNullArgument>
   </file>
 </files>

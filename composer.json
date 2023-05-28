@@ -28,7 +28,8 @@
     "ocramius/package-versions": "^2.7",
     "php-di/php-di": "^v7.0",
     "ramsey/uuid": "^4.4",
-    "adbario/php-dot-notation": "^3.3"
+    "adbario/php-dot-notation": "^3.3",
+    "amphp/http-server-static-content": "^2.0@beta"
   },
   "require-dev": {
     "amphp/http-client": "^v5.0",

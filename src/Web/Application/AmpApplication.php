@@ -10,6 +10,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
+use Amp\Http\Server\StaticContent\DocumentRoot;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Internal\ReflectionCache;
 use Labrador\Web\Application\Analytics\PreciseTime;
@@ -19,6 +20,7 @@ use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\DtoController;
 use Labrador\Web\Controller\RequireSession;
 use Labrador\Web\Controller\SessionAccess;
+use Labrador\Web\Controller\StaticAssetController;
 use Labrador\Web\ErrorHandlerFactory;
 use Labrador\Web\Event\AddRoutes;
 use Labrador\Web\Event\ApplicationStarted;
@@ -30,6 +32,7 @@ use Labrador\Web\Event\WillInvokeController;
 use Labrador\Web\Exception\SessionNotEnabled;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
+use Labrador\Web\Router\GetMapping;
 use Labrador\Web\Router\Router;
 use Labrador\Web\Router\RoutingResolution;
 use Labrador\Web\Router\RoutingResolutionReason;
@@ -69,6 +72,21 @@ final class AmpApplication implements Application, RequestHandler {
             $this->addMiddleware(
                 $sessionMiddleware,
                 Priority::Critical
+            );
+        }
+
+        $staticAssetSettings = $this->features->getStaticAssetSettings();
+        if ($staticAssetSettings !== null) {
+            $this->router->addRoute(
+                new GetMapping(sprintf('/%s/{path:.+}', $staticAssetSettings->pathPrefix)),
+                new StaticAssetController(
+                    new DocumentRoot(
+                        $this->httpServer,
+                        $this->getErrorHandler(),
+                        $staticAssetSettings->assetDir
+                    ),
+                    $this->getErrorHandler()
+                )
             );
         }
     }

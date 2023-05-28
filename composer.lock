@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7ad87049ac4a2d2186e839a2bcd0be57",
+    "content-hash": "01f7e47ad61fa3e28254d42693915f98",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -369,6 +369,91 @@
             "time": "2023-01-21T16:00:09+00:00"
         },
         {
+            "name": "amphp/file",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/file.git",
+                "reference": "1c9f0ebdb20ae05f1540fca3e7a517f7f166652b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amphp/file/zipball/1c9f0ebdb20ae05f1540fca3e7a517f7f166652b",
+                "reference": "1c9f0ebdb20ae05f1540fca3e7a517f7f166652b",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3",
+                "amphp/byte-stream": "^2",
+                "amphp/cache": "^2",
+                "amphp/parallel": "^2.1",
+                "amphp/sync": "^2",
+                "php": ">=8.1",
+                "revolt/event-loop": "^1"
+            },
+            "require-dev": {
+                "amphp/php-cs-fixer-config": "^2",
+                "amphp/phpunit-util": "^3",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "^5.4"
+            },
+            "suggest": {
+                "ext-eio": "^2 || ^3",
+                "ext-uv": "^0.3 || ^0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Amp\\File\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Lowrey",
+                    "email": "rdlowrey@php.net"
+                },
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                }
+            ],
+            "description": "Non-blocking access to the filesystem based on Amp and Revolt.",
+            "homepage": "https://github.com/amphp/file",
+            "keywords": [
+                "amp",
+                "amphp",
+                "async",
+                "disk",
+                "file",
+                "filesystem",
+                "io",
+                "non-blocking",
+                "static"
+            ],
+            "support": {
+                "issues": "https://github.com/amphp/file/issues",
+                "source": "https://github.com/amphp/file/tree/v3.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-03-02T22:29:08+00:00"
+        },
+        {
             "name": "amphp/hpack",
             "version": "v3.1.1",
             "source": {
@@ -679,6 +764,90 @@
             "time": "2023-04-22T16:03:26+00:00"
         },
         {
+            "name": "amphp/http-server-static-content",
+            "version": "v2.0.0-beta.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/http-server-static-content.git",
+                "reference": "074b9e0ba82723ddbf81c1b4e8eff46f8e303b00"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amphp/http-server-static-content/zipball/074b9e0ba82723ddbf81c1b4e8eff46f8e303b00",
+                "reference": "074b9e0ba82723ddbf81c1b4e8eff46f8e303b00",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3",
+                "amphp/byte-stream": "^2",
+                "amphp/cache": "^2",
+                "amphp/file": "^3",
+                "amphp/http": "^2-dev",
+                "amphp/http-server": "^3",
+                "amphp/pipeline": "^1",
+                "php": ">=8.1",
+                "revolt/event-loop": "^1 || ^0.2.4"
+            },
+            "require-dev": {
+                "amphp/http-server-router": "^2",
+                "amphp/log": "^2",
+                "amphp/php-cs-fixer-config": "^2",
+                "amphp/phpunit-util": "^3",
+                "danielmiessler/sec-lists": "2022.4",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "^5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "Amp\\Http\\Server\\StaticContent\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel Lowrey",
+                    "email": "rdlowrey@php.net"
+                },
+                {
+                    "name": "Bob Weinand"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                },
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                }
+            ],
+            "description": "Static content request handler for Amp's HTTP server.",
+            "homepage": "https://github.com/amphp/http-server-static-content",
+            "keywords": [
+                "file",
+                "http",
+                "server",
+                "static"
+            ],
+            "support": {
+                "issues": "https://github.com/amphp/http-server-static-content/issues",
+                "source": "https://github.com/amphp/http-server-static-content/tree/v2.0.0-beta.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-02-05T20:54:47+00:00"
+        },
+        {
             "name": "amphp/log",
             "version": "v2.0.0-beta.2",
             "source": {
@@ -751,6 +920,89 @@
                 }
             ],
             "time": "2023-02-03T03:34:16+00:00"
+        },
+        {
+            "name": "amphp/parallel",
+            "version": "v2.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amphp/parallel.git",
+                "reference": "ba11031b8664134b13c150530ae041a75e631858"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/amphp/parallel/zipball/ba11031b8664134b13c150530ae041a75e631858",
+                "reference": "ba11031b8664134b13c150530ae041a75e631858",
+                "shasum": ""
+            },
+            "require": {
+                "amphp/amp": "^3",
+                "amphp/byte-stream": "^2",
+                "amphp/parser": "^1",
+                "amphp/pipeline": "^1",
+                "amphp/process": "^2",
+                "amphp/serialization": "^1",
+                "amphp/socket": "^2",
+                "amphp/sync": "^2",
+                "php": ">=8.1",
+                "revolt/event-loop": "^1"
+            },
+            "require-dev": {
+                "amphp/php-cs-fixer-config": "^2",
+                "amphp/phpunit-util": "^3",
+                "phpunit/phpunit": "^9",
+                "psalm/phar": "^5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Context/functions.php",
+                    "src/Context/Internal/functions.php",
+                    "src/Ipc/functions.php",
+                    "src/Worker/functions.php"
+                ],
+                "psr-4": {
+                    "Amp\\Parallel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Piotrowski",
+                    "email": "aaron@trowski.com"
+                },
+                {
+                    "name": "Niklas Keller",
+                    "email": "me@kelunik.com"
+                },
+                {
+                    "name": "Stephen Coakley",
+                    "email": "me@stephencoakley.com"
+                }
+            ],
+            "description": "Parallel processing component for Amp.",
+            "homepage": "https://github.com/amphp/parallel",
+            "keywords": [
+                "async",
+                "asynchronous",
+                "concurrent",
+                "multi-processing",
+                "multi-threading"
+            ],
+            "support": {
+                "issues": "https://github.com/amphp/parallel/issues",
+                "source": "https://github.com/amphp/parallel/tree/v2.2.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/amphp",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-05-22T03:33:27+00:00"
         },
         {
             "name": "amphp/parser",
@@ -5832,6 +6084,7 @@
         "amphp/http-server": 10,
         "amphp/http-server-session": 10,
         "labrador-kennel/async-event-autowire": 20,
+        "amphp/http-server-static-content": 10,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
