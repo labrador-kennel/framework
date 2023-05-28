@@ -2,7 +2,6 @@
 
 namespace Labrador\Test\Unit\Web\Application;
 
-use Amp\Http\Cookie\RequestCookie;
 use Amp\Http\HttpStatus;
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\Driver\Client;
@@ -33,7 +32,6 @@ use Labrador\Test\Unit\Web\Stub\HttpServerStub;
 use Labrador\Test\Unit\Web\Stub\KnownIncrementPreciseTime;
 use Labrador\Test\Unit\Web\Stub\RequestAnalyticsQueueStub;
 use Labrador\Test\Unit\Web\Stub\RequireAccessReadSessionController;
-use Labrador\Test\Unit\Web\Stub\RequireAccessWriteSessionController;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionGatheringController;
 use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
@@ -42,6 +40,7 @@ use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalytics;
 use Labrador\Web\Application\ApplicationFeatures;
 use Labrador\Web\Application\NoApplicationFeatures;
+use Labrador\Web\Application\StaticAssetSettings;
 use Labrador\Web\Event\AddRoutes;
 use Labrador\Web\Event\ApplicationStarted;
 use Labrador\Web\Event\ApplicationStopped;
@@ -59,7 +58,6 @@ use League\Uri\Http;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Monolog\Processor\PsrLogMessageProcessor;
-use ParagonIE\ConstantTime\Base64UrlSafe;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Ramsey\Uuid\UuidInterface;
@@ -76,6 +74,8 @@ final class AmpApplicationTest extends TestCase {
     private RequestAnalyticsQueueStub $analyticsQueue;
     private PreciseTime $preciseTime;
 
+    private string $assetsDir;
+
     protected function setUp() : void {
         parent::setUp();
         $this->httpServer = new HttpServerStub();
@@ -88,6 +88,7 @@ final class AmpApplicationTest extends TestCase {
         $this->testHandler = new TestHandler();
         $this->analyticsQueue = new RequestAnalyticsQueueStub();
         $this->preciseTime = new KnownIncrementPreciseTime(0, 1);
+        $this->assetsDir = dirname(__DIR__, 3) . '/Helper/assets';
         $this->subject = new AmpApplication(
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
@@ -275,6 +276,10 @@ final class AmpApplicationTest extends TestCase {
             public function autoRedirectHttpToHttps() : bool {
                 return false;
             }
+
+            public function getStaticAssetSettings() : ?StaticAssetSettings {
+                return null;
+            }
         };
     }
 
@@ -287,6 +292,27 @@ final class AmpApplicationTest extends TestCase {
 
             public function autoRedirectHttpToHttps() : bool {
                 return true;
+            }
+
+            public function getStaticAssetSettings() : ?StaticAssetSettings {
+                return null;
+            }
+        };
+    }
+
+    private function getApplicationFeaturesWithStaticAssetSettings() : ApplicationFeatures {
+        return new class implements ApplicationFeatures {
+
+            public function getSessionMiddleware() : ?SessionMiddleware {
+                return null;
+            }
+
+            public function autoRedirectHttpToHttps() : bool {
+                return false;
+            }
+
+            public function getStaticAssetSettings() : ?StaticAssetSettings {
+                return new StaticAssetSettings(dirname(__DIR__, 3) . '/Helper/assets');
             }
         };
     }
@@ -655,5 +681,32 @@ final class AmpApplicationTest extends TestCase {
             $controller,
             $request->getAttribute(RequestAttribute::Controller->value)
         );
+    }
+
+    public function testStaticAssetSettingsProvidedHasControllerAddedAndReturnsCorrectFile() : void {
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new NullLogger(),
+            $this->getApplicationFeaturesWithStaticAssetSettings(),
+            $this->analyticsQueue,
+            $this->preciseTime
+        );
+
+        $subject->start();
+
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('https://example.com/assets/main.css')
+        );
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame(HttpStatus::OK, $response->getStatus());
+        self::assertSame('text/css; charset=utf-8', $response->getHeader('Content-Type'));
+        self::assertSame('html {}', $response->getBody()->read());
     }
 }

@@ -15,4 +15,8 @@ class NoApplicationFeatures implements ApplicationFeatures {
     public function autoRedirectHttpToHttps() : bool {
         return false;
     }
+
+    public function getStaticAssetSettings() : ?StaticAssetSettings {
+        return null;
+    }
 }

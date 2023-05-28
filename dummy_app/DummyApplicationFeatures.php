@@ -8,6 +8,7 @@ use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Sync\LocalKeyedMutex;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Application\ApplicationFeatures;
+use Labrador\Web\Application\StaticAssetSettings;
 
 #[Service(primary: true)]
 final class DummyApplicationFeatures implements ApplicationFeatures {
@@ -23,5 +24,9 @@ final class DummyApplicationFeatures implements ApplicationFeatures {
 
     public function autoRedirectHttpToHttps() : bool {
         return false;
+    }
+
+    public function getStaticAssetSettings() : ?StaticAssetSettings {
+        return null;
     }
 }
