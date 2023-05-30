@@ -9,17 +9,12 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\StaticContent\DocumentRoot;
 use Labrador\AsyncEvent\EventEmitter;
-use Labrador\Internal\ReflectionCache;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Web\Application\Analytics\RequestBenchmark;
 use Labrador\Web\Controller\Controller;
-use Labrador\Web\Controller\DtoController;
-use Labrador\Web\Controller\RequireSession;
-use Labrador\Web\Controller\SessionAccess;
 use Labrador\Web\Controller\StaticAssetController;
 use Labrador\Web\ErrorHandlerFactory;
 use Labrador\Web\Event\AddRoutes;
@@ -29,7 +24,6 @@ use Labrador\Web\Event\ReceivingConnections;
 use Labrador\Web\Event\RequestReceived;
 use Labrador\Web\Event\ResponseSent;
 use Labrador\Web\Event\WillInvokeController;
-use Labrador\Web\Exception\SessionNotEnabled;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\GetMapping;
@@ -38,8 +32,6 @@ use Labrador\Web\Router\RoutingResolution;
 use Labrador\Web\Router\RoutingResolutionReason;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
-use ReflectionClass;
-use ReflectionMethod;
 use Throwable;
 
 final class AmpApplication implements Application, RequestHandler {
@@ -207,7 +199,6 @@ final class AmpApplication implements Application, RequestHandler {
             }
         }
 
-        // It is CRITICAL that this middleware runs last to ensure any Session attributes are handled properly
         $middlewares[] = $this->finalMiddlewareProcessingMiddleware($benchmark);
 
         return Middleware\stack($controller, ...$middlewares);
@@ -227,11 +218,10 @@ final class AmpApplication implements Application, RequestHandler {
     }
 
     private function finalMiddlewareProcessingMiddleware(RequestBenchmark $benchmark) : Middleware {
-        return new class($benchmark, $this->isSessionSupported) implements Middleware {
+        return new class($benchmark) implements Middleware {
 
             public function __construct(
                 private readonly RequestBenchmark $benchmark,
-                private readonly bool $isSessionSupported,
             ) {}
 
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {

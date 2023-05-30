@@ -4,62 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "01f7e47ad61fa3e28254d42693915f98",
+    "content-hash": "1bf436de57f9e0440f1131b08d85d9e9",
     "packages": [
-        {
-            "name": "adbario/php-dot-notation",
-            "version": "3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/adbario/php-dot-notation.git",
-                "reference": "a94ce4493d19ea430baa8d7d210a2c9bd7129fc2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/adbario/php-dot-notation/zipball/a94ce4493d19ea430baa8d7d210a2c9bd7129fc2",
-                "reference": "a94ce4493d19ea430baa8d7d210a2c9bd7129fc2",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.4 || ^8.0"
-            },
-            "require-dev": {
-                "phpstan/phpstan": "^1.8",
-                "phpunit/phpunit": "^9.5",
-                "squizlabs/php_codesniffer": "^3.7"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Adbar\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Riku Särkinen",
-                    "email": "riku@adbar.io"
-                }
-            ],
-            "description": "PHP dot notation access to arrays",
-            "homepage": "https://github.com/adbario/php-dot-notation",
-            "keywords": [
-                "ArrayAccess",
-                "dotnotation"
-            ],
-            "support": {
-                "issues": "https://github.com/adbario/php-dot-notation/issues",
-                "source": "https://github.com/adbario/php-dot-notation/tree/3.3.0"
-            },
-            "time": "2023-02-24T20:27:50+00:00"
-        },
         {
             "name": "amphp/amp",
             "version": "v3.0.0",
@@ -1575,25 +1521,26 @@
         },
         {
             "name": "cspray/annotated-container",
-            "version": "v2.0.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container.git",
-                "reference": "1401bcc4f88d28ac872469b96ebdc533a8ba1829"
+                "reference": "831cf797b80b81d0079fa97d6ac23d0382cac4e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/1401bcc4f88d28ac872469b96ebdc533a8ba1829",
-                "reference": "1401bcc4f88d28ac872469b96ebdc533a8ba1829",
+                "url": "https://api.github.com/repos/cspray/annotated-container/zipball/831cf797b80b81d0079fa97d6ac23d0382cac4e5",
+                "reference": "831cf797b80b81d0079fa97d6ac23d0382cac4e5",
                 "shasum": ""
             },
             "require": {
                 "brick/varexporter": "^0.3.7",
                 "composer-runtime-api": "^2",
-                "cspray/annotated-container-adr": "^1.0",
-                "cspray/annotated-container-attribute": "^1.0",
-                "cspray/annotated-target": "^0.2",
-                "cspray/typiphy": "^0.2",
+                "cspray/annotated-container-adr": "^2",
+                "cspray/annotated-container-attribute": "^1.1",
+                "cspray/annotated-target": "^v0.3",
+                "cspray/precision-stopwatch": "^0.2.0",
+                "cspray/typiphy": "^0.3",
                 "ext-dom": "*",
                 "ext-libxml": "*",
                 "nikic/php-parser": "^4.10",
@@ -1604,6 +1551,7 @@
             },
             "require-dev": {
                 "cspray/phinal": "^1.0",
+                "illuminate/container": "^10.11",
                 "mikey179/vfsstream": "^1.6",
                 "php-di/php-di": "^7.0",
                 "phpunit/phpunit": "^9.5",
@@ -1619,6 +1567,13 @@
                 "bin/annotated-container"
             ],
             "type": "library",
+            "extra": {
+                "$architecturalDecision": {
+                    "initializers": [
+                        "Cspray\\AnnotatedContainer\\ArchitecturalDecisions\\Initializer"
+                    ]
+                }
+            },
             "autoload": {
                 "files": [
                     "src/Function/auto-wired-parameters.php",
@@ -1648,26 +1603,27 @@
             ],
             "support": {
                 "issues": "https://github.com/cspray/annotated-container/issues",
-                "source": "https://github.com/cspray/annotated-container/tree/v2.0.0"
+                "source": "https://github.com/cspray/annotated-container/tree/v2.2.0"
             },
-            "time": "2023-05-12T20:00:03+00:00"
+            "time": "2023-05-29T23:37:18+00:00"
         },
         {
             "name": "cspray/annotated-container-adr",
-            "version": "1.0.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container-adr.git",
-                "reference": "96093b036b94da28333533c4cbe83cffa084b07a"
+                "reference": "18006e499e70aa3506835f0cf6218d90cb661601"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container-adr/zipball/96093b036b94da28333533c4cbe83cffa084b07a",
-                "reference": "96093b036b94da28333533c4cbe83cffa084b07a",
+                "url": "https://api.github.com/repos/cspray/annotated-container-adr/zipball/18006e499e70aa3506835f0cf6218d90cb661601",
+                "reference": "18006e499e70aa3506835f0cf6218d90cb661601",
                 "shasum": ""
             },
             "require": {
-                "cspray/architectural-decision": "^1.0",
+                "cspray/architectural-decision": "^1.3",
+                "ext-dom": "*",
                 "php": "^8.1"
             },
             "type": "library",
@@ -1680,26 +1636,26 @@
             "description": "Architectural Decision Records for Annotated Container and its associated libraries.",
             "support": {
                 "issues": "https://github.com/cspray/annotated-container-adr/issues",
-                "source": "https://github.com/cspray/annotated-container-adr/tree/1.0.0"
+                "source": "https://github.com/cspray/annotated-container-adr/tree/2.2.0"
             },
-            "time": "2023-02-24T21:20:31+00:00"
+            "time": "2023-05-14T15:06:59+00:00"
         },
         {
             "name": "cspray/annotated-container-attribute",
-            "version": "1.0.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-container-attribute.git",
-                "reference": "6cfa0e15e7567a5ea4dba56693b3f74a41b97637"
+                "reference": "32ef379c0bbc6ecc50f6c8470a95388b34896c45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-container-attribute/zipball/6cfa0e15e7567a5ea4dba56693b3f74a41b97637",
-                "reference": "6cfa0e15e7567a5ea4dba56693b3f74a41b97637",
+                "url": "https://api.github.com/repos/cspray/annotated-container-attribute/zipball/32ef379c0bbc6ecc50f6c8470a95388b34896c45",
+                "reference": "32ef379c0bbc6ecc50f6c8470a95388b34896c45",
                 "shasum": ""
             },
             "require": {
-                "cspray/annotated-container-adr": "^1.0",
+                "cspray/annotated-container-adr": "^2",
                 "php": "^8.1"
             },
             "type": "library",
@@ -1715,26 +1671,26 @@
             "description": "Attributes used by Annotated Container, to configure an autowired PSR-11 dependency injection container.",
             "support": {
                 "issues": "https://github.com/cspray/annotated-container-attribute/issues",
-                "source": "https://github.com/cspray/annotated-container-attribute/tree/1.0.0"
+                "source": "https://github.com/cspray/annotated-container-attribute/tree/1.2.0"
             },
-            "time": "2023-02-26T15:01:53+00:00"
+            "time": "2023-05-29T15:14:32+00:00"
         },
         {
             "name": "cspray/annotated-target",
-            "version": "v0.2.1",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/annotated-target.git",
-                "reference": "8d1a59725df30a43f27bbdb973c0f714a8eb44f5"
+                "reference": "2606f82274d97c97cc9920af5c12f45e1ffbd283"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/annotated-target/zipball/8d1a59725df30a43f27bbdb973c0f714a8eb44f5",
-                "reference": "8d1a59725df30a43f27bbdb973c0f714a8eb44f5",
+                "url": "https://api.github.com/repos/cspray/annotated-target/zipball/2606f82274d97c97cc9920af5c12f45e1ffbd283",
+                "reference": "2606f82274d97c97cc9920af5c12f45e1ffbd283",
                 "shasum": ""
             },
             "require": {
-                "cspray/typiphy": "^0.2.0",
+                "cspray/typiphy": "^0.3",
                 "nikic/php-parser": "^v4.14",
                 "php": "^8.1"
             },
@@ -1765,34 +1721,34 @@
             "description": "A PHP 8 library for statically parsing Attributes using PHP-Parser.",
             "support": {
                 "issues": "https://github.com/cspray/annotated-target/issues",
-                "source": "https://github.com/cspray/annotated-target/tree/v0.2.1"
+                "source": "https://github.com/cspray/annotated-target/tree/v0.3.1"
             },
-            "time": "2022-08-12T14:01:47+00:00"
+            "time": "2023-05-22T14:01:29+00:00"
         },
         {
             "name": "cspray/architectural-decision",
-            "version": "v1.1.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/architectural-decision.git",
-                "reference": "a8bb504a06cebfde2d8235a6ac1204baf8a08bf0"
+                "reference": "972339dcc89d3e559e808bef63c8052cffdd89cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/architectural-decision/zipball/a8bb504a06cebfde2d8235a6ac1204baf8a08bf0",
-                "reference": "a8bb504a06cebfde2d8235a6ac1204baf8a08bf0",
+                "url": "https://api.github.com/repos/cspray/architectural-decision/zipball/972339dcc89d3e559e808bef63c8052cffdd89cb",
+                "reference": "972339dcc89d3e559e808bef63c8052cffdd89cb",
                 "shasum": ""
             },
             "require": {
-                "cspray/annotated-target": "^0.2",
+                "cspray/annotated-target": "^0.3",
                 "ext-dom": "*",
                 "php": "^8.1"
             },
             "require-dev": {
-                "cspray/phinal": "^1.0",
+                "cspray/phinal": "^2.0",
                 "mikey179/vfsstream": "^1.6",
-                "phpunit/phpunit": "^9.5",
-                "vimeo/psalm": "^4.24"
+                "phpunit/phpunit": "^10.1",
+                "vimeo/psalm": "^5.11"
             },
             "bin": [
                 "bin/architectural-decisions"
@@ -1810,22 +1766,67 @@
             "description": "A library to keep track of architectural decisions with PHP annotations.",
             "support": {
                 "issues": "https://github.com/cspray/architectural-decision/issues",
-                "source": "https://github.com/cspray/architectural-decision/tree/v1.1.0"
+                "source": "https://github.com/cspray/architectural-decision/tree/v1.3.0"
             },
-            "time": "2022-08-11T13:32:57+00:00"
+            "time": "2023-05-14T14:26:45+00:00"
         },
         {
-            "name": "cspray/typiphy",
+            "name": "cspray/precision-stopwatch",
             "version": "0.2.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/cspray/typiphy.git",
-                "reference": "f9823886e66be513a485d1b2a1fec4ad8c103f7e"
+                "url": "https://github.com/cspray/precision-stopwatch.git",
+                "reference": "8740db31df8cab333d584c59048e1b74cb627338"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/typiphy/zipball/f9823886e66be513a485d1b2a1fec4ad8c103f7e",
-                "reference": "f9823886e66be513a485d1b2a1fec4ad8c103f7e",
+                "url": "https://api.github.com/repos/cspray/precision-stopwatch/zipball/8740db31df8cab333d584c59048e1b74cb627338",
+                "reference": "8740db31df8cab333d584c59048e1b74cb627338",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "cspray/phinal": "^2.0",
+                "phpunit/phpunit": "^10.1",
+                "vimeo/psalm": "^5.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cspray\\PrecisionStopwatch\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Charles Sprayberry",
+                    "homepage": "https://cspray.io"
+                }
+            ],
+            "description": "A small library for keeping track of the duration between precise points in time.",
+            "support": {
+                "issues": "https://github.com/cspray/precision-stopwatch/issues",
+                "source": "https://github.com/cspray/precision-stopwatch/tree/0.2.0"
+            },
+            "time": "2023-05-13T18:36:49+00:00"
+        },
+        {
+            "name": "cspray/typiphy",
+            "version": "0.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cspray/typiphy.git",
+                "reference": "b0bc06525cc796c4cb5abaf0d1bac472579271d5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cspray/typiphy/zipball/b0bc06525cc796c4cb5abaf0d1bac472579271d5",
+                "reference": "b0bc06525cc796c4cb5abaf0d1bac472579271d5",
                 "shasum": ""
             },
             "require-dev": {
@@ -1844,82 +1845,9 @@
             "description": "A small library of value objects and functions for working with PHP's types.",
             "support": {
                 "issues": "https://github.com/cspray/typiphy/issues",
-                "source": "https://github.com/cspray/typiphy/tree/0.2.0"
+                "source": "https://github.com/cspray/typiphy/tree/0.3.0"
             },
-            "time": "2022-04-26T12:38:08+00:00"
-        },
-        {
-            "name": "cuyz/valinor",
-            "version": "1.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CuyZ/Valinor.git",
-                "reference": "229098184cf5877ec01305461cdcb8a73379bf5b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CuyZ/Valinor/zipball/229098184cf5877ec01305461cdcb8a73379bf5b",
-                "reference": "229098184cf5877ec01305461cdcb8a73379bf5b",
-                "shasum": ""
-            },
-            "require": {
-                "composer-runtime-api": "^2.0",
-                "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
-                "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.4",
-                "infection/infection": "^0.26",
-                "marcocesarato/php-conventional-changelog": "^1.12",
-                "mikey179/vfsstream": "^1.6.10",
-                "phpstan/phpstan": "^1.3",
-                "phpstan/phpstan-phpunit": "^1.0",
-                "phpstan/phpstan-strict-rules": "^1.0",
-                "phpunit/phpunit": "^9.5",
-                "rector/rector": "~0.15.0",
-                "vimeo/psalm": "^5.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "CuyZ\\Valinor\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Romain Canon",
-                    "email": "romain.hydrocanon@gmail.com",
-                    "homepage": "https://github.com/romm"
-                }
-            ],
-            "description": "Library that helps to map any input into a strongly-typed value object structure.",
-            "homepage": "https://github.com/CuyZ/Valinor",
-            "keywords": [
-                "array",
-                "conversion",
-                "hydrator",
-                "json",
-                "mapper",
-                "mapping",
-                "object",
-                "tree",
-                "yaml"
-            ],
-            "support": {
-                "issues": "https://github.com/CuyZ/Valinor/issues",
-                "source": "https://github.com/CuyZ/Valinor/tree/1.4.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/romm",
-                    "type": "github"
-                }
-            ],
-            "time": "2023-04-17T11:25:01+00:00"
+            "time": "2022-08-05T01:44:30+00:00"
         },
         {
             "name": "daverandom/libdns",
@@ -2647,16 +2575,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v4.15.4",
+            "version": "v4.15.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "6bb5176bc4af8bcb7d926f88718db9b96a2d4290"
+                "reference": "11e2663a5bc9db5d714eedb4277ee300403b4a9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/6bb5176bc4af8bcb7d926f88718db9b96a2d4290",
-                "reference": "6bb5176bc4af8bcb7d926f88718db9b96a2d4290",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/11e2663a5bc9db5d714eedb4277ee300403b4a9e",
+                "reference": "11e2663a5bc9db5d714eedb4277ee300403b4a9e",
                 "shasum": ""
             },
             "require": {
@@ -2697,9 +2625,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.4"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v4.15.5"
             },
-            "time": "2023-03-05T19:49:14+00:00"
+            "time": "2023-05-19T20:20:00+00:00"
         },
         {
             "name": "ocramius/package-versions",
@@ -3113,57 +3041,6 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.0"
             },
             "time": "2021-07-14T16:46:02+00:00"
-        },
-        {
-            "name": "psr/simple-cache",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/simple-cache.git",
-                "reference": "764e0b3939f5ca87cb904f570ef9be2d78a07865"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/simple-cache/zipball/764e0b3939f5ca87cb904f570ef9be2d78a07865",
-                "reference": "764e0b3939f5ca87cb904f570ef9be2d78a07865",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\SimpleCache\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interfaces for simple caching",
-            "keywords": [
-                "cache",
-                "caching",
-                "psr",
-                "psr-16",
-                "simple-cache"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/simple-cache/tree/3.0.0"
-            },
-            "time": "2021-10-29T13:26:27+00:00"
         },
         {
             "name": "ramsey/collection",
@@ -4364,16 +4241,16 @@
         },
         {
             "name": "psalm/phar",
-            "version": "5.11.0",
+            "version": "5.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "994dfb9f6263c79b19513309400afc69e7042a0d"
+                "reference": "e7f9306ec83c706b4dba451f6adfb865ce4688e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/994dfb9f6263c79b19513309400afc69e7042a0d",
-                "reference": "994dfb9f6263c79b19513309400afc69e7042a0d",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/e7f9306ec83c706b4dba451f6adfb865ce4688e4",
+                "reference": "e7f9306ec83c706b4dba451f6adfb865ce4688e4",
                 "shasum": ""
             },
             "require": {
@@ -4393,9 +4270,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/5.11.0"
+                "source": "https://github.com/psalm/phar/tree/5.12.0"
             },
-            "time": "2023-05-04T21:41:53+00:00"
+            "time": "2023-05-22T21:30:41+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -4403,12 +4280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "d1af11449398214f9664514ce705c5154ead9c38"
+                "reference": "2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d1af11449398214f9664514ce705c5154ead9c38",
-                "reference": "d1af11449398214f9664514ce705c5154ead9c38",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879",
+                "reference": "2d73bad6cb1c8cda0ab4e4208f4ee2d70e472879",
                 "shasum": ""
             },
             "conflict": {
@@ -4472,7 +4349,7 @@
                 "cockpit-hq/cockpit": "<2.4.1",
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
                 "codeigniter/framework": "<=3.0.6",
-                "codeigniter4/framework": "<4.2.11",
+                "codeigniter4/framework": "<4.3.5",
                 "codeigniter4/shield": "<1-beta.4|= 1.0.0-beta",
                 "codiad/codiad": "<=2.8.4",
                 "composer/composer": "<1.10.26|>=2-alpha.1,<2.2.12|>=2.3,<2.3.5",
@@ -4484,7 +4361,7 @@
                 "contao/core-bundle": "<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4|= 4.10.0",
                 "contao/listing-bundle": ">=4,<4.4.8",
                 "contao/managed-edition": "<=1.5",
-                "craftcms/cms": "<=3.8.3|>=4,<=4.4.3|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
+                "craftcms/cms": ">= 4.0.0-RC1, <= 4.4.5|>= 4.0.0-RC1, <= 4.4.6|<=3.8.5|>=4,<4.4.6|>= 4.0.0-RC1, < 4.4.6|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
                 "croogo/croogo": "<3.0.7",
                 "cuyz/valinor": "<0.12",
                 "czproject/git-php": "<4.0.3",
@@ -4556,14 +4433,14 @@
                 "fooman/tcpdf": "<6.2.22",
                 "forkcms/forkcms": "<5.11.1",
                 "fossar/tcpdf-parser": "<6.2.22",
-                "francoisjacquet/rosariosis": "<10.9.3",
+                "francoisjacquet/rosariosis": "<11",
                 "frappant/frp-form-answers": "<3.1.2|>=4,<4.0.2",
                 "friendsofsymfony/oauth2-php": "<1.3",
                 "friendsofsymfony/rest-bundle": ">=1.2,<1.2.2",
                 "friendsofsymfony/user-bundle": ">=1.2,<1.3.5",
                 "friendsoftypo3/mediace": ">=7.6.2,<7.6.5",
                 "froala/wysiwyg-editor": "<3.2.7",
-                "froxlor/froxlor": "<2.0.14",
+                "froxlor/froxlor": "<2.0.16",
                 "fuel/core": "<1.8.1",
                 "funadmin/funadmin": "<=3.2",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
@@ -4734,7 +4611,7 @@
                 "phpwhois/phpwhois": "<=4.2.5",
                 "phpxmlrpc/extras": "<0.6.1",
                 "phpxmlrpc/phpxmlrpc": "<4.9.2",
-                "pimcore/customer-management-framework-bundle": "<3.3.9",
+                "pimcore/customer-management-framework-bundle": "<3.3.10",
                 "pimcore/data-hub": "<1.2.4",
                 "pimcore/perspective-editor": "<1.5.1",
                 "pimcore/pimcore": "<10.5.21",
@@ -4762,7 +4639,7 @@
                 "pyrocms/pyrocms": "<=3.9.1",
                 "rainlab/debugbar-plugin": "<3.1",
                 "rankmath/seo-by-rank-math": "<=1.0.95",
-                "react/http": ">=0.7,<1.7",
+                "react/http": ">=0.7,<1.9",
                 "really-simple-plugins/complianz-gdpr": "<6.4.2",
                 "remdex/livehelperchat": "<3.99",
                 "rmccue/requests": ">=1.6,<1.8",
@@ -4806,7 +4683,7 @@
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
                 "simplito/elliptic-php": "<1.0.6",
                 "sitegeist/fluid-components": "<3.5",
-                "slim/psr7": "<1.6.1",
+                "slim/psr7": "<1.4.1|>=1.5,<1.5.1|>=1.6,<1.6.1",
                 "slim/slim": "<2.6",
                 "smarty/smarty": "<3.1.48|>=4,<4.3.1",
                 "snipe/snipe-it": "<=6.0.14|>= 6.0.0-RC-1, <= 6.0.0-RC-5",
@@ -4875,7 +4752,7 @@
                 "thelia/thelia": ">=2.1-beta.1,<2.1.3",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "thinkcmf/thinkcmf": "<=5.1.7",
-                "thorsten/phpmyfaq": "<3.1.13",
+                "thorsten/phpmyfaq": "<3.2-beta",
                 "tinymce/tinymce": "<5.10.7|>=6,<6.3.1",
                 "tinymighty/wiki-seo": "<1.2.2",
                 "titon/framework": ">=0,<9.9.99",
@@ -5003,7 +4880,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-12T21:03:58+00:00"
+            "time": "2023-05-26T14:04:17+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -6080,11 +5957,7 @@
     "aliases": [],
     "minimum-stability": "beta",
     "stability-flags": {
-        "amphp/cache": 10,
-        "amphp/http-server": 10,
-        "amphp/http-server-session": 10,
         "labrador-kennel/async-event-autowire": 20,
-        "amphp/http-server-static-content": 10,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,

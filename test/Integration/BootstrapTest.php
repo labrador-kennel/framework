@@ -38,7 +38,7 @@ use Psr\Log\LoggerInterface;
  */
 class BootstrapTest extends TestCase {
 
-    private const ExpectedControllerCount = 29;
+    private const ExpectedControllerCount = 3;
 
     use BootstrapAwareTestTrait;
 
@@ -165,72 +165,4 @@ class BootstrapTest extends TestCase {
         self::assertStringContainsString('Adding ' . QuxMiddleware::class . ' to application with Critical priority.', StreamBuffer::output($this->stdout));
     }
 
-    public function testDtoControllerRoutedWithCorrectControllerDescription() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $container = $bootstrap->bootstrapApplication();
-
-        $router = $this->container->get(Router::class);
-
-        self::assertInstanceOf(Router::class, $router);
-
-        $routes = array_filter($router->getRoutes(), fn(Route $route) => $route->requestMapping->getPath() === '/dto/headers');
-
-        self::assertCount(1, $routes);
-
-        $route = array_shift($routes);
-
-        self::assertSame(sprintf('DtoHandler<%s::checkHeaders>', CheckDtoController::class), $route->controller->toString());
-    }
-
-    public function testDtoControllerGetRouteLogged() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $bootstrap->bootstrapApplication();
-
-        self::assertStringContainsString(
-            sprintf(
-                'labrador.app.INFO: Autowiring route GET /dto/headers to DtoHandler<%s::checkHeaders> controller.',
-                CheckDtoController::class
-            ),
-            StreamBuffer::output($this->stdout)
-        );
-    }
-
-    public function testDtoControllerPostRouteLogged() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $bootstrap->bootstrapApplication();
-
-        self::assertStringContainsString(
-            sprintf(
-                'labrador.app.INFO: Autowiring route POST /dto/method to DtoHandler<%s::checkMethod> controller.',
-                CheckDtoController::class
-            ),
-            StreamBuffer::output($this->stdout)
-        );
-    }
-
-    public function testDtoControllerPutRouteLogged() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $bootstrap->bootstrapApplication();
-
-        self::assertStringContainsString(
-            sprintf(
-                'labrador.app.INFO: Autowiring route PUT /dto/url to DtoHandler<%s::checkUrl> controller.',
-                CheckDtoController::class
-            ),
-            StreamBuffer::output($this->stdout)
-        );
-    }
-
-    public function testDtoControllerDeleteRouteLogged() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $bootstrap->bootstrapApplication();
-
-        self::assertStringContainsString(
-            sprintf(
-                'labrador.app.INFO: Autowiring route DELETE /dto/widget/{id} to DtoHandler<%s::deleteWidget> controller.',
-                CheckDtoController::class
-            ),
-            StreamBuffer::output($this->stdout)
-        );
-    }
 }

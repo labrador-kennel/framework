@@ -5,8 +5,8 @@ namespace Labrador\DummyApp\Controller;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Labrador\DummyApp\Middleware\ControllerSpecificMiddleware;
+use Labrador\Web\Autowire\HttpController;
 use Labrador\Web\Controller\Controller;
-use Labrador\Web\Controller\HttpController;
 use Labrador\Web\Router\GetMapping;
 
 #[HttpController(

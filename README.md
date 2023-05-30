@@ -38,7 +38,7 @@ It's best to show a Controller implementing this functionality.
 
 namespace LabradorDemo;
 
-use Amp\Http\Server\Response;use Labrador\Web\Controller\ControllerActions;use Labrador\Web\Controller\Dto\Dto;use Labrador\Web\Controller\Dto\RouteParam;use Labrador\Web\Controller\Get;use Labrador\Web\Controller\Post;use League\Uri\Components\Query;use Psr\Log\LoggerInterface;use Ramsey\Uuid\UuidInterface;
+use Amp\Http\Server\Response;use Labrador\Web\Controller\Dto\Dto;use Labrador\Web\Controller\Dto\RouteParam;use Labrador\Web\Controller\RouteMapping\ControllerActions;use Labrador\Web\Controller\RouteMapping\Get;use Labrador\Web\Controller\RouteMapping\Post;use League\Uri\Components\Query;use Psr\Log\LoggerInterface;use Ramsey\Uuid\UuidInterface;
 
 #[ControllerActions]
 final class WidgetController {
@@ -81,7 +81,7 @@ Labrador HTTP also provides the ability to get specific parts of the Request usi
 
 namespace LabradorDemo;
 
-use Amp\Http\Server\RequestBody;use Amp\Http\Server\Response;use Labrador\Controller\Dto\QueryParams;use Labrador\Controller\Dto\Url;use Labrador\Web\Controller\ControllerActions;use Labrador\Web\Controller\Dto\Body;use Labrador\Web\Controller\Dto\Header;use Labrador\Web\Controller\Dto\Headers;use Labrador\Web\Controller\Dto\Method;use Labrador\Web\Controller\Dto\RouteParam;use Labrador\Web\Controller\Get;use Labrador\Web\Controller\Post;use League\Uri\Components\Query;use League\Uri\Contracts\QueryInterface;use Psr\Http\Message\UriInterface;
+use Amp\Http\Server\RequestBody;use Amp\Http\Server\Response;use Labrador\Controller\Dto\QueryParams;use Labrador\Controller\Dto\Url;use Labrador\Web\Controller\Dto\Body;use Labrador\Web\Controller\Dto\Header;use Labrador\Web\Controller\Dto\Headers;use Labrador\Web\Controller\Dto\Method;use Labrador\Web\Controller\Dto\RouteParam;use Labrador\Web\Controller\RouteMapping\ControllerActions;use Labrador\Web\Controller\RouteMapping\Get;use Labrador\Web\Controller\RouteMapping\Post;use League\Uri\Components\Query;use League\Uri\Contracts\QueryInterface;use Psr\Http\Message\UriInterface;
 
 #[ControllerActions]
 class RequestInjectionController {

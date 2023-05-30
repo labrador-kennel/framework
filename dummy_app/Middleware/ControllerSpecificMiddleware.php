@@ -6,7 +6,7 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Labrador\Web\Middleware\RouteMiddleware;
+use Labrador\Web\Autowire\RouteMiddleware;
 
 #[RouteMiddleware]
 class ControllerSpecificMiddleware implements Middleware {

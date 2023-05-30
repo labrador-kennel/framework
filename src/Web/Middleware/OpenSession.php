@@ -7,6 +7,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
+use Labrador\Web\Autowire\RouteMiddleware;
 use Labrador\Web\Exception\SessionNotEnabled;
 
 #[RouteMiddleware]

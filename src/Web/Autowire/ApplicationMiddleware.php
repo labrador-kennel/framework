@@ -1,8 +1,9 @@
 <?php
 
-namespace Labrador\Web\Middleware;
+namespace Labrador\Web\Autowire;
 
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
+use Labrador\Web\Middleware\Priority;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 final class ApplicationMiddleware implements ServiceAttribute {
@@ -10,7 +11,7 @@ final class ApplicationMiddleware implements ServiceAttribute {
     public function __construct(
         private readonly Priority $priority = Priority::Low,
         /**
-         * @var list<string> $profiles
+         * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
     ) {}
@@ -19,6 +20,9 @@ final class ApplicationMiddleware implements ServiceAttribute {
         return $this->priority;
     }
 
+    /**
+     * @return list<non-empty-string>
+     */
     public function getProfiles() : array {
         return $this->profiles;
     }

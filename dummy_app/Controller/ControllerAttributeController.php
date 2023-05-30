@@ -4,7 +4,7 @@ namespace Labrador\DummyApp\Controller;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Labrador\Web\Controller\HttpController;
+use Labrador\Web\Autowire\HttpController;
 use Labrador\Web\Controller\SelfDescribingController;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\GetMapping;
