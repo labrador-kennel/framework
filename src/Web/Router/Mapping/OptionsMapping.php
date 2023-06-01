@@ -1,17 +1,17 @@
 <?php
 
-namespace Labrador\Web\Router;
+namespace Labrador\Web\Router\Mapping;
 
 use Labrador\Web\HttpMethod;
 
-final class PostMapping implements RequestMapping {
+class OptionsMapping implements RequestMapping {
 
     public function __construct(
         private readonly string $path
     ) {}
 
     public function getHttpMethod() : HttpMethod {
-        return HttpMethod::Post;
+        return HttpMethod::Options;
     }
 
     public function getPath() : string {

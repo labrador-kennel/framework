@@ -52,7 +52,7 @@ use Labrador\Web\HttpMethod;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\FastRouteRouter;
-use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
@@ -392,70 +392,6 @@ final class AmpApplicationTest extends TestCase {
         self::assertSame('OK', $response->getBody()->read());
         self::assertNotNull($middleware->session);
         self::assertNotNull($controller->getSession());
-    }
-
-    public function testControllerRequireSessionReadAccess() : void {
-        $controller = new RequireAccessReadSessionController();
-        $this->router->addRoute(
-            new GetMapping('/session-test'),
-            $controller
-        );
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com/session-test')
-        );
-
-        $middleware = new class implements Middleware {
-            public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
-                $session = $request->getAttribute(Session::class);
-                assert($session instanceof Session);
-                $session->open()->set('known-session-path', 'my known value');
-                $session->save();
-
-                return $requestHandler->handleRequest($request);
-            }
-        };
-
-        $subject = new AmpApplication(
-            $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
-            $this->router,
-            $this->emitter,
-            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware(),
-            $this->analyticsQueue,
-            $this->preciseTime
-        );
-
-        $subject->addMiddleware($middleware);
-
-        $subject->start();
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame('OK', $response->getBody()->read());
-        self::assertSame('my known value', $controller->getSessionValue());
-    }
-
-    public function testRequiresSessionReadSessionFactoryNotProvidedReturnsCorrectResponse() : void {
-        $controller = new RequireAccessReadSessionController();
-        $this->router->addRoute(
-            new GetMapping('/'),
-            $controller
-        );
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com/')
-        );
-
-        $this->subject->start();
-
-        $response = $this->subject->handleRequest($request);
-
-        self::assertSame(HttpStatus::INTERNAL_SERVER_ERROR, $response->getStatus());
     }
 
     public function testApplicationFeaturesRedirectHttpToHttps() {

@@ -60,7 +60,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testGenerateAndStoreWithSessionAndNoCsrfTokensStartsCollectionAndSavesId() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
         $this->tokenGenerator->expects($this->once())
             ->method('generateToken')
             ->willReturn('known-token');
@@ -80,7 +80,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testGenerateAndStoreWithSessionAndExistingCsrfTokenAddsToStore() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
         $this->tokenGenerator->expects($this->once())
             ->method('generateToken')
             ->willReturn('known-token');
@@ -109,7 +109,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testValidateAndExpireWithNoTokensInSessionReturnsFalse() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
 
         $this->session->open();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
@@ -119,7 +119,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testValidateAndExpireWithValidTokenInSessionReturnsTrueAndRemovesToken() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['known-token'])]);
 
         $this->session->open();
@@ -134,7 +134,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testValidateAndExpireWithSessionIdButNoTokensInCacheReturnsFalseAndHasNoStore() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
 
         $this->session->open();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
@@ -148,7 +148,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testValidateAndExpireWithSessionIdHasCsrfStoreIdRemovedFromSession() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['known-token'])]);
 
         $this->session->open();
@@ -163,7 +163,7 @@ final class CsrfTokenManagerTest extends TestCase {
     }
 
     public function testValidateAndExpireWithMultipleStoreIdsHandledCorrectly() : void {
-        $this->request->setAttribute('session', $this->session);
+        $this->request->setAttribute(Session::class, $this->session);
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['other-existing-token', 'known-token'])]);
 
         $this->session->open();

@@ -1,11 +1,12 @@
 <?php
 
-namespace Labrador\Web\Controller;
+namespace Labrador\Web\Autowire;
 
 use Amp\Http\Server\Middleware;
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
-use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Controller\RouteMappingAttribute;
+use Labrador\Web\Router\Mapping\RequestMapping;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 final class HttpController implements ServiceAttribute, RouteMappingAttribute {
@@ -17,7 +18,7 @@ final class HttpController implements ServiceAttribute, RouteMappingAttribute {
          */
         private readonly array $middleware = [],
         /**
-         * @var list<string> $profiles
+         * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
     ) {}
@@ -33,6 +34,9 @@ final class HttpController implements ServiceAttribute, RouteMappingAttribute {
         return $this->middleware;
     }
 
+    /**
+     * @return list<non-empty-string>
+     */
     public function getProfiles() : array {
         return $this->profiles;
     }

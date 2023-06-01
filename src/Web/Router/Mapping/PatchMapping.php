@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Web\Router;
+namespace Labrador\Web\Router\Mapping;
 
 use Labrador\Web\HttpMethod;
 

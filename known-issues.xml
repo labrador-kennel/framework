@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.11.0@c9b192ab8400fdaf04b2b13d110575adc879aa90">
-  <file src="src/Cli/ServeCommand.php">
-    <UnresolvableInclude>
-      <code>include $bootstrap</code>
-    </UnresolvableInclude>
-  </file>
-  <file src="src/Security/InMemorySecretsSource.php">
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[$this->data]]></code>
-      <code>array</code>
-    </MixedReturnTypeCoercion>
-  </file>
-  <file src="src/Security/JsonFileSecretsSource.php">
-    <MixedAssignment>
-      <code><![CDATA[$this->data]]></code>
-    </MixedAssignment>
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[$this->data]]></code>
-      <code>array</code>
-    </MixedReturnTypeCoercion>
-  </file>
+<files psalm-version="5.12.0@f90118cdeacd0088e7215e64c0c99ceca819e176">
   <file src="src/Web/Application/Analytics/RequestBenchmark.php">
     <PossiblyNullOperand>
       <code><![CDATA[$this->middlewareCompleted]]></code>

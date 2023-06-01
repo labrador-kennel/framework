@@ -25,10 +25,10 @@ use Labrador\Web\Controller\Controller;
 use Labrador\Web\Exception\InvalidType;
 use Labrador\Web\HttpMethod;
 use Labrador\Web\Router\FastRouteRouter;
-use Labrador\Web\Router\GetMapping;
-use Labrador\Web\Router\PostMapping;
-use Labrador\Web\Router\PutMapping;
-use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
+use Labrador\Web\Router\Mapping\PostMapping;
+use Labrador\Web\Router\Mapping\PutMapping;
+use Labrador\Web\Router\Mapping\RequestMapping;
 use Labrador\Web\Router\Route;
 use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
@@ -225,7 +225,7 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function routerRouteMethodProvider() {
         $args = [];
         foreach (HttpMethod::cases() as $method) {
-            $mappingClass = 'Labrador\\Web\\Router\\' . $method->name . 'Mapping';
+            $mappingClass = 'Labrador\\Web\\Router\\Mapping\\' . $method->name . 'Mapping';
             $args[$method->value] = [new $mappingClass('/foo')];
         }
         return $args;

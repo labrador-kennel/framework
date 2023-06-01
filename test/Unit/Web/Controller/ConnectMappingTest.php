@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\ConnectMapping;
+use Labrador\Web\Router\Mapping\ConnectMapping;
 
 final class ConnectMappingTest extends RequestMappingTestCase {
 

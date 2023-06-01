@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\DeleteMapping;
+use Labrador\Web\Router\Mapping\DeleteMapping;
 
 final class DeleteMappingTest extends RequestMappingTestCase {
 

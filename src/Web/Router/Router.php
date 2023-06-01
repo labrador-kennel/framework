@@ -6,6 +6,7 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Controller\Controller;
+use Labrador\Web\Router\Mapping\RequestMapping;
 
 /**
  * An interface that is responsible for matching a given Request by HTTP method and URL to a Controller instance and an

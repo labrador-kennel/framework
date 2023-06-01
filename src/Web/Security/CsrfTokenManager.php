@@ -16,11 +16,11 @@ final class CsrfTokenManager {
     ) {}
 
     public function generateAndStore(Request $request) : string {
-        if (!$request->hasAttribute('session')) {
+        if (!$request->hasAttribute(Session::class)) {
             throw SessionNotEnabled::fromCsrfTokenManagerRequiresSession();
         }
 
-        $session = $request->getAttribute('session');
+        $session = $request->getAttribute(Session::class);
         assert($session instanceof Session);
 
         $token = $this->tokenGenerator->generateToken();
@@ -38,11 +38,11 @@ final class CsrfTokenManager {
     }
 
     public function validateAndExpire(Request $request, string $csrfToken) : bool {
-        if (!$request->hasAttribute('session')) {
+        if (!$request->hasAttribute(Session::class)) {
             throw SessionNotEnabled::fromCsrfTokenManagerRequiresSession();
         }
 
-        $session = $request->getAttribute('session');
+        $session = $request->getAttribute(Session::class);
         assert($session instanceof Session);
         if (!$session->has('csrfTokens')) {
             return false;

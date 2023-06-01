@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\PutMapping;
+use Labrador\Web\Router\Mapping\PutMapping;
 
 final class PutMappingTest extends RequestMappingTestCase {
 

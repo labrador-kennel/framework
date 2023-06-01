@@ -7,7 +7,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Labrador\DummyApp\MiddlewareCallRegistry;
-use Labrador\Web\Middleware\ApplicationMiddleware;
+use Labrador\Web\Autowire\ApplicationMiddleware;
 use Labrador\Web\Middleware\Priority;
 
 #[ApplicationMiddleware(priority: Priority::Medium)]

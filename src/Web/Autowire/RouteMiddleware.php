@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Web\Middleware;
+namespace Labrador\Web\Autowire;
 
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
@@ -10,11 +10,14 @@ final class RouteMiddleware implements ServiceAttribute {
 
     public function __construct(
         /**
-         * @var list<string> $profiles
+         * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
     ) {}
 
+    /**
+     * @return list<non-empty-string>
+     */
     public function getProfiles() : array {
         return $this->profiles;
     }

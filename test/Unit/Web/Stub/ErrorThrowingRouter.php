@@ -5,7 +5,7 @@ namespace Labrador\Test\Unit\Web\Stub;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Labrador\Web\Controller\Controller;
-use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Router\Mapping\RequestMapping;
 use Labrador\Web\Router\Route;
 use Labrador\Web\Router\Router;
 use Labrador\Web\Router\RoutingResolution;

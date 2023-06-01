@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
 
 final class GetMappingTest extends RequestMappingTestCase {
 
