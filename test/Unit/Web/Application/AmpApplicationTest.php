@@ -52,7 +52,7 @@ use Labrador\Web\HttpMethod;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\FastRouteRouter;
-use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;

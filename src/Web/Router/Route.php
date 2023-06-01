@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace Labrador\Web\Router;
 
 use Labrador\Web\Controller\Controller;
+use Labrador\Web\Router\Mapping\RequestMapping;
 
 final class Route {
 

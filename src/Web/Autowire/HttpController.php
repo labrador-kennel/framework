@@ -6,7 +6,7 @@ use Amp\Http\Server\Middleware;
 use Attribute;
 use Cspray\AnnotatedContainer\Attribute\ServiceAttribute;
 use Labrador\Web\Controller\RouteMappingAttribute;
-use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Router\Mapping\RequestMapping;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 final class HttpController implements ServiceAttribute, RouteMappingAttribute {

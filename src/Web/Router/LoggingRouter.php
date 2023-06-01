@@ -5,6 +5,7 @@ namespace Labrador\Web\Router;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Labrador\Web\Controller\Controller;
+use Labrador\Web\Router\Mapping\RequestMapping;
 use Psr\Log\LoggerInterface;
 
 final class LoggingRouter implements Router {

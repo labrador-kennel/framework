@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\RequestMapping;
+use Labrador\Web\Router\Mapping\RequestMapping;
 use PHPUnit\Framework\TestCase;
 
 abstract class RequestMappingTestCase extends TestCase {

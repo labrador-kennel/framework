@@ -9,6 +9,7 @@ use FastRoute\RouteCollector;
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\MiddlewareController;
 use Labrador\Web\Exception\InvalidType;
+use Labrador\Web\Router\Mapping\RequestMapping;
 
 /**
  * A Router implementation that makes use of FastRoute to do the actual heavy lifting.

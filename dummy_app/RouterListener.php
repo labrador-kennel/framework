@@ -10,7 +10,7 @@ use Labrador\CompositeFuture\CompositeFuture;
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Event\AddRoutes;
 use Labrador\Web\Event\AddRoutesListener;
-use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
 
 #[ListenerService]
 class RouterListener extends AddRoutesListener {

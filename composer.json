@@ -39,7 +39,6 @@
     "psalm/phar": "^5.0",
     "roave/security-advisories": "dev-latest"
   },
-  "bin": ["bin/labrador"],
   "autoload": {
     "psr-4": {
       "Labrador\\": "src"

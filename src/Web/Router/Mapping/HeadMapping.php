@@ -1,17 +1,17 @@
 <?php
 
-namespace Labrador\Web\Router;
+namespace Labrador\Web\Router\Mapping;
 
 use Labrador\Web\HttpMethod;
 
-class ConnectMapping implements RequestMapping {
+final class HeadMapping implements RequestMapping {
 
     public function __construct(
         private readonly string $path
     ) {}
 
     public function getHttpMethod() : HttpMethod {
-        return HttpMethod::Connect;
+        return HttpMethod::Head;
     }
 
     public function getPath() : string {

@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\PostMapping;
+use Labrador\Web\Router\Mapping\PostMapping;
 
 final class PostMappingTest extends RequestMappingTestCase {
 

@@ -11,7 +11,7 @@ namespace Labrador\Test\Unit\Web\Router;
 
 use Labrador\Router\MethodAndPathRequestMapping;
 use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
-use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Route;
 use PHPUnit\Framework\TestCase;
 

@@ -5,6 +5,11 @@ namespace Labrador\Web\Router;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Labrador\Web\Controller\Controller;
+use Labrador\Web\Router\Mapping\DeleteMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
+use Labrador\Web\Router\Mapping\PostMapping;
+use Labrador\Web\Router\Mapping\PutMapping;
+use Labrador\Web\Router\Mapping\RequestMapping;
 
 /**
  * A Router that acts as a decorator over other Router implementations and provides convenience methods for defining

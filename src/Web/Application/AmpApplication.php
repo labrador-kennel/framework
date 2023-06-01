@@ -26,7 +26,7 @@ use Labrador\Web\Event\ResponseSent;
 use Labrador\Web\Event\WillInvokeController;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
-use Labrador\Web\Router\GetMapping;
+use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Router;
 use Labrador\Web\Router\RoutingResolution;
 use Labrador\Web\Router\RoutingResolutionReason;

@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Controller;
 
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Router\TraceMapping;
+use Labrador\Web\Router\Mapping\TraceMapping;
 
 final class TraceMappingTest extends RequestMappingTestCase {
 
