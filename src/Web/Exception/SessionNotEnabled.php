@@ -2,6 +2,7 @@
 
 namespace Labrador\Web\Exception;
 
+use Labrador\Exception\Exception;
 use Labrador\Web\Middleware\OpenSession;
 
 final class SessionNotEnabled extends Exception {

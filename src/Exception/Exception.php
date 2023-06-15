@@ -7,7 +7,7 @@ declare(strict_types=1);
  * @license See LICENSE in source root
  */
 
-namespace Labrador\Web\Exception;
+namespace Labrador\Exception;
 
 use Exception as PhpException;
 use Throwable;
