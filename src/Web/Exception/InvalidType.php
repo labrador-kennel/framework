@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Labrador\Web\Exception;
 
+use Labrador\Exception\Exception;
+
 class InvalidType extends Exception {
 
     public static function fromDispatcherCallbackInvalidReturn() : self {
