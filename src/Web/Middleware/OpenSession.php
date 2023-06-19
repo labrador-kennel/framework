@@ -14,11 +14,11 @@ use Labrador\Web\Exception\SessionNotEnabled;
 final class OpenSession implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
-        if (!$request->hasAttribute('session')) {
+        if (!$request->hasAttribute(Session::class)) {
             throw SessionNotEnabled::fromOpenSessionMiddlewareFoundNoSession();
         }
 
-        $session = $request->getAttribute('session');
+        $session = $request->getAttribute(Session::class);
         assert($session instanceof Session);
         $session->open();
 

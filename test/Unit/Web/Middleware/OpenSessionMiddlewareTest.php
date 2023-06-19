@@ -57,13 +57,13 @@ final class OpenSessionMiddlewareTest extends TestCase {
         );
 
         $request = new Request($this->client, 'GET', Http::createFromString('https://example.com'));
-        $request->setAttribute('session', $this->session);
+        $request->setAttribute(Session::class, $this->session);
 
         $handler = $this->getMockBuilder(RequestHandler::class)->getMock();
         $handler->expects($this->once())
             ->method('handleRequest')
             ->with($this->callback(static function(Request $request) {
-                $session = $request->getAttribute('session');
+                $session = $request->getAttribute(Session::class);
                 return $session instanceof Session && $session->isRead() && $session->isLocked();
             }))->willReturn(new Response());
 
@@ -79,13 +79,13 @@ final class OpenSessionMiddlewareTest extends TestCase {
         );
 
         $request = new Request($this->client, 'GET', Http::createFromString('https://example.com'));
-        $request->setAttribute('session', $this->session);
+        $request->setAttribute(Session::class, $this->session);
 
         self::assertEmpty($this->storage->read($this->sessionId));
 
         $handler = new class implements RequestHandler {
             public function handleRequest(Request $request) : Response {
-                $request->getAttribute('session')->set('known-key', 'known-value');
+                $request->getAttribute(Session::class)->set('known-key', 'known-value');
                 return new Response();
             }
         };
@@ -104,7 +104,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
         );
 
         $request = new Request($this->client, 'GET', Http::createFromString('https://example.com'));
-        $request->setAttribute('session', $this->session);
+        $request->setAttribute(Session::class, $this->session);
 
         $this->subject->handleRequest($request, new ResponseControllerStub(new Response()));
 
