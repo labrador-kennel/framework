@@ -12,6 +12,8 @@ interface ApplicationFeatures {
 
     public function autoRedirectHttpToHttps() : bool;
 
+    public function getHttpsRedirectPort() : ?int;
+
     public function getStaticAssetSettings() : ?StaticAssetSettings;
 
 }

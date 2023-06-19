@@ -20,7 +20,7 @@
     "amphp/log": "^v2.0",
     "cspray/annotated-container": "^v2.2",
     "labrador-kennel/async-event": "^3.0",
-    "labrador-kennel/async-event-autowire":  "dev-main",
+    "labrador-kennel/async-event-autowire":  "^1.0",
     "league/uri": "^6.7",
     "league/uri-components": "^2.4",
     "monolog/monolog": "^3",

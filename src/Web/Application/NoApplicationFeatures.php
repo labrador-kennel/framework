@@ -19,4 +19,8 @@ class NoApplicationFeatures implements ApplicationFeatures {
     public function getStaticAssetSettings() : ?StaticAssetSettings {
         return null;
     }
+
+    public function getHttpsRedirectPort() : ?int {
+        return null;
+    }
 }

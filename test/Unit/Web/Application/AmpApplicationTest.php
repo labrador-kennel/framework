@@ -280,10 +280,14 @@ final class AmpApplicationTest extends TestCase {
             public function getStaticAssetSettings() : ?StaticAssetSettings {
                 return null;
             }
+
+            public function getHttpsRedirectPort() : ?int {
+                return null;
+            }
         };
     }
 
-    private function getApplicationFeaturesWithHttpToHttpsRedirect() : ApplicationFeatures {
+    private function getApplicationFeaturesWithHttpToHttpsRedirectAndNoHttpsPort() : ApplicationFeatures {
         return new class implements ApplicationFeatures {
 
             public function getSessionMiddleware() : ?SessionMiddleware {
@@ -296,6 +300,31 @@ final class AmpApplicationTest extends TestCase {
 
             public function getStaticAssetSettings() : ?StaticAssetSettings {
                 return null;
+            }
+
+            public function getHttpsRedirectPort() : ?int {
+                return null;
+            }
+        };
+    }
+
+    private function getApplicationFeaturesWithHttpToHttpsRedirectAndExplicitHttpsPort() : ApplicationFeatures {
+        return new class implements ApplicationFeatures {
+
+            public function getSessionMiddleware() : ?SessionMiddleware {
+                return null;
+            }
+
+            public function autoRedirectHttpToHttps() : bool {
+                return true;
+            }
+
+            public function getStaticAssetSettings() : ?StaticAssetSettings {
+                return null;
+            }
+
+            public function getHttpsRedirectPort() : ?int {
+                return 9001;
             }
         };
     }
@@ -313,6 +342,10 @@ final class AmpApplicationTest extends TestCase {
 
             public function getStaticAssetSettings() : ?StaticAssetSettings {
                 return new StaticAssetSettings(dirname(__DIR__, 3) . '/Helper/assets');
+            }
+
+            public function getHttpsRedirectPort() : ?int {
+                return null;
             }
         };
     }
@@ -394,7 +427,7 @@ final class AmpApplicationTest extends TestCase {
         self::assertNotNull($controller->getSession());
     }
 
-    public function testApplicationFeaturesRedirectHttpToHttps() {
+    public function testApplicationFeaturesRedirectHttpToHttpsWithNullPort() : void {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
@@ -407,7 +440,7 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithHttpToHttpsRedirect(),
+            $this->getApplicationFeaturesWithHttpToHttpsRedirectAndNoHttpsPort(),
             $this->analyticsQueue,
             $this->preciseTime,
         );
@@ -417,11 +450,43 @@ final class AmpApplicationTest extends TestCase {
         $response = $subject->handleRequest($request);
 
         self::assertSame(
-            HttpStatus::SEE_OTHER,
+            HttpStatus::MOVED_PERMANENTLY,
             $response->getStatus()
         );
         self::assertSame(
             ['location' => ['https://example.com/tls-test?foo=bar']],
+            $response->getHeaders()
+        );
+    }
+
+    public function testApplicationFeaturesRedirectHttpToHttpsWithExplicitPort() : void {
+        $request = new Request(
+            $this->getMockBuilder(Client::class)->getMock(),
+            HttpMethod::Get->value,
+            Http::createFromString('http://example.com/tls-test?foo=bar')
+        );
+
+        $subject = new AmpApplication(
+            $this->httpServer,
+            new ErrorHandlerFactoryStub($this->errorHandler),
+            $this->router,
+            $this->emitter,
+            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
+            $this->getApplicationFeaturesWithHttpToHttpsRedirectAndExplicitHttpsPort(),
+            $this->analyticsQueue,
+            $this->preciseTime,
+        );
+
+        $subject->start();
+
+        $response = $subject->handleRequest($request);
+
+        self::assertSame(
+            HttpStatus::MOVED_PERMANENTLY,
+            $response->getStatus()
+        );
+        self::assertSame(
+            ['location' => ['https://example.com:9001/tls-test?foo=bar']],
             $response->getHeaders()
         );
     }
