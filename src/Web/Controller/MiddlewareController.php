@@ -18,7 +18,7 @@ final class MiddlewareController implements Controller {
     public function __construct(Controller $controller, Middleware ...$middlewares) {
         $this->controller = $controller;
         $this->middlewares = $middlewares;
-        $this->stack = Middleware\stack($this->controller, ...$middlewares);
+        $this->stack = Middleware\stackMiddleware($this->controller, ...$middlewares);
     }
 
     public function getMiddlewares() : array {

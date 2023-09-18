@@ -6,6 +6,7 @@ use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\Base64UrlSessionIdGenerator;
 use Amp\Http\Server\Session\DefaultSessionIdGenerator;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\Session;
@@ -52,7 +53,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
         $this->session = new Session(
             new LocalKeyedMutex(),
             $this->storage = new LocalSessionStorage(),
-            $generator = new DefaultSessionIdGenerator(),
+            $generator = new Base64UrlSessionIdGenerator(),
             $this->sessionId = $generator->generate()
         );
 
@@ -74,7 +75,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
         $this->session = new Session(
             new LocalKeyedMutex(),
             $this->storage = new LocalSessionStorage(),
-            $generator = new DefaultSessionIdGenerator(),
+            $generator = new Base64UrlSessionIdGenerator(),
             $this->sessionId = $generator->generate()
         );
 
@@ -99,7 +100,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
         $this->session = new Session(
             new LocalKeyedMutex(),
             $this->storage = new LocalSessionStorage(),
-            $generator = new DefaultSessionIdGenerator(),
+            $generator = new Base64UrlSessionIdGenerator(),
             $this->sessionId = $generator->generate()
         );
 
