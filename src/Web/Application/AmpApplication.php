@@ -203,7 +203,7 @@ final class AmpApplication implements Application, RequestHandler {
 
         $middlewares[] = $this->finalMiddlewareProcessingMiddleware($benchmark);
 
-        return Middleware\stack($controller, ...$middlewares);
+        return Middleware\stackMiddleware($controller, ...$middlewares);
     }
 
     private function benchmarkMiddlewareProcessingStartedMiddleware(RequestBenchmark $benchmark) : Middleware {

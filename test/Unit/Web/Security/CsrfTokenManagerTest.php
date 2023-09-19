@@ -2,11 +2,9 @@
 
 namespace Labrador\Test\Unit\Web\Security;
 
-use Amp\Cache\Cache;
-use Amp\Cache\LocalCache;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
-use Amp\Http\Server\Session\DefaultSessionIdGenerator;
+use Amp\Http\Server\Session\Base64UrlSessionIdGenerator;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\Session\SessionStorage;
@@ -17,7 +15,6 @@ use Labrador\Web\Security\CsrfTokenManager;
 use League\Uri\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 
 final class CsrfTokenManagerTest extends TestCase {
 
@@ -40,7 +37,7 @@ final class CsrfTokenManagerTest extends TestCase {
             'GET',
             Http::createFromString('https://example.com')
         );
-        $idGenerator = new DefaultSessionIdGenerator();
+        $idGenerator = new Base64UrlSessionIdGenerator();
         $this->session = new Session(
             new LocalKeyedMutex(),
             $this->storage = new LocalSessionStorage(),
@@ -65,9 +62,9 @@ final class CsrfTokenManagerTest extends TestCase {
             ->method('generateToken')
             ->willReturn('known-token');
 
-        $this->session->open();
+        $this->session->lock();
         $token = $this->subject->generateAndStore($this->request);
-        $this->session->save();
+        $this->session->commit();
 
         $data = $this->storage->read($this->sessionId);
         self::assertArrayHasKey('csrfTokens', $data);
@@ -86,9 +83,9 @@ final class CsrfTokenManagerTest extends TestCase {
             ->willReturn('known-token');
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['existing-token'])]);
 
-        $this->session->open();
+        $this->session->lock();
         $token = $this->subject->generateAndStore($this->request);
-        $this->session->save();
+        $this->session->commit();
 
         $data = $this->storage->read($this->sessionId);
         self::assertArrayHasKey('csrfTokens', $data);
@@ -111,9 +108,9 @@ final class CsrfTokenManagerTest extends TestCase {
     public function testValidateAndExpireWithNoTokensInSessionReturnsFalse() : void {
         $this->request->setAttribute(Session::class, $this->session);
 
-        $this->session->open();
+        $this->session->lock();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
-        $this->session->save();
+        $this->session->commit();
 
         self::assertFalse($valid);
     }
@@ -122,9 +119,9 @@ final class CsrfTokenManagerTest extends TestCase {
         $this->request->setAttribute(Session::class, $this->session);
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['known-token'])]);
 
-        $this->session->open();
+        $this->session->lock();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
-        $this->session->save();
+        $this->session->commit();
 
         self::assertTrue($valid);
         self::assertSame(
@@ -136,9 +133,9 @@ final class CsrfTokenManagerTest extends TestCase {
     public function testValidateAndExpireWithSessionIdButNoTokensInCacheReturnsFalseAndHasNoStore() : void {
         $this->request->setAttribute(Session::class, $this->session);
 
-        $this->session->open();
+        $this->session->lock();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
-        $this->session->save();
+        $this->session->commit();
 
         self::assertFalse($valid);
         self::assertSame(
@@ -151,9 +148,9 @@ final class CsrfTokenManagerTest extends TestCase {
         $this->request->setAttribute(Session::class, $this->session);
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['known-token'])]);
 
-        $this->session->open();
+        $this->session->lock();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
-        $this->session->save();
+        $this->session->commit();
 
         self::assertTrue($valid);
         self::assertSame(
@@ -166,9 +163,9 @@ final class CsrfTokenManagerTest extends TestCase {
         $this->request->setAttribute(Session::class, $this->session);
         $this->storage->write($this->sessionId, ['csrfTokens' => json_encode(['other-existing-token', 'known-token'])]);
 
-        $this->session->open();
+        $this->session->lock();
         $valid = $this->subject->validateAndExpire($this->request, 'known-token');
-        $this->session->save();
+        $this->session->commit();
 
         self::assertTrue($valid);
         self::assertSame(

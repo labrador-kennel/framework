@@ -20,11 +20,11 @@ final class OpenSession implements Middleware {
 
         $session = $request->getAttribute(Session::class);
         assert($session instanceof Session);
-        $session->open();
+        $session->lock();
 
         $response = $requestHandler->handleRequest($request);
 
-        $session->save();
+        $session->commit();
 
         return $response;
     }
