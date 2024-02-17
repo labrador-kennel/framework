@@ -13,6 +13,7 @@ use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\Session\SessionStorage;
 use Amp\Sync\LocalKeyedMutex;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
+use Labrador\Test\Unit\Web\Stub\SessionDestroyingController;
 use Labrador\Web\Exception\SessionNotEnabled;
 use Labrador\Web\Middleware\OpenSession;
 use League\Uri\Http;
@@ -44,7 +45,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
         $this->expectExceptionMessage('The ' . OpenSession::class . ' was added to a route but no session was found on the request.');
 
         $this->subject->handleRequest(
-            new Request($this->client, 'GET', Http::createFromString('https://example.com')),
+            new Request($this->client, 'GET', Http::new('https://example.com')),
             $handler
         );
     }
@@ -57,7 +58,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
             $this->sessionId = $generator->generate()
         );
 
-        $request = new Request($this->client, 'GET', Http::createFromString('https://example.com'));
+        $request = new Request($this->client, 'GET', Http::new('https://example.com'));
         $request->setAttribute(Session::class, $this->session);
 
         $handler = $this->getMockBuilder(RequestHandler::class)->getMock();
@@ -79,7 +80,7 @@ final class OpenSessionMiddlewareTest extends TestCase {
             $this->sessionId = $generator->generate()
         );
 
-        $request = new Request($this->client, 'GET', Http::createFromString('https://example.com'));
+        $request = new Request($this->client, 'GET', Http::new('https://example.com'));
         $request->setAttribute(Session::class, $this->session);
 
         self::assertEmpty($this->storage->read($this->sessionId));
@@ -104,12 +105,29 @@ final class OpenSessionMiddlewareTest extends TestCase {
             $this->sessionId = $generator->generate()
         );
 
-        $request = new Request($this->client, 'GET', Http::createFromString('https://example.com'));
+        $request = new Request($this->client, 'GET', Http::new('https://example.com'));
         $request->setAttribute(Session::class, $this->session);
 
         $this->subject->handleRequest($request, new ResponseControllerStub(new Response()));
 
         self::assertFalse($this->session->isLocked());
+    }
+
+    public function testHandleSessionBeingDestroyedDoesNotThrowError() : void {
+        $this->session = new Session(
+            new LocalKeyedMutex(),
+            $this->storage = new LocalSessionStorage(),
+            $generator = new Base64UrlSessionIdGenerator(),
+            $this->sessionId = $generator->generate()
+        );
+
+        $request = new Request($this->client, 'GET', Http::new('https://example.com'));
+        $request->setAttribute(Session::class, $this->session);
+
+        $response = $this->subject->handleRequest($request, new SessionDestroyingController());
+
+        self::assertFalse($this->session->isLocked());
+        self::assertSame('Session destroyed', $response->getBody()->read());
     }
 
 }
