@@ -4,14 +4,11 @@ namespace Labrador\Test\Integration;
 
 use Amp\Http\Client\HttpClientBuilder;
 use Amp\Http\Client\Request;
-use Amp\Http\Cookie\ResponseCookie;
 use Amp\Http\HttpStatus;
 use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\DummyApp\Controller\SessionDtoController;
-use Labrador\DummyApp\CountingService;
 use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
@@ -149,20 +146,18 @@ TEXT;
         $request = new Request('http://localhost:4200/exception');
         $client->request($request);
 
-        $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
-        $expected = <<<TEXT
-%a
-%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
-TEXT;
         $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
 
-        self::assertStringMatchesFormat(
-            $expected,
-            join(
-                PHP_EOL,
-                array_map(static fn(LogRecord $logRecord) => $logRecord->formatted, $handler->getRecords())
-            )
-        );
+        self::assertTrue($handler->hasErrorThatPasses(static function (LogRecord $record) {
+            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
+            $expected = <<<TEXT
+%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
+TEXT;
+            return (new StringMatchesFormatDescription($expected))->evaluate(
+                other: $record->formatted,
+                returnResult: true
+            );
+        }));
     }
 }
