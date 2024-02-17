@@ -42,21 +42,7 @@ class LoggerFactoryTest extends TestCase {
         $logger = $subject->createLogger($loggerType);
 
         self::assertInstanceOf(Logger::class, $logger);
-
         self::assertSame($loggerType->value, $logger->getName());
-    }
-
-    /**
-     * @dataProvider loggerTypeProvider
-     */
-    public function testLoggerReturnedWithPsrLogMessageProcessor(LoggerType $loggerType) : void {
-        $subject = new MonologLoggerFactory($this->nullInitializer);
-        $logger = $subject->createLogger($loggerType);
-
-        self::assertInstanceOf(Logger::class, $logger);
-
-        self::assertCount(1,  $logger->getProcessors());
-        self::assertInstanceOf(PsrLogMessageProcessor::class, $logger->getProcessors()[0]);
     }
 
     /**

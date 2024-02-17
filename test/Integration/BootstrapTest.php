@@ -16,6 +16,7 @@ use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\AsyncEvent\AmpEventEmitter;
 use Labrador\AsyncEvent\EventEmitter;
 use Labrador\DummyApp\Controller\CheckDtoController;
+use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
 use Labrador\DummyApp\Middleware\FooMiddleware;
@@ -26,9 +27,11 @@ use Labrador\Validation\AuraFilterRuleValidator;
 use Labrador\Validation\Filter;
 use Labrador\Web\Bootstrap;
 use Labrador\Web\ErrorHandlerFactory;
+use Labrador\Web\Middleware\Priority;
 use Labrador\Web\Router\LoggingRouter;
 use Labrador\Web\Router\Route;
 use Labrador\Web\Router\Router;
+use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
@@ -96,7 +99,12 @@ class BootstrapTest extends TestCase {
         self::assertInstanceOf(Logger::class, $logger);
 
         $logger->info('This is a test message');
-        self::assertStringContainsString('This is a test message', StreamBuffer::output($this->stdout));
+
+        $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
+        self::assertTrue(
+            $handler->hasInfoThatContains('This is a test message')
+        );
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsRouter() : void {
@@ -155,17 +163,36 @@ class BootstrapTest extends TestCase {
 
         $bootstrap->bootstrapApplication();
 
-        self::assertStringContainsString('Autowiring route GET /hello/world to HelloWorld controller.', StreamBuffer::output($this->stdout));
+        $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
+
+        self::assertTrue(
+            $handler->hasInfoThatContains('Autowiring route GET /hello/world to HelloWorld controller.')
+        );
     }
 
-    public function testApplicationAutowiringApplicationMiddlewareLogged() : void {
+    public static function expectedMiddlewareProvider() : array {
+        return [
+            BarMiddleware::class => [BarMiddleware::class, Priority::Low],
+            BazMiddleware::class => [BazMiddleware::class, Priority::Medium],
+            FooMiddleware::class => [FooMiddleware::class, Priority::High],
+            QuxMiddleware::class => [QuxMiddleware::class, Priority::Critical]
+        ];
+    }
+
+    /**
+     * @dataProvider expectedMiddlewareProvider
+     */
+    public function testApplicationAutowiringApplicationMiddlewareLogged(string $middlewareClass, Priority $priority) : void {
         $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
-        self::assertStringContainsString('Adding ' . BarMiddleware::class . ' to application with Low priority.', StreamBuffer::output($this->stdout));
-        self::assertStringContainsString('Adding ' . BazMiddleware::class . ' to application with Medium priority.', StreamBuffer::output($this->stdout));
-        self::assertStringContainsString('Adding ' . FooMiddleware::class . ' to application with High priority.', StreamBuffer::output($this->stdout));
-        self::assertStringContainsString('Adding ' . QuxMiddleware::class . ' to application with Critical priority.', StreamBuffer::output($this->stdout));
+        $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
+
+        self::assertTrue(
+            $handler->hasInfoThatContains('Adding ' . $middlewareClass . ' to application with ' . $priority->name . ' priority.')
+        );
     }
 
 }

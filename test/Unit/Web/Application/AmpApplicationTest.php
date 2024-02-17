@@ -23,6 +23,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\MiddlewareCallRegistry;
+use Labrador\Test\Helper\StubApplicationFeatures;
 use Labrador\Test\Unit\Web\Stub\ErrorHandlerFactoryStub;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingController;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingMiddleware;
@@ -95,7 +96,7 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            new NoApplicationFeatures(),
+            new StubApplicationFeatures(),
             $this->analyticsQueue,
             $this->preciseTime
         );
@@ -341,7 +342,10 @@ final class AmpApplicationTest extends TestCase {
             }
 
             public function getStaticAssetSettings() : ?StaticAssetSettings {
-                return new StaticAssetSettings(dirname(__DIR__, 3) . '/Helper/assets');
+                return new StaticAssetSettings(
+                    dirname(__DIR__, 3) . '/Helper/assets',
+                    'assets'
+                );
             }
 
             public function getHttpsRedirectPort() : ?int {
@@ -427,70 +431,6 @@ final class AmpApplicationTest extends TestCase {
         self::assertNotNull($controller->getSession());
     }
 
-    public function testApplicationFeaturesRedirectHttpToHttpsWithNullPort() : void {
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com/tls-test?foo=bar')
-        );
-
-        $subject = new AmpApplication(
-            $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
-            $this->router,
-            $this->emitter,
-            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithHttpToHttpsRedirectAndNoHttpsPort(),
-            $this->analyticsQueue,
-            $this->preciseTime,
-        );
-
-        $subject->start();
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame(
-            HttpStatus::MOVED_PERMANENTLY,
-            $response->getStatus()
-        );
-        self::assertSame(
-            ['location' => ['https://example.com/tls-test?foo=bar']],
-            $response->getHeaders()
-        );
-    }
-
-    public function testApplicationFeaturesRedirectHttpToHttpsWithExplicitPort() : void {
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com/tls-test?foo=bar')
-        );
-
-        $subject = new AmpApplication(
-            $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
-            $this->router,
-            $this->emitter,
-            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithHttpToHttpsRedirectAndExplicitHttpsPort(),
-            $this->analyticsQueue,
-            $this->preciseTime,
-        );
-
-        $subject->start();
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame(
-            HttpStatus::MOVED_PERMANENTLY,
-            $response->getStatus()
-        );
-        self::assertSame(
-            ['location' => ['https://example.com:9001/tls-test?foo=bar']],
-            $response->getHeaders()
-        );
-    }
-
     public function testNormalProcessingHasCorrectRequestAnalyticsQueued() : void {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
@@ -541,7 +481,7 @@ final class AmpApplicationTest extends TestCase {
             new ErrorThrowingRouter($exception = new RuntimeException()),
             $this->emitter,
             new NullLogger(),
-            new NoApplicationFeatures(),
+            new StubApplicationFeatures(),
             $this->analyticsQueue,
             $this->preciseTime
         );

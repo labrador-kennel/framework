@@ -12,6 +12,7 @@ use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\DummyApp\Controller\SessionDtoController;
 use Labrador\DummyApp\CountingService;
+use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
 use Labrador\DummyApp\Middleware\FooMiddleware;
@@ -20,6 +21,8 @@ use Labrador\DummyApp\MiddlewareCallRegistry;
 use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
 use Labrador\Web\Application\Application;
+use Monolog\Handler\TestHandler;
+use Monolog\LogRecord;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
 use org\bovigo\vfs\vfsStreamWrapper as VirtualStream;
@@ -105,8 +108,6 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/middleware', 'GET');
         $response = $client->request($request);
 
-        $output = StreamBuffer::output(self::$stdout);
-
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Hello, Universe!', $response->getBody()->buffer());
     }
@@ -132,9 +133,15 @@ class HttpServerTest extends AsyncTestCase {
 %a
 TEXT;
 
+        $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
+
         self::assertStringMatchesFormat(
             $expected,
-            StreamBuffer::output(self::$stdout)
+            join(
+                PHP_EOL,
+                array_map(static fn(LogRecord $logRecord) => $logRecord->formatted, $handler->getRecords())
+            )
         );
     }
 
@@ -149,10 +156,15 @@ TEXT;
 %a
 %a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
 TEXT;
+        $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertStringMatchesFormat(
             $expected,
-            StreamBuffer::output(self::$stdout)
+            join(
+                PHP_EOL,
+                array_map(static fn(LogRecord $logRecord) => $logRecord->formatted, $handler->getRecords())
+            )
         );
     }
 }
