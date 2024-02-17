@@ -47,10 +47,11 @@ final class FastRouteRouter implements Router {
             $controller = new MiddlewareController($controller, ...$middlewares);
         }
         $route = new Route($requestMapping, $controller);
+        $path = $requestMapping->getPath();
         $this->routes[] = $route;
         $this->collector->addRoute(
             $requestMapping->getHttpMethod()->value,
-            $requestMapping->getPath(),
+            $path === '/' ? $path : rtrim($requestMapping->getPath(), '/'),
             $route
         );
 
@@ -62,7 +63,7 @@ final class FastRouteRouter implements Router {
      */
     public function match(Request $request) : RoutingResolution {
         $uri = $request->getUri();
-        $path = empty($uri->getPath()) ? '/' : $uri->getPath();
+        $path = empty($uri->getPath()) ? '/' : rtrim($uri->getPath(), '/');
         $routeData = $this->getDispatcher()->dispatch($request->getMethod(), $path);
         $status = (int) array_shift($routeData);
 

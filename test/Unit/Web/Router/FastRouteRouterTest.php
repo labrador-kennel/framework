@@ -9,6 +9,7 @@
 
 namespace Labrador\Test\Unit\Web\Router;
 
+use Amp\Http\HttpStatus;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
@@ -252,5 +253,45 @@ class FastRouteRouterTest extends AsyncTestCase {
         $body = $response->getBody()->read();
 
         $this->assertSame('decorated value: foobar', $body);
+    }
+
+    public function testTrailingSlashWithMatchedPathDoesNotResultIn404() : void {
+        $request = $this->getRequest(HttpMethod::Get->value, 'http://example.com/found-controller/');
+        $router = $this->getRouter();
+        $responseController = new ResponseControllerStub(new Response(200, [], 'found controller with trailing slash'));
+        $router->addRoute(
+            new GetMapping('/found-controller'),
+            $responseController,
+        );
+
+        $controller = $router->match($request)->controller;
+
+        self::assertNotNull($controller);
+
+        $response = $controller->handleRequest($request);
+
+
+        self::assertSame(HttpStatus::OK, $response->getStatus());
+        self::assertSame('found controller with trailing slash', $response->getBody()->read());
+    }
+
+    public function testTrailingSlashInAddedRouteDoesNotResultIn404() : void {
+        $request = $this->getRequest(HttpMethod::Get->value, 'http://example.com/found-controller');
+        $router = $this->getRouter();
+        $responseController = new ResponseControllerStub(new Response(200, [], 'found controller with trailing slash'));
+        $router->addRoute(
+            new GetMapping('/found-controller/'),
+            $responseController,
+        );
+
+        $controller = $router->match($request)->controller;
+
+        self::assertNotNull($controller);
+
+        $response = $controller->handleRequest($request);
+
+
+        self::assertSame(HttpStatus::OK, $response->getStatus());
+        self::assertSame('found controller with trailing slash', $response->getBody()->read());
     }
 }
