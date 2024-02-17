@@ -4,14 +4,12 @@ namespace Labrador\Test\Integration;
 
 use Amp\Http\Client\HttpClientBuilder;
 use Amp\Http\Client\Request;
-use Amp\Http\Cookie\ResponseCookie;
 use Amp\Http\HttpStatus;
 use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\DummyApp\Controller\SessionDtoController;
-use Labrador\DummyApp\CountingService;
+use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
 use Labrador\DummyApp\Middleware\FooMiddleware;
@@ -20,9 +18,12 @@ use Labrador\DummyApp\MiddlewareCallRegistry;
 use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
 use Labrador\Web\Application\Application;
+use Monolog\Handler\TestHandler;
+use Monolog\LogRecord;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
 use org\bovigo\vfs\vfsStreamWrapper as VirtualStream;
+use PHPUnit\Framework\Constraint\StringMatchesFormatDescription;
 use Ramsey\Uuid\Uuid;
 
 class HttpServerTest extends AsyncTestCase {
@@ -105,8 +106,6 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/middleware', 'GET');
         $response = $client->request($request);
 
-        $output = StreamBuffer::output(self::$stdout);
-
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('Hello, Universe!', $response->getBody()->buffer());
     }
@@ -126,16 +125,19 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/world');
         $client->request($request);
 
-        $expected = <<<TEXT
-%a
-%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
-%a
-TEXT;
 
-        self::assertStringMatchesFormat(
-            $expected,
-            StreamBuffer::output(self::$stdout)
-        );
+        $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
+
+        self::assertTrue($handler->hasInfoThatPasses(static function (LogRecord $record) {
+            $expected = <<<TEXT
+%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
+TEXT;
+            return (new StringMatchesFormatDescription($expected))->evaluate(
+                other: $record->formatted,
+                returnResult: true
+            );
+        }));
     }
 
     public function testExceptionThrowHasCorrectLogOutputSentToStdout() : void {
@@ -144,15 +146,18 @@ TEXT;
         $request = new Request('http://localhost:4200/exception');
         $client->request($request);
 
-        $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
-        $expected = <<<TEXT
-%a
+        $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
+        self::assertInstanceOf(TestHandler::class, $handler);
+
+        self::assertTrue($handler->hasErrorThatPasses(static function (LogRecord $record) {
+            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
+            $expected = <<<TEXT
 %a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
 TEXT;
-
-        self::assertStringMatchesFormat(
-            $expected,
-            StreamBuffer::output(self::$stdout)
-        );
+            return (new StringMatchesFormatDescription($expected))->evaluate(
+                other: $record->formatted,
+                returnResult: true
+            );
+        }));
     }
 }

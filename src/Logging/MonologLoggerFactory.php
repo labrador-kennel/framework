@@ -22,7 +22,6 @@ final class MonologLoggerFactory implements LoggerFactory {
     public function createLogger(LoggerType $loggerType) : LoggerInterface {
         if (!array_key_exists($loggerType->value, $this->cache)) {
             $logger = new Logger($loggerType->value);
-            $logger->pushProcessor(new PsrLogMessageProcessor());
 
             $this->loggerInitializer->initialize($logger, $loggerType);
 

@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.12.0@f90118cdeacd0088e7215e64c0c99ceca819e176">
+<files psalm-version="5.17.0@c620f6e80d0abfca532b00bda366062aaedf6e5d">
+  <file src="src/Util/ReflectionCache.php">
+    <InvalidArrayOffset>
+      <code>self::$cache[$class]</code>
+    </InvalidArrayOffset>
+    <PropertyTypeCoercion>
+      <code>[]</code>
+      <code>self::$cache</code>
+    </PropertyTypeCoercion>
+  </file>
+  <file src="src/Validation/EntityValidator.php">
+    <ArgumentTypeCoercion>
+      <code>$errors</code>
+    </ArgumentTypeCoercion>
+    <MixedAssignment>
+      <code>$value</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Validation/PropertyValidateMap.php">
+    <InvalidArgument>
+      <code>$map</code>
+    </InvalidArgument>
+  </file>
   <file src="src/Web/Application/Analytics/RequestBenchmark.php">
     <PossiblyNullOperand>
       <code><![CDATA[$this->middlewareCompleted]]></code>
@@ -14,6 +36,11 @@
       <code><![CDATA[$this->profiles]]></code>
     </ArgumentTypeCoercion>
   </file>
+  <file src="src/Web/Controller/MiddlewareController.php">
+    <RedundantCondition>
+      <code><![CDATA[$toString !== '']]></code>
+    </RedundantCondition>
+  </file>
   <file src="src/Web/Controller/StaticAssetController.php">
     <MixedOperand>
       <code><![CDATA[$request->getAttribute('path')]]></code>
@@ -25,6 +52,10 @@
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Web/Security/CsrfTokenManager.php">
+    <MixedArgument>
+      <code><![CDATA[$session->get('csrfTokens')]]></code>
+      <code><![CDATA[$session->get('csrfTokens')]]></code>
+    </MixedArgument>
     <MixedArrayAccess>
       <code>$tokens[$index]</code>
     </MixedArrayAccess>
@@ -40,9 +71,5 @@
       <code>$tokens</code>
       <code>$tokens</code>
     </MixedAssignment>
-    <PossiblyNullArgument>
-      <code><![CDATA[$session->get('csrfTokens')]]></code>
-      <code><![CDATA[$session->get('csrfTokens')]]></code>
-    </PossiblyNullArgument>
   </file>
 </files>

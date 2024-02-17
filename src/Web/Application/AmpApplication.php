@@ -116,15 +116,6 @@ final class AmpApplication implements Application, RequestHandler {
     }
 
     public function handleRequest(Request $request) : Response {
-        if ($this->features->autoRedirectHttpToHttps() && $request->getUri()->getScheme() === 'http') {
-            $uri = $request->getUri()->withScheme('https');
-            $uri = $uri->withPort($this->features->getHttpsRedirectPort());
-            return new Response(
-                status: HttpStatus::MOVED_PERMANENTLY,
-                headers: ['Location' => (string) $uri]
-            );
-        }
-
         $benchmark = RequestBenchmark::requestReceived($request, $this->preciseTime);
 
         try {

@@ -6,7 +6,7 @@ final class StaticAssetSettings {
 
     public function __construct(
         public readonly string $assetDir,
-        public readonly string $pathPrefix = 'assets'
+        public readonly string $pathPrefix
     ) {}
 
 }

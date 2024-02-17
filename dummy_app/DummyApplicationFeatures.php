@@ -10,7 +10,7 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Application\ApplicationFeatures;
 use Labrador\Web\Application\StaticAssetSettings;
 
-#[Service(primary: true)]
+#[Service]
 final class DummyApplicationFeatures implements ApplicationFeatures {
 
     public function getSessionMiddleware() : ?SessionMiddleware {
