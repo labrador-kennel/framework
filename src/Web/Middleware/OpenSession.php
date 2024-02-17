@@ -24,7 +24,9 @@ final class OpenSession implements Middleware {
 
         $response = $requestHandler->handleRequest($request);
 
-        $session->commit();
+        if ($session->isLocked()) {
+            $session->commit();
+        }
 
         return $response;
     }
