@@ -26,6 +26,7 @@ use Monolog\LogRecord;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
 use org\bovigo\vfs\vfsStreamWrapper as VirtualStream;
+use PHPUnit\Framework\Constraint\StringMatchesFormatDescription;
 use Ramsey\Uuid\Uuid;
 
 class HttpServerTest extends AsyncTestCase {
@@ -127,22 +128,19 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/world');
         $client->request($request);
 
-        $expected = <<<TEXT
-%a
-%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
-%a
-TEXT;
 
         $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
 
-        self::assertStringMatchesFormat(
-            $expected,
-            join(
-                PHP_EOL,
-                array_map(static fn(LogRecord $logRecord) => $logRecord->formatted, $handler->getRecords())
-            )
-        );
+        self::assertTrue($handler->hasInfoThatPasses(static function (LogRecord $record) {
+            $expected = <<<TEXT
+%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
+TEXT;
+            return (new StringMatchesFormatDescription($expected))->evaluate(
+                other: $record->formatted,
+                returnResult: true
+            );
+        }));
     }
 
     public function testExceptionThrowHasCorrectLogOutputSentToStdout() : void {
