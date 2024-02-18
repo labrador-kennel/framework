@@ -6,23 +6,19 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use function Amp\Http\Server\Middleware;
+use function Amp\Http\Server\Middleware\stackMiddleware;
 
 final class MiddlewareController implements Controller {
 
-    private Controller $controller;
+    public readonly Controller $controller;
     /** @var Middleware[] */
-    private array $middlewares;
+    public readonly array $middlewares;
     private RequestHandler $stack;
 
     public function __construct(Controller $controller, Middleware ...$middlewares) {
         $this->controller = $controller;
         $this->middlewares = $middlewares;
-        $this->stack = Middleware\stackMiddleware($this->controller, ...$middlewares);
-    }
-
-    public function getMiddlewares() : array {
-        return $this->middlewares;
+        $this->stack = stackMiddleware($this->controller, ...$middlewares);
     }
 
     /**
