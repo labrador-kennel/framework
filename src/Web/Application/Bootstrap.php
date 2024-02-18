@@ -1,22 +1,32 @@
 <?php
 
-namespace Labrador\Web;
+namespace Labrador\Web\Application;
 
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
-use Labrador\Web\Application\Application;
 use PackageVersions\Versions;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Revolt\EventLoop;
 use function Amp\ByteStream\getStdout;
 
 final class Bootstrap {
 
-    public function __construct(
+    private function __construct(
         private readonly AnnotatedContainerBootstrap $bootstrap,
         /**
-         * @var list<string> $profiles
+         * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = ['default'],
     ) {}
+
+    /**
+     * @param AnnotatedContainerBootstrap $bootstrap
+     * @param list<non-empty-string> $profiles
+     * @return self
+     */
+    public static function fromProvidedContainerBootstrap(AnnotatedContainerBootstrap $bootstrap, array $profiles = ['default']) : self {
+        return new self($bootstrap, $profiles);
+    }
 
     public function bootstrapApplication() : Application {
         $memoryLimit = ini_get('memory_limit');

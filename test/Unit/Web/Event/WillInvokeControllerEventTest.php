@@ -3,8 +3,8 @@
 namespace Labrador\Test\Unit\Web\Event;
 
 use Labrador\Web\Application\ApplicationEvent;
+use Labrador\Web\Application\Event\WillInvokeController;
 use Labrador\Web\Controller\Controller;
-use Labrador\Web\Event\WillInvokeController;
 use Labrador\Web\RequestAttribute;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

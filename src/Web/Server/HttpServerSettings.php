@@ -6,7 +6,7 @@ use Amp\Socket\InternetAddress;
 use Cspray\AnnotatedContainer\Attribute\Service;
 
 #[Service]
-interface HttpServerConfiguration {
+interface HttpServerSettings {
 
     /**
      * @return list<InternetAddress>

@@ -18,12 +18,18 @@ abstract class EntityValidator {
     final public function validate(object $entity) : ValidationResult {
         $errors = [];
         foreach ($this->propertyValidateMap as $property => $validates) {
+            /** @var mixed $value */
             $value = $this->getPropertyValue($entity, $property);
             /** @var Validate $validate */
             foreach ($validates as $validate) {
                 if (!$validate->rule->validate($validate)) {
                     $errors[$property] ??= [];
-                    $errors[$property][] = $validate->messageGenerator->getMessage($validate->rule, $entity, $property, $value);
+
+                    $message = $validate->messageGenerator->getMessage($validate->rule, $entity, $property, $value);
+
+                    assert($message !== '');
+
+                    $errors[$property][] = $message;
                 }
             }
         }

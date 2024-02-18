@@ -1,21 +1,21 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Web\Event;
+namespace Labrador\Web\Application\Event;
 
 use Amp\Future;
 use Labrador\AsyncEvent\AbstractListenerProvider;
 use Labrador\CompositeFuture\CompositeFuture;
 use Labrador\Web\Application\ApplicationEvent;
 
-abstract class AddRoutesListener extends AbstractListenerProvider {
+abstract class ResponseSentListener extends AbstractListenerProvider {
 
     public function __construct() {
         parent::__construct(
-            [ApplicationEvent::AddRoutes->value],
+            [ApplicationEvent::ResponseSent->value],
             $this->handle(...)
         );
     }
 
-    abstract protected function handle(AddRoutes $addRoutes) : Future|CompositeFuture|null;
+    abstract protected function handle(ResponseSent $responseSent) : Future|CompositeFuture|null;
 
 }

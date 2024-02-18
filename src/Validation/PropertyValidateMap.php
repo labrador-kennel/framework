@@ -13,7 +13,7 @@ use Traversable;
 class PropertyValidateMap implements \Countable, IteratorAggregate {
 
     /**
-     * @param array<non-empty-string, non-empty-list<Validate>> $propertyValidateMap
+     * @param array<non-empty-string, list<Validate>> $propertyValidateMap
      */
     private function __construct(
         private readonly array $propertyValidateMap

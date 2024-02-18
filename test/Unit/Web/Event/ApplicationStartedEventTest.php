@@ -4,7 +4,7 @@ namespace Labrador\Test\Unit\Web\Event;
 
 use Labrador\Web\Application\Application;
 use Labrador\Web\Application\ApplicationEvent;
-use Labrador\Web\Event\ApplicationStarted;
+use Labrador\Web\Application\Event\ApplicationStarted;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

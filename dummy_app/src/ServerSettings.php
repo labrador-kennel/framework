@@ -5,10 +5,10 @@ namespace Labrador\DummyApp;
 use Amp\Socket\InternetAddress;
 use Cspray\AnnotatedContainer\Attribute\Inject;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Labrador\Web\Server\HttpServerConfiguration;
+use Labrador\Web\Server\HttpServerSettings;
 
 #[Service]
-class ServerConfiguration implements HttpServerConfiguration {
+class ServerSettings implements HttpServerSettings {
 
     public function __construct(
         #[Inject([

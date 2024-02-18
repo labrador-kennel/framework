@@ -1,20 +1,20 @@
 <?php
 
-namespace Labrador\Web\Event;
+namespace Labrador\Web\Application\Event;
 
+use Amp\Http\Server\Response;
 use DateTimeImmutable;
 use Labrador\AsyncEvent\Event;
 use Labrador\Web\Application\ApplicationEvent;
-use Labrador\Web\Controller\Controller;
 use Labrador\Web\RequestAttribute;
 use Ramsey\Uuid\UuidInterface;
 
-final class WillInvokeController implements Event {
+final class ResponseSent implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 
     public function __construct(
-        private readonly Controller $controller,
+        private readonly Response $response,
         private readonly UuidInterface $requestId,
         DateTimeImmutable $createdAt = null
     ) {
@@ -22,11 +22,11 @@ final class WillInvokeController implements Event {
     }
 
     public function getName() : string {
-        return ApplicationEvent::WillInvokeController->value;
+        return ApplicationEvent::ResponseSent->value;
     }
 
-    public function getTarget() : Controller {
-        return $this->controller;
+    public function getTarget() : Response {
+        return $this->response;
     }
 
     public function getData() : array {

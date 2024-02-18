@@ -6,7 +6,7 @@ use Amp\Http\Server\Session\SessionMiddleware;
 use Cspray\AnnotatedContainer\Attribute\Service;
 
 #[Service]
-interface ApplicationFeatures {
+interface ApplicationSettings {
 
     public function getSessionMiddleware() : ?SessionMiddleware;
 

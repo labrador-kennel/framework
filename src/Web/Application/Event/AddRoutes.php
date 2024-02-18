@@ -1,29 +1,29 @@
 <?php
 
-namespace Labrador\Web\Event;
+namespace Labrador\Web\Application\Event;
 
-use Amp\Http\Server\Request;
 use DateTimeImmutable;
 use Labrador\AsyncEvent\Event;
 use Labrador\Web\Application\ApplicationEvent;
+use Labrador\Web\Router\Router;
 
-final class RequestReceived implements Event {
+final class AddRoutes implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 
     public function __construct(
-        private readonly Request $request,
+        private readonly Router $router,
         DateTimeImmutable $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
     public function getName() : string {
-        return ApplicationEvent::RequestReceived->value;
+        return ApplicationEvent::AddRoutes->value;
     }
 
-    public function getTarget() : Request {
-        return $this->request;
+    public function getTarget() : Router {
+        return $this->router;
     }
 
     public function getData() : array {

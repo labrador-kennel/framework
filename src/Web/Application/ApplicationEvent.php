@@ -2,13 +2,13 @@
 
 namespace Labrador\Web\Application;
 
-use Labrador\Web\Event\AddRoutes;
-use Labrador\Web\Event\ApplicationStarted;
-use Labrador\Web\Event\ApplicationStopped;
-use Labrador\Web\Event\ReceivingConnections;
-use Labrador\Web\Event\RequestReceived;
-use Labrador\Web\Event\ResponseSent;
-use Labrador\Web\Event\WillInvokeController;
+use Labrador\Web\Application\Event\AddRoutes;
+use Labrador\Web\Application\Event\ApplicationStarted;
+use Labrador\Web\Application\Event\ApplicationStopped;
+use Labrador\Web\Application\Event\ReceivingConnections;
+use Labrador\Web\Application\Event\RequestReceived;
+use Labrador\Web\Application\Event\ResponseSent;
+use Labrador\Web\Application\Event\WillInvokeController;
 
 enum ApplicationEvent : string {
     case ApplicationStarted = ApplicationStarted::class;

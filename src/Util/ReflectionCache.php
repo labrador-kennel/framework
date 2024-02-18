@@ -4,11 +4,12 @@ namespace Labrador\Util;
 
 use ReflectionClass;
 use ReflectionException;
+use SplObjectStorage;
 
 final class ReflectionCache {
 
     /**
-     * @var array{class-string, ReflectionClass}
+     * @var array<class-string, ReflectionClass>
      */
     private static array $cache = [];
 
@@ -18,11 +19,7 @@ final class ReflectionCache {
      * @throws ReflectionException
      */
     public static function fromClass(string $class) : ReflectionClass {
-        $reflection = self::$cache[$class] ??= new ReflectionClass($class);
-
-        assert($reflection instanceof ReflectionClass);
-
-        return $reflection;
+        return self::$cache[$class] ??= new ReflectionClass($class);
     }
 
 }

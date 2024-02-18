@@ -109,19 +109,19 @@ class FriendlyRouterTest extends TestCase {
         self::assertCount(4, $routes);
 
         self::assertInstanceOf(MiddlewareController::class, $routes[0]->controller);
-        self::assertSame([$middlewareA, $middlewareB], $routes[0]->controller->getMiddlewares());
+        self::assertSame([$middlewareA, $middlewareB], $routes[0]->controller->middlewares);
 
         self::assertInstanceOf(MiddlewareController::class, $routes[1]->controller);
-        self::assertSame([$middlewareA, $middlewareB], $routes[1]->controller->getMiddlewares());
+        self::assertSame([$middlewareA, $middlewareB], $routes[1]->controller->middlewares);
 
         self::assertInstanceOf(MiddlewareController::class, $routes[1]->controller);
-        self::assertSame([$middlewareA, $middlewareB], $routes[1]->controller->getMiddlewares());
+        self::assertSame([$middlewareA, $middlewareB], $routes[1]->controller->middlewares);
 
         self::assertInstanceOf(MiddlewareController::class, $routes[2]->controller);
-        self::assertSame([$middlewareA, $middlewareB], $routes[2]->controller->getMiddlewares());
+        self::assertSame([$middlewareA, $middlewareB], $routes[2]->controller->middlewares);
 
         self::assertInstanceOf(MiddlewareController::class, $routes[3]->controller);
-        self::assertSame([$middlewareA, $middlewareB], $routes[3]->controller->getMiddlewares());
+        self::assertSame([$middlewareA, $middlewareB], $routes[3]->controller->middlewares);
     }
 
     public function testMultipleMountsOnlyAddsMiddlewareAppropriately() {
@@ -141,7 +141,7 @@ class FriendlyRouterTest extends TestCase {
         self::assertCount(2, $routes);
 
         self::assertInstanceOf(MiddlewareController::class, $routes[0]->controller);
-        self::assertSame([$middlewareA, $middlewareB], $routes[0]->controller->getMiddlewares());
+        self::assertSame([$middlewareA, $middlewareB], $routes[0]->controller->middlewares);
         self::assertSame($controller, $routes[1]->controller);
     }
 
@@ -165,7 +165,7 @@ class FriendlyRouterTest extends TestCase {
 
         self::assertCount(1, $routes);
         self::assertInstanceOf(MiddlewareController::class, $routes[0]->controller);
-        self::assertSame($expectedMiddlewares, $routes[0]->controller->getMiddlewares());
+        self::assertSame($expectedMiddlewares, $routes[0]->controller->middlewares);
     }
 
     public function testDelegateMatch() : void {

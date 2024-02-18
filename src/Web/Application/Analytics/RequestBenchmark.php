@@ -63,7 +63,13 @@ final class RequestBenchmark {
     public function exceptionThrown(Throwable $throwable) : RequestAnalytics {
         $finishTime = $this->preciseTime->now();
         $totalTimeSpent = $finishTime - $this->startTime;
-        $timeSpentRouting = ($this->routingCompleted ?? $finishTime) - $this->routingStarted;
+
+        if (isset($this->routingStarted)) {
+            $timeSpentRouting = ($this->routingCompleted ?? $finishTime) - $this->routingStarted;
+        } else {
+            $timeSpentRouting = 0;
+        }
+
         if (isset($this->middlewareStarted)) {
             $timeSpentMiddleware = ($this->middlewareCompleted ?? $finishTime) - $this->middlewareStarted;
         } else {

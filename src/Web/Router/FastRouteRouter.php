@@ -81,6 +81,7 @@ final class FastRouteRouter implements Router {
             $controller = $route->controller;
             foreach ($params as $k => $v) {
                 assert(is_string($k));
+                assert($k !== '');
                 assert(is_string($v));
                 $request->setAttribute($k, urldecode($v));
             }

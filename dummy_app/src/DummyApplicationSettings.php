@@ -7,11 +7,11 @@ use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Sync\LocalKeyedMutex;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Labrador\Web\Application\ApplicationFeatures;
+use Labrador\Web\Application\ApplicationSettings;
 use Labrador\Web\Application\StaticAssetSettings;
 
 #[Service]
-final class DummyApplicationFeatures implements ApplicationFeatures {
+final class DummyApplicationSettings implements ApplicationSettings {
 
     public function getSessionMiddleware() : ?SessionMiddleware {
         return new SessionMiddleware(
@@ -22,15 +22,8 @@ final class DummyApplicationFeatures implements ApplicationFeatures {
         );
     }
 
-    public function autoRedirectHttpToHttps() : bool {
-        return false;
-    }
-
     public function getStaticAssetSettings() : ?StaticAssetSettings {
         return null;
     }
 
-    public function getHttpsRedirectPort() : ?int {
-        return null;
-    }
 }
