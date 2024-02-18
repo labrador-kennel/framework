@@ -1,21 +1,21 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Web\Event;
+namespace Labrador\Web\Application\Event;
 
 use Amp\Future;
 use Labrador\AsyncEvent\AbstractListenerProvider;
 use Labrador\CompositeFuture\CompositeFuture;
 use Labrador\Web\Application\ApplicationEvent;
 
-abstract class WillInvokeControllerListener extends AbstractListenerProvider {
+abstract class RequestReceivedListener extends AbstractListenerProvider {
 
     public function __construct() {
         parent::__construct(
-            [ApplicationEvent::WillInvokeController->value],
+            [ApplicationEvent::RequestReceived->value],
             $this->handle(...)
         );
     }
 
-    abstract protected function handle(WillInvokeController $willInvokeController) : Future|CompositeFuture|null;
+    abstract protected function handle(RequestReceived $requestReceived) : Future|CompositeFuture|null;
 
 }

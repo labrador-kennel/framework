@@ -10,7 +10,6 @@ use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
-use Labrador\Web\ErrorHandlerFactory;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\Router\Router;
 
@@ -18,14 +17,14 @@ final class ApplicationFactory {
 
     #[ServiceDelegate]
     public static function createApp(
-        HttpServer                 $httpServer,
-        ErrorHandlerFactory $errorHandlerFactory,
-        Router                     $router,
-        EventEmitter               $emitter,
-        LoggerFactory              $loggerFactory,
-        ApplicationFeatures        $features,
-        RequestAnalyticsQueue      $analyticsQueue,
-        PreciseTime                $preciseTime,
+        HttpServer            $httpServer,
+        ErrorHandlerFactory   $errorHandlerFactory,
+        Router                $router,
+        EventEmitter          $emitter,
+        LoggerFactory         $loggerFactory,
+        ApplicationSettings   $features,
+        RequestAnalyticsQueue $analyticsQueue,
+        PreciseTime           $preciseTime,
     ) : Application {
         $app = new AmpApplication(
             $httpServer,

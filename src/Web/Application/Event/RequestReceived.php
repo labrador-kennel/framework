@@ -1,30 +1,29 @@
-<?php declare(strict_types=1);
+<?php
 
+namespace Labrador\Web\Application\Event;
 
-namespace Labrador\Web\Event;
-
+use Amp\Http\Server\Request;
 use DateTimeImmutable;
 use Labrador\AsyncEvent\Event;
-use Labrador\Web\Application\Application;
 use Labrador\Web\Application\ApplicationEvent;
 
-class ApplicationStopped implements Event {
+final class RequestReceived implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 
     public function __construct(
-        private readonly Application $app,
-        DateTimeImmutable               $createdAt = null
+        private readonly Request $request,
+        DateTimeImmutable $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
     public function getName() : string {
-        return ApplicationEvent::ApplicationStopped->value;
+        return ApplicationEvent::RequestReceived->value;
     }
 
-    public function getTarget() : Application {
-        return $this->app;
+    public function getTarget() : Request {
+        return $this->request;
     }
 
     public function getData() : array {

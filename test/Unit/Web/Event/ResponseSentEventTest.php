@@ -4,7 +4,7 @@ namespace Labrador\Test\Unit\Web\Event;
 
 use Amp\Http\Server\Response;
 use Labrador\Web\Application\ApplicationEvent;
-use Labrador\Web\Event\ResponseSent;
+use Labrador\Web\Application\Event\ResponseSent;
 use Labrador\Web\RequestAttribute;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;

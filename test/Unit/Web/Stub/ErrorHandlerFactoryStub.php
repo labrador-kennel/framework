@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Stub;
 
 use Amp\Http\Server\ErrorHandler;
-use Labrador\Web\ErrorHandlerFactory;
+use Labrador\Web\Application\ErrorHandlerFactory;
 
 final class ErrorHandlerFactoryStub implements ErrorHandlerFactory {
 

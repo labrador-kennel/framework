@@ -14,16 +14,15 @@ use Labrador\AsyncEvent\EventEmitter;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Web\Application\Analytics\RequestBenchmark;
+use Labrador\Web\Application\Event\AddRoutes;
+use Labrador\Web\Application\Event\ApplicationStarted;
+use Labrador\Web\Application\Event\ApplicationStopped;
+use Labrador\Web\Application\Event\ReceivingConnections;
+use Labrador\Web\Application\Event\RequestReceived;
+use Labrador\Web\Application\Event\ResponseSent;
+use Labrador\Web\Application\Event\WillInvokeController;
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\StaticAssetController;
-use Labrador\Web\ErrorHandlerFactory;
-use Labrador\Web\Event\AddRoutes;
-use Labrador\Web\Event\ApplicationStarted;
-use Labrador\Web\Event\ApplicationStopped;
-use Labrador\Web\Event\ReceivingConnections;
-use Labrador\Web\Event\RequestReceived;
-use Labrador\Web\Event\ResponseSent;
-use Labrador\Web\Event\WillInvokeController;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\Mapping\GetMapping;
@@ -46,14 +45,14 @@ final class AmpApplication implements Application, RequestHandler {
     private bool $isSessionSupported;
 
     public function __construct(
-        private readonly HttpServer                 $httpServer,
-        private readonly ErrorHandlerFactory $errorHandlerFactory,
-        private readonly Router                     $router,
-        private readonly EventEmitter               $emitter,
-        private readonly LoggerInterface            $logger,
-        private readonly ApplicationFeatures        $features,
-        private readonly RequestAnalyticsQueue      $analyticsQueue,
-        private readonly PreciseTime                $preciseTime,
+        private readonly HttpServer            $httpServer,
+        private readonly ErrorHandlerFactory   $errorHandlerFactory,
+        private readonly Router                $router,
+        private readonly EventEmitter          $emitter,
+        private readonly LoggerInterface       $logger,
+        private readonly ApplicationSettings   $features,
+        private readonly RequestAnalyticsQueue $analyticsQueue,
+        private readonly PreciseTime           $preciseTime,
     ) {
         $this->handleApplicationFeaturesSetup();
     }

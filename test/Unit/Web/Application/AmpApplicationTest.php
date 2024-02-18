@@ -23,7 +23,7 @@ use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\MiddlewareCallRegistry;
-use Labrador\Test\Helper\StubApplicationFeatures;
+use Labrador\Test\Helper\StubApplicationSettings;
 use Labrador\Test\Unit\Web\Stub\ErrorHandlerFactoryStub;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingController;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingMiddleware;
@@ -39,16 +39,16 @@ use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
 use Labrador\Web\Application\AmpApplication;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalytics;
-use Labrador\Web\Application\ApplicationFeatures;
+use Labrador\Web\Application\ApplicationSettings;
+use Labrador\Web\Application\Event\AddRoutes;
+use Labrador\Web\Application\Event\ApplicationStarted;
+use Labrador\Web\Application\Event\ApplicationStopped;
+use Labrador\Web\Application\Event\ReceivingConnections;
+use Labrador\Web\Application\Event\RequestReceived;
+use Labrador\Web\Application\Event\ResponseSent;
+use Labrador\Web\Application\Event\WillInvokeController;
 use Labrador\Web\Application\NoApplicationFeatures;
 use Labrador\Web\Application\StaticAssetSettings;
-use Labrador\Web\Event\AddRoutes;
-use Labrador\Web\Event\ApplicationStarted;
-use Labrador\Web\Event\ApplicationStopped;
-use Labrador\Web\Event\ReceivingConnections;
-use Labrador\Web\Event\RequestReceived;
-use Labrador\Web\Event\ResponseSent;
-use Labrador\Web\Event\WillInvokeController;
 use Labrador\Web\HttpMethod;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\RequestAttribute;
@@ -96,7 +96,7 @@ final class AmpApplicationTest extends TestCase {
             $this->router,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            new StubApplicationFeatures(),
+            new StubApplicationSettings(),
             $this->analyticsQueue,
             $this->preciseTime
         );
@@ -258,8 +258,8 @@ final class AmpApplicationTest extends TestCase {
         self::assertInstanceOf(ApplicationStopped::class, $this->emitter->getEmittedEvents()[0]);
     }
 
-    private function getApplicationFeaturesWithSessionMiddleware(?SessionStorage $storage = null) : ApplicationFeatures {
-        return new class($storage) implements ApplicationFeatures {
+    private function getApplicationFeaturesWithSessionMiddleware(?SessionStorage $storage = null) : ApplicationSettings {
+        return new class($storage) implements ApplicationSettings {
 
             public function __construct(
                 private readonly ?SessionStorage $storage
@@ -288,8 +288,8 @@ final class AmpApplicationTest extends TestCase {
         };
     }
 
-    private function getApplicationFeaturesWithHttpToHttpsRedirectAndNoHttpsPort() : ApplicationFeatures {
-        return new class implements ApplicationFeatures {
+    private function getApplicationFeaturesWithHttpToHttpsRedirectAndNoHttpsPort() : ApplicationSettings {
+        return new class implements ApplicationSettings {
 
             public function getSessionMiddleware() : ?SessionMiddleware {
                 return null;
@@ -309,8 +309,8 @@ final class AmpApplicationTest extends TestCase {
         };
     }
 
-    private function getApplicationFeaturesWithHttpToHttpsRedirectAndExplicitHttpsPort() : ApplicationFeatures {
-        return new class implements ApplicationFeatures {
+    private function getApplicationFeaturesWithHttpToHttpsRedirectAndExplicitHttpsPort() : ApplicationSettings {
+        return new class implements ApplicationSettings {
 
             public function getSessionMiddleware() : ?SessionMiddleware {
                 return null;
@@ -330,8 +330,8 @@ final class AmpApplicationTest extends TestCase {
         };
     }
 
-    private function getApplicationFeaturesWithStaticAssetSettings() : ApplicationFeatures {
-        return new class implements ApplicationFeatures {
+    private function getApplicationFeaturesWithStaticAssetSettings() : ApplicationSettings {
+        return new class implements ApplicationSettings {
 
             public function getSessionMiddleware() : ?SessionMiddleware {
                 return null;
@@ -481,7 +481,7 @@ final class AmpApplicationTest extends TestCase {
             new ErrorThrowingRouter($exception = new RuntimeException()),
             $this->emitter,
             new NullLogger(),
-            new StubApplicationFeatures(),
+            new StubApplicationSettings(),
             $this->analyticsQueue,
             $this->preciseTime
         );

@@ -21,6 +21,7 @@
     "cspray/annotated-container": "^v2.2",
     "labrador-kennel/async-event": "^3.0",
     "labrador-kennel/async-event-autowire":  "^1.0",
+    "league/plates": "^3.3",
     "league/uri": "^7",
     "league/uri-components": "^7",
     "monolog/monolog": "^3",
@@ -49,7 +50,7 @@
   "autoload-dev": {
     "psr-4": {
       "Labrador\\Test\\": "test",
-      "Labrador\\DummyApp\\": "dummy_app"
+      "Labrador\\DummyApp\\": "dummy_app/src"
     }
   },
   "extra": {

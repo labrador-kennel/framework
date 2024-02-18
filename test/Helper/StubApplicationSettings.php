@@ -3,10 +3,10 @@
 namespace Labrador\Test\Helper;
 
 use Amp\Http\Server\Session\SessionMiddleware;
-use Labrador\Web\Application\ApplicationFeatures;
+use Labrador\Web\Application\ApplicationSettings;
 use Labrador\Web\Application\StaticAssetSettings;
 
-class StubApplicationFeatures implements ApplicationFeatures {
+class StubApplicationSettings implements ApplicationSettings {
 
     public function getSessionMiddleware() : ?SessionMiddleware {
         return null;

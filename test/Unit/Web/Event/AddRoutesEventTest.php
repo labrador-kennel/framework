@@ -3,7 +3,7 @@
 namespace Labrador\Test\Unit\Web\Event;
 
 use Labrador\Web\Application\ApplicationEvent;
-use Labrador\Web\Event\AddRoutes;
+use Labrador\Web\Application\Event\AddRoutes;
 use Labrador\Web\Router\Router;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

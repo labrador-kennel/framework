@@ -19,35 +19,35 @@ final class HttpServerFactory {
 
     #[ServiceDelegate]
     public static function createServer(
-        HttpServerConfiguration $serverConfiguration,
-        LoggerFactory $loggerFactory
+        HttpServerSettings $serverSettings,
+        LoggerFactory      $loggerFactory
     ) : HttpServer {
         $logger = $loggerFactory->createLogger(LoggerType::WebServer);
         $socketServer = new SocketHttpServer(
             $logger,
             new ConnectionLimitingServerSocketFactory(
-                new LocalSemaphore($serverConfiguration->getTotalClientConnectionLimit())
+                new LocalSemaphore($serverSettings->getTotalClientConnectionLimit())
             ),
             new ConnectionLimitingClientFactory(
                 new SocketClientFactory($logger),
                 $logger,
-                $serverConfiguration->getClientConnectionLimitPerIpAddress()
+                $serverSettings->getClientConnectionLimitPerIpAddress()
             )
         );
 
-        foreach ($serverConfiguration->getUnencryptedInternetAddresses() as $address) {
+        foreach ($serverSettings->getUnencryptedInternetAddresses() as $address) {
             $socketServer->expose($address);
         }
 
         $tlsContext = null;
-        if (($tlsCert = $serverConfiguration->getTlsCertificateFile()) !== null) {
+        if (($tlsCert = $serverSettings->getTlsCertificateFile()) !== null) {
             $certificate = new Certificate($tlsCert);
             $tlsContext = (new BindContext())
                 ->withTlsContext((new ServerTlsContext())
                 ->withDefaultCertificate($certificate));
         }
 
-        $encryptedAddresses = $serverConfiguration->getEncryptedInternetAddresses();
+        $encryptedAddresses = $serverSettings->getEncryptedInternetAddresses();
         if (count($encryptedAddresses) > 0 && $tlsContext === null) {
             throw new \RuntimeException();
         }

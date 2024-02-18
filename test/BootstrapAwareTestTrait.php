@@ -6,8 +6,6 @@ use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
 use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
 use Labrador\Test\Helper\VfsDirectoryResolver;
-use Labrador\Web\Bootstrap;
-use org\bovigo\vfs\vfsStreamDirectory;
 
 trait BootstrapAwareTestTrait {
 
@@ -18,7 +16,7 @@ trait BootstrapAwareTestTrait {
     <scanDirectories>
         <source>
             <dir>src</dir>
-            <dir>dummy_app</dir>
+            <dir>dummy_app/src</dir>
         </source>
     </scanDirectories>
     <definitionProviders>

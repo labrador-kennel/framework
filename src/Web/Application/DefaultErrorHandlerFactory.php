@@ -1,6 +1,6 @@
 <?php
 
-namespace Labrador\Web;
+namespace Labrador\Web\Application;
 
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\ErrorHandler;

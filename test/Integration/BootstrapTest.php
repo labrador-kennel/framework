@@ -5,7 +5,6 @@ namespace Labrador\Test\Integration;
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\SocketHttpServer;
-use Aura\Filter\FilterFactory;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
 use Cspray\AnnotatedContainer\Bootstrap\ContainerCreatedObserver;
@@ -15,7 +14,6 @@ use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\AsyncEvent\AmpEventEmitter;
 use Labrador\AsyncEvent\EventEmitter;
-use Labrador\DummyApp\Controller\CheckDtoController;
 use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
@@ -23,13 +21,10 @@ use Labrador\DummyApp\Middleware\FooMiddleware;
 use Labrador\DummyApp\Middleware\QuxMiddleware;
 use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
-use Labrador\Validation\AuraFilterRuleValidator;
-use Labrador\Validation\Filter;
-use Labrador\Web\Bootstrap;
-use Labrador\Web\ErrorHandlerFactory;
+use Labrador\Web\Application\Bootstrap;
+use Labrador\Web\Application\ErrorHandlerFactory;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\Router\LoggingRouter;
-use Labrador\Web\Router\Route;
 use Labrador\Web\Router\Router;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
@@ -90,7 +85,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsLogger() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $bootstrap->bootstrapApplication();
 
@@ -108,7 +103,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsRouter() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $bootstrap->bootstrapApplication();
 
@@ -118,7 +113,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsEventEmitter() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $bootstrap->bootstrapApplication();
 
@@ -128,7 +123,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsErrorHandler() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $bootstrap->bootstrapApplication();
 
@@ -138,7 +133,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerHttpServer() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication();
 
@@ -148,7 +143,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerRouterRoutes() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $container = $bootstrap->bootstrapApplication();
 
@@ -159,7 +154,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
         $bootstrap->bootstrapApplication();
 
@@ -184,7 +179,7 @@ class BootstrapTest extends TestCase {
      * @dataProvider expectedMiddlewareProvider
      */
     public function testApplicationAutowiringApplicationMiddlewareLogged(string $middlewareClass, Priority $priority) : void {
-        $bootstrap = new Bootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
         $bootstrap->bootstrapApplication();
 
         $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
@@ -194,5 +189,7 @@ class BootstrapTest extends TestCase {
             $handler->hasInfoThatContains('Adding ' . $middlewareClass . ' to application with ' . $priority->name . ' priority.')
         );
     }
+
+
 
 }
