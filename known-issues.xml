@@ -1,50 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.22.1@e9dad66e11274315dac27e08349c628c7d6a1a43">
-  <file src="src/Util/ReflectionCache.php">
-    <InvalidArrayOffset>
-      <code><![CDATA[self::$cache[$class]]]></code>
-    </InvalidArrayOffset>
-    <PropertyTypeCoercion>
-      <code><![CDATA[[]]]></code>
-      <code><![CDATA[self::$cache]]></code>
-    </PropertyTypeCoercion>
-  </file>
-  <file src="src/Validation/EntityValidator.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$errors]]></code>
-    </ArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Validation/PropertyValidateMap.php">
-    <InvalidArgument>
-      <code><![CDATA[$map]]></code>
-    </InvalidArgument>
-  </file>
   <file src="src/Web/Application/Analytics/RequestBenchmark.php">
     <PossiblyNullOperand>
       <code><![CDATA[$this->middlewareCompleted]]></code>
       <code><![CDATA[$this->middlewareStarted]]></code>
       <code><![CDATA[$this->routingCompleted]]></code>
       <code><![CDATA[$this->routingStarted]]></code>
-      <code><![CDATA[$this->routingStarted]]></code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/Web/Controller/MiddlewareController.php">
-    <RedundantCondition>
-      <code><![CDATA[$toString !== '']]></code>
-    </RedundantCondition>
   </file>
   <file src="src/Web/Controller/StaticAssetController.php">
     <MixedOperand>
       <code><![CDATA[$request->getAttribute('path')]]></code>
     </MixedOperand>
-  </file>
-  <file src="src/Web/Router/FastRouteRouter.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$k]]></code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/Web/Security/CsrfTokenManager.php">
     <MixedArgument>

@@ -35,8 +35,6 @@ final class MiddlewareController implements Controller {
             return get_class($middleware);
         }, $this->middlewares));
 
-        $toString = sprintf('MiddlewareHandler<%s, %s>', $this->controller->toString(), $middlewareDescription);
-        assert($toString !== '');
-        return $toString;
+        return sprintf('MiddlewareHandler<%s, %s>', $this->controller->toString(), $middlewareDescription);
     }
 }
