@@ -17,7 +17,10 @@ use Labrador\DummyApp\Middleware\QuxMiddleware;
 use Labrador\DummyApp\MiddlewareCallRegistry;
 use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
+use Labrador\Test\Unit\Web\Stub\ErrorThrowingController;
 use Labrador\Web\Application\Application;
+use Labrador\Web\Router\Mapping\GetMapping;
+use Labrador\Web\Router\Router;
 use Monolog\Handler\TestHandler;
 use Monolog\LogRecord;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
@@ -142,6 +145,10 @@ TEXT;
 
     public function testExceptionThrowHasCorrectLogOutputSentToStdout() : void {
         $client = (new HttpClientBuilder())->build();
+        self::$container->get(Router::class)->addRoute(
+            new GetMapping('/exception'),
+            new ErrorThrowingController(new \RuntimeException('A message detailing what went wrong that should show up in logs.'))
+        );
 
         $request = new Request('http://localhost:4200/exception');
         $client->request($request);
@@ -150,9 +157,9 @@ TEXT;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue($handler->hasErrorThatPasses(static function (LogRecord $record) {
-            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":28,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
+            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/HttpServerTest.php","line_number":150,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
             $expected = <<<TEXT
-%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L28 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
+%a labrador.app.ERROR: RuntimeException thrown in %a/HttpServerTest.php#L150 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
 TEXT;
             return (new StringMatchesFormatDescription($expected))->evaluate(
                 other: $record->formatted,

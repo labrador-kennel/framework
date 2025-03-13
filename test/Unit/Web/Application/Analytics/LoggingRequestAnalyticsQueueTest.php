@@ -36,39 +36,39 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 private readonly Client $client,
             ) {}
 
-            public function getRequest() : Request {
+            public function request() : Request {
                 return new Request($this->client, HttpMethod::Get->value, Http::createFromString('https://example.com/success'));
             }
 
-            public function getRoutingResolutionReason() : ?RoutingResolutionReason {
+            public function routingResolutionReason() : ?RoutingResolutionReason {
                 return RoutingResolutionReason::RequestMatched;
             }
 
-            public function getControllerName() : ?string {
+            public function controllerName() : ?string {
                 return 'RoutedController';
             }
 
-            public function getThrownException() : ?\Throwable {
+            public function thrownException() : ?\Throwable {
                 return null;
             }
 
-            public function getTotalTimeSpentInNanoSeconds() : int|float {
+            public function totalTimeSpentInNanoSeconds() : int|float {
                 return 10;
             }
 
-            public function getTimeSpentRoutingInNanoSeconds() : int|float {
+            public function timeSpentRoutingInNanoSeconds() : int|float {
                 return 1;
             }
 
-            public function getTimeSpentProcessingMiddlewareInNanoseconds() : int|float {
+            public function timeSpentProcessingMiddlewareInNanoseconds() : int|float {
                 return 2;
             }
 
-            public function getTimeSpentProcessingControllerInNanoseconds() : int|float {
+            public function timeSpentProcessingControllerInNanoseconds() : int|float {
                 return 3;
             }
 
-            public function getResponseStatusCode() : int {
+            public function responseStatusCode() : int {
                 return HttpStatus::OK;
             }
         };
@@ -96,39 +96,39 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 private readonly Client $client,
             ) {}
 
-            public function getRequest() : Request {
+            public function request() : Request {
                 return new Request($this->client, HttpMethod::Get->value, Http::createFromString('https://example.com/failure'));
             }
 
-            public function getRoutingResolutionReason() : ?RoutingResolutionReason {
+            public function routingResolutionReason() : ?RoutingResolutionReason {
                 return RoutingResolutionReason::RequestMatched;
             }
 
-            public function getControllerName() : ?string {
+            public function controllerName() : ?string {
                 return 'RoutedController';
             }
 
-            public function getThrownException() : ?\Throwable {
+            public function thrownException() : ?\Throwable {
                 return new RuntimeException('Known message');
             }
 
-            public function getTotalTimeSpentInNanoSeconds() : int|float {
+            public function totalTimeSpentInNanoSeconds() : int|float {
                 return 10;
             }
 
-            public function getTimeSpentRoutingInNanoSeconds() : int|float {
+            public function timeSpentRoutingInNanoSeconds() : int|float {
                 return 1;
             }
 
-            public function getTimeSpentProcessingMiddlewareInNanoseconds() : int|float {
+            public function timeSpentProcessingMiddlewareInNanoseconds() : int|float {
                 return 2;
             }
 
-            public function getTimeSpentProcessingControllerInNanoseconds() : int|float {
+            public function timeSpentProcessingControllerInNanoseconds() : int|float {
                 return 3;
             }
 
-            public function getResponseStatusCode() : int {
+            public function responseStatusCode() : int {
                 return HttpStatus::INTERNAL_SERVER_ERROR;
             }
         };

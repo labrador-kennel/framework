@@ -5,14 +5,18 @@ namespace Labrador\Test;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
 use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
+use Cspray\AnnotatedContainer\ContainerFactory\PhpDiContainerFactory;
+use Cspray\AnnotatedContainer\Event\Emitter;
+use Cspray\AnnotatedContainer\Profiles;
 use Labrador\Test\Helper\VfsDirectoryResolver;
+use Labrador\Web\Autowire\RegisterControllerAndMiddlewareListener;
 
 trait BootstrapAwareTestTrait {
 
     private static function getDefaultConfiguration() : string {
         return <<<XML
 <?xml version="1.0" encoding="UTF-8" ?>
-<annotatedContainer xmlns="https://annotated-container.cspray.io/schema/annotated-container.xsd">
+<annotatedContainer xmlns="https://annotated-container.cspray.io/schema/annotated-container.xsd" version="dev">
     <scanDirectories>
         <source>
             <dir>src</dir>
@@ -23,11 +27,6 @@ trait BootstrapAwareTestTrait {
         <definitionProvider>Labrador\Web\Autowire\DefinitionProvider</definitionProvider>
         <definitionProvider>Labrador\AsyncEvent\Autowire\DefinitionProvider</definitionProvider>
     </definitionProviders>
-    <observers>
-        <observer>Labrador\Web\Autowire\Observer</observer>
-        <observer>Labrador\AsyncEvent\Autowire\Observer</observer>
-    </observers>
-    <cacheDir>.annotated-container-cache</cacheDir>
 </annotatedContainer>
 XML;
     }
@@ -36,8 +35,14 @@ XML;
         array $profiles,
         BootstrappingDirectoryResolver $directoryResolver = null
     ) : AnnotatedContainer {
-        $containerBootstrap = new AnnotatedContainerBootstrap($directoryResolver ?? new VfsDirectoryResolver());
-        return $containerBootstrap->bootstrapContainer(profiles: $profiles);
+        $emitter = new Emitter();
+        $emitter->addListener(new RegisterControllerAndMiddlewareListener());
+        $containerBootstrap = AnnotatedContainerBootstrap::fromAnnotatedContainerConventions(
+            new PhpDiContainerFactory($emitter),
+            $emitter,
+            directoryResolver: $directoryResolver ?? new VfsDirectoryResolver()
+        );
+        return $containerBootstrap->bootstrapContainer(profiles: Profiles::fromList($profiles));
     }
 
 }

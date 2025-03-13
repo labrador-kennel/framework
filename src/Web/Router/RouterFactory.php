@@ -10,7 +10,7 @@ use FastRoute\RouteParser\Std as StdRouteParser;
 use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
 
-class RouterFactory {
+final class RouterFactory {
 
     #[ServiceDelegate]
     public static function createRouter(LoggerFactory $loggerFactory) : Router {

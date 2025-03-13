@@ -4,40 +4,40 @@ namespace Labrador\Web\Application\Analytics;
 
 use Psr\Log\LoggerInterface;
 
-class LoggingRequestAnalyticsQueue implements RequestAnalyticsQueue {
+final class LoggingRequestAnalyticsQueue implements RequestAnalyticsQueue {
 
     public function __construct(
         private readonly LoggerInterface $logger
     ) {}
 
     public function queue(RequestAnalytics $analytics) : void {
-        $exception = $analytics->getThrownException();
+        $exception = $analytics->thrownException();
         if ($exception === null) {
             $this->logger->info(
                 'Processed "{request}" in {total_time_spent} nanoseconds.',
                 [
-                    'request' => sprintf("%s %s", $analytics->getRequest()->getMethod(), $analytics->getRequest()->getUri()->getPath()),
-                    'resolution_reason' => $analytics->getRoutingResolutionReason(),
-                    'controller' => $analytics->getControllerName(),
-                    'total_time_spent' => $analytics->getTotalTimeSpentInNanoSeconds(),
-                    'time_spent_routing' => $analytics->getTimeSpentRoutingInNanoSeconds(),
-                    'time_spent_middleware' => $analytics->getTimeSpentProcessingMiddlewareInNanoseconds(),
-                    'time_spent_controller' => $analytics->getTimeSpentProcessingControllerInNanoseconds(),
-                    'response_code' => $analytics->getResponseStatusCode()
+                    'request' => sprintf("%s %s", $analytics->request()->getMethod(), $analytics->request()->getUri()->getPath()),
+                    'resolution_reason' => $analytics->routingResolutionReason(),
+                    'controller' => $analytics->controllerName(),
+                    'total_time_spent' => $analytics->totalTimeSpentInNanoSeconds(),
+                    'time_spent_routing' => $analytics->timeSpentRoutingInNanoSeconds(),
+                    'time_spent_middleware' => $analytics->timeSpentProcessingMiddlewareInNanoseconds(),
+                    'time_spent_controller' => $analytics->timeSpentProcessingControllerInNanoseconds(),
+                    'response_code' => $analytics->responseStatusCode()
                 ]
             );
         } else {
             $this->logger->info(
                 'Failed processing "{request}" in {total_time_spent} nanoseconds.',
                 [
-                    'request' => sprintf("%s %s", $analytics->getRequest()->getMethod(), $analytics->getRequest()->getUri()->getPath()),
-                    'resolution_reason' => $analytics->getRoutingResolutionReason(),
-                    'controller' => $analytics->getControllerName(),
-                    'total_time_spent' => $analytics->getTotalTimeSpentInNanoSeconds(),
-                    'time_spent_routing' => $analytics->getTimeSpentRoutingInNanoSeconds(),
-                    'time_spent_middleware' => $analytics->getTimeSpentProcessingMiddlewareInNanoseconds(),
-                    'time_spent_controller' => $analytics->getTimeSpentProcessingControllerInNanoseconds(),
-                    'response_code' => $analytics->getResponseStatusCode(),
+                    'request' => sprintf("%s %s", $analytics->request()->getMethod(), $analytics->request()->getUri()->getPath()),
+                    'resolution_reason' => $analytics->routingResolutionReason(),
+                    'controller' => $analytics->controllerName(),
+                    'total_time_spent' => $analytics->totalTimeSpentInNanoSeconds(),
+                    'time_spent_routing' => $analytics->timeSpentRoutingInNanoSeconds(),
+                    'time_spent_middleware' => $analytics->timeSpentProcessingMiddlewareInNanoseconds(),
+                    'time_spent_controller' => $analytics->timeSpentProcessingControllerInNanoseconds(),
+                    'response_code' => $analytics->responseStatusCode(),
                     'exception_message' => $exception->getMessage(),
                     'exception_class' => $exception::class,
                     'exception_file' => $exception->getFile(),

@@ -8,7 +8,10 @@ use Labrador\AsyncEvent\Event;
 use Labrador\Web\Application\Application;
 use Labrador\Web\Application\ApplicationEvent;
 
-class ApplicationStopped implements Event {
+/**
+ * @implements Event<Application>
+ */
+final class ApplicationStopped implements Event {
 
     private readonly DateTimeImmutable $createdAt;
 
@@ -19,19 +22,15 @@ class ApplicationStopped implements Event {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
-    public function getName() : string {
+    public function name() : string {
         return ApplicationEvent::ApplicationStopped->value;
     }
 
-    public function getTarget() : Application {
+    public function payload() : Application {
         return $this->app;
     }
 
-    public function getData() : array {
-        return [];
-    }
-
-    public function getCreatedAt() : DateTimeImmutable {
+    public function triggeredAt() : DateTimeImmutable {
         return $this->createdAt;
     }
 }

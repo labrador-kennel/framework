@@ -294,4 +294,23 @@ class FastRouteRouterTest extends AsyncTestCase {
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('found controller with trailing slash', $response->getBody()->read());
     }
+
+    public function testFoundRootControllerJustSlash() : void {
+        $request = $this->getRequest(HttpMethod::Get->value, 'http://example.com/');
+        $router = $this->getRouter();
+        $responseController = new ResponseControllerStub(new Response(200, [], 'found controller with just slash'));
+        $router->addRoute(
+            new GetMapping('/'),
+            $responseController,
+        );
+
+        $controller = $router->match($request)->controller;
+
+        self::assertNotNull($controller);
+
+        $response = $controller->handleRequest($request);
+
+        self::assertSame(HttpStatus::OK, $response->getStatus());
+        self::assertSame('found controller with just slash', $response->getBody()->read());
+    }
 }

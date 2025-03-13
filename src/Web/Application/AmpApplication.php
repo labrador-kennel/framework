@@ -10,7 +10,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\StaticContent\DocumentRoot;
-use Labrador\AsyncEvent\EventEmitter;
+use Labrador\AsyncEvent\Emitter;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Web\Application\Analytics\RequestBenchmark;
@@ -48,7 +48,7 @@ final class AmpApplication implements Application, RequestHandler {
         private readonly HttpServer            $httpServer,
         private readonly ErrorHandlerFactory   $errorHandlerFactory,
         private readonly Router                $router,
-        private readonly EventEmitter          $emitter,
+        private readonly Emitter          $emitter,
         private readonly LoggerInterface       $logger,
         private readonly ApplicationSettings   $features,
         private readonly RequestAnalyticsQueue $analyticsQueue,
@@ -60,10 +60,7 @@ final class AmpApplication implements Application, RequestHandler {
     private function handleApplicationFeaturesSetup() : void {
         $sessionMiddleware = $this->features->getSessionMiddleware();
         if ($this->isSessionSupported = ($sessionMiddleware !== null)) {
-            $this->addMiddleware(
-                $sessionMiddleware,
-                Priority::Critical
-            );
+            $this->addMiddleware($sessionMiddleware, Priority::Critical);
         }
 
         $staticAssetSettings = $this->features->getStaticAssetSettings();
@@ -82,7 +79,7 @@ final class AmpApplication implements Application, RequestHandler {
         }
     }
 
-    public function getRouter() : Router {
+    public function router() : Router {
         return $this->router;
     }
 
@@ -136,14 +133,14 @@ final class AmpApplication implements Application, RequestHandler {
 
                 $request->setAttribute(RequestAttribute::Controller->value, $controller);
 
-                $this->emitter->queue(new WillInvokeController($controller, $requestId));
+                $this->emitter->queue(new WillInvokeController($controller, $request));
 
                 $handler = $this->getMiddlewareStack($controller, $benchmark);
 
                 $response = $handler->handleRequest($request);
             }
 
-            $this->emitter->queue(new ResponseSent($response, $requestId));
+            $this->emitter->queue(new ResponseSent($request, $response));
 
             $this->analyticsQueue->queue($benchmark->responseSent($response));
 

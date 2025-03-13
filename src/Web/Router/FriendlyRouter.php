@@ -108,7 +108,7 @@ final class FriendlyRouter implements Router {
      * @return bool
      */
     public function isMounted() : bool {
-        return !empty($this->mounts['prefix']);
+        return $this->mounts['prefix'] !== [];
     }
 
     public function addRoute(

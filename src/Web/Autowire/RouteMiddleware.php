@@ -18,7 +18,7 @@ final class RouteMiddleware implements ServiceAttribute {
     /**
      * @return list<non-empty-string>
      */
-    public function getProfiles() : array {
+    public function profiles() : array {
         return $this->profiles;
     }
 
@@ -26,7 +26,7 @@ final class RouteMiddleware implements ServiceAttribute {
         return false;
     }
 
-    public function getName() : ?string {
+    public function name() : ?string {
         return null;
     }
 }

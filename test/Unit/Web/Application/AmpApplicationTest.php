@@ -103,7 +103,7 @@ final class AmpApplicationTest extends TestCase {
     }
 
     public function testGetRouter() : void {
-        self::assertSame($this->router, $this->subject->getRouter());
+        self::assertSame($this->router, $this->subject->router());
     }
 
     public function testCorrectEventsEmitted() : void {
@@ -124,7 +124,7 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertCount(3, $events);
         self::assertInstanceOf(ReceivingConnections::class, $events[2]);
-        self::assertSame(HttpServerStatus::Started, $events[2]->getTarget()->getStatus());
+        self::assertSame(HttpServerStatus::Started, $events[2]->payload()->getStatus());
     }
 
     public function testHttpServerReceivesRequestTriggersEvents() : void {
@@ -172,13 +172,7 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertSame($response, $actual);
         self::assertCount(3, $events);
-        self::assertInstanceOf(UuidInterface::class, $id = $events[0]->getTarget()->getAttribute(RequestAttribute::RequestId->value));
-
-        self::assertArrayHasKey(RequestAttribute::RequestId->value, $events[1]->getData());
-        self::assertSame($id, $events[1]->getData()[RequestAttribute::RequestId->value]);
-
-        self::assertArrayHasKey(RequestAttribute::RequestId->value, $events[2]->getData());
-        self::assertSame($id, $events[2]->getData()[RequestAttribute::RequestId->value]);
+        self::assertInstanceOf(UuidInterface::class, $events[0]->payload()->getAttribute(RequestAttribute::RequestId->value));
     }
 
     public function testApplicationStartedHasStartingUpLogs() : void {
@@ -453,14 +447,14 @@ final class AmpApplicationTest extends TestCase {
         $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
-        self::assertSame($request, $analytics->getRequest());
-        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->getRoutingResolutionReason());
-        self::assertSame('KnownController', $analytics->getControllerName());
-        self::assertSame(6, $analytics->getTotalTimeSpentInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(1, $analytics->getTimeSpentProcessingControllerInNanoseconds());
-        self::assertSame(200, $analytics->getResponseStatusCode());
+        self::assertSame($request, $analytics->request());
+        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->routingResolutionReason());
+        self::assertSame('KnownController', $analytics->controllerName());
+        self::assertSame(6, $analytics->totalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(1, $analytics->timeSpentProcessingControllerInNanoseconds());
+        self::assertSame(200, $analytics->responseStatusCode());
     }
 
     public function testExceptionThrownInRouterHasCorrectRequestAnalytics() : void {
@@ -496,14 +490,14 @@ final class AmpApplicationTest extends TestCase {
         $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
-        self::assertSame($request, $analytics->getRequest());
-        self::assertNull($analytics->getControllerName());
-        self::assertNull($analytics->getRoutingResolutionReason());
-        self::assertSame($exception, $analytics->getThrownException());
-        self::assertSame(2, $analytics->getTotalTimeSpentInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
-        self::assertSame(0, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(0, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+        self::assertSame($request, $analytics->request());
+        self::assertNull($analytics->controllerName());
+        self::assertNull($analytics->routingResolutionReason());
+        self::assertSame($exception, $analytics->thrownException());
+        self::assertSame(2, $analytics->totalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
+        self::assertSame(0, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(0, $analytics->timeSpentProcessingControllerInNanoseconds());
     }
 
     public function testExceptionThrownInMiddlewareHasCorrectRequestAnalytics() : void {
@@ -531,14 +525,14 @@ final class AmpApplicationTest extends TestCase {
         $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
-        self::assertSame($request, $analytics->getRequest());
-        self::assertNull($analytics->getControllerName());
-        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->getRoutingResolutionReason());
-        self::assertSame($exception, $analytics->getThrownException());
-        self::assertSame(4, $analytics->getTotalTimeSpentInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(0, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+        self::assertSame($request, $analytics->request());
+        self::assertNull($analytics->controllerName());
+        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->routingResolutionReason());
+        self::assertSame($exception, $analytics->thrownException());
+        self::assertSame(4, $analytics->totalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(0, $analytics->timeSpentProcessingControllerInNanoseconds());
     }
 
     public function testExceptionThrownInControllerHasCorrectRequestAnalytics() : void {
@@ -565,14 +559,14 @@ final class AmpApplicationTest extends TestCase {
         $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
-        self::assertSame($request, $analytics->getRequest());
-        self::assertSame(ErrorThrowingController::class, $analytics->getControllerName());
-        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->getRoutingResolutionReason());
-        self::assertSame($exception, $analytics->getThrownException());
-        self::assertSame(6, $analytics->getTotalTimeSpentInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(1, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+        self::assertSame($request, $analytics->request());
+        self::assertSame(ErrorThrowingController::class, $analytics->controllerName());
+        self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->routingResolutionReason());
+        self::assertSame($exception, $analytics->thrownException());
+        self::assertSame(6, $analytics->totalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(1, $analytics->timeSpentProcessingControllerInNanoseconds());
     }
 
     public function testRouterResolutionNotFoundHasControllerProcessingTime() : void {
@@ -592,14 +586,14 @@ final class AmpApplicationTest extends TestCase {
         $analytics = $this->analyticsQueue->getQueuedRequestAnalytics()[0];
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
-        self::assertSame($request, $analytics->getRequest());
-        self::assertNull($analytics->getControllerName());
-        self::assertSame(RoutingResolutionReason::NotFound, $analytics->getRoutingResolutionReason());
-        self::assertNull($analytics->getThrownException());
-        self::assertSame(3, $analytics->getTotalTimeSpentInNanoSeconds());
-        self::assertSame(1, $analytics->getTimeSpentRoutingInNanoSeconds());
-        self::assertSame(0, $analytics->getTimeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(0, $analytics->getTimeSpentProcessingControllerInNanoseconds());
+        self::assertSame($request, $analytics->request());
+        self::assertNull($analytics->controllerName());
+        self::assertSame(RoutingResolutionReason::NotFound, $analytics->routingResolutionReason());
+        self::assertNull($analytics->thrownException());
+        self::assertSame(3, $analytics->totalTimeSpentInNanoSeconds());
+        self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
+        self::assertSame(0, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
+        self::assertSame(0, $analytics->timeSpentProcessingControllerInNanoseconds());
     }
 
     public function testControllerAddedToRequestAttribute() : void {

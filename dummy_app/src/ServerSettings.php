@@ -17,23 +17,23 @@ class ServerSettings implements HttpServerSettings {
         private readonly array $httpAddresses,
     ) {}
 
-    public function getUnencryptedInternetAddresses() : array {
+    public function unencryptedInternetAddresses() : array {
         return $this->httpAddresses;
     }
 
-    public function getClientConnectionLimitPerIpAddress() : int {
+    public function clientConnectionLimitPerIpAddress() : int {
         return 10;
     }
 
-    public function getEncryptedInternetAddresses() : array {
+    public function encryptedInternetAddresses() : array {
         return [];
     }
 
-    public function getTlsCertificateFile() : ?string {
+    public function tlsCertificateFile() : ?string {
         return null;
     }
 
-    public function getTotalClientConnectionLimit() : int {
+    public function totalClientConnectionLimit() : int {
         return 1000;
     }
 }

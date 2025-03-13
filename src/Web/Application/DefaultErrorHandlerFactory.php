@@ -7,7 +7,7 @@ use Amp\Http\Server\ErrorHandler;
 use Cspray\AnnotatedContainer\Attribute\Service;
 
 #[Service]
-class DefaultErrorHandlerFactory implements ErrorHandlerFactory {
+final class DefaultErrorHandlerFactory implements ErrorHandlerFactory {
 
     public function createErrorHandler() : ErrorHandler {
         return new DefaultErrorHandler();

@@ -5,7 +5,6 @@ namespace Labrador\Test\Helper;
 use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
 
 class VfsDirectoryResolver implements BootstrappingDirectoryResolver {
-
     private readonly string $realRoot;
     private readonly string $virtualRoot;
 
@@ -14,23 +13,11 @@ class VfsDirectoryResolver implements BootstrappingDirectoryResolver {
         $this->virtualRoot = 'vfs://root';
     }
 
-    public function getConfigurationPath(string $subPath) : string {
-        return sprintf('%s/%s', $this->virtualRoot, $subPath);
-    }
-
-    public function getCachePath(string $subPath) : string {
-        return sprintf('%s/%s', $this->virtualRoot, $subPath);
-    }
-
-    public function getLogPath(string $subPath) : string {
-        return sprintf('%s/%s', $this->virtualRoot, $subPath);
-    }
-
-    public function getPathFromRoot(string $subPath) : string {
+    public function rootPath(string $subPath = '') : string {
         return sprintf('%s/%s', $this->realRoot, $subPath);
     }
 
-    public function getVendorPath() : string {
-        return sprintf('%s/vendor', $this->virtualRoot);
+    public function configurationPath(string $subPath = '') : string {
+        return sprintf('%s/%s', $this->virtualRoot, $subPath);
     }
 }

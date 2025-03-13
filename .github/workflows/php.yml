@@ -7,26 +7,59 @@ on:
     branches: [ main ]
 
 jobs:
-  continuous-integration:
+  unit-testing:
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          path: /tmp/composer-cache
-          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-
+          php-version: 8.2
+          extensions: xdebug
+          tools: composer:2
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
       - name: Composer
-        uses: php-actions/composer@v6
-        with:
-          php_version: "8.2"
-          php_extensions: pcntl
+        run: composer install
+      - name: PHPUnit
+        env:
+          XDEBUG_MODE: coverage
+        run: ./vendor/bin/phpunit
 
-      - name: Unit Test
-        uses: php-actions/phpunit@v3
+  static-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          version: "9.5"
+          php-version: 8.2
+          tools: composer:2
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+      - name: Composer
+        run: composer install
+      - name: Static Analysis
+        run: ./vendor/bin/psalm.phar --output-format=github
+
+  code-linting:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer:2, cs2pr, phpcs
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+      - name: Composer
+        run: composer install
+      - name: Code Linting
+        run: phpcs -q --standard=./vendor/cspray/labrador-coding-standard/ruleset.xml --exclude=Generic.Files.LineLength --report=checkstyle src test | cs2pr
