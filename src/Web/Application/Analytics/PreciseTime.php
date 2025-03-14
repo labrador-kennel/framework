@@ -8,5 +8,4 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 interface PreciseTime {
 
     public function now() : int|float;
-
 }

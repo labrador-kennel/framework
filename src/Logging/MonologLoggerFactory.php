@@ -17,7 +17,8 @@ final class MonologLoggerFactory implements LoggerFactory {
 
     public function __construct(
         private readonly MonologLoggerInitializer $loggerInitializer
-    ) {}
+    ) {
+    }
 
     public function createLogger(LoggerType $loggerType) : LoggerInterface {
         if (!array_key_exists($loggerType->value, $this->cache)) {
@@ -30,5 +31,4 @@ final class MonologLoggerFactory implements LoggerFactory {
 
         return $this->cache[$loggerType->value];
     }
-
 }

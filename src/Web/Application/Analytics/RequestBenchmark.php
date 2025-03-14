@@ -101,7 +101,8 @@ final class RequestBenchmark {
                 private readonly int|float $totalTimeRouting,
                 private readonly int|float $totalTimeMiddleware,
                 private readonly int|float $totalTimeController
-            ) {}
+            ) {
+            }
 
             public function request() : Request {
                 return $this->request;
@@ -171,7 +172,8 @@ final class RequestBenchmark {
                 private readonly int|float $timeSpentProcessingMiddleware,
                 private readonly int|float $timeSpentProcessingController,
                 private readonly int $responseStatusCode,
-            ) {}
+            ) {
+            }
 
             public function request() : Request {
                 return $this->request;
@@ -210,5 +212,4 @@ final class RequestBenchmark {
             }
         };
     }
-
 }

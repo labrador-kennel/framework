@@ -16,5 +16,4 @@ class EntityWithMultiplePropertiesAndSingleValidate {
 
     #[Validate(new Alnum())]
     private string $baz;
-
 }

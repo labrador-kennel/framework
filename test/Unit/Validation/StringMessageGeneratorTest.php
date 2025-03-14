@@ -18,5 +18,4 @@ final class StringMessageGeneratorTest extends TestCase {
             'value'
         ));
     }
-
 }

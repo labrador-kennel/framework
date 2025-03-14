@@ -17,5 +17,4 @@ class InvalidType extends Exception {
         $msg = 'A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor';
         return new self($msg);
     }
-
 }

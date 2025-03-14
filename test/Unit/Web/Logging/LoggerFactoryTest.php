@@ -75,6 +75,4 @@ class LoggerFactoryTest extends TestCase {
 
         self::assertSame($a, $b);
     }
-
-
 }

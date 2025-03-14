@@ -12,7 +12,8 @@ final class ErrorThrowingMiddleware implements Middleware {
 
     public function __construct(
         private readonly Throwable $throwable
-    ) {}
+    ) {
+    }
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
         throw $this->throwable;

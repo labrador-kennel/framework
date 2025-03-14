@@ -124,7 +124,7 @@ final class AmpApplication implements Application, RequestHandler {
 
             if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
                 $response = $this->getErrorHandler()->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
-            } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
+            } elseif ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
                 $response = $this->getErrorHandler()->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
             } else {
                 $controller = $routingResolution->controller;
@@ -183,7 +183,7 @@ final class AmpApplication implements Application, RequestHandler {
 
         foreach (Priority::cases() as $priority) {
             $priorityMiddleware = $this->middleware[$priority->name] ?? [];
-            foreach ($priorityMiddleware as $middleware)  {
+            foreach ($priorityMiddleware as $middleware) {
                 $middlewares[] = $middleware;
             }
         }
@@ -197,7 +197,8 @@ final class AmpApplication implements Application, RequestHandler {
         return new class($benchmark) implements Middleware {
             public function __construct(
                 private readonly RequestBenchmark $benchmark
-            ) {}
+            ) {
+            }
 
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
                 $this->benchmark->middlewareProcessingStarted();
@@ -211,7 +212,8 @@ final class AmpApplication implements Application, RequestHandler {
 
             public function __construct(
                 private readonly RequestBenchmark $benchmark,
-            ) {}
+            ) {
+            }
 
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
                 if (!$requestHandler instanceof Controller) {

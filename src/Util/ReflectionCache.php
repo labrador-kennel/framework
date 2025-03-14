@@ -21,5 +21,4 @@ final class ReflectionCache {
     public static function fromClass(string $class) : ReflectionClass {
         return self::$cache[$class] ??= new ReflectionClass($class);
     }
-
 }

@@ -117,5 +117,4 @@ final class ControllerInvokerTest extends TestCase {
         self::assertCount(3, $controller->middlewares);
         self::assertSame($middleware, $controller->middlewares[2]);
     }
-
 }

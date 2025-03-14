@@ -24,5 +24,4 @@ interface RequestAnalytics {
     public function timeSpentProcessingControllerInNanoseconds() : int|float;
 
     public function responseStatusCode() : int;
-
 }

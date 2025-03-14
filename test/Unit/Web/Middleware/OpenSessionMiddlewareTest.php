@@ -129,5 +129,4 @@ final class OpenSessionMiddlewareTest extends TestCase {
         self::assertFalse($this->session->isLocked());
         self::assertSame('Session destroyed', $response->getBody()->read());
     }
-
 }

@@ -11,5 +11,4 @@ class ApplicationLoggerProvider {
     public static function createLogger(LoggerFactory $loggerFactory) : LoggerInterface {
         return $loggerFactory->createLogger(LoggerType::Application);
     }
-
 }

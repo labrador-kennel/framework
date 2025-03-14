@@ -10,5 +10,4 @@ final class EntityValidatorStub extends EntityValidator {
     public function __construct(string $class) {
         parent::__construct(PropertyValidateMap::fromAttributedProperties($class));
     }
-
 }

@@ -16,7 +16,8 @@ final class ValidationResult implements Countable, IteratorAggregate {
      */
     public function __construct(
         private readonly array $propertyMessages
-    ) {}
+    ) {
+    }
 
     public function isValid() : bool {
         return count($this) === 0;
@@ -37,5 +38,4 @@ final class ValidationResult implements Countable, IteratorAggregate {
     public function count() : int {
         return count($this->propertyMessages);
     }
-
 }

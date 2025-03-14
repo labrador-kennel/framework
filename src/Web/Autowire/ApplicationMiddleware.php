@@ -14,7 +14,8 @@ final class ApplicationMiddleware implements ServiceAttribute {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
-    ) {}
+    ) {
+    }
 
     public function priority() : Priority {
         return $this->priority;

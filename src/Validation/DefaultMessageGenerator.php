@@ -14,5 +14,4 @@ final class DefaultMessageGenerator implements MessageGenerator {
             $rule::class
         );
     }
-
 }

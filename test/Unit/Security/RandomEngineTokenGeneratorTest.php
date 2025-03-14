@@ -16,5 +16,4 @@ class RandomEngineTokenGeneratorTest extends TestCase {
 
         self::assertSame(bin2hex('known-value'), $subject->generateToken());
     }
-
 }

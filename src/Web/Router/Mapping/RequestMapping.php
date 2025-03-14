@@ -11,5 +11,4 @@ interface RequestMapping {
     public function getPath() : string;
 
     public function withPath(string $path) : RequestMapping;
-
 }

@@ -10,5 +10,4 @@ interface RequestAndResponse {
     public function request() : Request;
 
     public function response() : Response;
-
 }

@@ -29,5 +29,4 @@ interface HttpServerSettings {
      * @return positive-int
      */
     public function clientConnectionLimitPerIpAddress() : int;
-
 }

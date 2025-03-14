@@ -15,7 +15,8 @@ final class ErrorThrowingRouter implements Router {
 
     public function __construct(
         private readonly Throwable $throwable
-    ) {}
+    ) {
+    }
 
     public function addRoute(RequestMapping $requestMapping, Controller $controller, Middleware ...$middlewares) : Route {
         return new Route($requestMapping, $controller);

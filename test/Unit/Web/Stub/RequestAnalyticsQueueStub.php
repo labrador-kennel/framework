@@ -16,5 +16,4 @@ final class RequestAnalyticsQueueStub implements RequestAnalyticsQueue {
     public function getQueuedRequestAnalytics() : array {
         return $this->queue;
     }
-
 }

@@ -13,7 +13,8 @@ final class RouteMiddleware implements ServiceAttribute {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
-    ) {}
+    ) {
+    }
 
     /**
      * @return list<non-empty-string>

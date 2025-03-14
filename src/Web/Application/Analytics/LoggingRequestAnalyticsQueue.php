@@ -8,7 +8,8 @@ final class LoggingRequestAnalyticsQueue implements RequestAnalyticsQueue {
 
     public function __construct(
         private readonly LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function queue(RequestAnalytics $analytics) : void {
         $exception = $analytics->thrownException();

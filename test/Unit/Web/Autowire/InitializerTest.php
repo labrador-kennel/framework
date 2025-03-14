@@ -26,5 +26,4 @@ final class InitializerTest extends TestCase {
 
         self::assertSame(DefinitionProvider::class, $actual);
     }
-
 }

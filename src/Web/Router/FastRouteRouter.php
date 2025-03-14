@@ -119,5 +119,4 @@ final class FastRouteRouter implements Router {
     public function getRoutes() : array {
         return $this->routes;
     }
-
 }

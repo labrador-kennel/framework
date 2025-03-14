@@ -41,5 +41,4 @@ class WillInvokeControllerEventTest extends TestCase {
         // Just make sure the datetime was created recently, i.e. within the last second.
         self::assertSame(0, $diff->s);
     }
-
 }

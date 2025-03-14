@@ -21,7 +21,8 @@ final class HttpController implements ServiceAttribute, RouteMappingAttribute {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
-    ) {}
+    ) {
+    }
 
     public function requestMapping() : RequestMapping {
         return $this->requestMapping;

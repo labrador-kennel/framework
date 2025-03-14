@@ -8,7 +8,8 @@ final class HeadMapping implements RequestMapping {
 
     public function __construct(
         private readonly string $path
-    ) {}
+    ) {
+    }
 
     public function getHttpMethod() : HttpMethod {
         return HttpMethod::Head;

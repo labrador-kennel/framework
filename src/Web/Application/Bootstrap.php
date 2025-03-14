@@ -16,7 +16,8 @@ final class Bootstrap {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = ['default'],
-    ) {}
+    ) {
+    }
 
     /**
      * @param AnnotatedContainerBootstrap $bootstrap
@@ -61,5 +62,4 @@ _  / / /_/ /_  /_/ /  /   / /_/ // /_/ / / /_/ /  /
 
 ASCII;
     }
-
 }

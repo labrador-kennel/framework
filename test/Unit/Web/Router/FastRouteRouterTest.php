@@ -50,7 +50,8 @@ class FastRouteRouterTest extends AsyncTestCase {
     private function getRouter() : FastRouteRouter {
         return new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
     }
 
@@ -61,7 +62,8 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testFastRouteDispatcherCallbackReturnsImproperTypeThrowsException() {
         $router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function() { return 'not a dispatcher'; }
+            function() { return 'not a dispatcher';
+            }
         );
 
         $this->expectException(InvalidType::class);

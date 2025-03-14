@@ -9,5 +9,4 @@ class EntityWithNoValidateAttributes {
     public string $bar;
 
     public int $baz;
-
 }

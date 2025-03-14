@@ -58,5 +58,4 @@ final class HttpServerFactory {
 
         return $socketServer;
     }
-
 }

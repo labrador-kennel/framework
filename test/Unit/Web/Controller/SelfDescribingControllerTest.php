@@ -12,5 +12,4 @@ final class SelfDescribingControllerTest extends TestCase {
 
         self::assertSame($subject::class, $subject->toString());
     }
-
 }

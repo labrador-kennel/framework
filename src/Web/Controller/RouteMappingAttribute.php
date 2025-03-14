@@ -13,5 +13,4 @@ interface RouteMappingAttribute {
      * @return list<class-string<Middleware>>
      */
     public function middleware() : array;
-
 }

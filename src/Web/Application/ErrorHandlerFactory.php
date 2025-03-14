@@ -9,5 +9,4 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 interface ErrorHandlerFactory {
 
     public function createErrorHandler() : ErrorHandler;
-
 }

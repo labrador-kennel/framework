@@ -27,7 +27,8 @@ final class FriendlyRouter implements Router {
 
     public function __construct(
         private readonly Router $router
-    ) {}
+    ) {
+    }
 
     /**
      * Define a Route that should respond to a GET request.
@@ -132,5 +133,4 @@ final class FriendlyRouter implements Router {
     public function getRoutes(): array {
         return $this->router->getRoutes();
     }
-
 }

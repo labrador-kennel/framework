@@ -45,5 +45,4 @@ final class ApplicationFactory {
 
         return $app;
     }
-
 }

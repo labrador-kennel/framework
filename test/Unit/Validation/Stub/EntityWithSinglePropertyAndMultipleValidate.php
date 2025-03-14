@@ -13,5 +13,4 @@ final class EntityWithSinglePropertyAndMultipleValidate {
         Validate(new Equals('some value'))
     ]
     private string $foo;
-
 }

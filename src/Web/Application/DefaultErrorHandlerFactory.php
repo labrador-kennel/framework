@@ -12,5 +12,4 @@ final class DefaultErrorHandlerFactory implements ErrorHandlerFactory {
     public function createErrorHandler() : ErrorHandler {
         return new DefaultErrorHandler();
     }
-
 }

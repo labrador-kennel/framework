@@ -49,7 +49,11 @@ final class RegisterControllerAndMiddlewareListener extends ServiceWiringListene
 
         if ($attr instanceof HttpController) {
             $this->handleHttpController(
-                $container, $router, $logger, $attr, $controller
+                $container,
+                $router,
+                $logger,
+                $attr,
+                $controller
             );
         }
     }
@@ -103,7 +107,6 @@ final class RegisterControllerAndMiddlewareListener extends ServiceWiringListene
                 ]
             );
         }
-
     }
 
     /**

@@ -34,7 +34,8 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
 
             public function __construct(
                 private readonly Client $client,
-            ) {}
+            ) {
+            }
 
             public function request() : Request {
                 return new Request($this->client, HttpMethod::Get->value, Http::createFromString('https://example.com/success'));
@@ -94,7 +95,8 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
 
             public function __construct(
                 private readonly Client $client,
-            ) {}
+            ) {
+            }
 
             public function request() : Request {
                 return new Request($this->client, HttpMethod::Get->value, Http::createFromString('https://example.com/failure'));
@@ -148,9 +150,8 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 'exception_message' => 'Known message',
                 'exception_class' => RuntimeException::class,
                 'exception_file' => __FILE__,
-                'exception_line' => 112
+                'exception_line' => 114
             ]
         ]));
     }
-
 }

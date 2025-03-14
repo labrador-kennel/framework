@@ -16,11 +16,10 @@ final readonly class Validate {
     ) {
         if ($message === null) {
             $this->messageGenerator = new DefaultMessageGenerator();
-        } else if ($message instanceof MessageGenerator) {
+        } elseif ($message instanceof MessageGenerator) {
             $this->messageGenerator = $message;
         } else {
             $this->messageGenerator = new StringMessageGenerator($message);
         }
     }
-
 }

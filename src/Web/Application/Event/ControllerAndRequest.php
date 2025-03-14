@@ -10,5 +10,4 @@ interface ControllerAndRequest {
     public function controller() : Controller;
 
     public function request() : Request;
-
 }

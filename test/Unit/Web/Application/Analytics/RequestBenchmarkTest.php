@@ -30,7 +30,8 @@ final class RequestBenchmarkTest extends TestCase {
             Http::createFromString('https://example.com')
         );
         $this->preciseTime = new KnownIncrementPreciseTime(
-            10, 1
+            10,
+            1
         );
         $this->controller = new ToStringControllerStub('KnownController');
     }
@@ -132,6 +133,4 @@ final class RequestBenchmarkTest extends TestCase {
 
         self::assertSame(HttpStatus::INTERNAL_SERVER_ERROR, $analytics->responseStatusCode());
     }
-
-
 }

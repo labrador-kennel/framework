@@ -33,7 +33,8 @@ final class ResponseSent implements Event {
             public function __construct(
                 private readonly Request $request,
                 private readonly Response $response
-            ) {}
+            ) {
+            }
 
             public function request() : Request {
                 return $this->request;

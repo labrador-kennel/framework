@@ -11,7 +11,8 @@ class ErrorThrowingController implements Controller {
 
     public function __construct(
         private readonly Throwable $throwable
-    ) {}
+    ) {
+    }
 
     public function toString(): string {
         return self::class;

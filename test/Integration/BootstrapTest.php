@@ -42,7 +42,7 @@ use Psr\Log\LoggerInterface;
  */
 class BootstrapTest extends TestCase {
 
-    private const ExpectedControllerCount = 3;
+    private const EXPECTED_CONTROLLER_COUNT = 3;
 
     use BootstrapAwareTestTrait;
 
@@ -78,7 +78,8 @@ class BootstrapTest extends TestCase {
             new class(fn(AnnotatedContainer $container) => $this->container = $container) implements AfterContainerCreation {
                 public function __construct(
                     private readonly \Closure $setContainer
-                ) {}
+                ) {
+                }
 
                 public function handleAfterContainerCreation(
                     Profiles $profiles,
@@ -162,7 +163,7 @@ class BootstrapTest extends TestCase {
         /** @var Router $router */
         $router = $this->container->get(Router::class);
 
-        self::assertCount(self::ExpectedControllerCount, $router->getRoutes());
+        self::assertCount(self::EXPECTED_CONTROLLER_COUNT, $router->getRoutes());
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
@@ -201,7 +202,4 @@ class BootstrapTest extends TestCase {
             $handler->hasInfoThatContains('Adding ' . $middlewareClass . ' to application with ' . $priority->name . ' priority.')
         );
     }
-
-
-
 }

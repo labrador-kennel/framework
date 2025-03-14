@@ -2,7 +2,6 @@
 
 namespace Labrador\Validation;
 
-
 /**
  * @template T of object
  */
@@ -10,7 +9,8 @@ abstract class EntityValidator {
 
     protected function __construct(
         private readonly PropertyValidateMap $propertyValidateMap,
-    ) {}
+    ) {
+    }
 
     /**
      * @psalm-param T $entity
@@ -40,5 +40,4 @@ abstract class EntityValidator {
     protected function getPropertyValue(object $entity, string $property) : mixed {
         return $entity->{$property};
     }
-
 }

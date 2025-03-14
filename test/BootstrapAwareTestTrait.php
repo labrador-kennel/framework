@@ -44,5 +44,4 @@ XML;
         );
         return $containerBootstrap->bootstrapContainer(profiles: Profiles::fromList($profiles));
     }
-
 }

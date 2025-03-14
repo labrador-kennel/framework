@@ -173,5 +173,4 @@ final class CsrfTokenManagerTest extends TestCase {
             $this->storage->read($this->sessionId)
         );
     }
-
 }

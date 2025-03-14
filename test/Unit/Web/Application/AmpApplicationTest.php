@@ -83,7 +83,8 @@ final class AmpApplicationTest extends TestCase {
         $this->errorHandler = new DefaultErrorHandler();
         $this->router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
         $this->emitter = new EventEmitterStub();
         $this->testHandler = new TestHandler();
@@ -257,7 +258,8 @@ final class AmpApplicationTest extends TestCase {
 
             public function __construct(
                 private readonly ?SessionStorage $storage
-            ) {}
+            ) {
+            }
 
             public function getSessionMiddleware() : ?SessionMiddleware {
                 return new SessionMiddleware(

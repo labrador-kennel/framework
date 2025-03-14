@@ -13,7 +13,8 @@ final class StaticAssetController extends SelfDescribingController {
     public function __construct(
         private readonly DocumentRoot $root,
         private readonly ErrorHandler $errorHandler
-    ) {}
+    ) {
+    }
 
 
     public function handleRequest(Request $request) : Response {

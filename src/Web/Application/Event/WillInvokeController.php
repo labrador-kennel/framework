@@ -33,7 +33,8 @@ final class WillInvokeController implements Event {
             public function __construct(
                 private readonly Controller $controller,
                 private readonly Request $request,
-            ) {}
+            ) {
+            }
 
             public function controller() : Controller {
                 return $this->controller;

@@ -23,12 +23,12 @@ class ControllerInvoker {
 
     private function __construct(
         private readonly SessionStorage $sessionStorage,
-        Middleware... $applicationMiddleware
+        Middleware...$applicationMiddleware
     ) {
         $this->applicationMiddleware = $applicationMiddleware;
     }
 
-    public static function withTestSessionMiddleware(Middleware... $middleware) : self {
+    public static function withTestSessionMiddleware(Middleware...$middleware) : self {
         $sessionStorage = new LocalSessionStorage();
         $knownSessionIdGenerator = new class implements SessionIdGenerator {
             public function generate() : string {
@@ -56,7 +56,7 @@ class ControllerInvoker {
     public function invokeController(
         Request $request,
         Controller $controller,
-        Middleware... $middleware,
+        Middleware...$middleware,
     ) : InvokedControllerResponse {
         $invokedController = new MiddlewareController(
             $controller,
@@ -75,7 +75,8 @@ class ControllerInvoker {
                 private readonly Request $request,
                 private readonly Response $response,
                 private readonly SessionStorage $sessionStorage,
-            ) {}
+            ) {
+            }
 
             public function getInvokedController() : Controller {
                 return $this->controller;
@@ -94,5 +95,4 @@ class ControllerInvoker {
             }
         };
     }
-
 }

@@ -9,5 +9,4 @@ use Monolog\Logger;
 interface MonologLoggerInitializer {
 
     public function initialize(Logger $logger, LoggerType $loggerType) : void;
-
 }

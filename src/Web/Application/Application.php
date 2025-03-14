@@ -17,5 +17,4 @@ interface Application {
     public function start() : void;
 
     public function stop() : void;
-
 }

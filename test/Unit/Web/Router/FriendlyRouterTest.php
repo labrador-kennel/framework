@@ -29,7 +29,8 @@ class FriendlyRouterTest extends TestCase {
     private function getRouter(Router $router = null) : FriendlyRouter {
         $router = $router ?? new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
         return new FriendlyRouter($router);
     }
@@ -182,5 +183,4 @@ class FriendlyRouterTest extends TestCase {
 
         $this->getRouter($router)->match($request);
     }
-
 }

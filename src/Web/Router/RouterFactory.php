@@ -18,10 +18,10 @@ final class RouterFactory {
         return new LoggingRouter(
             new FastRouteRouter(
                 new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-                function(array $data) : GcbDispatcher { return new GcbDispatcher($data); }
+                function(array $data) : GcbDispatcher { return new GcbDispatcher($data);
+                }
             ),
             $logger
         );
     }
-
 }
