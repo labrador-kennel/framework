@@ -8,11 +8,11 @@ use Labrador\Web\Controller\Controller;
 
 interface InvokedControllerResponse {
 
-    public function getInvokedController() : Controller;
+    public function invokedController() : Controller;
 
-    public function getRequest() : Request;
+    public function request() : Request;
 
-    public function getResponse() : Response;
+    public function response() : Response;
 
     public function readSession() : array;
 }

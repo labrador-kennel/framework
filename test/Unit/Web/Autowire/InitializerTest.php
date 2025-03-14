@@ -4,7 +4,7 @@ namespace Labrador\Test\Unit\Web\Autowire;
 
 use Labrador\Web\Autowire\DefinitionProvider;
 use Labrador\Web\Autowire\Initializer;
-use Labrador\Web\Autowire\RegisterControllerAndMiddlewareListener;
+use Labrador\Web\Autowire\RegisterControllerListener;
 use PHPUnit\Framework\TestCase;
 
 final class InitializerTest extends TestCase {

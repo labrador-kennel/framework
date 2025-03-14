@@ -33,12 +33,12 @@ final class ControllerInvokerTest extends TestCase {
             $controller = new ResponseControllerStub($response = new Response())
         );
 
-        $invokedController = $invokedControllerResponse->getInvokedController();
+        $invokedController = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $invokedController);
         self::assertSame($controller, $invokedController->controller);
-        self::assertSame($request, $invokedControllerResponse->getRequest());
-        self::assertSame($response, $invokedControllerResponse->getResponse());
+        self::assertSame($request, $invokedControllerResponse->request());
+        self::assertSame($response, $invokedControllerResponse->response());
     }
 
     public function testControllerInvokedWithInvokedControllerResponseWithCorrectSessionStorage() : void {
@@ -65,7 +65,7 @@ final class ControllerInvokerTest extends TestCase {
             new ResponseControllerStub(new Response())
         );
 
-        $controller = $invokedControllerResponse->getInvokedController();
+        $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
         self::assertCount(3, $controller->middlewares);
@@ -76,7 +76,7 @@ final class ControllerInvokerTest extends TestCase {
             new ResponseControllerStub(new Response())
         );
 
-        $controller = $invokedControllerResponse->getInvokedController();
+        $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
         self::assertCount(3, $controller->middlewares);
@@ -99,7 +99,7 @@ final class ControllerInvokerTest extends TestCase {
             $controllerMiddleware
         );
 
-        $controller = $invokedControllerResponse->getInvokedController();
+        $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
         self::assertCount(4, $controller->middlewares);
@@ -111,7 +111,7 @@ final class ControllerInvokerTest extends TestCase {
             new ResponseControllerStub(new Response())
         );
 
-        $controller = $invokedControllerResponse->getInvokedController();
+        $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
         self::assertCount(3, $controller->middlewares);

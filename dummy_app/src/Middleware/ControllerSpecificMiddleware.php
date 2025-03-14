@@ -6,9 +6,9 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Labrador\Web\Autowire\RouteMiddleware;
+use Cspray\AnnotatedContainer\Attribute\Service;
 
-#[RouteMiddleware]
+#[Service]
 class ControllerSpecificMiddleware implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {

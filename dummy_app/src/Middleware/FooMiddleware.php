@@ -6,11 +6,10 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
+use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\DummyApp\MiddlewareCallRegistry;
-use Labrador\Web\Autowire\ApplicationMiddleware;
-use Labrador\Web\Middleware\Priority;
 
-#[ApplicationMiddleware(priority: Priority::High)]
+#[Service]
 class FooMiddleware implements Middleware {
 
     public function __construct(
