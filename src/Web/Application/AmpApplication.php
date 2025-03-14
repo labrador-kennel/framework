@@ -23,7 +23,7 @@ use Labrador\Web\Application\Event\ResponseSent;
 use Labrador\Web\Application\Event\WillInvokeController;
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\StaticAssetController;
-use Labrador\Web\Middleware\Priority;
+use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Router;
@@ -35,19 +35,13 @@ use Throwable;
 
 final class AmpApplication implements Application, RequestHandler {
 
-    /**
-     * @var array<string, Middleware[]>
-     */
-    private array $middleware = [];
-
     private ?ErrorHandler $errorHandler = null;
-
-    private bool $isSessionSupported;
 
     public function __construct(
         private readonly HttpServer            $httpServer,
         private readonly ErrorHandlerFactory   $errorHandlerFactory,
         private readonly Router                $router,
+        private readonly GlobalMiddlewareCollection $globalMiddlewareCollection,
         private readonly Emitter          $emitter,
         private readonly LoggerInterface       $logger,
         private readonly ApplicationSettings   $features,
@@ -58,11 +52,6 @@ final class AmpApplication implements Application, RequestHandler {
     }
 
     private function handleApplicationFeaturesSetup() : void {
-        $sessionMiddleware = $this->features->getSessionMiddleware();
-        if ($this->isSessionSupported = ($sessionMiddleware !== null)) {
-            $this->addMiddleware($sessionMiddleware, Priority::Critical);
-        }
-
         $staticAssetSettings = $this->features->getStaticAssetSettings();
         if ($staticAssetSettings !== null) {
             $this->router->addRoute(
@@ -79,23 +68,11 @@ final class AmpApplication implements Application, RequestHandler {
         }
     }
 
-    public function router() : Router {
-        return $this->router;
-    }
-
-    public function addMiddleware(Middleware $middleware, Priority $priority = Priority::Low) : void {
-        if (!isset($this->middleware[$priority->name])) {
-            $this->middleware[$priority->name] = [];
-        }
-
-        $this->middleware[$priority->name][] = $middleware;
-    }
-
     public function start() : void {
         $this->logger->info('Labrador HTTP application starting up.');
         $this->emitter->emit(new ApplicationStarted($this))->await();
         $this->logger->debug('Allowing routes to be added through event system.');
-        $this->emitter->emit(new AddRoutes($this->router))->await();
+        $this->emitter->emit(new AddRoutes($this->router, $this->globalMiddlewareCollection))->await();
 
         $this->httpServer->start($this, $this->getErrorHandler());
 
@@ -180,14 +157,16 @@ final class AmpApplication implements Application, RequestHandler {
     private function getMiddlewareStack(Controller $controller, RequestBenchmark $benchmark) : RequestHandler {
         $middlewares = [];
         $middlewares[] = $this->benchmarkMiddlewareProcessingStartedMiddleware($benchmark);
-
-        foreach (Priority::cases() as $priority) {
-            $priorityMiddleware = $this->middleware[$priority->name] ?? [];
-            foreach ($priorityMiddleware as $middleware) {
-                $middlewares[] = $middleware;
-            }
+        $sessionMiddleware = $this->features->getSessionMiddleware();
+        if ($sessionMiddleware !== null) {
+            $middlewares[] = $sessionMiddleware;
         }
 
+        foreach ($this->globalMiddlewareCollection as $middleware) {
+            $middlewares[] = $middleware;
+        }
+
+        $middlewares[] = new Middleware\AccessLoggerMiddleware($this->logger);
         $middlewares[] = $this->finalMiddlewareProcessingMiddleware($benchmark);
 
         return Middleware\stackMiddleware($controller, ...$middlewares);

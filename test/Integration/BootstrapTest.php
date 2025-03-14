@@ -25,8 +25,7 @@ use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
 use Labrador\Web\Application\Bootstrap;
 use Labrador\Web\Application\ErrorHandlerFactory;
-use Labrador\Web\Autowire\RegisterControllerAndMiddlewareListener;
-use Labrador\Web\Middleware\Priority;
+use Labrador\Web\Autowire\RegisterControllerListener;
 use Labrador\Web\Router\LoggingRouter;
 use Labrador\Web\Router\Router;
 use Monolog\Handler\TestHandler;
@@ -68,7 +67,7 @@ class BootstrapTest extends TestCase {
         $this->stdout = StreamBuffer::intercept(STDOUT);
         $this->stderr = StreamBuffer::intercept(STDERR);
         $emitter = new AnnotatedContainerEmitter();
-        $emitter->addListener(new RegisterControllerAndMiddlewareListener());
+        $emitter->addListener(new RegisterControllerListener());
         $this->containerBootstrap = AnnotatedContainerBootstrap::fromAnnotatedContainerConventions(
             new PhpDiContainerFactory($emitter),
             $emitter,
@@ -176,30 +175,6 @@ class BootstrapTest extends TestCase {
 
         self::assertTrue(
             $handler->hasInfoThatContains('Autowiring route GET /hello/world to HelloWorld controller.')
-        );
-    }
-
-    public static function expectedMiddlewareProvider() : array {
-        return [
-            BarMiddleware::class => [BarMiddleware::class, Priority::Low],
-            BazMiddleware::class => [BazMiddleware::class, Priority::Medium],
-            FooMiddleware::class => [FooMiddleware::class, Priority::High],
-            QuxMiddleware::class => [QuxMiddleware::class, Priority::Critical]
-        ];
-    }
-
-    /**
-     * @dataProvider expectedMiddlewareProvider
-     */
-    public function testApplicationAutowiringApplicationMiddlewareLogged(string $middlewareClass, Priority $priority) : void {
-        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
-        $bootstrap->bootstrapApplication();
-
-        $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
-        self::assertInstanceOf(TestHandler::class, $handler);
-
-        self::assertTrue(
-            $handler->hasInfoThatContains('Adding ' . $middlewareClass . ' to application with ' . $priority->name . ' priority.')
         );
     }
 }

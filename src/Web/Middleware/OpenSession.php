@@ -7,10 +7,10 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Labrador\Web\Autowire\RouteMiddleware;
+use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Exception\SessionNotEnabled;
 
-#[RouteMiddleware]
+#[Service]
 final class OpenSession implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {

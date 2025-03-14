@@ -45,7 +45,6 @@ class HttpServerTest extends AsyncTestCase {
         self::$stdout = StreamBuffer::intercept(STDOUT);
         self::$stderr = StreamBuffer::intercept(STDERR);
         self::$vfs = VirtualFilesystem::setup();
-        VirtualFilesystem::newDirectory('.annotated-container-cache')->at(self::$vfs);
         self::writeStandardConfigurationFile();
 
         self::$container = self::getContainer(['default', 'integration-test'], new VfsDirectoryResolver());
@@ -83,7 +82,7 @@ class HttpServerTest extends AsyncTestCase {
         self::assertSame('Hello, world!', $response->getBody()->buffer());
     }
 
-    public function testMiddlewareCalledInPriorityOrder() : void {
+    public function testGlobalMiddlewareAddedFromAppRouteListenerIsInvoked() : void {
         $client = (new HttpClientBuilder())->build();
 
         $response = $client->request(new Request('http://localhost:4200/hello/world'));
@@ -128,13 +127,12 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/world');
         $client->request($request);
 
-
         $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue($handler->hasInfoThatPasses(static function (LogRecord $record) {
             $expected = <<<TEXT
-%a labrador.web-server.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
+%a labrador.app.INFO: "GET http://localhost:%d/hello/world" 200 "OK" HTTP/1.1 127.0.0.1:%d on 127.0.0.1:%d {"request":{"method":"GET","uri":"http://localhost:4200/hello/world","protocolVersion":"1.1","local":"127.0.0.1:%d","remote":"127.0.0.1:%d"},"response":{"status":200,"reason":"OK"}} []
 TEXT;
             return (new StringMatchesFormatDescription($expected))->evaluate(
                 other: $record->formatted,
@@ -145,10 +143,6 @@ TEXT;
 
     public function testExceptionThrowHasCorrectLogOutputSentToStdout() : void {
         $client = (new HttpClientBuilder())->build();
-        self::$container->get(Router::class)->addRoute(
-            new GetMapping('/exception'),
-            new ErrorThrowingController(new \RuntimeException('A message detailing what went wrong that should show up in logs.'))
-        );
 
         $request = new Request('http://localhost:4200/exception');
         $client->request($request);
@@ -157,9 +151,9 @@ TEXT;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue($handler->hasErrorThatPasses(static function (LogRecord $record) {
-            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/HttpServerTest.php","line_number":150,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
+            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":47,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
             $expected = <<<TEXT
-%a labrador.app.ERROR: RuntimeException thrown in %a/HttpServerTest.php#L150 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
+%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L47 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
 TEXT;
             return (new StringMatchesFormatDescription($expected))->evaluate(
                 other: $record->formatted,

@@ -10,6 +10,7 @@ use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
+use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\Router\Router;
 
@@ -30,6 +31,7 @@ final class ApplicationFactory {
             $httpServer,
             $errorHandlerFactory,
             $router,
+            new GlobalMiddlewareCollection(),
             $emitter,
             $loggerFactory->createLogger(LoggerType::Application),
             $features,
@@ -40,8 +42,6 @@ final class ApplicationFactory {
         $accessLoggingMiddleware = new AccessLoggerMiddleware(
             $loggerFactory->createLogger(LoggerType::WebServer)
         );
-
-        $app->addMiddleware($accessLoggingMiddleware, Priority::Critical);
 
         return $app;
     }

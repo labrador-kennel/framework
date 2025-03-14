@@ -16,24 +16,18 @@ use Labrador\Web\Router\Route;
 use Labrador\Web\Router\Router;
 use Psr\Log\LoggerInterface;
 
-final class RegisterControllerAndMiddlewareListener extends ServiceWiringListener {
+final class RegisterControllerListener extends ServiceWiringListener {
 
     public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
         /** @var LoggerFactory $loggerFactory */
         $loggerFactory = $container->get(LoggerFactory::class);
         $logger = $loggerFactory->createLogger(LoggerType::Application);
 
-        /** @var Application $app */
-        $app = $container->get(Application::class);
         /** @var Router $router */
         $router = $container->get(Router::class);
 
         foreach ($gatherer->servicesForType(Controller::class) as $controller) {
             $this->handlePotentialHttpController($container, $controller, $logger, $router);
-        }
-
-        foreach ($gatherer->servicesForType(Middleware::class) as $middleware) {
-            $this->handleApplicationMiddleware($logger, $app, $middleware);
         }
     }
 
@@ -82,31 +76,6 @@ final class RegisterControllerAndMiddlewareListener extends ServiceWiringListene
                 'controller' => $route->controller->toString()
             ]
         );
-    }
-
-    private function handleApplicationMiddleware(
-        LoggerInterface $logger,
-        Application $application,
-        ServiceFromServiceDefinition $middlewareAndDefinition
-    ) : void {
-        $middleware = $middlewareAndDefinition->service();
-        assert($middleware instanceof Middleware);
-
-        $attr = $middlewareAndDefinition->definition()->attribute();
-
-        if ($attr instanceof ApplicationMiddleware) {
-            $application->addMiddleware(
-                $middleware,
-                $attr->priority()
-            );
-            $logger->info(
-                'Adding {middleware} to application with {priority} priority.',
-                [
-                    'middleware' => $middleware::class,
-                    'priority' => $attr->priority()->name
-                ]
-            );
-        }
     }
 
     /**

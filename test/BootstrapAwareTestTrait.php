@@ -8,8 +8,9 @@ use Cspray\AnnotatedContainer\Bootstrap\BootstrappingDirectoryResolver;
 use Cspray\AnnotatedContainer\ContainerFactory\PhpDiContainerFactory;
 use Cspray\AnnotatedContainer\Event\Emitter;
 use Cspray\AnnotatedContainer\Profiles;
+use Labrador\AsyncEvent\Autowire\RegisterAutowiredListener;
 use Labrador\Test\Helper\VfsDirectoryResolver;
-use Labrador\Web\Autowire\RegisterControllerAndMiddlewareListener;
+use Labrador\Web\Autowire\RegisterControllerListener;
 
 trait BootstrapAwareTestTrait {
 
@@ -36,7 +37,8 @@ XML;
         BootstrappingDirectoryResolver $directoryResolver = null
     ) : AnnotatedContainer {
         $emitter = new Emitter();
-        $emitter->addListener(new RegisterControllerAndMiddlewareListener());
+        $emitter->addListener(new RegisterControllerListener());
+        $emitter->addListener(new RegisterAutowiredListener());
         $containerBootstrap = AnnotatedContainerBootstrap::fromAnnotatedContainerConventions(
             new PhpDiContainerFactory($emitter),
             $emitter,

@@ -4,6 +4,7 @@ namespace Labrador\Test\Unit\Web\Event;
 
 use Labrador\Web\Application\ApplicationEvent;
 use Labrador\Web\Application\Event\AddRoutes;
+use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\Router\Router;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -11,12 +12,14 @@ use PHPUnit\Framework\TestCase;
 class AddRoutesEventTest extends TestCase {
 
     private Router&MockObject $router;
+    private GlobalMiddlewareCollection $globalMiddlewareCollection;
     private AddRoutes $subject;
 
     protected function setUp() : void {
         parent::setUp();
         $this->router = $this->getMockBuilder(Router::class)->getMock();
-        $this->subject = new AddRoutes($this->router);
+        $this->globalMiddlewareCollection = new GlobalMiddlewareCollection();
+        $this->subject = new AddRoutes($this->router, $this->globalMiddlewareCollection);
     }
 
     public function testGetName() : void {
@@ -24,7 +27,8 @@ class AddRoutesEventTest extends TestCase {
     }
 
     public function testGetTarget() : void {
-        self::assertSame($this->router, $this->subject->payload());
+        self::assertSame($this->router, $this->subject->payload()->router());
+        self::assertSame($this->globalMiddlewareCollection, $this->subject->payload()->globalMiddleware());
     }
 
     public function testGetCreatedAt() : void {

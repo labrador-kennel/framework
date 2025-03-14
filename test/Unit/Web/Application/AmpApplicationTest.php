@@ -32,7 +32,6 @@ use Labrador\Test\Unit\Web\Stub\EventEmitterStub;
 use Labrador\Test\Unit\Web\Stub\HttpServerStub;
 use Labrador\Test\Unit\Web\Stub\KnownIncrementPreciseTime;
 use Labrador\Test\Unit\Web\Stub\RequestAnalyticsQueueStub;
-use Labrador\Test\Unit\Web\Stub\RequireAccessReadSessionController;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionGatheringController;
 use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
@@ -47,10 +46,9 @@ use Labrador\Web\Application\Event\ReceivingConnections;
 use Labrador\Web\Application\Event\RequestReceived;
 use Labrador\Web\Application\Event\ResponseSent;
 use Labrador\Web\Application\Event\WillInvokeController;
-use Labrador\Web\Application\NoApplicationFeatures;
 use Labrador\Web\Application\StaticAssetSettings;
 use Labrador\Web\HttpMethod;
-use Labrador\Web\Middleware\Priority;
+use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\FastRouteRouter;
 use Labrador\Web\Router\Mapping\GetMapping;
@@ -74,6 +72,7 @@ final class AmpApplicationTest extends TestCase {
     private TestHandler $testHandler;
     private RequestAnalyticsQueueStub $analyticsQueue;
     private PreciseTime $preciseTime;
+    private GlobalMiddlewareCollection $globalMiddlewareCollection;
 
     private string $assetsDir;
 
@@ -91,20 +90,18 @@ final class AmpApplicationTest extends TestCase {
         $this->analyticsQueue = new RequestAnalyticsQueueStub();
         $this->preciseTime = new KnownIncrementPreciseTime(0, 1);
         $this->assetsDir = dirname(__DIR__, 3) . '/Helper/assets';
+        $this->globalMiddlewareCollection = new GlobalMiddlewareCollection();
         $this->subject = new AmpApplication(
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
+            $this->globalMiddlewareCollection,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
             new StubApplicationSettings(),
             $this->analyticsQueue,
             $this->preciseTime
         );
-    }
-
-    public function testGetRouter() : void {
-        self::assertSame($this->router, $this->subject->router());
     }
 
     public function testCorrectEventsEmitted() : void {
@@ -215,7 +212,7 @@ final class AmpApplicationTest extends TestCase {
             Http::createFromString('http://example.com'),
         );
 
-        $this->subject->addMiddleware(
+        $this->globalMiddlewareCollection->add(
             new BarMiddleware(new MiddlewareCallRegistry())
         );
 
@@ -367,6 +364,7 @@ final class AmpApplicationTest extends TestCase {
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
+            new GlobalMiddlewareCollection(),
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
             $this->getApplicationFeaturesWithSessionMiddleware(),
@@ -382,7 +380,7 @@ final class AmpApplicationTest extends TestCase {
         self::assertNotNull($controller->getSession());
     }
 
-    public function testSessionMiddlewareSetToCriticalLevelAndRunFirst() : void {
+    public function testSessionMiddlewareRunBeforeOtherAddedMiddleware() : void {
         $controller = new SessionGatheringController();
         $this->router->addRoute(
             new GetMapping('/session-test'),
@@ -393,11 +391,13 @@ final class AmpApplicationTest extends TestCase {
             HttpMethod::Get->value,
             Http::createFromString('http://example.com/session-test')
         );
+        $globalMiddlewareCollection = new GlobalMiddlewareCollection();
 
         $subject = new AmpApplication(
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
+            $globalMiddlewareCollection,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
             $this->getApplicationFeaturesWithSessionMiddleware(),
@@ -416,7 +416,7 @@ final class AmpApplicationTest extends TestCase {
                 return $requestHandler->handleRequest($request);
             }
         };
-        $subject->addMiddleware($middleware, Priority::Critical);
+        $globalMiddlewareCollection->add($middleware);
 
         $subject->start();
 
@@ -475,6 +475,7 @@ final class AmpApplicationTest extends TestCase {
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             new ErrorThrowingRouter($exception = new RuntimeException()),
+            new GlobalMiddlewareCollection(),
             $this->emitter,
             new NullLogger(),
             new StubApplicationSettings(),
@@ -516,7 +517,7 @@ final class AmpApplicationTest extends TestCase {
             new ToStringControllerStub('KnownController'),
         );
 
-        $this->subject->addMiddleware(new ErrorThrowingMiddleware($exception));
+        $this->globalMiddlewareCollection->add(new ErrorThrowingMiddleware($exception));
         $this->subject->start();
 
         $response = $this->subject->handleRequest($request);
@@ -625,6 +626,7 @@ final class AmpApplicationTest extends TestCase {
             $this->httpServer,
             new ErrorHandlerFactoryStub($this->errorHandler),
             $this->router,
+            new GlobalMiddlewareCollection(),
             $this->emitter,
             new NullLogger(),
             $this->getApplicationFeaturesWithStaticAssetSettings(),
