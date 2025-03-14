@@ -3,10 +3,12 @@
 namespace Labrador\Logging;
 
 use Cspray\AnnotatedContainer\Attribute\Service;
+use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Psr\Log\LoggerInterface;
 
 #[Service]
 interface LoggerFactory {
 
-    public function createLogger(LoggerType $loggerType) : LoggerInterface;
+    #[ServiceDelegate]
+    public function createLogger() : LoggerInterface;
 }

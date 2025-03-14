@@ -13,6 +13,7 @@ use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\Router\Router;
+use Psr\Log\LoggerInterface;
 
 final class ApplicationFactory {
 
@@ -22,27 +23,21 @@ final class ApplicationFactory {
         ErrorHandlerFactory   $errorHandlerFactory,
         Router                $router,
         Emitter               $emitter,
-        LoggerFactory         $loggerFactory,
+        LoggerInterface $logger,
         ApplicationSettings   $features,
         RequestAnalyticsQueue $analyticsQueue,
         PreciseTime           $preciseTime,
     ) : Application {
-        $app = new AmpApplication(
+        return new AmpApplication(
             $httpServer,
             $errorHandlerFactory,
             $router,
             new GlobalMiddlewareCollection(),
             $emitter,
-            $loggerFactory->createLogger(LoggerType::Application),
+            $logger,
             $features,
             $analyticsQueue,
             $preciseTime
         );
-
-        $accessLoggingMiddleware = new AccessLoggerMiddleware(
-            $loggerFactory->createLogger(LoggerType::WebServer)
-        );
-
-        return $app;
     }
 }

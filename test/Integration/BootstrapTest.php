@@ -16,11 +16,7 @@ use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\AsyncEvent\AmpEmitter;
 use Labrador\AsyncEvent\Emitter;
-use Labrador\DummyApp\DummyMonologInitializer;
-use Labrador\DummyApp\Middleware\BarMiddleware;
-use Labrador\DummyApp\Middleware\BazMiddleware;
-use Labrador\DummyApp\Middleware\FooMiddleware;
-use Labrador\DummyApp\Middleware\QuxMiddleware;
+use Labrador\DummyApp\DummyLoggerFactory;
 use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
 use Labrador\Web\Application\Bootstrap;
@@ -107,7 +103,7 @@ class BootstrapTest extends TestCase {
 
         $logger->info('This is a test message');
 
-        $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
+        $handler = $this->container->get(DummyLoggerFactory::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
         self::assertTrue(
             $handler->hasInfoThatContains('This is a test message')
@@ -170,7 +166,7 @@ class BootstrapTest extends TestCase {
 
         $bootstrap->bootstrapApplication();
 
-        $handler = $this->container->get(DummyMonologInitializer::class)->testHandler;
+        $handler = $this->container->get(DummyLoggerFactory::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue(

@@ -5,6 +5,7 @@ namespace Labrador\Web\Application\Analytics;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
+use Psr\Log\LoggerInterface;
 
 final class RequestAnalyticsQueueFactory {
 
@@ -12,9 +13,7 @@ final class RequestAnalyticsQueueFactory {
     }
 
     #[ServiceDelegate]
-    public static function createAnalyticsQueue(LoggerFactory $loggerFactory) : RequestAnalyticsQueue {
-        return new LoggingRequestAnalyticsQueue(
-            $loggerFactory->createLogger(LoggerType::Application)
-        );
+    public static function createAnalyticsQueue(LoggerInterface $logger) : RequestAnalyticsQueue {
+        return new LoggingRequestAnalyticsQueue($logger);
     }
 }

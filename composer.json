@@ -19,6 +19,7 @@
     "amphp/http-server-static-content": "^2.0",
     "amphp/log": "^v2.0",
     "cspray/annotated-container": "^v3.0",
+    "cspray/marked-logs": "^2.0",
     "labrador-kennel/async-event": "^4.0",
     "labrador-kennel/async-event-autowire":  "^3.0",
     "league/uri": "^7",
