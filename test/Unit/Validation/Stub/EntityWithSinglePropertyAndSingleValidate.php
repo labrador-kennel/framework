@@ -10,7 +10,6 @@ final class EntityWithSinglePropertyAndSingleValidate {
     public function __construct(
         #[Validate(new Alpha())]
         public readonly string $foo
-    ) {}
-
-
+    ) {
+    }
 }

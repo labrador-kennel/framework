@@ -5,7 +5,7 @@ namespace Labrador\Web\Application;
 use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\Middleware\AccessLoggerMiddleware;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
-use Labrador\AsyncEvent\EventEmitter;
+use Labrador\AsyncEvent\Emitter;
 use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
 use Labrador\Web\Application\Analytics\PreciseTime;
@@ -20,7 +20,7 @@ final class ApplicationFactory {
         HttpServer            $httpServer,
         ErrorHandlerFactory   $errorHandlerFactory,
         Router                $router,
-        EventEmitter          $emitter,
+        Emitter               $emitter,
         LoggerFactory         $loggerFactory,
         ApplicationSettings   $features,
         RequestAnalyticsQueue $analyticsQueue,
@@ -45,5 +45,4 @@ final class ApplicationFactory {
 
         return $app;
     }
-
 }

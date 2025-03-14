@@ -9,5 +9,4 @@ use Psr\Log\LoggerInterface;
 interface LoggerFactory {
 
     public function createLogger(LoggerType $loggerType) : LoggerInterface;
-
 }

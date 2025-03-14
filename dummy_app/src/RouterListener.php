@@ -16,7 +16,7 @@ use Labrador\Web\Router\Mapping\GetMapping;
 class RouterListener extends AddRoutesListener {
 
     protected function handle(AddRoutes $addRoutes) : Future|CompositeFuture|null {
-        $addRoutes->getTarget()->addRoute(
+        $addRoutes->payload()->addRoute(
             new GetMapping('/exception'),
             new class implements Controller {
 

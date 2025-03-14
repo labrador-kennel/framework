@@ -6,7 +6,7 @@ use Amp\Http\Server\Middleware;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceFromServiceDefinition;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
-use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringObserver;
+use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringListener;
 use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
 use Labrador\Web\Application\Application;
@@ -16,7 +16,7 @@ use Labrador\Web\Router\Route;
 use Labrador\Web\Router\Router;
 use Psr\Log\LoggerInterface;
 
-class Observer extends ServiceWiringObserver {
+final class RegisterControllerAndMiddlewareListener extends ServiceWiringListener {
 
     public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
         /** @var LoggerFactory $loggerFactory */
@@ -28,11 +28,11 @@ class Observer extends ServiceWiringObserver {
         /** @var Router $router */
         $router = $container->get(Router::class);
 
-        foreach ($gatherer->getServicesForType(Controller::class) as $controller) {
+        foreach ($gatherer->servicesForType(Controller::class) as $controller) {
             $this->handlePotentialHttpController($container, $controller, $logger, $router);
         }
 
-        foreach ($gatherer->getServicesForType(Middleware::class) as $middleware) {
+        foreach ($gatherer->servicesForType(Middleware::class) as $middleware) {
             $this->handleApplicationMiddleware($logger, $app, $middleware);
         }
     }
@@ -43,13 +43,17 @@ class Observer extends ServiceWiringObserver {
         LoggerInterface $logger,
         Router $router,
     ) : void {
-        $controller = $controllerAndDefinition->getService();
+        $controller = $controllerAndDefinition->service();
         assert($controller instanceof Controller);
-        $attr = $controllerAndDefinition->getDefinition()->getAttribute();
+        $attr = $controllerAndDefinition->definition()->attribute();
 
         if ($attr instanceof HttpController) {
             $this->handleHttpController(
-                $container, $router, $logger, $attr, $controller
+                $container,
+                $router,
+                $logger,
+                $attr,
+                $controller
             );
         }
     }
@@ -62,7 +66,7 @@ class Observer extends ServiceWiringObserver {
         Controller $controller
     ) : void {
         $route = $router->addRoute(
-            $httpController->getRequestMapping(),
+            $httpController->requestMapping(),
             $controller,
             ...$this->getMiddlewareFromRouteMappingAttribute($container, $httpController)
         );
@@ -85,25 +89,24 @@ class Observer extends ServiceWiringObserver {
         Application $application,
         ServiceFromServiceDefinition $middlewareAndDefinition
     ) : void {
-        $middleware = $middlewareAndDefinition->getService();
+        $middleware = $middlewareAndDefinition->service();
         assert($middleware instanceof Middleware);
 
-        $attr = $middlewareAndDefinition->getDefinition()->getAttribute();
+        $attr = $middlewareAndDefinition->definition()->attribute();
 
         if ($attr instanceof ApplicationMiddleware) {
             $application->addMiddleware(
                 $middleware,
-                $attr->getPriority()
+                $attr->priority()
             );
             $logger->info(
                 'Adding {middleware} to application with {priority} priority.',
                 [
                     'middleware' => $middleware::class,
-                    'priority' => $attr->getPriority()->name
+                    'priority' => $attr->priority()->name
                 ]
             );
         }
-
     }
 
     /**
@@ -115,7 +118,7 @@ class Observer extends ServiceWiringObserver {
      */
     private function getMiddlewareFromRouteMappingAttribute(AnnotatedContainer $container, RouteMappingAttribute $attr) : array {
         $middleware = [];
-        foreach ($attr->getMiddleware() as $middlewareClass) {
+        foreach ($attr->middleware() as $middlewareClass) {
             $middlewareService = $container->get($middlewareClass);
             assert($middlewareService instanceof Middleware);
             $middleware[] = $middlewareService;

@@ -21,23 +21,24 @@ final class HttpController implements ServiceAttribute, RouteMappingAttribute {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
-    ) {}
+    ) {
+    }
 
-    public function getRequestMapping() : RequestMapping {
+    public function requestMapping() : RequestMapping {
         return $this->requestMapping;
     }
 
     /**
      * @return list<class-string<Middleware>>
      */
-    public function getMiddleware() : array {
+    public function middleware() : array {
         return $this->middleware;
     }
 
     /**
      * @return list<non-empty-string>
      */
-    public function getProfiles() : array {
+    public function profiles() : array {
         return $this->profiles;
     }
 
@@ -45,7 +46,7 @@ final class HttpController implements ServiceAttribute, RouteMappingAttribute {
         return false;
     }
 
-    public function getName() : ?string {
+    public function name() : ?string {
         return null;
     }
 }

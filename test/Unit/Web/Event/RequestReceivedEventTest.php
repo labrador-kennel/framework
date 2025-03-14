@@ -16,29 +16,24 @@ class RequestReceivedEventTest extends TestCase {
 
     protected function setUp() : void {
         parent::setUp();
-        $this->request = new Request($this->getMockBuilder(Client::class)->getMock(), 'GET', Http::createFromString('http://example.com'));
+        $this->request = new Request($this->getMockBuilder(Client::class)->getMock(), 'GET', Http::new('http://example.com'));
         $this->subject = new RequestReceived($this->request);
     }
 
     public function testGetName() : void {
-        self::assertSame(ApplicationEvent::RequestReceived->value, $this->subject->getName());
+        self::assertSame(ApplicationEvent::RequestReceived->value, $this->subject->name());
     }
 
     public function testGetTarget() : void {
-        self::assertSame($this->request, $this->subject->getTarget());
-    }
-
-    public function testGetData() : void {
-        self::assertSame([], $this->subject->getData());
+        self::assertSame($this->request, $this->subject->payload());
     }
 
     public function testGetCreatedAt() : void {
-        $createdAt = $this->subject->getCreatedAt();
+        $createdAt = $this->subject->triggeredAt();
 
         $diff = $createdAt->diff(new \DateTimeImmutable());
 
         // Just make sure the datetime was created recently, i.e. within the last second.
         self::assertSame(0, $diff->s);
     }
-
 }

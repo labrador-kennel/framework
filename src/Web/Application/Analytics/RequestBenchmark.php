@@ -101,41 +101,42 @@ final class RequestBenchmark {
                 private readonly int|float $totalTimeRouting,
                 private readonly int|float $totalTimeMiddleware,
                 private readonly int|float $totalTimeController
-            ) {}
+            ) {
+            }
 
-            public function getRequest() : Request {
+            public function request() : Request {
                 return $this->request;
             }
 
-            public function getRoutingResolutionReason() : ?RoutingResolutionReason {
+            public function routingResolutionReason() : ?RoutingResolutionReason {
                 return $this->resolutionReason;
             }
 
-            public function getControllerName() : ?string {
+            public function controllerName() : ?string {
                 return $this->controllerName;
             }
 
-            public function getThrownException() : Throwable {
+            public function thrownException() : Throwable {
                 return $this->throwable;
             }
 
-            public function getTotalTimeSpentInNanoSeconds() : int|float {
+            public function totalTimeSpentInNanoSeconds() : int|float {
                 return $this->totalTimeSpent;
             }
 
-            public function getTimeSpentRoutingInNanoSeconds() : int|float {
+            public function timeSpentRoutingInNanoSeconds() : int|float {
                 return $this->totalTimeRouting;
             }
 
-            public function getTimeSpentProcessingMiddlewareInNanoseconds() : int|float {
+            public function timeSpentProcessingMiddlewareInNanoseconds() : int|float {
                 return $this->totalTimeMiddleware;
             }
 
-            public function getTimeSpentProcessingControllerInNanoseconds() : int|float {
+            public function timeSpentProcessingControllerInNanoseconds() : int|float {
                 return $this->totalTimeController;
             }
 
-            public function getResponseStatusCode() : int {
+            public function responseStatusCode() : int {
                 return HttpStatus::INTERNAL_SERVER_ERROR;
             }
         };
@@ -171,44 +172,44 @@ final class RequestBenchmark {
                 private readonly int|float $timeSpentProcessingMiddleware,
                 private readonly int|float $timeSpentProcessingController,
                 private readonly int $responseStatusCode,
-            ) {}
+            ) {
+            }
 
-            public function getRequest() : Request {
+            public function request() : Request {
                 return $this->request;
             }
 
-            public function getRoutingResolutionReason() : ?RoutingResolutionReason {
+            public function routingResolutionReason() : ?RoutingResolutionReason {
                 return $this->resolutionReason;
             }
 
-            public function getControllerName() : ?string {
+            public function controllerName() : ?string {
                 return $this->controllerName;
             }
 
-            public function getThrownException() : ?Throwable {
+            public function thrownException() : ?Throwable {
                 return null;
             }
 
-            public function getTotalTimeSpentInNanoSeconds() : int|float {
+            public function totalTimeSpentInNanoSeconds() : int|float {
                 return $this->totalTimeSpent;
             }
 
-            public function getTimeSpentRoutingInNanoSeconds() : int|float {
+            public function timeSpentRoutingInNanoSeconds() : int|float {
                 return $this->timeSpentRouting;
             }
 
-            public function getTimeSpentProcessingMiddlewareInNanoseconds() : int|float {
+            public function timeSpentProcessingMiddlewareInNanoseconds() : int|float {
                 return $this->timeSpentProcessingMiddleware;
             }
 
-            public function getTimeSpentProcessingControllerInNanoseconds() : int|float {
+            public function timeSpentProcessingControllerInNanoseconds() : int|float {
                 return $this->timeSpentProcessingController;
             }
 
-            public function getResponseStatusCode() : int {
+            public function responseStatusCode() : int {
                 return $this->responseStatusCode;
             }
         };
     }
-
 }

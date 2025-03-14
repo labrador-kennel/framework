@@ -23,7 +23,7 @@ interface Router {
     public function addRoute(
         RequestMapping $requestMapping,
         Controller                  $controller,
-        Middleware... $middlewares
+        Middleware...$middlewares
     ) : Route;
 
     /**

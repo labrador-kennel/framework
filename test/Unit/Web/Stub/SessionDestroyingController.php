@@ -20,5 +20,4 @@ class SessionDestroyingController extends SelfDescribingController {
 
         return new Response(body: 'Session destroyed');
     }
-
 }

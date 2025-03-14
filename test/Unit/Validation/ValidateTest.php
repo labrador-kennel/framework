@@ -23,7 +23,10 @@ final class ValidateTest extends TestCase {
 
         self::assertInstanceOf(StringMessageGenerator::class, $subject->messageGenerator);
         self::assertEquals('My custom message as a string', $subject->messageGenerator->getMessage(
-            $rule, new EntityWithSinglePropertyAndSingleValidate('something'), 'foo', 'whatever'
+            $rule,
+            new EntityWithSinglePropertyAndSingleValidate('something'),
+            'foo',
+            'whatever'
         ));
     }
 
@@ -35,5 +38,4 @@ final class ValidateTest extends TestCase {
 
         self::assertSame($generator, $subject->messageGenerator);
     }
-
 }

@@ -8,5 +8,4 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 interface RequestAnalyticsQueue {
 
     public function queue(RequestAnalytics $analytics) : void;
-
 }

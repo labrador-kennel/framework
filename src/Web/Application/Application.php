@@ -10,12 +10,11 @@ use Labrador\Web\Router\Router;
 #[Service]
 interface Application {
 
-    public function getRouter() : Router;
+    public function router() : Router;
 
     public function addMiddleware(Middleware $middleware, Priority $priority = Priority::Low) : void;
 
     public function start() : void;
 
     public function stop() : void;
-
 }

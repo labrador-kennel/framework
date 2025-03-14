@@ -86,5 +86,4 @@ final class PropertyValidateMapTest extends TestCase {
         self::assertInstanceOf(Alnum::class, $subjectArray['baz'][0]->rule);
         self::assertInstanceOf(DefaultMessageGenerator::class, $subjectArray['baz'][0]->messageGenerator);
     }
-
 }

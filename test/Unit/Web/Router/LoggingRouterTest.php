@@ -48,7 +48,8 @@ class LoggingRouterTest extends TestCase {
         $this->mockRouter = $this->getMockBuilder(Router::class)->getMock();
         $this->router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function(array $data) : GcbDispatcher { return new GcbDispatcher($data); }
+            function(array $data) : GcbDispatcher { return new GcbDispatcher($data);
+            }
         );
         $this->logger = new Logger(
             'logging-router-test',
@@ -173,7 +174,6 @@ class LoggingRouterTest extends TestCase {
                 ]
             ]
         ]));
-
     }
 
     public function testMatchReturnsRoutingResolutionRequestMatchedLogsPertinentOutput() : void {
@@ -247,5 +247,4 @@ class LoggingRouterTest extends TestCase {
             ]
         ]));
     }
-
 }

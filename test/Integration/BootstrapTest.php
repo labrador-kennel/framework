@@ -7,13 +7,15 @@ use Amp\Http\Server\HttpServer;
 use Amp\Http\Server\SocketHttpServer;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
-use Cspray\AnnotatedContainer\Bootstrap\ContainerCreatedObserver;
+use Cspray\AnnotatedContainer\ContainerFactory\PhpDiContainerFactory;
 use Cspray\AnnotatedContainer\Definition\ContainerDefinition;
-use Cspray\AnnotatedContainer\Profiles\ActiveProfiles;
+use Cspray\AnnotatedContainer\Event\Emitter as AnnotatedContainerEmitter;
+use Cspray\AnnotatedContainer\Event\Listener\ContainerFactory\AfterContainerCreation;
+use Cspray\AnnotatedContainer\Profiles;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
-use Labrador\AsyncEvent\AmpEventEmitter;
-use Labrador\AsyncEvent\EventEmitter;
+use Labrador\AsyncEvent\AmpEmitter;
+use Labrador\AsyncEvent\Emitter;
 use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
@@ -23,6 +25,7 @@ use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
 use Labrador\Web\Application\Bootstrap;
 use Labrador\Web\Application\ErrorHandlerFactory;
+use Labrador\Web\Autowire\RegisterControllerAndMiddlewareListener;
 use Labrador\Web\Middleware\Priority;
 use Labrador\Web\Router\LoggingRouter;
 use Labrador\Web\Router\Router;
@@ -39,7 +42,7 @@ use Psr\Log\LoggerInterface;
  */
 class BootstrapTest extends TestCase {
 
-    private const ExpectedControllerCount = 3;
+    private const EXPECTED_CONTROLLER_COUNT = 3;
 
     use BootstrapAwareTestTrait;
 
@@ -55,7 +58,6 @@ class BootstrapTest extends TestCase {
     public static function setUpBeforeClass() : void {
         StreamBuffer::register();
         self::$vfs = VirtualFilesystem::setup();
-        VirtualFilesystem::newDirectory('.annotated-container-cache')->at(self::$vfs);
         VirtualFilesystem::newFile('annotated-container.xml')
             ->withContent(self::getDefaultConfiguration())
             ->at(self::$vfs);
@@ -65,14 +67,25 @@ class BootstrapTest extends TestCase {
         parent::setUp();
         $this->stdout = StreamBuffer::intercept(STDOUT);
         $this->stderr = StreamBuffer::intercept(STDERR);
-        $this->containerBootstrap = new AnnotatedContainerBootstrap(directoryResolver: new VfsDirectoryResolver());
-        $this->containerBootstrap->addObserver(
-            new class(fn(AnnotatedContainer $container) => $this->container = $container) implements ContainerCreatedObserver {
+        $emitter = new AnnotatedContainerEmitter();
+        $emitter->addListener(new RegisterControllerAndMiddlewareListener());
+        $this->containerBootstrap = AnnotatedContainerBootstrap::fromAnnotatedContainerConventions(
+            new PhpDiContainerFactory($emitter),
+            $emitter,
+            directoryResolver: new VfsDirectoryResolver()
+        );
+        $emitter->addListener(
+            new class(fn(AnnotatedContainer $container) => $this->container = $container) implements AfterContainerCreation {
                 public function __construct(
                     private readonly \Closure $setContainer
-                ) {}
+                ) {
+                }
 
-                public function notifyContainerCreated(ActiveProfiles $activeProfiles, ContainerDefinition $containerDefinition, AnnotatedContainer $container) : void {
+                public function handleAfterContainerCreation(
+                    Profiles $profiles,
+                    ContainerDefinition $containerDefinition,
+                    AnnotatedContainer $container
+                ) : void {
                     ($this->setContainer)($container);
                 }
             }
@@ -117,9 +130,9 @@ class BootstrapTest extends TestCase {
 
         $bootstrap->bootstrapApplication();
 
-        $emitter = $this->container->get(EventEmitter::class);
+        $emitter = $this->container->get(Emitter::class);
 
-        self::assertInstanceOf(AmpEventEmitter::class, $emitter);
+        self::assertInstanceOf(AmpEmitter::class, $emitter);
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerReturnsErrorHandler() : void {
@@ -150,7 +163,7 @@ class BootstrapTest extends TestCase {
         /** @var Router $router */
         $router = $this->container->get(Router::class);
 
-        self::assertCount(self::ExpectedControllerCount, $router->getRoutes());
+        self::assertCount(self::EXPECTED_CONTROLLER_COUNT, $router->getRoutes());
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
@@ -189,7 +202,4 @@ class BootstrapTest extends TestCase {
             $handler->hasInfoThatContains('Adding ' . $middlewareClass . ' to application with ' . $priority->name . ' priority.')
         );
     }
-
-
-
 }

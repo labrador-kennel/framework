@@ -7,6 +7,9 @@ use Labrador\AsyncEvent\Event;
 use Labrador\Web\Application\ApplicationEvent;
 use Labrador\Web\Router\Router;
 
+/**
+ * @implements Event<Router>
+ */
 final class AddRoutes implements Event {
 
     private readonly DateTimeImmutable $createdAt;
@@ -18,19 +21,15 @@ final class AddRoutes implements Event {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
     }
 
-    public function getName() : string {
+    public function name() : string {
         return ApplicationEvent::AddRoutes->value;
     }
 
-    public function getTarget() : Router {
+    public function payload() : Router {
         return $this->router;
     }
 
-    public function getData() : array {
-        return [];
-    }
-
-    public function getCreatedAt() : DateTimeImmutable {
+    public function triggeredAt() : DateTimeImmutable {
         return $this->createdAt;
     }
 }

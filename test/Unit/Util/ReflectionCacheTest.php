@@ -13,5 +13,4 @@ final class ReflectionCacheTest extends TestCase {
 
         self::assertSame($a, $b);
     }
-
 }

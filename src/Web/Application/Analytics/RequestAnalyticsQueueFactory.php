@@ -8,7 +8,8 @@ use Labrador\Logging\LoggerType;
 
 final class RequestAnalyticsQueueFactory {
 
-    private function __construct() {}
+    private function __construct() {
+    }
 
     #[ServiceDelegate]
     public static function createAnalyticsQueue(LoggerFactory $loggerFactory) : RequestAnalyticsQueue {
@@ -16,5 +17,4 @@ final class RequestAnalyticsQueueFactory {
             $loggerFactory->createLogger(LoggerType::Application)
         );
     }
-
 }

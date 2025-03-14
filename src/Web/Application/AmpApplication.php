@@ -10,7 +10,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\StaticContent\DocumentRoot;
-use Labrador\AsyncEvent\EventEmitter;
+use Labrador\AsyncEvent\Emitter;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Web\Application\Analytics\RequestBenchmark;
@@ -48,7 +48,7 @@ final class AmpApplication implements Application, RequestHandler {
         private readonly HttpServer            $httpServer,
         private readonly ErrorHandlerFactory   $errorHandlerFactory,
         private readonly Router                $router,
-        private readonly EventEmitter          $emitter,
+        private readonly Emitter          $emitter,
         private readonly LoggerInterface       $logger,
         private readonly ApplicationSettings   $features,
         private readonly RequestAnalyticsQueue $analyticsQueue,
@@ -60,10 +60,7 @@ final class AmpApplication implements Application, RequestHandler {
     private function handleApplicationFeaturesSetup() : void {
         $sessionMiddleware = $this->features->getSessionMiddleware();
         if ($this->isSessionSupported = ($sessionMiddleware !== null)) {
-            $this->addMiddleware(
-                $sessionMiddleware,
-                Priority::Critical
-            );
+            $this->addMiddleware($sessionMiddleware, Priority::Critical);
         }
 
         $staticAssetSettings = $this->features->getStaticAssetSettings();
@@ -82,7 +79,7 @@ final class AmpApplication implements Application, RequestHandler {
         }
     }
 
-    public function getRouter() : Router {
+    public function router() : Router {
         return $this->router;
     }
 
@@ -127,7 +124,7 @@ final class AmpApplication implements Application, RequestHandler {
 
             if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
                 $response = $this->getErrorHandler()->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
-            } else if ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
+            } elseif ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
                 $response = $this->getErrorHandler()->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
             } else {
                 $controller = $routingResolution->controller;
@@ -136,14 +133,14 @@ final class AmpApplication implements Application, RequestHandler {
 
                 $request->setAttribute(RequestAttribute::Controller->value, $controller);
 
-                $this->emitter->queue(new WillInvokeController($controller, $requestId));
+                $this->emitter->queue(new WillInvokeController($controller, $request));
 
                 $handler = $this->getMiddlewareStack($controller, $benchmark);
 
                 $response = $handler->handleRequest($request);
             }
 
-            $this->emitter->queue(new ResponseSent($response, $requestId));
+            $this->emitter->queue(new ResponseSent($request, $response));
 
             $this->analyticsQueue->queue($benchmark->responseSent($response));
 
@@ -186,7 +183,7 @@ final class AmpApplication implements Application, RequestHandler {
 
         foreach (Priority::cases() as $priority) {
             $priorityMiddleware = $this->middleware[$priority->name] ?? [];
-            foreach ($priorityMiddleware as $middleware)  {
+            foreach ($priorityMiddleware as $middleware) {
                 $middlewares[] = $middleware;
             }
         }
@@ -200,7 +197,8 @@ final class AmpApplication implements Application, RequestHandler {
         return new class($benchmark) implements Middleware {
             public function __construct(
                 private readonly RequestBenchmark $benchmark
-            ) {}
+            ) {
+            }
 
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
                 $this->benchmark->middlewareProcessingStarted();
@@ -214,7 +212,8 @@ final class AmpApplication implements Application, RequestHandler {
 
             public function __construct(
                 private readonly RequestBenchmark $benchmark,
-            ) {}
+            ) {
+            }
 
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
                 if (!$requestHandler instanceof Controller) {

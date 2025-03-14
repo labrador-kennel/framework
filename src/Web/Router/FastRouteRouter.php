@@ -51,7 +51,7 @@ final class FastRouteRouter implements Router {
         $this->routes[] = $route;
         $this->collector->addRoute(
             $requestMapping->getHttpMethod()->value,
-            $path === '/' ? $path : rtrim($requestMapping->getPath(), '/'),
+            $path === '/' ? $path : rtrim($path, '/'),
             $route
         );
 
@@ -63,7 +63,7 @@ final class FastRouteRouter implements Router {
      */
     public function match(Request $request) : RoutingResolution {
         $uri = $request->getUri();
-        $path = empty($uri->getPath()) ? '/' : rtrim($uri->getPath(), '/');
+        $path = empty($uri->getPath()) || $uri->getPath() === '/' ? '/' : rtrim($uri->getPath(), '/');
         $routeData = $this->getDispatcher()->dispatch($request->getMethod(), $path);
         $status = (int) array_shift($routeData);
 
@@ -119,5 +119,4 @@ final class FastRouteRouter implements Router {
     public function getRoutes() : array {
         return $this->routes;
     }
-
 }

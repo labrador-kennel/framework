@@ -66,6 +66,4 @@ final class ValidationResultTest extends TestCase {
 
         self::assertEquals($expected, $subject);
     }
-
-
 }

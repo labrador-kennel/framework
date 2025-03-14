@@ -13,7 +13,8 @@ final class CsrfTokenManager {
 
     public function __construct(
         private readonly TokenGenerator $tokenGenerator,
-    ) {}
+    ) {
+    }
 
     public function generateAndStore(Request $request) : string {
         if (!$request->hasAttribute(Session::class)) {
@@ -61,5 +62,4 @@ final class CsrfTokenManager {
 
         return $valid;
     }
-
 }

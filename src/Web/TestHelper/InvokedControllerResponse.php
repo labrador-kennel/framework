@@ -15,5 +15,4 @@ interface InvokedControllerResponse {
     public function getResponse() : Response;
 
     public function readSession() : array;
-
 }

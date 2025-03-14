@@ -23,5 +23,4 @@ final class EntityValidatorTest extends TestCase {
             Alpha::class
         )], $results->getMessages('foo'));
     }
-
 }

@@ -18,7 +18,8 @@ final class Route {
     public function __construct(
         public readonly RequestMapping $requestMapping,
         public readonly Controller                  $controller
-    ) {}
+    ) {
+    }
 
     public function toString() : string {
         return sprintf(
@@ -28,5 +29,4 @@ final class Route {
             $this->controller->toString()
         );
     }
-
 }

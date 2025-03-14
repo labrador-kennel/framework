@@ -7,11 +7,10 @@ use Labrador\Web\Router\Mapping\RequestMapping;
 
 interface RouteMappingAttribute {
 
-    public function getRequestMapping() : RequestMapping;
+    public function requestMapping() : RequestMapping;
 
     /**
      * @return list<class-string<Middleware>>
      */
-    public function getMiddleware() : array;
-
+    public function middleware() : array;
 }

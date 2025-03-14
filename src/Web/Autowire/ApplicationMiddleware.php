@@ -14,16 +14,17 @@ final class ApplicationMiddleware implements ServiceAttribute {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = []
-    ) {}
+    ) {
+    }
 
-    public function getPriority() : Priority {
+    public function priority() : Priority {
         return $this->priority;
     }
 
     /**
      * @return list<non-empty-string>
      */
-    public function getProfiles() : array {
+    public function profiles() : array {
         return $this->profiles;
     }
 
@@ -31,7 +32,7 @@ final class ApplicationMiddleware implements ServiceAttribute {
         return false;
     }
 
-    public function getName() : ?string {
+    public function name() : ?string {
         return null;
     }
 }

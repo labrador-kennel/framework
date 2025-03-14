@@ -17,5 +17,4 @@ final class DefaultMessageGeneratorTest extends TestCase {
 
         self::assertEquals($expected, $subject->getMessage(new Alpha(), $object, 'foo', 'whatever'));
     }
-
 }

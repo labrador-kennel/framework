@@ -3,9 +3,8 @@
 namespace Labrador\Web\Application;
 
 use Cspray\AnnotatedContainer\Bootstrap\Bootstrap as AnnotatedContainerBootstrap;
+use Cspray\AnnotatedContainer\Profiles;
 use PackageVersions\Versions;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Revolt\EventLoop;
 use function Amp\ByteStream\getStdout;
 
@@ -17,7 +16,8 @@ final class Bootstrap {
          * @var list<non-empty-string> $profiles
          */
         private readonly array $profiles = ['default'],
-    ) {}
+    ) {
+    }
 
     /**
      * @param AnnotatedContainerBootstrap $bootstrap
@@ -44,7 +44,7 @@ final class Bootstrap {
         getStdout()->write('Memory Limit: ' . $memoryLimit . PHP_EOL);
         getStdout()->write(PHP_EOL);
 
-        $container = $this->bootstrap->bootstrapContainer(profiles: $this->profiles);
+        $container = $this->bootstrap->bootstrapContainer(profiles: Profiles::fromList($this->profiles));
 
         $app = $container->get(Application::class);
         assert($app instanceof Application);
@@ -62,5 +62,4 @@ _  / / /_/ /_  /_/ /  /   / /_/ // /_/ / / /_/ /  /
 
 ASCII;
     }
-
 }

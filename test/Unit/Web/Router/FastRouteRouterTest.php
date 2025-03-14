@@ -50,7 +50,8 @@ class FastRouteRouterTest extends AsyncTestCase {
     private function getRouter() : FastRouteRouter {
         return new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function($data) { return new GcbDispatcher($data); }
+            function($data) { return new GcbDispatcher($data);
+            }
         );
     }
 
@@ -61,7 +62,8 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function testFastRouteDispatcherCallbackReturnsImproperTypeThrowsException() {
         $router = new FastRouteRouter(
             new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
-            function() { return 'not a dispatcher'; }
+            function() { return 'not a dispatcher';
+            }
         );
 
         $this->expectException(InvalidType::class);
@@ -293,5 +295,24 @@ class FastRouteRouterTest extends AsyncTestCase {
 
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('found controller with trailing slash', $response->getBody()->read());
+    }
+
+    public function testFoundRootControllerJustSlash() : void {
+        $request = $this->getRequest(HttpMethod::Get->value, 'http://example.com/');
+        $router = $this->getRouter();
+        $responseController = new ResponseControllerStub(new Response(200, [], 'found controller with just slash'));
+        $router->addRoute(
+            new GetMapping('/'),
+            $responseController,
+        );
+
+        $controller = $router->match($request)->controller;
+
+        self::assertNotNull($controller);
+
+        $response = $controller->handleRequest($request);
+
+        self::assertSame(HttpStatus::OK, $response->getStatus());
+        self::assertSame('found controller with just slash', $response->getBody()->read());
     }
 }

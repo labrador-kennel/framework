@@ -26,28 +26,28 @@ final class HttpServerFactory {
         $socketServer = new SocketHttpServer(
             $logger,
             new ConnectionLimitingServerSocketFactory(
-                new LocalSemaphore($serverSettings->getTotalClientConnectionLimit())
+                new LocalSemaphore($serverSettings->totalClientConnectionLimit())
             ),
             new ConnectionLimitingClientFactory(
                 new SocketClientFactory($logger),
                 $logger,
-                $serverSettings->getClientConnectionLimitPerIpAddress()
+                $serverSettings->clientConnectionLimitPerIpAddress()
             )
         );
 
-        foreach ($serverSettings->getUnencryptedInternetAddresses() as $address) {
+        foreach ($serverSettings->unencryptedInternetAddresses() as $address) {
             $socketServer->expose($address);
         }
 
         $tlsContext = null;
-        if (($tlsCert = $serverSettings->getTlsCertificateFile()) !== null) {
+        if (($tlsCert = $serverSettings->tlsCertificateFile()) !== null) {
             $certificate = new Certificate($tlsCert);
             $tlsContext = (new BindContext())
                 ->withTlsContext((new ServerTlsContext())
                 ->withDefaultCertificate($certificate));
         }
 
-        $encryptedAddresses = $serverSettings->getEncryptedInternetAddresses();
+        $encryptedAddresses = $serverSettings->encryptedInternetAddresses();
         if (count($encryptedAddresses) > 0 && $tlsContext === null) {
             throw new \RuntimeException();
         }
@@ -58,5 +58,4 @@ final class HttpServerFactory {
 
         return $socketServer;
     }
-
 }

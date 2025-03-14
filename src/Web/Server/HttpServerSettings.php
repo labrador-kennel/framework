@@ -11,23 +11,22 @@ interface HttpServerSettings {
     /**
      * @return list<InternetAddress>
      */
-    public function getUnencryptedInternetAddresses() : array;
+    public function unencryptedInternetAddresses() : array;
 
     /**
      * @return list<InternetAddress>
      */
-    public function getEncryptedInternetAddresses() : array;
+    public function encryptedInternetAddresses() : array;
 
-    public function getTlsCertificateFile() : ?string;
-
-    /**
-     * @return positive-int
-     */
-    public function getTotalClientConnectionLimit() : int;
+    public function tlsCertificateFile() : ?string;
 
     /**
      * @return positive-int
      */
-    public function getClientConnectionLimitPerIpAddress() : int;
+    public function totalClientConnectionLimit() : int;
 
+    /**
+     * @return positive-int
+     */
+    public function clientConnectionLimitPerIpAddress() : int;
 }

@@ -8,5 +8,4 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 interface TokenGenerator {
 
     public function generateToken() : string;
-
 }

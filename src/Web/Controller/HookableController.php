@@ -5,7 +5,6 @@ namespace Labrador\Web\Controller;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 
-
 /**
  * A Controller implementation that allows you to hook into the processing so that you may short circuit normal
  * processing with beforeAction or decorate a Response from normal processing with afterAction.

@@ -1,165 +1,29 @@
-# Labrador HTTP
+# Labrador Framework
 
-[![Travis](https://img.shields.io/travis/labrador-kennel/http.svg?style=flat-square)](https://travis-ci.org/labrador-kennel/http)
 [![GitHub license](https://img.shields.io/github/license/labrador-kennel/http.svg?style=flat-square)](http://opensource.org/licenses/MIT)
 [![GitHub release](https://img.shields.io/github/release/labrador-kennel/http.svg?style=flat-square)](https://github.com/labrador-kennel/http/releases/latest)
 
-Labrador HTTP is a framework for creating feature-rich, SOLID web applications. It is primarily a set of opinions on integrating the following libraries:
+Labrador is a microframework built on-top of [Amphp](https://github.com/amphp) and [Annotated Container](https://github.com/cspray/annotated-container). It offers a non-traditional way of writing small-to-medium sized applications in PHP. Among its many features includes:
 
-- [amphp/http-server](https://github.com/amphp/http-server) Provides the underlying server and HTTP-stack.
-- [cspray/annotated-container](https://github.com/cspray/annotated-container) Provides a powerful dependency injection framework using PHP 8 Attributes.
-- [nikic/fast-route](https://github.com/nikic/fast-route) Provides the actual routing functionality that maps a Request to a Controller.
-- [cuyz/valinor](https://github.com/cuzy/valinor) Provides the ability to create DTO objects from a Request body.
+- Everything in pure PHP. Have a fully-featured, web server up with `php app.php`
+- Declarative approach to dependency injection
+- Comprehensive, secure solution for handling configuration
+- Asynchronous by default
+- Robust, data-rich event system for knowing when things happen
+- An easy-to-use HTTP and routing layer
 
-> This is not meant to be an exhaustive list of all dependencies, simply those involving major integration points.
-
-Please check out the Quick Start below for more details on Labrador HTTP's novel features.
+If you're looking for a more complete skeleton to get started with writing Labrador-powered apps, you should check out [labrador-kennel/web-app](https://github.com/labrador-kennel/web-app); it is a skeleton for a complete app, including Docker setup and a database.
 
 ## Install
 
 Use [Composer](https://getcomposer.org) to install the library.
 
 ```
-composer require cspray/labrador-http:dev-main
+composer require labrador-kennel/framework
 ```
 
-## Quick Start
+## Requirements 
 
-Labrador's most novel feature is its integration with Annotated Container to allow the following features:
+> TODO: Determine and document precise steps would need to result in a running app
 
-- Inject specific parts of a Request into a controller method
-- Inject custom DTO objects based on a JSON encoded body
-- Specify route mapping using FastRoute and Attributes.
 
-It's best to show a Controller implementing this functionality.
-
-```php
-<?php declare(strict_types=1);
-
-namespace LabradorDemo;
-
-use Amp\Http\Server\Response;use Labrador\Web\Controller\Dto\Dto;use Labrador\Web\Controller\Dto\RouteParam;use Labrador\Web\Controller\RouteMapping\ControllerActions;use Labrador\Web\Controller\RouteMapping\Get;use Labrador\Web\Controller\RouteMapping\Post;use League\Uri\Components\Query;use Psr\Log\LoggerInterface;use Ramsey\Uuid\UuidInterface;
-
-#[ControllerActions]
-final class WidgetController {
-
-    // The $logger will be a Monolog logger that sends output to stdout using amphp/log
-    public function __construct(
-        private readonly LoggerInterface $logger
-    ) {}
-
-    // The $filter will be injected from the query parameters sent in the request
-    // The $widgetGatherer is an injected service and will be the same instance, unlike $filter
-    #[Get('/widgets')]
-    public function list(Query $filter, WidgetGatherer $widgetGatherer) : Response {
-        // do some stuff to generate a response 
-    }
-    
-    // The $widgetId will be injected from the value sent in the route
-    // The $widgetGatherer is an injected service and will be the same instance, unlike $widgetId
-    #[Get('/widgets/{id}')]
-    public function fetch(#[RouteParam('id')] UuidInterface $widgetId, WidgetGatherer $widgetGatherer) : Response {
-        // do some stuff to generate a response 
-    }
-    
-    // The $widget will be created using cuyz/valinor from the JSON decoded Request body
-    // The $creator is an injected service and will be the same instance, unlike $widget
-    #[Post('/widgets')]
-    public function create(#[Dto] Widget $widget, WidgetCreator $creator) : Response {
-        // do some stuff to generate a response 
-    }
-
-}
-```
-
-## Request Injections
-
-Labrador HTTP also provides the ability to get specific parts of the Request using a set of Attributes, or specific type mappings.
-
-```php
-<?php declare(strict_types=1);
-
-namespace LabradorDemo;
-
-use Amp\Http\Server\RequestBody;use Amp\Http\Server\Response;use Labrador\Controller\Dto\QueryParams;use Labrador\Controller\Dto\Url;use Labrador\Web\Controller\Dto\Body;use Labrador\Web\Controller\Dto\Header;use Labrador\Web\Controller\Dto\Headers;use Labrador\Web\Controller\Dto\Method;use Labrador\Web\Controller\Dto\RouteParam;use Labrador\Web\Controller\RouteMapping\ControllerActions;use Labrador\Web\Controller\RouteMapping\Get;use Labrador\Web\Controller\RouteMapping\Post;use League\Uri\Components\Query;use League\Uri\Contracts\QueryInterface;use Psr\Http\Message\UriInterface;
-
-#[ControllerActions]
-class RequestInjectionController {
-
-    #[Get('/headers')]
-    public function headers(#[Headers] array $headers) : Response {
-        // ...  
-    }
-
-    #[Get('/header-array')]
-    public function headerAsArray(#[Header('Accept')] array $accept) : Response {
-        // ... 
-    }
-    
-    #[Get('/header-string')]
-    public function headerAsString(#[Header('Authorization')] string $token) : Response {
-        // ... 
-    }
-    
-    #[Get('/url/attr')]
-    public function url(#[Url] UriInterface $uri) : Response {
-        // ...
-    }
-    
-    #[Get('/method')]
-    public function method(#[Method] string $method) : Response {
-        // ...
-    }
-    
-    #[Get('/body/buffered')]
-    public function body(#[Body] string $body) : Response {
-        // ... 
-    }
-    
-    #[Post(('/body/stream'))]
-    public function bodyStream(#[Body] RequestBody $body) : Response {
-        // ...
-    }
-    
-    #[Get('/query/string')]
-    public function queryAsString(#[QueryParams] string $query) : Response {
-        // ...
-    }
-    
-    #[Get('/query/interface')]
-    public function queryAsInterface(#[QueryParams] QueryInterface $query) : Response {
-        // ...
-    }
-    
-    #[Get('/query/object')]
-    public function queryAsObject(#[QueryParams] Query $query) : Response {
-        // ...
-    }
-    
-    #[Get('/route/{foo}/param/{bar}')]
-    public function routeParam(
-        #[RouteParam('foo')] string $fooParam,
-        #[RouteParam('bar')] string $barParam
-    ) : Response {
-        // ... 
-    }
-    
-    // Some parameters you can simply provide a type and not have to attribute it
-    
-    #[Get('/uri/implied')]
-    public function uriImplied(UriInterface $uri) : Response {
-        // ...
-    }
-    
-    #[Get('/query/implied')]
-    public function queryImplied(Query $query) : Response {
-        // ...
-    }
-    
-    #[Get('/body/implied')]
-    public function bodyImplied(RequestBody $body) : Response {
-        // ...
-    }
-    
-}
-```

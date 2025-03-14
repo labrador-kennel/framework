@@ -11,10 +11,10 @@ class KnownIncrementPreciseTime implements PreciseTime {
     public function __construct(
         private readonly int $start,
         private readonly int $increase
-    ) {}
+    ) {
+    }
 
     public function now() : int|float {
         return $this->start + ($this->increase * $this->timesCalled++);
     }
-
 }

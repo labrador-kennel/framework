@@ -49,5 +49,4 @@ final class StaticAssetControllerTest extends TestCase {
 
         self::assertSame(HttpStatus::OK, $response->getStatus());
     }
-
 }

@@ -17,7 +17,8 @@ class PropertyValidateMap implements \Countable, IteratorAggregate {
      */
     private function __construct(
         private readonly array $propertyValidateMap
-    ) {}
+    ) {
+    }
 
     /**
      * @template T of object

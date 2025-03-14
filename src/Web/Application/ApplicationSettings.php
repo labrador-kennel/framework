@@ -11,5 +11,4 @@ interface ApplicationSettings {
     public function getSessionMiddleware() : ?SessionMiddleware;
 
     public function getStaticAssetSettings() : ?StaticAssetSettings;
-
 }

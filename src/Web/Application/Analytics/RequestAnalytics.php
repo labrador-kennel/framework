@@ -7,22 +7,21 @@ use Labrador\Web\Router\RoutingResolutionReason;
 
 interface RequestAnalytics {
 
-    public function getRequest() : Request;
+    public function request() : Request;
 
-    public function getRoutingResolutionReason() : ?RoutingResolutionReason;
+    public function routingResolutionReason() : ?RoutingResolutionReason;
 
-    public function getControllerName() : ?string;
+    public function controllerName() : ?string;
 
-    public function getThrownException() : ?\Throwable;
+    public function thrownException() : ?\Throwable;
 
-    public function getTotalTimeSpentInNanoSeconds() : int|float;
+    public function totalTimeSpentInNanoSeconds() : int|float;
 
-    public function getTimeSpentRoutingInNanoSeconds() : int|float;
+    public function timeSpentRoutingInNanoSeconds() : int|float;
 
-    public function getTimeSpentProcessingMiddlewareInNanoseconds() : int|float;
+    public function timeSpentProcessingMiddlewareInNanoseconds() : int|float;
 
-    public function getTimeSpentProcessingControllerInNanoseconds() : int|float;
+    public function timeSpentProcessingControllerInNanoseconds() : int|float;
 
-    public function getResponseStatusCode() : int;
-
+    public function responseStatusCode() : int;
 }

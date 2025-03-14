@@ -13,7 +13,8 @@ final class LoggingRouter implements Router {
     public function __construct(
         private readonly Router $router,
         private readonly LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function addRoute(RequestMapping $requestMapping, Controller $controller, Middleware ...$middlewares) : Route {
         $message = 'Routing "{method} {path}" to {controller}';
@@ -47,7 +48,6 @@ final class LoggingRouter implements Router {
                     'path' => $request->getUri()->getPath()
                 ]
             );
-
         } else {
             $this->logger->info(
                 'Routed "{method} {path}" to {controller}.',

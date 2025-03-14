@@ -7,5 +7,4 @@ use Respect\Validation\Validatable;
 interface MessageGenerator {
 
     public function getMessage(Validatable $rule, object $object, string $property, mixed $value) : string;
-
 }

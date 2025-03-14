@@ -15,5 +15,4 @@ final class ValidateAttributeNotFound extends Exception {
             $class
         ));
     }
-
 }
