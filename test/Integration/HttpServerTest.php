@@ -9,6 +9,7 @@ use Amp\PHPUnit\AsyncTestCase;
 use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
+use Labrador\DummyApp\DummyLoggerFactory;
 use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
@@ -127,7 +128,7 @@ class HttpServerTest extends AsyncTestCase {
         $request = new Request('http://localhost:4200/hello/world');
         $client->request($request);
 
-        $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
+        $handler = self::$container->get(DummyLoggerFactory::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue($handler->hasInfoThatPasses(static function (LogRecord $record) {
@@ -147,7 +148,7 @@ TEXT;
         $request = new Request('http://localhost:4200/exception');
         $client->request($request);
 
-        $handler = self::$container->get(DummyMonologInitializer::class)->testHandler;
+        $handler = self::$container->get(DummyLoggerFactory::class)->testHandler;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue($handler->hasErrorThatPasses(static function (LogRecord $record) {

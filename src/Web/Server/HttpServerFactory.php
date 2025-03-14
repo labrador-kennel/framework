@@ -14,15 +14,15 @@ use Amp\Sync\LocalSemaphore;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
 use Labrador\Logging\LoggerFactory;
 use Labrador\Logging\LoggerType;
+use Psr\Log\LoggerInterface;
 
 final class HttpServerFactory {
 
     #[ServiceDelegate]
     public static function createServer(
         HttpServerSettings $serverSettings,
-        LoggerFactory      $loggerFactory
+        LoggerInterface $logger,
     ) : HttpServer {
-        $logger = $loggerFactory->createLogger(LoggerType::WebServer);
         $socketServer = new SocketHttpServer(
             $logger,
             new ConnectionLimitingServerSocketFactory(

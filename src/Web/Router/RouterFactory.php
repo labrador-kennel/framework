@@ -7,14 +7,12 @@ use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
-use Labrador\Logging\LoggerFactory;
-use Labrador\Logging\LoggerType;
+use Psr\Log\LoggerInterface;
 
 final class RouterFactory {
 
     #[ServiceDelegate]
-    public static function createRouter(LoggerFactory $loggerFactory) : Router {
-        $logger = $loggerFactory->createLogger(LoggerType::Router);
+    public static function createRouter(LoggerInterface $logger) : Router {
         return new LoggingRouter(
             new FastRouteRouter(
                 new RouteCollector(new StdRouteParser(), new GcbDataGenerator()),
