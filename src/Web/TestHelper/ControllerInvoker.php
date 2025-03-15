@@ -16,6 +16,8 @@ use Labrador\Web\Middleware\OpenSession;
 
 class ControllerInvoker {
 
+    private const TEST_SESSION_ID = 'known-session-id-controller-invoker';
+
     /**
      * @var Middleware[]
      */
@@ -30,24 +32,11 @@ class ControllerInvoker {
 
     public static function withTestSessionMiddleware(Middleware ...$middleware) : self {
         $sessionStorage = new LocalSessionStorage();
-        $knownSessionIdGenerator = new class implements SessionIdGenerator {
-            public function generate() : string {
-                return 'known-session-id';
-            }
-
-            public function validate(string $id) : bool {
-                return $id === 'known-session-id';
-            }
-        };
+        $knownSessionIdGenerator = new KnownSessionIdGenerator(self::TEST_SESSION_ID);
 
         return new self(
             $sessionStorage,
-            new SessionMiddleware(
-                new SessionFactory(
-                    storage: $sessionStorage,
-                    idGenerator: $knownSessionIdGenerator
-                )
-            ),
+            TestSessionMiddleware::create($sessionStorage, $knownSessionIdGenerator),
             new OpenSession(),
             ...$middleware
         );
@@ -68,6 +57,7 @@ class ControllerInvoker {
             $request,
             $invokedController->handleRequest($request),
             $this->sessionStorage,
+            self::TEST_SESSION_ID
         ) implements InvokedControllerResponse {
 
             public function __construct(
@@ -75,6 +65,7 @@ class ControllerInvoker {
                 private readonly Request $request,
                 private readonly Response $response,
                 private readonly SessionStorage $sessionStorage,
+                private readonly string $sessionKey
             ) {
             }
 
@@ -91,7 +82,7 @@ class ControllerInvoker {
             }
 
             public function readSession() : array {
-                return $this->sessionStorage->read('known-session-id');
+                return $this->sessionStorage->read($this->sessionKey);
             }
         };
     }
