@@ -3,7 +3,7 @@
 _default:
     just --list --unsorted
 
-ci: test static-analysis
+ci: test static-analysis code-lint
 
 install-deps:
     composer install
