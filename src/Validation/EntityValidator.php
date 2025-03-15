@@ -22,7 +22,7 @@ abstract class EntityValidator {
             $value = $this->getPropertyValue($entity, $property);
             /** @var Validate $validate */
             foreach ($validates as $validate) {
-                if (!$validate->rule->validate($validate)) {
+                if (!$validate->rule->validate($value)) {
                     $errors[$property] ??= [];
 
                     $message = $validate->messageGenerator->getMessage($validate->rule, $entity, $property, $value);

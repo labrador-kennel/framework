@@ -9,10 +9,10 @@ use Respect\Validation\Rules\Alpha;
 
 final class EntityValidatorTest extends TestCase {
 
-    public function testEntityWithSingleValidatedProperty() : void {
+    public function testEntityWithSingleValidatedPropertyThatIsInvalid() : void {
         $subject = new EntityValidatorStub(EntityWithSinglePropertyAndSingleValidate::class);
 
-        $entity = new EntityWithSinglePropertyAndSingleValidate('not alphabetic 1234');
+        $entity = new EntityWithSinglePropertyAndSingleValidate('not alphabetic 1234!');
 
         $results = $subject->validate($entity);
 
@@ -22,5 +22,16 @@ final class EntityValidatorTest extends TestCase {
             EntityWithSinglePropertyAndSingleValidate::class,
             Alpha::class
         )], $results->getMessages('foo'));
+    }
+
+    public function testEntityWithSingleValidatedPropertyThatIsValid() : void {
+        $subject = new EntityValidatorStub(EntityWithSinglePropertyAndSingleValidate::class);
+
+        $entity = new EntityWithSinglePropertyAndSingleValidate('isalphabetic');
+
+        $results = $subject->validate($entity);
+
+        self::assertTrue($results->isValid());
+        self::assertSame([], $results->getMessages('foo'));
     }
 }
