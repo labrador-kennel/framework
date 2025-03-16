@@ -3,16 +3,21 @@
 namespace Labrador\Test\Unit\Web\Response;
 
 use Amp\Http\HttpStatus;
+use Amp\Http\Server\ErrorHandler;
+use Amp\Http\Server\Response;
 use Labrador\Template\RenderedTemplate;
 use Labrador\Web\Response\ResponseFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class ResponseFactoryTest extends TestCase {
 
     private ResponseFactory $subject;
+    private ErrorHandler&MockObject $errorHandler;
 
     protected function setUp() : void {
-        $this->subject = new ResponseFactory();
+        $this->errorHandler = $this->createMock(ErrorHandler::class);
+        $this->subject = new ResponseFactory($this->errorHandler);
     }
 
     public function testHtmlResponseHasCorrectBodyContentWhenString() : void {
@@ -81,5 +86,14 @@ final class ResponseFactoryTest extends TestCase {
             HttpStatus::FOUND,
             $response->getStatus()
         );
+    }
+
+    public function testErrorResponseReturnsWhateverIsGeneratedByErrorHandler() : void {
+        $this->errorHandler->expects($this->once())
+            ->method('handleError')
+            ->with(HttpStatus::FORBIDDEN)
+            ->willReturn($response = new Response());
+
+        self::assertSame($response, $this->subject->error(HttpStatus::FORBIDDEN));
     }
 }
