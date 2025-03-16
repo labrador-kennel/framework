@@ -49,10 +49,6 @@ final class AmpApplication implements Application, RequestHandler {
         private readonly RequestAnalyticsQueue $analyticsQueue,
         private readonly PreciseTime           $preciseTime,
     ) {
-        $this->handleApplicationFeaturesSetup();
-    }
-
-    private function handleApplicationFeaturesSetup() : void {
         $staticAssetSettings = $this->features->getStaticAssetSettings();
         if ($staticAssetSettings !== null) {
             $this->router->addRoute(
