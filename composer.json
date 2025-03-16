@@ -22,6 +22,7 @@
     "cspray/marked-logs": "^2.0",
     "labrador-kennel/async-event": "^4.0",
     "labrador-kennel/async-event-autowire":  "^3.0",
+    "league/plates": "^3.6",
     "league/uri": "^7",
     "league/uri-components": "^7",
     "monolog/monolog": "^3",
