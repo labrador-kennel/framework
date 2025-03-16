@@ -15,7 +15,7 @@ final class PlatesRendererTest extends TestCase {
     public function testEngineDecoratorSetsTemplateDirectoryAndRendersTemplateFromIt() : void {
         $decorator = new class implements PlatesEngineDecorator {
             public function decorate(TemplateEngine $engine) : void {
-                $engine->setDirectory(__DIR__ . '/../../Helper/templates');
+                $engine->setDirectory(__DIR__ . '/../../../Helper/templates');
             }
         };
         $subject = new PlatesRenderer([$decorator]);
@@ -37,7 +37,7 @@ final class PlatesRendererTest extends TestCase {
     public function testEngineDecoratorSetsTemplateDecoratorAndRendersTemplateWithData() : void {
         $decorator = new class implements PlatesEngineDecorator {
             public function decorate(TemplateEngine $engine) : void {
-                $engine->setDirectory(__DIR__ . '/../../Helper/templates');
+                $engine->setDirectory(__DIR__ . '/../../../Helper/templates');
             }
         };
         $subject = new PlatesRenderer([$decorator]);
@@ -56,7 +56,7 @@ final class PlatesRendererTest extends TestCase {
     public function testMultipleDecoratorsAreRespectedCheckedByAddingFunctionInSecondDecorator() : void {
         $directoryDecorator = new class implements PlatesEngineDecorator {
             public function decorate(TemplateEngine $engine) : void {
-                $engine->setDirectory(__DIR__ . '/../../Helper/templates');
+                $engine->setDirectory(__DIR__ . '/../../../Helper/templates');
             }
         };
         $functionDecorator = new class implements PlatesEngineDecorator {
@@ -93,7 +93,7 @@ final class PlatesRendererTest extends TestCase {
             ->with($this->isInstanceOf(TemplateEngine::class));
         $directoryDecorator = new class implements PlatesEngineDecorator {
             public function decorate(TemplateEngine $engine) : void {
-                $engine->setDirectory(__DIR__ . '/../../Helper/templates');
+                $engine->setDirectory(__DIR__ . '/../../../Helper/templates');
             }
         };
         $subject = new PlatesRenderer([$decoratorOne, $decoratorTwo, $decoratorThree, $directoryDecorator]);
@@ -116,5 +116,4 @@ final class PlatesRendererTest extends TestCase {
             $subject->render($identifier, $this->createMock(TemplateData::class))->toString()
         );
     }
-
 }

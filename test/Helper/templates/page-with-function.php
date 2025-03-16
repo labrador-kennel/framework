@@ -2,4 +2,4 @@
 
 /** @var \League\Plates\Template\Template $this */
 ?>
-<?= $this->vicaVersa('angel') ?>
+<?= $this->vicaVersa('angel');

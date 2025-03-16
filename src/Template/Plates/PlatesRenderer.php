@@ -31,7 +31,8 @@ final class PlatesRenderer implements Renderer {
         return new class($content) implements RenderedTemplate {
             public function __construct(
                 private readonly string $content
-            ) {}
+            ) {
+            }
 
             public function toString() : string {
                 return $this->content;
@@ -39,6 +40,10 @@ final class PlatesRenderer implements Renderer {
         };
     }
 
+    /**
+     * @param list<PlatesEngineDecorator> $decorators
+     * @return TemplateEngine
+     */
     private function createAndDecorateEngine(array $decorators) : TemplateEngine {
         $engine = new TemplateEngine();
         foreach ($decorators as $decorator) {
@@ -46,5 +51,4 @@ final class PlatesRenderer implements Renderer {
         }
         return $engine;
     }
-
 }

@@ -9,5 +9,4 @@ final class BlankTemplateIdentifierProvided extends Exception {
     public static function fromBlankTemplateIdentifier() : self {
         return new self('TemplateIdentifiers MUST NOT be blank.');
     }
-
 }

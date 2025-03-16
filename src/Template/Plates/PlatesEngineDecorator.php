@@ -9,5 +9,4 @@ use League\Plates\Engine as TemplateEngine;
 interface PlatesEngineDecorator {
 
     public function decorate(TemplateEngine $engine) : void;
-
 }

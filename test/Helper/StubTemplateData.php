@@ -9,5 +9,4 @@ final class StubTemplateData implements TemplateData {
     public function who() : string {
         return 'kdot';
     }
-
 }

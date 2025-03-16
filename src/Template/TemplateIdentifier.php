@@ -8,5 +8,4 @@ interface TemplateIdentifier {
      * @return non-empty-string
      */
     public function toString() : string;
-
 }

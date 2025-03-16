@@ -8,5 +8,4 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 interface Renderer {
 
     public function render(TemplateIdentifier $templateIdentifier, TemplateData $templateData) : RenderedTemplate;
-
 }

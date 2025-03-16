@@ -5,5 +5,4 @@ namespace Labrador\Template;
 interface RenderedTemplate {
 
     public function toString() : string;
-
 }

@@ -12,7 +12,8 @@ final class PlatesTemplateIdentifier implements TemplateIdentifier {
      */
     private function __construct(
         private readonly string $id
-    ) {}
+    ) {
+    }
 
     public static function template(string $name) : self {
         if ($name === '') {
