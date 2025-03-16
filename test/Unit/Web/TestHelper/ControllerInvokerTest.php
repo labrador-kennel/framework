@@ -54,6 +54,7 @@ final class ControllerInvokerTest extends TestCase {
 
     public function testControllerInvokedWithApplicationMiddlewareAppliedToAllInvokedControllers() : void {
         $subject = ControllerInvoker::withTestSessionMiddleware(
+            [],
             $middleware = Mockery::mock(Middleware::class)
         );
 
@@ -85,6 +86,7 @@ final class ControllerInvokerTest extends TestCase {
 
     public function testControllerInvokedWithApplicationMiddlewareAndControllerSpecificMiddleware() : void {
         $subject = ControllerInvoker::withTestSessionMiddleware(
+            [],
             $middleware = Mockery::mock(Middleware::class)
         );
 

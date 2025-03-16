@@ -30,9 +30,19 @@ class ControllerInvoker {
         $this->applicationMiddleware = $applicationMiddleware;
     }
 
-    public static function withTestSessionMiddleware(Middleware ...$middleware) : self {
+    /**
+     * @param array<string, string> $initialSessionData
+     * @param Middleware ...$middleware
+     * @return self
+     * @throws \Amp\Http\Server\Session\SessionException
+     */
+    public static function withTestSessionMiddleware(
+        array $initialSessionData = [],
+        Middleware ...$middleware
+    ) : self {
         $sessionStorage = new LocalSessionStorage();
         $knownSessionIdGenerator = new KnownSessionIdGenerator(self::TEST_SESSION_ID);
+        $sessionStorage->write(self::TEST_SESSION_ID, $initialSessionData);
 
         return new self(
             $sessionStorage,
