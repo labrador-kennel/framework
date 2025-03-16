@@ -2,6 +2,7 @@
 
 namespace Labrador\Test\Unit\Web\Application;
 
+use Amp\Http\Cookie\RequestCookie;
 use Amp\Http\HttpStatus;
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\Driver\Client;
@@ -34,6 +35,8 @@ use Labrador\Test\Unit\Web\Stub\KnownIncrementPreciseTime;
 use Labrador\Test\Unit\Web\Stub\RequestAnalyticsQueueStub;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionGatheringController;
+use Labrador\Test\Unit\Web\Stub\SessionReadingControllerStub;
+use Labrador\Test\Unit\Web\Stub\SessionWritingControllerStub;
 use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
 use Labrador\Web\Application\AmpApplication;
 use Labrador\Web\Application\Analytics\PreciseTime;
@@ -49,10 +52,12 @@ use Labrador\Web\Application\Event\WillInvokeController;
 use Labrador\Web\Application\StaticAssetSettings;
 use Labrador\Web\HttpMethod;
 use Labrador\Web\Middleware\GlobalMiddlewareCollection;
+use Labrador\Web\Middleware\OpenSession;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\FastRouteRouter;
 use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\RoutingResolutionReason;
+use Labrador\Web\TestHelper\KnownSessionIdGenerator;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
@@ -263,6 +268,7 @@ final class AmpApplicationTest extends TestCase {
                     new SessionFactory(
                         new LocalKeyedMutex(),
                         $this->storage ?? new LocalSessionStorage(),
+                        new KnownSessionIdGenerator()
                     )
                 );
             }
@@ -647,5 +653,50 @@ final class AmpApplicationTest extends TestCase {
         self::assertSame(HttpStatus::OK, $response->getStatus());
         self::assertSame('text/css; charset=utf-8', $response->getHeader('Content-Type'));
         self::assertSame('html {}', $response->getBody()->read());
+    }
+
+    public function testSameSessionStorageUsedAcrossMultipleRequests() : void {
+        $subject = new AmpApplication(
+            $this->httpServer,
+            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
+            $this->router,
+            new GlobalMiddlewareCollection(),
+            $this->emitter,
+            new NullLogger(),
+            $this->getApplicationFeaturesWithSessionMiddleware(),
+            $this->analyticsQueue,
+            $this->preciseTime
+        );
+
+        $openSession = new OpenSession();
+
+        $this->router->addRoute(
+            new GetMapping('/write'),
+            new SessionWritingControllerStub(),
+            $openSession
+        );
+        $this->router->addRoute(
+            new GetMapping('/read'),
+            new SessionReadingControllerStub('known-key'),
+            $openSession
+        );
+
+        $writeRequest = new Request(
+            $this->createMock(Client::class),
+            HttpMethod::Get->value,
+            Http::new('http://example.com/write/')
+        );
+        $writeRequest->setCookie(new RequestCookie('session', 'known-session-id'));
+        $readRequest = new Request(
+            $this->createMock(Client::class),
+            HttpMethod::Get->value,
+            Http::new('http://example.com/read/')
+        );
+        $readRequest->setCookie(new RequestCookie('session', 'known-session-id'));
+
+        $subject->handleRequest($writeRequest);
+        $response = $subject->handleRequest($readRequest);
+
+        self::assertSame('known-value', $response->getBody()->read());
     }
 }
