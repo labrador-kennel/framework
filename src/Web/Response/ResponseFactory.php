@@ -4,6 +4,7 @@ namespace Labrador\Web\Response;
 
 use Amp\Http\HttpMessage;
 use Amp\Http\HttpStatus;
+use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\Response;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Template\RenderedTemplate;
@@ -13,6 +14,11 @@ use Labrador\Template\RenderedTemplate;
  */
 #[Service]
 final class ResponseFactory {
+
+    public function __construct(
+        private readonly ErrorHandler $errorHandler
+    ) {
+    }
 
     /**
      * @param string|RenderedTemplate $content
@@ -33,5 +39,12 @@ final class ResponseFactory {
             headers: $headers,
             body: $body
         );
+    }
+
+    /**
+     * Generates a response derived from the ErrorHandler wired into your container.
+     */
+    public function error(int $status) : Response {
+        return $this->errorHandler->handleError($status);
     }
 }
