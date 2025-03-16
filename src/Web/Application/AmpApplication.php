@@ -9,6 +9,7 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
+use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Server\StaticContent\DocumentRoot;
 use Labrador\AsyncEvent\Emitter;
 use Labrador\Web\Application\Analytics\PreciseTime;
@@ -34,6 +35,8 @@ use Ramsey\Uuid\Uuid;
 use Throwable;
 
 final class AmpApplication implements Application, RequestHandler {
+
+    private readonly ?SessionMiddleware $sessionMiddleware;
 
     public function __construct(
         private readonly HttpServer            $httpServer,
@@ -64,6 +67,7 @@ final class AmpApplication implements Application, RequestHandler {
                 )
             );
         }
+        $this->sessionMiddleware = $this->features->getSessionMiddleware();
     }
 
     public function start() : void {
@@ -155,9 +159,8 @@ final class AmpApplication implements Application, RequestHandler {
     private function getMiddlewareStack(Controller $controller, RequestBenchmark $benchmark) : RequestHandler {
         $middlewares = [];
         $middlewares[] = $this->benchmarkMiddlewareProcessingStartedMiddleware($benchmark);
-        $sessionMiddleware = $this->features->getSessionMiddleware();
-        if ($sessionMiddleware !== null) {
-            $middlewares[] = $sessionMiddleware;
+        if ($this->sessionMiddleware !== null) {
+            $middlewares[] = $this->sessionMiddleware;
         }
 
         foreach ($this->globalMiddlewareCollection as $middleware) {
