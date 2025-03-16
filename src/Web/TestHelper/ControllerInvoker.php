@@ -2,6 +2,7 @@
 
 namespace Labrador\Web\TestHelper;
 
+use Amp\Http\Cookie\RequestCookie;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
@@ -61,6 +62,9 @@ class ControllerInvoker {
             $controller,
             ...$this->applicationMiddleware,
             ...$middleware
+        );
+        $request->setCookie(
+            new RequestCookie('session', self::TEST_SESSION_ID)
         );
         return new class(
             $invokedController,

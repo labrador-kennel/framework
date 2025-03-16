@@ -8,6 +8,7 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
+use Labrador\Test\Unit\Web\Stub\SessionReadingControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionWritingControllerStub;
 use Labrador\Web\Controller\MiddlewareController;
 use Labrador\Web\HttpMethod;
@@ -118,5 +119,17 @@ final class ControllerInvokerTest extends TestCase {
         self::assertInstanceOf(MiddlewareController::class, $controller);
         self::assertCount(3, $controller->middlewares);
         self::assertSame($middleware, $controller->middlewares[2]);
+    }
+
+    public function testInitialSessionDataIsAvailableInInvokedController() : void {
+        $subject = ControllerInvoker::withTestSessionMiddleware([
+            'my-data-key' => 'some value'
+        ]);
+        $invokedController = $subject->invokeController(
+            new Request($this->client, HttpMethod::Get->value, Http::new('http://example.com')),
+            new SessionReadingControllerStub('my-data-key')
+        );
+
+        self::assertSame('some value', $invokedController->response()->getBody()->read());
     }
 }
