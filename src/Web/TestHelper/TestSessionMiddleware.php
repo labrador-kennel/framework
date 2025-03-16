@@ -21,7 +21,7 @@ final class TestSessionMiddleware {
             new SessionFactory(
                 storage: $sessionStorage,
                 idGenerator: $sessionIdGenerator
-            )
+            ),
         );
     }
 }
