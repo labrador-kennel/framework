@@ -35,11 +35,9 @@ use Throwable;
 
 final class AmpApplication implements Application, RequestHandler {
 
-    private ?ErrorHandler $errorHandler = null;
-
     public function __construct(
         private readonly HttpServer            $httpServer,
-        private readonly ErrorHandlerFactory   $errorHandlerFactory,
+        private readonly ErrorHandler   $errorHandler,
         private readonly Router                $router,
         private readonly GlobalMiddlewareCollection $globalMiddlewareCollection,
         private readonly Emitter          $emitter,
@@ -59,10 +57,10 @@ final class AmpApplication implements Application, RequestHandler {
                 new StaticAssetController(
                     new DocumentRoot(
                         $this->httpServer,
-                        $this->getErrorHandler(),
+                        $this->errorHandler,
                         $staticAssetSettings->assetDir
                     ),
-                    $this->getErrorHandler()
+                    $this->errorHandler
                 )
             );
         }
@@ -74,7 +72,7 @@ final class AmpApplication implements Application, RequestHandler {
         $this->logger->debug('Allowing routes to be added through event system.');
         $this->emitter->emit(new AddRoutes($this->router, $this->globalMiddlewareCollection))->await();
 
-        $this->httpServer->start($this, $this->getErrorHandler());
+        $this->httpServer->start($this, $this->errorHandler);
 
         $this->logger->info('Application server is responding to requests.');
         $this->emitter->emit(new ReceivingConnections($this->httpServer))->await();
@@ -100,9 +98,9 @@ final class AmpApplication implements Application, RequestHandler {
             $routingResolution = $this->routeRequest($request, $benchmark);
 
             if ($routingResolution->reason === RoutingResolutionReason::NotFound) {
-                $response = $this->getErrorHandler()->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
+                $response = $this->errorHandler->handleError(HttpStatus::NOT_FOUND, 'Not Found', $request);
             } elseif ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
-                $response = $this->getErrorHandler()->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
+                $response = $this->errorHandler->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
             } else {
                 $controller = $routingResolution->controller;
 
@@ -139,7 +137,7 @@ final class AmpApplication implements Application, RequestHandler {
 
             $this->analyticsQueue->queue($benchmark->exceptionThrown($throwable));
 
-            return $this->getErrorHandler()->handleError(
+            return $this->errorHandler->handleError(
                 HttpStatus::INTERNAL_SERVER_ERROR,
                 'Internal Server Error',
                 $request
@@ -207,13 +205,5 @@ final class AmpApplication implements Application, RequestHandler {
                 return $requestHandler->handleRequest($request);
             }
         };
-    }
-
-    private function getErrorHandler() : ErrorHandler {
-        if ($this->errorHandler === null) {
-            $this->errorHandler = $this->errorHandlerFactory->createErrorHandler();
-        }
-
-        return $this->errorHandler;
     }
 }

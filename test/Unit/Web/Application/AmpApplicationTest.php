@@ -93,7 +93,7 @@ final class AmpApplicationTest extends TestCase {
         $this->globalMiddlewareCollection = new GlobalMiddlewareCollection();
         $this->subject = new AmpApplication(
             $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
+            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
             $this->router,
             $this->globalMiddlewareCollection,
             $this->emitter,
@@ -362,7 +362,7 @@ final class AmpApplicationTest extends TestCase {
 
         $subject = new AmpApplication(
             $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
+            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
             $this->router,
             new GlobalMiddlewareCollection(),
             $this->emitter,
@@ -395,7 +395,7 @@ final class AmpApplicationTest extends TestCase {
 
         $subject = new AmpApplication(
             $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
+            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
             $this->router,
             $globalMiddlewareCollection,
             $this->emitter,
@@ -473,7 +473,7 @@ final class AmpApplicationTest extends TestCase {
 
         $subject = new AmpApplication(
             $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
+            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
             new ErrorThrowingRouter($exception = new RuntimeException()),
             new GlobalMiddlewareCollection(),
             $this->emitter,
@@ -624,7 +624,7 @@ final class AmpApplicationTest extends TestCase {
     public function testStaticAssetSettingsProvidedHasControllerAddedAndReturnsCorrectFile() : void {
         $subject = new AmpApplication(
             $this->httpServer,
-            new ErrorHandlerFactoryStub($this->errorHandler),
+            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
             $this->router,
             new GlobalMiddlewareCollection(),
             $this->emitter,
