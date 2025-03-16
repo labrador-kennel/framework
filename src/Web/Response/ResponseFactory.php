@@ -34,5 +34,4 @@ final class ResponseFactory {
             body: $body
         );
     }
-
 }

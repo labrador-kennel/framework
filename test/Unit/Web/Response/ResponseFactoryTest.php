@@ -82,5 +82,4 @@ final class ResponseFactoryTest extends TestCase {
             $response->getStatus()
         );
     }
-
 }
