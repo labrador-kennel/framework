@@ -50,7 +50,10 @@ final class ControllerInvokerTest extends TestCase {
             new SessionWritingControllerStub(),
         );
 
-        self::assertSame(['known-key' => 'known-value'], $invokedControllerResponse->readSession());
+        self::assertSame([
+            'labrador.csrfToken' => 'known-token',
+            'known-key' => 'known-value'
+        ], $invokedControllerResponse->readSession());
     }
 
     public function testControllerInvokedWithApplicationMiddlewareAppliedToAllInvokedControllers() : void {
@@ -70,8 +73,8 @@ final class ControllerInvokerTest extends TestCase {
         $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
-        self::assertCount(3, $controller->middlewares);
-        self::assertSame($middleware, $controller->middlewares[2]);
+        self::assertCount(4, $controller->middlewares);
+        self::assertSame($middleware, $controller->middlewares[3]);
 
         $invokedControllerResponse = $subject->invokeController(
             new Request($this->client, HttpMethod::Get->value, Http::new('https://example.com')),
@@ -81,8 +84,8 @@ final class ControllerInvokerTest extends TestCase {
         $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
-        self::assertCount(3, $controller->middlewares);
-        self::assertSame($middleware, $controller->middlewares[2]);
+        self::assertCount(4, $controller->middlewares);
+        self::assertSame($middleware, $controller->middlewares[3]);
     }
 
     public function testControllerInvokedWithApplicationMiddlewareAndControllerSpecificMiddleware() : void {
@@ -105,9 +108,9 @@ final class ControllerInvokerTest extends TestCase {
         $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
-        self::assertCount(4, $controller->middlewares);
-        self::assertSame($middleware, $controller->middlewares[2]);
-        self::assertSame($controllerMiddleware, $controller->middlewares[3]);
+        self::assertCount(5, $controller->middlewares);
+        self::assertSame($middleware, $controller->middlewares[3]);
+        self::assertSame($controllerMiddleware, $controller->middlewares[4]);
 
         $invokedControllerResponse = $subject->invokeController(
             new Request($this->client, HttpMethod::Get->value, Http::new('https://example.com')),
@@ -117,8 +120,8 @@ final class ControllerInvokerTest extends TestCase {
         $controller = $invokedControllerResponse->invokedController();
 
         self::assertInstanceOf(MiddlewareController::class, $controller);
-        self::assertCount(3, $controller->middlewares);
-        self::assertSame($middleware, $controller->middlewares[2]);
+        self::assertCount(4, $controller->middlewares);
+        self::assertSame($middleware, $controller->middlewares[3]);
     }
 
     public function testInitialSessionDataIsAvailableInInvokedController() : void {

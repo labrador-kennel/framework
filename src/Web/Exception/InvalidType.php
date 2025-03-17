@@ -11,7 +11,7 @@ namespace Labrador\Web\Exception;
 
 use Labrador\Exception\Exception;
 
-class InvalidType extends Exception {
+final class InvalidType extends Exception {
 
     public static function fromDispatcherCallbackInvalidReturn() : self {
         $msg = 'A FastRoute\\Dispatcher must be returned from dispatcher callback injected in constructor';
