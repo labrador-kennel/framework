@@ -27,5 +27,4 @@ final class CsrfTokenHelper {
     public function isTokenValid(Request $request, string $token) : bool {
         return $this->token($request) === $token;
     }
-
 }

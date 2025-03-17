@@ -9,5 +9,4 @@ final class SessionHasNoCsrfToken extends Exception {
     public static function fromSessionDoesNotHaveCsrfToken() : self {
         return new self('Attached session has no CSRF token associated with it.');
     }
-
 }
