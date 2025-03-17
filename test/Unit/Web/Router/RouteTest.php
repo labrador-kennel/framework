@@ -9,15 +9,15 @@
 
 namespace Labrador\Test\Unit\Web\Router;
 
-use Labrador\Router\MethodAndPathRequestMapping;
 use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
 use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Route;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RouteTest extends TestCase {
 
-    public function routeProvider() {
+    public static function routeProvider() {
         return [
             [new Route(
                 new GetMapping(
@@ -28,9 +28,7 @@ class RouteTest extends TestCase {
         ];
     }
 
-    /**
-     * @dataProvider routeProvider
-     */
+    #[DataProvider('routeProvider')]
     public function testRouteToString(Route $route, $expected) {
         self::assertSame($expected, $route->toString());
     }

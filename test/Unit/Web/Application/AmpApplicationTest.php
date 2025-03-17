@@ -75,7 +75,6 @@ final class AmpApplicationTest extends TestCase {
         $this->testHandler = new TestHandler();
         $this->analyticsQueue = new RequestAnalyticsQueueStub();
         $this->preciseTime = new KnownIncrementPreciseTime(0, 1);
-        $this->assetsDir = dirname(__DIR__, 3) . '/Helper/assets';
         $this->globalMiddlewareCollection = new GlobalMiddlewareCollection();
         $this->subject = new AmpApplication(
             $this->httpServer,

@@ -34,12 +34,11 @@
   },
   "require-dev": {
     "amphp/http-client": "^v5.0",
-    "amphp/phpunit-util": "^v3.0",
     "cspray/labrador-coding-standard": "0.1.0",
     "cspray/stream-buffer-intercept": "^0.1.0",
     "mikey179/vfsstream": "^1.6",
     "mockery/mockery": "^1.6",
-    "phpunit/phpunit": "^9.6",
+    "phpunit/phpunit": "^11",
     "psalm/phar": "^5.0",
     "roave/security-advisories": "dev-latest"
   },
