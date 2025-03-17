@@ -8,16 +8,18 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\SessionFactory;
-use Amp\Http\Server\Session\SessionIdGenerator;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Amp\Http\Server\Session\SessionStorage;
+use Labrador\Security\TokenGenerator;
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\MiddlewareController;
-use Labrador\Web\Middleware\OpenSession;
+use Labrador\Web\Session\CsrfAwareSessionMiddleware;
+use Labrador\Web\Session\LockAndAutoCommitSessionMiddleware;
 
 class ControllerInvoker {
 
-    private const TEST_SESSION_ID = 'known-session-id-controller-invoker';
+    public const TEST_SESSION_ID = 'known-session-id-controller-invoker';
+    public const TEST_TOKEN = 'known-token';
 
     /**
      * @var Middleware[]
@@ -43,12 +45,28 @@ class ControllerInvoker {
     ) : self {
         $sessionStorage = new LocalSessionStorage();
         $knownSessionIdGenerator = new KnownSessionIdGenerator(self::TEST_SESSION_ID);
+        $knownTokenGenerator = new class(self::TEST_TOKEN) implements TokenGenerator {
+            public function __construct(
+                private readonly string $token,
+            ) {
+            }
+
+            public function generateToken() : string {
+                return $this->token;
+            }
+        };
         $sessionStorage->write(self::TEST_SESSION_ID, $initialSessionData);
 
         return new self(
             $sessionStorage,
-            TestSessionMiddleware::create($sessionStorage, $knownSessionIdGenerator),
-            new OpenSession(),
+            new SessionMiddleware(
+                new SessionFactory(
+                    storage: $sessionStorage,
+                    idGenerator: $knownSessionIdGenerator
+                )
+            ),
+            new CsrfAwareSessionMiddleware($knownTokenGenerator),
+            new LockAndAutoCommitSessionMiddleware(),
             ...$middleware
         );
     }
