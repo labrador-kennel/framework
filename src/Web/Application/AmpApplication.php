@@ -9,8 +9,6 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Server\Session\SessionMiddleware;
-use Amp\Http\Server\StaticContent\DocumentRoot;
 use Labrador\AsyncEvent\Emitter;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
@@ -23,10 +21,8 @@ use Labrador\Web\Application\Event\RequestReceived;
 use Labrador\Web\Application\Event\ResponseSent;
 use Labrador\Web\Application\Event\WillInvokeController;
 use Labrador\Web\Controller\Controller;
-use Labrador\Web\Controller\StaticAssetController;
 use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\RequestAttribute;
-use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Router;
 use Labrador\Web\Router\RoutingResolution;
 use Labrador\Web\Router\RoutingResolutionReason;
@@ -36,8 +32,6 @@ use Throwable;
 
 final class AmpApplication implements Application, RequestHandler {
 
-    private readonly ?SessionMiddleware $sessionMiddleware;
-
     public function __construct(
         private readonly HttpServer            $httpServer,
         private readonly ErrorHandler   $errorHandler,
@@ -45,25 +39,9 @@ final class AmpApplication implements Application, RequestHandler {
         private readonly GlobalMiddlewareCollection $globalMiddlewareCollection,
         private readonly Emitter          $emitter,
         private readonly LoggerInterface       $logger,
-        private readonly ApplicationSettings   $features,
         private readonly RequestAnalyticsQueue $analyticsQueue,
         private readonly PreciseTime           $preciseTime,
     ) {
-        $staticAssetSettings = $this->features->getStaticAssetSettings();
-        if ($staticAssetSettings !== null) {
-            $this->router->addRoute(
-                new GetMapping(sprintf('/%s/{path:.+}', $staticAssetSettings->pathPrefix)),
-                new StaticAssetController(
-                    new DocumentRoot(
-                        $this->httpServer,
-                        $this->errorHandler,
-                        $staticAssetSettings->assetDir
-                    ),
-                    $this->errorHandler
-                )
-            );
-        }
-        $this->sessionMiddleware = $this->features->getSessionMiddleware();
     }
 
     public function start() : void {
@@ -155,9 +133,6 @@ final class AmpApplication implements Application, RequestHandler {
     private function getMiddlewareStack(Controller $controller, RequestBenchmark $benchmark) : RequestHandler {
         $middlewares = [];
         $middlewares[] = $this->benchmarkMiddlewareProcessingStartedMiddleware($benchmark);
-        if ($this->sessionMiddleware !== null) {
-            $middlewares[] = $this->sessionMiddleware;
-        }
 
         foreach ($this->globalMiddlewareCollection as $middleware) {
             $middlewares[] = $middleware;

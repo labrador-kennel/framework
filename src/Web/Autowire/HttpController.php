@@ -9,7 +9,7 @@ use Labrador\Web\Controller\RouteMappingAttribute;
 use Labrador\Web\Router\Mapping\RequestMapping;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final class HttpController implements ServiceAttribute, RouteMappingAttribute {
+final class HttpController implements AutowireableController {
 
     public function __construct(
         private readonly RequestMapping $requestMapping,

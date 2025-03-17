@@ -13,25 +13,4 @@
       <code><![CDATA[$request->getAttribute('path')]]></code>
     </MixedOperand>
   </file>
-  <file src="src/Web/Security/CsrfTokenManager.php">
-    <MixedArgument>
-      <code><![CDATA[$session->get('csrfTokens')]]></code>
-      <code><![CDATA[$session->get('csrfTokens')]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$tokens[$index]]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$tokens[]]]></code>
-    </MixedArrayAssignment>
-    <MixedArrayOffset>
-      <code><![CDATA[$tokens[$index]]]></code>
-    </MixedArrayOffset>
-    <MixedAssignment>
-      <code><![CDATA[$index]]></code>
-      <code><![CDATA[$token]]></code>
-      <code><![CDATA[$tokens]]></code>
-      <code><![CDATA[$tokens]]></code>
-    </MixedAssignment>
-  </file>
 </files>
