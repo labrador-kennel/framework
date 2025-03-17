@@ -13,7 +13,6 @@ use Amp\Http\HttpStatus;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Amp\PHPUnit\AsyncTestCase;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
@@ -33,8 +32,10 @@ use Labrador\Web\Router\Mapping\RequestMapping;
 use Labrador\Web\Router\Route;
 use Labrador\Web\Router\RoutingResolutionReason;
 use League\Uri\Http;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-class FastRouteRouterTest extends AsyncTestCase {
+class FastRouteRouterTest extends TestCase {
 
     /**
      * @var Client
@@ -44,7 +45,6 @@ class FastRouteRouterTest extends AsyncTestCase {
     public function setUp() : void {
         parent::setUp();
         $this->client = $this->createMock(Client::class);
-        $this->setTimeout(1500);
     }
 
     private function getRouter() : FastRouteRouter {
@@ -225,7 +225,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         return [$requestDecorator, $responseDecorator];
     }
 
-    public function routerRouteMethodProvider() {
+    public static function routerRouteMethodProvider() {
         $args = [];
         foreach (HttpMethod::cases() as $method) {
             $mappingClass = 'Labrador\\Web\\Router\\Mapping\\' . $method->name . 'Mapping';
@@ -234,9 +234,7 @@ class FastRouteRouterTest extends AsyncTestCase {
         return $args;
     }
 
-    /**
-     * @dataProvider routerRouteMethodProvider
-     */
+    #[DataProvider('routerRouteMethodProvider')]
     public function testAddingMiddlewareToSingleRoute(RequestMapping $requestMapping) {
         $request = $this->getRequest($requestMapping->getHttpMethod()->value, 'http://example.com' . $requestMapping->getPath());
         $router = $this->getRouter();

@@ -2,29 +2,19 @@
 
 namespace Labrador\Test\Unit\Web\Application;
 
-use Amp\Http\Cookie\RequestCookie;
 use Amp\Http\HttpStatus;
 use Amp\Http\Server\DefaultErrorHandler;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\HttpServerStatus;
-use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Server\Session\LocalSessionStorage;
-use Amp\Http\Server\Session\Session;
-use Amp\Http\Server\Session\SessionFactory;
-use Amp\Http\Server\Session\SessionMiddleware;
-use Amp\Http\Server\Session\SessionStorage;
-use Amp\Sync\LocalKeyedMutex;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\MiddlewareCallRegistry;
-use Labrador\Test\Helper\StubApplicationSettings;
 use Labrador\Test\Unit\Web\Stub\ErrorHandlerFactoryStub;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingController;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingMiddleware;
@@ -34,14 +24,10 @@ use Labrador\Test\Unit\Web\Stub\HttpServerStub;
 use Labrador\Test\Unit\Web\Stub\KnownIncrementPreciseTime;
 use Labrador\Test\Unit\Web\Stub\RequestAnalyticsQueueStub;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
-use Labrador\Test\Unit\Web\Stub\SessionGatheringController;
-use Labrador\Test\Unit\Web\Stub\SessionReadingControllerStub;
-use Labrador\Test\Unit\Web\Stub\SessionWritingControllerStub;
 use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
 use Labrador\Web\Application\AmpApplication;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalytics;
-use Labrador\Web\Application\ApplicationSettings;
 use Labrador\Web\Application\Event\AddRoutes;
 use Labrador\Web\Application\Event\ApplicationStarted;
 use Labrador\Web\Application\Event\ApplicationStopped;
@@ -49,15 +35,12 @@ use Labrador\Web\Application\Event\ReceivingConnections;
 use Labrador\Web\Application\Event\RequestReceived;
 use Labrador\Web\Application\Event\ResponseSent;
 use Labrador\Web\Application\Event\WillInvokeController;
-use Labrador\Web\Application\StaticAssetSettings;
 use Labrador\Web\HttpMethod;
 use Labrador\Web\Middleware\GlobalMiddlewareCollection;
-use Labrador\Web\Middleware\OpenSession;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\FastRouteRouter;
 use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\RoutingResolutionReason;
-use Labrador\Web\TestHelper\KnownSessionIdGenerator;
 use League\Uri\Http;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
@@ -79,8 +62,6 @@ final class AmpApplicationTest extends TestCase {
     private PreciseTime $preciseTime;
     private GlobalMiddlewareCollection $globalMiddlewareCollection;
 
-    private string $assetsDir;
-
     protected function setUp() : void {
         parent::setUp();
         $this->httpServer = new HttpServerStub();
@@ -94,7 +75,6 @@ final class AmpApplicationTest extends TestCase {
         $this->testHandler = new TestHandler();
         $this->analyticsQueue = new RequestAnalyticsQueueStub();
         $this->preciseTime = new KnownIncrementPreciseTime(0, 1);
-        $this->assetsDir = dirname(__DIR__, 3) . '/Helper/assets';
         $this->globalMiddlewareCollection = new GlobalMiddlewareCollection();
         $this->subject = new AmpApplication(
             $this->httpServer,
@@ -103,7 +83,6 @@ final class AmpApplicationTest extends TestCase {
             $this->globalMiddlewareCollection,
             $this->emitter,
             new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            new StubApplicationSettings(),
             $this->analyticsQueue,
             $this->preciseTime
         );
@@ -214,7 +193,7 @@ final class AmpApplicationTest extends TestCase {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
+            Http::new('http://example.com'),
         );
 
         $this->globalMiddlewareCollection->add(
@@ -255,189 +234,11 @@ final class AmpApplicationTest extends TestCase {
         self::assertInstanceOf(ApplicationStopped::class, $this->emitter->getEmittedEvents()[0]);
     }
 
-    private function getApplicationFeaturesWithSessionMiddleware(?SessionStorage $storage = null) : ApplicationSettings {
-        return new class($storage) implements ApplicationSettings {
-
-            public function __construct(
-                private readonly ?SessionStorage $storage
-            ) {
-            }
-
-            public function getSessionMiddleware() : ?SessionMiddleware {
-                return new SessionMiddleware(
-                    new SessionFactory(
-                        new LocalKeyedMutex(),
-                        $this->storage ?? new LocalSessionStorage(),
-                        new KnownSessionIdGenerator()
-                    )
-                );
-            }
-
-            public function autoRedirectHttpToHttps() : bool {
-                return false;
-            }
-
-            public function getStaticAssetSettings() : ?StaticAssetSettings {
-                return null;
-            }
-
-            public function getHttpsRedirectPort() : ?int {
-                return null;
-            }
-        };
-    }
-
-    private function getApplicationFeaturesWithHttpToHttpsRedirectAndNoHttpsPort() : ApplicationSettings {
-        return new class implements ApplicationSettings {
-
-            public function getSessionMiddleware() : ?SessionMiddleware {
-                return null;
-            }
-
-            public function autoRedirectHttpToHttps() : bool {
-                return true;
-            }
-
-            public function getStaticAssetSettings() : ?StaticAssetSettings {
-                return null;
-            }
-
-            public function getHttpsRedirectPort() : ?int {
-                return null;
-            }
-        };
-    }
-
-    private function getApplicationFeaturesWithHttpToHttpsRedirectAndExplicitHttpsPort() : ApplicationSettings {
-        return new class implements ApplicationSettings {
-
-            public function getSessionMiddleware() : ?SessionMiddleware {
-                return null;
-            }
-
-            public function autoRedirectHttpToHttps() : bool {
-                return true;
-            }
-
-            public function getStaticAssetSettings() : ?StaticAssetSettings {
-                return null;
-            }
-
-            public function getHttpsRedirectPort() : ?int {
-                return 9001;
-            }
-        };
-    }
-
-    private function getApplicationFeaturesWithStaticAssetSettings() : ApplicationSettings {
-        return new class implements ApplicationSettings {
-
-            public function getSessionMiddleware() : ?SessionMiddleware {
-                return null;
-            }
-
-            public function autoRedirectHttpToHttps() : bool {
-                return false;
-            }
-
-            public function getStaticAssetSettings() : ?StaticAssetSettings {
-                return new StaticAssetSettings(
-                    dirname(__DIR__, 3) . '/Helper/assets',
-                    'assets'
-                );
-            }
-
-            public function getHttpsRedirectPort() : ?int {
-                return null;
-            }
-        };
-    }
-
-    public function testSessionFactoryPresentInAppFeaturesSetsSessionOnRequest() : void {
-        $controller = new SessionGatheringController();
-        $this->router->addRoute(
-            new GetMapping('/session-test'),
-            $controller
-        );
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com/session-test')
-        );
-
-
-        $subject = new AmpApplication(
-            $this->httpServer,
-            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
-            $this->router,
-            new GlobalMiddlewareCollection(),
-            $this->emitter,
-            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware(),
-            $this->analyticsQueue,
-            $this->preciseTime
-        );
-
-        $subject->start();
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame('OK', $response->getBody()->read());
-        self::assertNotNull($controller->getSession());
-    }
-
-    public function testSessionMiddlewareRunBeforeOtherAddedMiddleware() : void {
-        $controller = new SessionGatheringController();
-        $this->router->addRoute(
-            new GetMapping('/session-test'),
-            $controller
-        );
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('http://example.com/session-test')
-        );
-        $globalMiddlewareCollection = new GlobalMiddlewareCollection();
-
-        $subject = new AmpApplication(
-            $this->httpServer,
-            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
-            $this->router,
-            $globalMiddlewareCollection,
-            $this->emitter,
-            new Logger('labrador-http-test', [$this->testHandler], [new PsrLogMessageProcessor()]),
-            $this->getApplicationFeaturesWithSessionMiddleware(),
-            $this->analyticsQueue,
-            $this->preciseTime
-        );
-
-        $middleware = new class implements Middleware {
-            public ?Session $session = null;
-
-            public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
-                if ($request->hasAttribute(Session::class)) {
-                    $this->session = $request->getAttribute(Session::class);
-                }
-
-                return $requestHandler->handleRequest($request);
-            }
-        };
-        $globalMiddlewareCollection->add($middleware);
-
-        $subject->start();
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame('OK', $response->getBody()->read());
-        self::assertNotNull($middleware->session);
-        self::assertNotNull($controller->getSession());
-    }
-
     public function testNormalProcessingHasCorrectRequestAnalyticsQueued() : void {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com')
+            Http::new('https://example.com')
         );
 
         $this->router->addRoute(
@@ -469,7 +270,7 @@ final class AmpApplicationTest extends TestCase {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com')
+            Http::new('https://example.com')
         );
 
         $this->router->addRoute(
@@ -484,7 +285,6 @@ final class AmpApplicationTest extends TestCase {
             new GlobalMiddlewareCollection(),
             $this->emitter,
             new NullLogger(),
-            new StubApplicationSettings(),
             $this->analyticsQueue,
             $this->preciseTime
         );
@@ -513,7 +313,7 @@ final class AmpApplicationTest extends TestCase {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com')
+            Http::new('https://example.com')
         );
 
         $exception = new RuntimeException();
@@ -548,7 +348,7 @@ final class AmpApplicationTest extends TestCase {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com')
+            Http::new('https://example.com')
         );
 
         $exception = new RuntimeException();
@@ -625,78 +425,5 @@ final class AmpApplicationTest extends TestCase {
             $controller,
             $request->getAttribute(RequestAttribute::Controller->value)
         );
-    }
-
-    public function testStaticAssetSettingsProvidedHasControllerAddedAndReturnsCorrectFile() : void {
-        $subject = new AmpApplication(
-            $this->httpServer,
-            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
-            $this->router,
-            new GlobalMiddlewareCollection(),
-            $this->emitter,
-            new NullLogger(),
-            $this->getApplicationFeaturesWithStaticAssetSettings(),
-            $this->analyticsQueue,
-            $this->preciseTime
-        );
-
-        $subject->start();
-
-        $request = new Request(
-            $this->getMockBuilder(Client::class)->getMock(),
-            HttpMethod::Get->value,
-            Http::createFromString('https://example.com/assets/main.css')
-        );
-
-        $response = $subject->handleRequest($request);
-
-        self::assertSame(HttpStatus::OK, $response->getStatus());
-        self::assertSame('text/css; charset=utf-8', $response->getHeader('Content-Type'));
-        self::assertSame('html {}', $response->getBody()->read());
-    }
-
-    public function testSameSessionStorageUsedAcrossMultipleRequests() : void {
-        $subject = new AmpApplication(
-            $this->httpServer,
-            (new ErrorHandlerFactoryStub($this->errorHandler))->createErrorHandler(),
-            $this->router,
-            new GlobalMiddlewareCollection(),
-            $this->emitter,
-            new NullLogger(),
-            $this->getApplicationFeaturesWithSessionMiddleware(),
-            $this->analyticsQueue,
-            $this->preciseTime
-        );
-
-        $openSession = new OpenSession();
-
-        $this->router->addRoute(
-            new GetMapping('/write'),
-            new SessionWritingControllerStub(),
-            $openSession
-        );
-        $this->router->addRoute(
-            new GetMapping('/read'),
-            new SessionReadingControllerStub('known-key'),
-            $openSession
-        );
-
-        $writeRequest = new Request(
-            $this->createMock(Client::class),
-            HttpMethod::Get->value,
-            Http::new('http://example.com/write/')
-        );
-        $writeRequest->setCookie(new RequestCookie('session', 'known-session-id'));
-        $readRequest = new Request(
-            $this->createMock(Client::class),
-            HttpMethod::Get->value,
-            Http::new('http://example.com/read/')
-        );
-        $readRequest->setCookie(new RequestCookie('session', 'known-session-id'));
-
-        $subject->handleRequest($writeRequest);
-        $response = $subject->handleRequest($readRequest);
-
-        self::assertSame('known-value', $response->getBody()->read());
     }
 }

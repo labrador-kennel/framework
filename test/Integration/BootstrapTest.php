@@ -170,7 +170,7 @@ class BootstrapTest extends TestCase {
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue(
-            $handler->hasInfoThatContains('Autowiring route GET /hello/world to HelloWorld controller.')
+            $handler->hasInfoThatContains('Autowiring route GET /hello/world to MiddlewareHandler<HelloWorld, Amp\Http\Server\Session\SessionMiddleware, Labrador\Web\Session\CsrfAwareSessionMiddleware, Labrador\Web\Session\LockAndAutoCommitSessionMiddleware> controller.')
         );
     }
 }

@@ -12,8 +12,9 @@ use Labrador\Test\Unit\Web\Stub\BeforeActionResponseHookableControllerStub;
 use Labrador\Test\Unit\Web\Stub\OnlyHandlerHookableControllerStub;
 use Labrador\Test\Unit\Web\Stub\SequenceHookableControllerStub;
 use League\Uri\Http;
+use PHPUnit\Framework\TestCase;
 
-class HookableControllerTest extends AsyncTestCase {
+class HookableControllerTest extends TestCase {
 
     public function testRequestReceivingCallsInvokedInOrder() {
         $subject = new SequenceHookableControllerStub();

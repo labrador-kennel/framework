@@ -36,8 +36,8 @@ final class RegisterControllerListener extends ServiceWiringListener {
         assert($controller instanceof Controller);
         $attr = $controllerAndDefinition->definition()->attribute();
 
-        if ($attr instanceof HttpController) {
-            $this->handleHttpController(
+        if ($attr instanceof AutowireableController) {
+            $this->handleAutowireableController(
                 $container,
                 $router,
                 $logger,
@@ -47,11 +47,11 @@ final class RegisterControllerListener extends ServiceWiringListener {
         }
     }
 
-    private function handleHttpController(
+    private function handleAutowireableController(
         AnnotatedContainer $container,
         Router $router,
         LoggerInterface $logger,
-        HttpController $httpController,
+        AutowireableController $httpController,
         Controller $controller
     ) : void {
         $route = $router->addRoute(

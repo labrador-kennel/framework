@@ -21,7 +21,6 @@ final class ApplicationFactory {
         Router                $router,
         Emitter               $emitter,
         LoggerInterface $logger,
-        ApplicationSettings   $features,
         RequestAnalyticsQueue $analyticsQueue,
         PreciseTime           $preciseTime,
     ) : Application {
@@ -32,7 +31,6 @@ final class ApplicationFactory {
             new GlobalMiddlewareCollection(),
             $emitter,
             $logger,
-            $features,
             $analyticsQueue,
             $preciseTime
         );
