@@ -17,7 +17,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.2
-          extensions: xdebug
           tools: composer:2
       - name: Setup problem matchers for PHP
         run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
@@ -26,8 +25,6 @@ jobs:
       - name: Composer
         run: composer install
       - name: PHPUnit
-        env:
-          XDEBUG_MODE: coverage
         run: ./vendor/bin/phpunit --testdox
 
   static-analysis:
