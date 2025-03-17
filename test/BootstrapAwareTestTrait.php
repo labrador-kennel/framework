@@ -22,6 +22,7 @@ trait BootstrapAwareTestTrait {
         <source>
             <dir>src</dir>
             <dir>dummy_app/src</dir>
+            <dir>test/Helper</dir>
         </source>
     </scanDirectories>
     <definitionProviders>

@@ -10,7 +10,6 @@ use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\StreamBufferIntercept\BufferIdentifier;
 use Cspray\StreamBufferIntercept\StreamBuffer;
 use Labrador\DummyApp\DummyLoggerFactory;
-use Labrador\DummyApp\DummyMonologInitializer;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\Middleware\BazMiddleware;
 use Labrador\DummyApp\Middleware\FooMiddleware;
@@ -18,17 +17,13 @@ use Labrador\DummyApp\Middleware\QuxMiddleware;
 use Labrador\DummyApp\MiddlewareCallRegistry;
 use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
-use Labrador\Test\Unit\Web\Stub\ErrorThrowingController;
 use Labrador\Web\Application\Application;
-use Labrador\Web\Router\Mapping\GetMapping;
-use Labrador\Web\Router\Router;
 use Monolog\Handler\TestHandler;
 use Monolog\LogRecord;
 use org\bovigo\vfs\vfsStream as VirtualFilesystem;
 use org\bovigo\vfs\vfsStreamDirectory as VirtualDirectory;
 use org\bovigo\vfs\vfsStreamWrapper as VirtualStream;
 use PHPUnit\Framework\Constraint\StringMatchesFormatDescription;
-use Ramsey\Uuid\Uuid;
 
 class HttpServerTest extends AsyncTestCase {
 

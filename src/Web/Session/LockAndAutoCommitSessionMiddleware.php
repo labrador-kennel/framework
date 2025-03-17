@@ -7,8 +7,10 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
+use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 
+#[Service]
 class LockAndAutoCommitSessionMiddleware implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
