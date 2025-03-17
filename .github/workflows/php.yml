@@ -28,7 +28,7 @@ jobs:
       - name: PHPUnit
         env:
           XDEBUG_MODE: coverage
-        run: ./vendor/bin/phpunit
+        run: ./vendor/bin/phpunit --testdox
 
   static-analysis:
     runs-on: ubuntu-latest
