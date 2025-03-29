@@ -33,6 +33,10 @@ class ServerSettings implements HttpServerSettings {
         return null;
     }
 
+    public function tlsKeyFile() : ?string {
+        return null;
+    }
+
     public function totalClientConnectionLimit() : int {
         return 1000;
     }
