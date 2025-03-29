@@ -20,6 +20,8 @@ interface HttpServerSettings {
 
     public function tlsCertificateFile() : ?string;
 
+    public function tlsKeyFile() : ?string;
+
     /**
      * @return positive-int
      */

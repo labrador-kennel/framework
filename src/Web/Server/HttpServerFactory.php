@@ -41,7 +41,7 @@ final class HttpServerFactory {
 
         $tlsContext = null;
         if (($tlsCert = $serverSettings->tlsCertificateFile()) !== null) {
-            $certificate = new Certificate($tlsCert);
+            $certificate = new Certificate($tlsCert, $serverSettings->tlsKeyFile());
             $tlsContext = (new BindContext())
                 ->withTlsContext((new ServerTlsContext())
                 ->withDefaultCertificate($certificate));
