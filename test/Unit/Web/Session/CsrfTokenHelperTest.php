@@ -7,10 +7,10 @@ use Amp\Http\Server\Request;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\Session;
 use Amp\Sync\LocalKeyedMutex;
+use Labrador\TestHelper\KnownSessionIdGenerator;
 use Labrador\Web\Session\CsrfTokenHelper;
 use Labrador\Web\Session\Exception\SessionHasNoCsrfToken;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
-use Labrador\Web\TestHelper\KnownSessionIdGenerator;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 

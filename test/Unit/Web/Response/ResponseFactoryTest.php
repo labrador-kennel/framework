@@ -6,7 +6,9 @@ use Amp\Http\HttpStatus;
 use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\Response;
 use Labrador\Template\RenderedTemplate;
+use Labrador\Web\Response\Exception\AmbiguousRedirectLocation;
 use Labrador\Web\Response\ResponseFactory;
+use League\Uri\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -95,5 +97,66 @@ final class ResponseFactoryTest extends TestCase {
             ->willReturn($response = new Response());
 
         self::assertSame($response, $this->subject->error(HttpStatus::FORBIDDEN));
+    }
+
+    public function testSeeOtherResponseReturnsCorrectStatusAndLocationHeader() : void {
+        $response = $this->subject->seeOther(
+            Http::new('https://example.com/see/other')
+        );
+
+        self::assertSame(
+            HttpStatus::SEE_OTHER,
+            $response->getStatus()
+        );
+        self::assertSame(
+            'https://example.com/see/other',
+            $response->getHeader('Location')
+        );
+    }
+
+    public function testSeeOtherHasLocationInHeadersThrowsException() : void {
+        $this->expectException(AmbiguousRedirectLocation::class);
+        $this->expectExceptionMessage(
+            'Attempted to create a 303 Response but multiple location targets were provided. Do not include a' .
+            ' Location header when creating this type of response.'
+        );
+
+        $this->subject->seeOther(
+            Http::new('http://example.com'),
+            ['Location' => 'http://example.com/something/else']
+        );
+    }
+
+    public function testSeeOtherHasLocationInHeadersCheckIsCaseInsensitiveThrowsException() : void {
+        $this->expectException(AmbiguousRedirectLocation::class);
+        $this->expectExceptionMessage(
+            'Attempted to create a 303 Response but multiple location targets were provided. Do not include a' .
+            ' Location header when creating this type of response.'
+        );
+
+        $this->subject->seeOther(
+            Http::new('http://example.com'),
+            ['location' => 'http://example.com/something/else']
+        );
+    }
+
+    public function testSeeOtherHasCorrectCustomHeaders() : void {
+        $response = $this->subject->seeOther(
+            Http::new('http://sub.example.com'),
+            [
+                'Custom-Header' => 'my-custom-val',
+                'Powered-By' => 'Labrador'
+            ]
+        );
+
+        self::assertSame(HttpStatus::SEE_OTHER, $response->getStatus());
+        self::assertSame(
+            [
+                'location' => ['http://sub.example.com'],
+                'custom-header' => ['my-custom-val'],
+                'powered-by' => ['Labrador']
+            ],
+            $response->getHeaders()
+        );
     }
 }

@@ -1,18 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Test\Unit\Web\TestHelper;
+namespace Labrador\Test\Unit\TestHelper;
 
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
-use Amp\Http\Server\Session\Session;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionReadingControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionWritingControllerStub;
+use Labrador\TestHelper\ControllerInvoker;
 use Labrador\Web\Controller\MiddlewareController;
 use Labrador\Web\HttpMethod;
-use Labrador\Web\TestHelper\ControllerInvoker;
 use League\Uri\Http;
 use Mockery;
 use Mockery\MockInterface;

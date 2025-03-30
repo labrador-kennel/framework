@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Labrador\Web\TestHelper;
+namespace Labrador\TestHelper;
 
 use Amp\Http\Server\Session\SessionIdGenerator;
 
