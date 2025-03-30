@@ -18,6 +18,8 @@ interface HttpServerSettings {
      */
     public function encryptedInternetAddresses() : array;
 
+    // TODO combine TLS information into a value object
+
     public function tlsCertificateFile() : ?string;
 
     public function tlsKeyFile() : ?string;

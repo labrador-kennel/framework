@@ -62,7 +62,6 @@ final class MyLoggerFactory implements LoggerFactory {
 
 This is a minimal setup that could be applicable if your app is running in a Docker container. It will stream log output to `stdout` using Amp-provided mechanisms. It is important to use a Monolog handler provided by Amp, to avoid blocking I/O operations.
 
-
 Again, this is a highly important step that you MUST complete. If you get an error from your dependency injection container stating that a `LoggerFactory` cannot be instantiated, completing this step is your resolution.
 
 > TODO: Determine and document precise steps would need to result in a running app

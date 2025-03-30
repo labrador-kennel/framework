@@ -11,7 +11,7 @@ use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 
 #[Service]
-class LockAndAutoCommitSessionMiddleware implements Middleware {
+final class LockAndAutoCommitSessionMiddleware implements Middleware {
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
         if (!$request->hasAttribute(Session::class)) {

@@ -12,8 +12,6 @@ use Amp\Socket\Certificate;
 use Amp\Socket\ServerTlsContext;
 use Amp\Sync\LocalSemaphore;
 use Cspray\AnnotatedContainer\Attribute\ServiceDelegate;
-use Labrador\Logging\LoggerFactory;
-use Labrador\Logging\LoggerType;
 use Psr\Log\LoggerInterface;
 
 final class HttpServerFactory {
@@ -49,8 +47,11 @@ final class HttpServerFactory {
 
         $encryptedAddresses = $serverSettings->encryptedInternetAddresses();
         if (count($encryptedAddresses) > 0 && $tlsContext === null) {
+            // TODO throw a more specific exception that https is enabled but no tls context is available
             throw new \RuntimeException();
         }
+
+        // TODO throw an exception if there are encrypted internet addresses specified but no tls file
 
         foreach ($encryptedAddresses as $encryptedAddress) {
             $socketServer->expose($encryptedAddress, $tlsContext);

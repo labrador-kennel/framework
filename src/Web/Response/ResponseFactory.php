@@ -8,6 +8,8 @@ use Amp\Http\Server\ErrorHandler;
 use Amp\Http\Server\Response;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Template\RenderedTemplate;
+use Labrador\Web\Response\Exception\AmbiguousRedirectLocation;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @psalm-import-type HeaderParamArrayType from HttpMessage
@@ -38,6 +40,26 @@ final class ResponseFactory {
             status: $status,
             headers: $headers,
             body: $body
+        );
+    }
+
+    /**
+     * @param HeaderParamArrayType $headers
+     * @throws AmbiguousRedirectLocation
+     */
+    public function seeOther(
+        UriInterface $location,
+        array $headers = [],
+    ) : Response {
+        foreach (array_keys($headers) as $key) {
+            if (strtolower($key) === 'location') {
+                throw AmbiguousRedirectLocation::fromSeeOtherResponseHasAmbiguousHeaders();
+            }
+        }
+
+        return new Response(
+            status: HttpStatus::SEE_OTHER,
+            headers: ['Location' => (string) $location, ...$headers],
         );
     }
 
