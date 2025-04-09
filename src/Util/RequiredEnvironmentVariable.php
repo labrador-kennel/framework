@@ -6,7 +6,8 @@ use Labrador\Util\Exception\MissingRequiredEnvironmentVariable;
 
 final class RequiredEnvironmentVariable {
 
-    private function __construct() {}
+    private function __construct() {
+    }
 
     public static function get(string $var): string {
         $value = getenv($var);
@@ -16,5 +17,4 @@ final class RequiredEnvironmentVariable {
 
         return $value;
     }
-
 }

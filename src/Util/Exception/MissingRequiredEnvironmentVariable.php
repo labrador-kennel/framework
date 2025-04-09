@@ -11,5 +11,4 @@ final class MissingRequiredEnvironmentVariable extends Exception {
             $variable
         ));
     }
-
 }

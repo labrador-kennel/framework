@@ -25,5 +25,4 @@ class RequiredEnvironmentVariableTest extends TestCase {
             RequiredEnvironmentVariable::get('ENV_VAR')
         );
     }
-
 }
