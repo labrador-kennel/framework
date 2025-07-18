@@ -10,11 +10,13 @@ use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
+use Labrador\Test\Unit\Web\Stub\SessionDestroyingController;
 use Labrador\Test\Unit\Web\Stub\SessionReadingControllerStub;
 use Labrador\Test\Unit\Web\Stub\SessionWritingControllerStub;
 use Labrador\TestHelper\KnownSessionIdGenerator;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 use Labrador\Web\Session\LockAndAutoCommitSessionMiddleware;
+use Labrador\Web\Session\SessionHelper;
 use League\Uri\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -26,7 +28,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
     private Client&MockObject $client;
 
     protected function setUp() : void {
-        $this->subject = new LockAndAutoCommitSessionMiddleware();
+        $this->subject = new LockAndAutoCommitSessionMiddleware(new SessionHelper());
         $this->client = $this->createMock(Client::class);
     }
 
@@ -57,7 +59,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
 
         $writeRequest = new Request($this->client, 'GET', Http::new('http://example.com'));
         $writeRequest->setCookie(
-            new RequestCookie('session', 'known-session-id')
+            new RequestCookie('session', 'known-session-id-0')
         );
         stackMiddleware(
             new SessionWritingControllerStub(),
@@ -67,7 +69,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
 
         $readRequest = new Request($this->client, 'GET', Http::new('http://example.com'));
         $readRequest->setCookie(
-            new RequestCookie('session', 'known-session-id')
+            new RequestCookie('session', 'known-session-id-0')
         );
         $response = stackMiddleware(
             new SessionReadingControllerStub('known-key'),
@@ -76,6 +78,38 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
         )->handleRequest($readRequest);
 
         self::assertSame('known-value', $response->getBody()->read());
-        self::assertSame(['known-key' => 'known-value'], $storage->read('known-session-id'));
+        self::assertSame(['known-key' => 'known-value'], $storage->read('known-session-id-0'));
+    }
+
+    public function testRequestHandlerImplicitlyUnlocksSessionDoesNotResultInCommitting() : void {
+        $storage = new LocalSessionStorage();
+        $idGenerator = new KnownSessionIdGenerator();
+
+        $sessionMiddleware = new SessionMiddleware(
+            new SessionFactory(storage: $storage, idGenerator: $idGenerator)
+        );
+
+        $writeRequest = new Request($this->client, 'GET', Http::new('http://example.com'));
+        $writeRequest->setCookie(
+            new RequestCookie('session', 'known-session-id-0')
+        );
+        stackMiddleware(
+            new SessionWritingControllerStub(),
+            $sessionMiddleware,
+            $this->subject
+        )->handleRequest($writeRequest);
+
+        $readRequest = new Request($this->client, 'GET', Http::new('http://example.com'));
+        $readRequest->setCookie(
+            new RequestCookie('session', 'known-session-id-0')
+        );
+        $response = stackMiddleware(
+            new SessionDestroyingController(),
+            $sessionMiddleware,
+            $this->subject
+        )->handleRequest($readRequest);
+
+        self::assertSame('Session destroyed', $response->getBody()->read());
+        self::assertSame([], $storage->read('known-session-id-0'));
     }
 }

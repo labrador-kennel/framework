@@ -11,15 +11,18 @@ use Labrador\TestHelper\KnownSessionIdGenerator;
 use Labrador\Web\Session\CsrfTokenHelper;
 use Labrador\Web\Session\Exception\SessionHasNoCsrfToken;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
+use Labrador\Web\Session\SessionHelper;
 use League\Uri\Http;
 use PHPUnit\Framework\TestCase;
 
 final class CsrfTokenHelperTest extends TestCase {
 
     private Client $client;
+    private SessionHelper $sessionHelper;
 
     protected function setUp() : void {
         $this->client = $this->createMock(Client::class);
+        $this->sessionHelper = new SessionHelper();
     }
 
     public function testGetTokenFromRequestWithNoSessionThrowsException() : void {
@@ -29,7 +32,9 @@ final class CsrfTokenHelperTest extends TestCase {
             . 'middleware that will attach Session to Request runs first.'
         );
 
-        (new CsrfTokenHelper())->token(new Request($this->client, 'GET', Http::new('http://example.com')));
+        (new CsrfTokenHelper($this->sessionHelper))->token(
+            new Request($this->client, 'GET', Http::new('http://example.com'))
+        );
     }
 
     public function testGetTokenFromRequestWhenAttachedSessionDoesNotHaveCsrfToken() : void {
@@ -46,23 +51,25 @@ final class CsrfTokenHelperTest extends TestCase {
             null
         ));
 
-        (new CsrfTokenHelper())->token($request);
+        (new CsrfTokenHelper($this->sessionHelper))->token($request);
     }
 
     public function testGetTokenFromRequestWhenAttachedSessionDoesHaveCsrfToken() : void {
+        $generator = new KnownSessionIdGenerator();
+        $sessionId = $generator->generate();
         $storage = new LocalSessionStorage();
-        $storage->write('known-session-id', ['labrador.csrfToken' => 'my-stored-token']);
+        $storage->write($sessionId, ['labrador.csrfToken' => 'my-stored-token']);
         $request = new Request($this->client, 'GET', Http::new('http://example.com'));
         $request->setAttribute(Session::class, $session = new Session(
             new LocalKeyedMutex(),
             $storage,
-            new KnownSessionIdGenerator(),
-            'known-session-id'
+            $generator,
+            $sessionId
         ));
 
         $session->lock();
 
-        $actual = (new CsrfTokenHelper())->token($request);
+        $actual = (new CsrfTokenHelper($this->sessionHelper))->token($request);
 
         $session->unlock();
 
@@ -70,34 +77,40 @@ final class CsrfTokenHelperTest extends TestCase {
     }
 
     public function testStoredTokenMatchesCheckedTokenReturnsIsValid() : void {
+        $generator = new KnownSessionIdGenerator();
+        $sessionId = $generator->generate();
         $storage = new LocalSessionStorage();
-        $storage->write('known-session-id', ['labrador.csrfToken' => 'my-stored-token']);
+        $storage->write($sessionId, ['labrador.csrfToken' => 'my-stored-token']);
         $request = new Request($this->client, 'GET', Http::new('http://example.com'));
         $request->setAttribute(Session::class, $session = new Session(
             new LocalKeyedMutex(),
             $storage,
-            new KnownSessionIdGenerator(),
-            'known-session-id'
+            $generator,
+            $sessionId
         ));
 
         $session->lock();
 
-        self::assertTrue((new CsrfTokenHelper())->isTokenValid($request, 'my-stored-token'));
+        self::assertTrue((new CsrfTokenHelper($this->sessionHelper))->isTokenValid($request, 'my-stored-token'));
     }
 
     public function testStoredTokenDoesNotMatchCheckedTokenReturnsIsNotValid() : void {
+        $generator = new KnownSessionIdGenerator();
+        $sessionId = $generator->generate();
         $storage = new LocalSessionStorage();
-        $storage->write('known-session-id', ['labrador.csrfToken' => 'my-stored-token']);
+        $storage->write($sessionId, ['labrador.csrfToken' => 'my-stored-token']);
         $request = new Request($this->client, 'GET', Http::new('http://example.com'));
         $request->setAttribute(Session::class, $session = new Session(
             new LocalKeyedMutex(),
             $storage,
-            new KnownSessionIdGenerator(),
-            'known-session-id'
+            $generator,
+            $sessionId
         ));
 
         $session->lock();
 
-        self::assertFalse((new CsrfTokenHelper())->isTokenValid($request, 'my-stored-token-wrong'));
+        self::assertFalse(
+            (new CsrfTokenHelper($this->sessionHelper))->isTokenValid($request, 'my-stored-token-wrong')
+        );
     }
 }

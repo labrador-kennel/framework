@@ -6,19 +6,16 @@ use Amp\Http\Server\Session\SessionIdGenerator;
 
 final class KnownSessionIdGenerator implements SessionIdGenerator {
 
-    /**
-     * @param non-empty-string $sessionId
-     */
-    public function __construct(
-        private readonly string $sessionId = 'known-session-id'
-    ) {
-    }
+    public const ID_PREFIX = 'known-session-id';
+
+    private int $counter = 0;
 
     public function generate() : string {
-        return $this->sessionId;
+        return self::ID_PREFIX . '-' . $this->counter++;
     }
 
     public function validate(string $id) : bool {
-        return $this->sessionId === $id;
+        $counter = $this->counter > 0 ? $this->counter - 1 : 0;
+        return self::ID_PREFIX . '-' . ($counter) === $id;
     }
 }

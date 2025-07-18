@@ -16,21 +16,17 @@ final class CsrfAwareSessionMiddleware implements Middleware {
 
     public function __construct(
         private readonly TokenGenerator $tokenGenerator,
+        private readonly SessionHelper $sessionHelper,
     ) {
     }
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
-        if (!$request->hasAttribute(Session::class)) {
-            throw SessionNotAttachedToRequest::fromSessionNotAttachedToRequest();
+        $this->sessionHelper->lock($request);
+        $csrfTokenAttribute = new CsrfTokenAttribute();
+        if (!$this->sessionHelper->has($request, $csrfTokenAttribute)) {
+            $this->sessionHelper->set($request, $csrfTokenAttribute, $this->tokenGenerator->generateToken());
         }
-
-        $session = $request->getAttribute(Session::class);
-        assert($session instanceof Session);
-        $session->lock();
-        if (!$session->has('labrador.csrfToken')) {
-            $session->set('labrador.csrfToken', $this->tokenGenerator->generateToken());
-        }
-        $session->commit();
+        $this->sessionHelper->commit($request);
 
         return $requestHandler->handleRequest($request);
     }
