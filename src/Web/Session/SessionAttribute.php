@@ -8,5 +8,4 @@ interface SessionAttribute {
      * @return non-empty-string
      */
     public function key() : string;
-
 }

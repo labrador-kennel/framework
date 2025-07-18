@@ -76,5 +76,4 @@ final readonly class SessionHelper {
 
         return $session;
     }
-
 }

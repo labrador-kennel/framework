@@ -135,7 +135,8 @@ final class SessionHelperTest extends TestCase {
         ]);
 
         self::assertSame(
-            'my-user-id', $this->subject->get($this->request, $this->sessionAttribute)
+            'my-user-id',
+            $this->subject->get($this->request, $this->sessionAttribute)
         );
     }
 
@@ -300,5 +301,4 @@ final class SessionHelperTest extends TestCase {
 
         self::assertSame([], $this->subject->getAll($this->request));
     }
-
 }

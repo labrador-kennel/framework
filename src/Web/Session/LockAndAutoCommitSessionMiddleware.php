@@ -13,7 +13,8 @@ final class LockAndAutoCommitSessionMiddleware implements Middleware {
 
     public function __construct(
         private readonly SessionHelper $sessionHelper
-    ) {}
+    ) {
+    }
 
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
         $this->sessionHelper->lock($request);

@@ -13,7 +13,8 @@ final readonly class CsrfTokenHelper {
 
     public function __construct(
         private SessionHelper $sessionHelper
-    ) {}
+    ) {
+    }
 
     public function token(Request $request) : string {
         if (!$request->hasAttribute(Session::class)) {
