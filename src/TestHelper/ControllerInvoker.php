@@ -15,10 +15,10 @@ use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\MiddlewareController;
 use Labrador\Web\Session\CsrfAwareSessionMiddleware;
 use Labrador\Web\Session\LockAndAutoCommitSessionMiddleware;
+use Labrador\Web\Session\SessionHelper;
 
 class ControllerInvoker {
 
-    public const TEST_SESSION_ID = 'known-session-id-controller-invoker';
     public const TEST_TOKEN = 'known-token';
 
     /**
@@ -44,7 +44,7 @@ class ControllerInvoker {
         Middleware ...$middleware
     ) : self {
         $sessionStorage = new LocalSessionStorage();
-        $knownSessionIdGenerator = new KnownSessionIdGenerator(self::TEST_SESSION_ID);
+        $knownSessionIdGenerator = new KnownSessionIdGenerator();
         $knownTokenGenerator = new class(self::TEST_TOKEN) implements TokenGenerator {
             public function __construct(
                 private readonly string $token,
@@ -55,7 +55,8 @@ class ControllerInvoker {
                 return $this->token;
             }
         };
-        $sessionStorage->write(self::TEST_SESSION_ID, $initialSessionData);
+        $sessionStorage->write(KnownSessionIdGenerator::ID_PREFIX . '-0', $initialSessionData);
+        $sessionHelper = new SessionHelper();
 
         return new self(
             $sessionStorage,
@@ -65,8 +66,8 @@ class ControllerInvoker {
                     idGenerator: $knownSessionIdGenerator
                 )
             ),
-            new CsrfAwareSessionMiddleware($knownTokenGenerator),
-            new LockAndAutoCommitSessionMiddleware(),
+            new CsrfAwareSessionMiddleware($knownTokenGenerator, $sessionHelper),
+            new LockAndAutoCommitSessionMiddleware($sessionHelper),
             ...$middleware
         );
     }
@@ -82,14 +83,14 @@ class ControllerInvoker {
             ...$middleware
         );
         $request->setCookie(
-            new RequestCookie('session', self::TEST_SESSION_ID)
+            new RequestCookie('session', KnownSessionIdGenerator::ID_PREFIX . '-0')
         );
         return new class(
             $invokedController,
             $request,
             $invokedController->handleRequest($request),
             $this->sessionStorage,
-            self::TEST_SESSION_ID
+            KnownSessionIdGenerator::ID_PREFIX . '-0'
         ) implements InvokedControllerResponse {
 
             public function __construct(

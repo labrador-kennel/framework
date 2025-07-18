@@ -4,10 +4,16 @@ namespace Labrador\Web\Session;
 
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Session\Session;
+use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Session\Exception\SessionHasNoCsrfToken;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 
-final class CsrfTokenHelper {
+#[Service]
+final readonly class CsrfTokenHelper {
+
+    public function __construct(
+        private SessionHelper $sessionHelper
+    ) {}
 
     public function token(Request $request) : string {
         if (!$request->hasAttribute(Session::class)) {

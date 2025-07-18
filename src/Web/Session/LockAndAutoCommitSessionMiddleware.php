@@ -6,26 +6,23 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Server\Session\Session;
 use Cspray\AnnotatedContainer\Attribute\Service;
-use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 
 #[Service]
 final class LockAndAutoCommitSessionMiddleware implements Middleware {
 
+    public function __construct(
+        private readonly SessionHelper $sessionHelper
+    ) {}
+
     public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
-        if (!$request->hasAttribute(Session::class)) {
-            throw SessionNotAttachedToRequest::fromSessionNotAttachedToRequest();
-        }
-
-        $session = $request->getAttribute(Session::class);
-        assert($session instanceof Session);
-
-        $session->lock();
+        $this->sessionHelper->lock($request);
 
         $response = $requestHandler->handleRequest($request);
 
-        $session->commit();
+        if ($this->sessionHelper->isLocked($request)) {
+            $this->sessionHelper->commit($request);
+        }
 
         return $response;
     }
