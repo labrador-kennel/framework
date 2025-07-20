@@ -24,5 +24,4 @@ final class KnownSessionIdGenerator implements SessionIdGenerator {
         $counter = $this->counter > 0 ? $this->counter - 1 : 0;
         return self::ID_PREFIX . '-' . $counter;
     }
-
 }
