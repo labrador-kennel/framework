@@ -20,7 +20,6 @@ use Labrador\Web\Session\SessionHelper;
 use League\Uri\Http;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use SebastianBergmann\CodeCoverage\Test\TestStatus\Known;
 
 final class CsrfAwareSessionMiddlewareTest extends TestCase {
 
@@ -92,7 +91,7 @@ final class CsrfAwareSessionMiddlewareTest extends TestCase {
             new SessionMiddleware(
                 new SessionFactory(
                     storage: $storage,
-                    idGenerator: new KnownSessionIdGenerator()
+                    idGenerator: $sessionIdGenerator = new KnownSessionIdGenerator()
                 )
             ),
             $subject
@@ -103,15 +102,15 @@ final class CsrfAwareSessionMiddlewareTest extends TestCase {
             ->willReturn('token');
 
         $request = new Request($this->client, 'GET', Http::new('http://example.com'));
-        $request->setCookie(new RequestCookie('session', KnownSessionIdGenerator::ID_PREFIX . '-0'));
-        $storage->write(KnownSessionIdGenerator::ID_PREFIX . '-0', ['labrador.csrfToken' => 'existing token']);
+        $request->setCookie(new RequestCookie('session', $sessionIdGenerator->currentId()));
+        $storage->write($sessionIdGenerator->currentId(), ['labrador.csrfToken' => 'existing token']);
 
         $stack->handleRequest($request);
 
         $session = $request->getAttribute(Session::class);
         self::assertInstanceOf(Session::class, $session);
         self::assertFalse($session->isLocked());
-        self::assertSame(KnownSessionIdGenerator::ID_PREFIX . '-0', $session->getId());
+        self::assertSame($sessionIdGenerator->currentId(), $session->getId());
         self::assertSame(
             ['labrador.csrfToken' => 'existing token'],
             $storage->read($session->getId())

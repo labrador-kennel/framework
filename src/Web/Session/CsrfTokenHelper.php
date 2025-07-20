@@ -3,10 +3,8 @@
 namespace Labrador\Web\Session;
 
 use Amp\Http\Server\Request;
-use Amp\Http\Server\Session\Session;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Web\Session\Exception\SessionHasNoCsrfToken;
-use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 
 #[Service]
 final readonly class CsrfTokenHelper {
@@ -17,18 +15,13 @@ final readonly class CsrfTokenHelper {
     }
 
     public function token(Request $request) : string {
-        if (!$request->hasAttribute(Session::class)) {
-            throw SessionNotAttachedToRequest::fromSessionNotAttachedToRequest();
-        }
+        $csrfTokenAttribute = new CsrfTokenAttribute();
 
-        $session = $request->getAttribute(Session::class);
-        assert($session instanceof Session);
-
-        if (!$session->has('labrador.csrfToken')) {
+        if (!$this->sessionHelper->has($request, $csrfTokenAttribute)) {
             throw SessionHasNoCsrfToken::fromSessionDoesNotHaveCsrfToken();
         }
 
-        return (string) $session->get('labrador.csrfToken');
+        return (string) $this->sessionHelper->get($request, $csrfTokenAttribute);
     }
 
     public function isTokenValid(Request $request, string $token) : bool {

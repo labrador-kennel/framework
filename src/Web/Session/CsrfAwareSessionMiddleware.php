@@ -6,10 +6,8 @@ use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Amp\Http\Server\Session\Session;
 use Cspray\AnnotatedContainer\Attribute\Service;
 use Labrador\Security\TokenGenerator;
-use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 
 #[Service]
 final class CsrfAwareSessionMiddleware implements Middleware {

@@ -5,7 +5,6 @@ namespace Labrador\Test\Unit\Web\Stub;
 use Amp\Http\Server\Request;
 use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\Session;
-use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\SelfDescribingController;
 use PHPUnit\Framework\Assert;
 

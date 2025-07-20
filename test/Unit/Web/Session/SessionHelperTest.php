@@ -27,6 +27,7 @@ final class SessionHelperTest extends TestCase {
     private SessionStorage $storage;
     private Request $request;
     private SessionAttribute&MockObject $sessionAttribute;
+    private KnownSessionIdGenerator $knownSessionIdGenerator;
 
     protected function setUp() : void {
         $this->subject = new SessionHelper();
@@ -36,10 +37,11 @@ final class SessionHelperTest extends TestCase {
             Http::new('http://example.com')
         );
         $this->storage = new LocalSessionStorage();
+        $this->knownSessionIdGenerator = new KnownSessionIdGenerator();
         $this->session = (new SessionFactory(
             storage: $this->storage,
-            idGenerator: $generator = new KnownSessionIdGenerator()
-        ))->create($generator->generate());
+            idGenerator: $this->knownSessionIdGenerator
+        ))->create($this->knownSessionIdGenerator->generate());
         $this->sessionAttribute = $this->createMock(SessionAttribute::class);
         $this->sessionAttribute->expects($this->any())->method('key')->willReturn('session-attr-key');
     }
@@ -130,7 +132,7 @@ final class SessionHelperTest extends TestCase {
 
     public function testGetWithSessionSetOnRequestAndKeyIsPresentReturnsValue() : void {
         $this->request->setAttribute(Session::class, $this->session);
-        $this->storage->write('known-session-id-0', [
+        $this->storage->write($this->knownSessionIdGenerator->currentId(), [
             'session-attr-key' => 'my-user-id'
         ]);
 
@@ -146,13 +148,13 @@ final class SessionHelperTest extends TestCase {
         $this->subject->set($this->request, $this->sessionAttribute, 'my-new-user-id');
         $this->session->commit();
 
-        $actual = $this->storage->read('known-session-id-0')['session-attr-key'] ?? null;
+        $actual = $this->storage->read($this->knownSessionIdGenerator->currentId())['session-attr-key'] ?? null;
 
         self::assertSame('my-new-user-id', $actual);
     }
 
     public function testUnsetWithSessionSetOnRequestRemovesValueFromStorage() : void {
-        $this->storage->write('known-session-id-0', [
+        $this->storage->write($this->knownSessionIdGenerator->currentId(), [
             'session-attr-key' => 'my-user-id'
         ]);
         $this->request->setAttribute(Session::class, $this->session);
@@ -167,7 +169,7 @@ final class SessionHelperTest extends TestCase {
     }
 
     public function testDestroyingSessionRemovesStorageData() : void {
-        $this->storage->write('known-session-id-0', [
+        $this->storage->write($this->knownSessionIdGenerator->currentId(), [
             'session-attr-key' => 'my-user-id',
             'some-other-key' => 'some-other-data'
         ]);
@@ -184,7 +186,7 @@ final class SessionHelperTest extends TestCase {
     }
 
     public function testRegeneratingSessionCreatesNewIdWithDataPersisted() : void {
-        $this->storage->write('known-session-id-0', [
+        $this->storage->write($this->knownSessionIdGenerator->currentId(), [
             'session-attr-key' => 'my-user-id',
             'some-other-key' => 'some-other-data'
         ]);
@@ -196,7 +198,7 @@ final class SessionHelperTest extends TestCase {
         $this->subject->regenerate($this->request);
         $this->session->commit();
 
-        self::assertSame('known-session-id-1', $this->session->getId());
+        self::assertSame($this->knownSessionIdGenerator->currentId(), $this->session->getId());
         self::assertSame([
             'session-attr-key' => 'my-user-id',
             'some-other-key' => 'some-other-data'
@@ -206,7 +208,7 @@ final class SessionHelperTest extends TestCase {
         self::assertSame([
             'session-attr-key' => 'my-user-id',
             'some-other-key' => 'some-other-data'
-        ], $this->storage->read('known-session-id-1'));
+        ], $this->storage->read($this->knownSessionIdGenerator->currentId()));
     }
 
     public function testIdReturnsTheSessionId() : void {
