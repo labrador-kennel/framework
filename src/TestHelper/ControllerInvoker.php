@@ -26,8 +26,10 @@ class ControllerInvoker {
      */
     private readonly array $applicationMiddleware;
 
+
     private function __construct(
         private readonly SessionStorage $sessionStorage,
+        private readonly KnownSessionIdGenerator $sessionIdGenerator,
         Middleware ...$applicationMiddleware
     ) {
         $this->applicationMiddleware = $applicationMiddleware;
@@ -55,11 +57,12 @@ class ControllerInvoker {
                 return $this->token;
             }
         };
-        $sessionStorage->write(KnownSessionIdGenerator::ID_PREFIX . '-0', $initialSessionData);
+        $sessionStorage->write($knownSessionIdGenerator->currentId(), $initialSessionData);
         $sessionHelper = new SessionHelper();
 
         return new self(
             $sessionStorage,
+            $knownSessionIdGenerator,
             new SessionMiddleware(
                 new SessionFactory(
                     storage: $sessionStorage,
@@ -83,14 +86,14 @@ class ControllerInvoker {
             ...$middleware
         );
         $request->setCookie(
-            new RequestCookie('session', KnownSessionIdGenerator::ID_PREFIX . '-0')
+            new RequestCookie('session', $this->sessionIdGenerator->currentId())
         );
         return new class(
             $invokedController,
             $request,
             $invokedController->handleRequest($request),
             $this->sessionStorage,
-            KnownSessionIdGenerator::ID_PREFIX . '-0'
+            $this->sessionIdGenerator->currentId()
         ) implements InvokedControllerResponse {
 
             public function __construct(

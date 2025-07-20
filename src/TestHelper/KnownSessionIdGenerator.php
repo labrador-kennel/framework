@@ -6,7 +6,7 @@ use Amp\Http\Server\Session\SessionIdGenerator;
 
 final class KnownSessionIdGenerator implements SessionIdGenerator {
 
-    public const ID_PREFIX = 'known-session-id';
+    private const ID_PREFIX = 'known-session-id';
 
     private int $counter = 0;
 
@@ -15,7 +15,14 @@ final class KnownSessionIdGenerator implements SessionIdGenerator {
     }
 
     public function validate(string $id) : bool {
-        $counter = $this->counter > 0 ? $this->counter - 1 : 0;
-        return self::ID_PREFIX . '-' . ($counter) === $id;
+        return str_starts_with($id, self::ID_PREFIX);
     }
+
+    public function currentId() : string {
+        // the current id is always whatever the counter is before it has been incremented
+        // if we have already started incrementing, then we need to take off 1 to account for this
+        $counter = $this->counter > 0 ? $this->counter - 1 : 0;
+        return self::ID_PREFIX . '-' . $counter;
+    }
+
 }
