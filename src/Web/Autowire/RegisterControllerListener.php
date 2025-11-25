@@ -7,6 +7,7 @@ use Cspray\AnnotatedContainer\AnnotatedContainer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceFromServiceDefinition;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceGatherer;
 use Cspray\AnnotatedContainer\Bootstrap\ServiceWiringListener;
+use Cspray\AnnotatedContainer\Profiles;
 use Labrador\Web\Controller\Controller;
 use Labrador\Web\Controller\RouteMappingAttribute;
 use Labrador\Web\Router\Route;
@@ -15,11 +16,25 @@ use Psr\Log\LoggerInterface;
 
 final class RegisterControllerListener extends ServiceWiringListener {
 
+    /**
+     * @param list<non-empty-string> $profilesToRouteControllers
+     */
+    public function __construct(
+        private readonly array $profilesToRouteControllers = ['web']
+    ) {
+    }
+
     public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
         /** @var LoggerInterface $logger */
         $logger = $container->get(LoggerInterface::class);
         /** @var Router $router */
         $router = $container->get(Router::class);
+        /** @var Profiles $profiles */
+        $profiles = $container->get(Profiles::class);
+
+        if (!$profiles->isAnyActive($this->profilesToRouteControllers)) {
+            return;
+        }
 
         foreach ($gatherer->servicesForType(Controller::class) as $controller) {
             $this->handlePotentialHttpController($container, $controller, $logger, $router);

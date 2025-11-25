@@ -151,7 +151,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testCorrectlyConfiguredAnnotatedContainerRouterRoutes() : void {
-        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test', 'web']);
 
         $container = $bootstrap->bootstrapApplication();
 
@@ -162,7 +162,7 @@ class BootstrapTest extends TestCase {
     }
 
     public function testApplicationAutowiringControllersLogged() : void {
-        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
+        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test', 'web']);
 
         $bootstrap->bootstrapApplication();
 
