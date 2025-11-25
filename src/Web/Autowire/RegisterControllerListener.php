@@ -16,9 +16,13 @@ use Psr\Log\LoggerInterface;
 
 final class RegisterControllerListener extends ServiceWiringListener {
 
+    /**
+     * @param list<non-empty-string> $profilesToRouteControllers
+     */
     public function __construct(
         private readonly array $profilesToRouteControllers = ['web']
-    ) {}
+    ) {
+    }
 
     public function wireServices(AnnotatedContainer $container, ServiceGatherer $gatherer) : void {
         /** @var LoggerInterface $logger */
