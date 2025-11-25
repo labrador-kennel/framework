@@ -44,7 +44,7 @@ class HttpServerTest extends TestCase {
         self::$vfs = VirtualFilesystem::setup();
         self::writeStandardConfigurationFile();
 
-        self::$container = self::getContainer(['default', 'integration-test'], new VfsDirectoryResolver());
+        self::$container = self::getContainer(['default', 'integration-test', 'web'], new VfsDirectoryResolver());
         self::$app = self::$container->get(Application::class);
 
         self::$app->start();
