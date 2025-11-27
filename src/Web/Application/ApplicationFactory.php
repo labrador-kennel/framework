@@ -16,13 +16,13 @@ final class ApplicationFactory {
 
     #[ServiceDelegate]
     public static function createApp(
-        HttpServer            $httpServer,
-        ErrorHandler   $errorHandler,
-        Router                $router,
-        Emitter               $emitter,
+        HttpServer $httpServer,
+        ErrorHandler $errorHandler,
+        Router $router,
+        Emitter $emitter,
         LoggerInterface $logger,
         RequestAnalyticsQueue $analyticsQueue,
-        PreciseTime           $preciseTime,
+        PreciseTime $preciseTime,
     ) : Application {
         return new AmpApplication(
             $httpServer,

@@ -3,6 +3,6 @@
 namespace Labrador\Web;
 
 enum RequestAttribute : string {
-    case Controller = 'labrador.http.controller';
+    case RequestHandler = 'labrador.http.requestHandler';
     case RequestId = 'labrador.http.requestId';
 }

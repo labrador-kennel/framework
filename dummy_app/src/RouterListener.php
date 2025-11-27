@@ -4,45 +4,47 @@ namespace Labrador\DummyApp;
 
 use Amp\Future;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
+use Cspray\AnnotatedContainer\Autowire\AutowireableFactory;
 use Labrador\AsyncEvent\Autowire\AutowiredListener;
 use Labrador\AsyncEvent\Event;
 use Labrador\AsyncEvent\Listener;
 use Labrador\CompositeFuture\CompositeFuture;
-use Labrador\DummyApp\Middleware\BarMiddleware;
-use Labrador\DummyApp\Middleware\BazMiddleware;
-use Labrador\DummyApp\Middleware\FooMiddleware;
-use Labrador\DummyApp\Middleware\QuxMiddleware;
+use Labrador\DummyApp\RequestHandler\HelloMiddlewareRequestHandler;
+use Labrador\DummyApp\RequestHandler\HelloWorldRequestHandler;
+use Labrador\DummyApp\Middleware\RequestHandlerSpecificMiddleware;
 use Labrador\Web\Application\ApplicationEvent;
-use Labrador\Web\Application\Event\AddRoutes;
-use Labrador\Web\Application\Event\RouterAndGlobalMiddlewareCollection;
-use Labrador\Web\Controller\Controller;
-use Labrador\Web\Router\Mapping\GetMapping;
+use Labrador\Web\Router\FriendlyRouter;
+use Labrador\Web\Router\Router;
 
 #[AutowiredListener(ApplicationEvent::AddRoutes->value)]
 class RouterListener implements Listener {
 
     public function __construct(
-        private readonly MiddlewareCallRegistry $middlewareCallRegistry
+        private readonly AutowireableFactory $factory
     ) {}
 
     /**
-     * @param Event<RouterAndGlobalMiddlewareCollection> $event
+     * @param Event<Router> $event
      * @return Future|CompositeFuture|null
      */
     public function handle(Event $event) : Future|CompositeFuture|null {
-        $event->payload()->globalMiddleware()->add(new QuxMiddleware($this->middlewareCallRegistry));
-        $event->payload()->globalMiddleware()->add(new FooMiddleware($this->middlewareCallRegistry));
-        $event->payload()->globalMiddleware()->add(new BazMiddleware($this->middlewareCallRegistry));
-        $event->payload()->globalMiddleware()->add(new BarMiddleware($this->middlewareCallRegistry));
-        $event->payload()->router()->addRoute(
-            new GetMapping('/exception'),
-            new class implements Controller {
+        $friendlyRouter = new FriendlyRouter($event->payload());
 
-                public function toString() : string {
-                    return 'ErrorThrowingController';
-                }
+        $friendlyRouter->get(
+            '/hello/world',
+            $this->factory->make(HelloWorldRequestHandler::class)
+        );
+        $friendlyRouter->get(
+            '/hello/middleware',
+            $this->factory->make(HelloMiddlewareRequestHandler::class),
+            $this->factory->make(RequestHandlerSpecificMiddleware::class)
+        );
 
+        $friendlyRouter->get(
+            '/exception',
+            new class implements RequestHandler {
                 public function handleRequest(Request $request) : Response {
                     throw new \RuntimeException('A message detailing what went wrong that should show up in logs.');
                 }

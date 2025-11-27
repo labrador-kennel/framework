@@ -9,10 +9,10 @@ use Amp\Http\Server\Response;
 use Amp\Http\Server\Session\LocalSessionStorage;
 use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
-use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
-use Labrador\Test\Unit\Web\Stub\SessionDestroyingController;
-use Labrador\Test\Unit\Web\Stub\SessionReadingControllerStub;
-use Labrador\Test\Unit\Web\Stub\SessionWritingControllerStub;
+use Labrador\Test\Unit\Web\Stub\ResponseRequestHandlerStub;
+use Labrador\Test\Unit\Web\Stub\SessionDestroyingRequestHandler;
+use Labrador\Test\Unit\Web\Stub\SessionReadingRequestHandler;
+use Labrador\Test\Unit\Web\Stub\SessionWritingRequestHandler;
 use Labrador\TestHelper\KnownSessionIdGenerator;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
 use Labrador\Web\Session\LockAndAutoCommitSessionMiddleware;
@@ -34,7 +34,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
 
     public function testSessionNotSetOnRequestThrowsException() : void {
         $stack = stackMiddleware(
-            new ResponseControllerStub(new Response()),
+            new ResponseRequestHandlerStub(new Response()),
             $this->subject
         );
 
@@ -62,7 +62,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
             new RequestCookie('session', 'known-session-id-0')
         );
         stackMiddleware(
-            new SessionWritingControllerStub(),
+            new SessionWritingRequestHandler(),
             $sessionMiddleware,
             $this->subject
         )->handleRequest($writeRequest);
@@ -72,7 +72,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
             new RequestCookie('session', 'known-session-id-0')
         );
         $response = stackMiddleware(
-            new SessionReadingControllerStub('known-key'),
+            new SessionReadingRequestHandler('known-key'),
             $sessionMiddleware,
             $this->subject
         )->handleRequest($readRequest);
@@ -94,7 +94,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
             new RequestCookie('session', 'known-session-id-0')
         );
         stackMiddleware(
-            new SessionWritingControllerStub(),
+            new SessionWritingRequestHandler(),
             $sessionMiddleware,
             $this->subject
         )->handleRequest($writeRequest);
@@ -104,7 +104,7 @@ final class LockAndAutoCommitSessionMiddlewareTest extends TestCase {
             new RequestCookie('session', 'known-session-id-0')
         );
         $response = stackMiddleware(
-            new SessionDestroyingController(),
+            new SessionDestroyingRequestHandler(),
             $sessionMiddleware,
             $this->subject
         )->handleRequest($readRequest);

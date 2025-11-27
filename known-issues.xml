@@ -8,9 +8,4 @@
       <code><![CDATA[$this->routingStarted]]></code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Web/Controller/StaticAssetController.php">
-    <MixedOperand>
-      <code><![CDATA[$request->getAttribute('path')]]></code>
-    </MixedOperand>
-  </file>
 </files>

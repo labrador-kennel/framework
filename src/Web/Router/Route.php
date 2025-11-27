@@ -10,14 +10,21 @@ declare(strict_types=1);
 
 namespace Labrador\Web\Router;
 
-use Labrador\Web\Controller\Controller;
+use Amp\Http\Server\Middleware;
+use Amp\Http\Server\RequestHandler;
 use Labrador\Web\Router\Mapping\RequestMapping;
 
 final class Route {
 
+    /**
+     * @param RequestMapping $requestMapping
+     * @param RequestHandler $requestHandler
+     * @param list<Middleware> $middleware
+     */
     public function __construct(
         public readonly RequestMapping $requestMapping,
-        public readonly Controller                  $controller
+        public readonly RequestHandler $requestHandler,
+        public readonly array $middleware
     ) {
     }
 
@@ -26,7 +33,7 @@ final class Route {
             "%s\t%s\t\t%s",
             $this->requestMapping->getHttpMethod()->value,
             $this->requestMapping->getPath(),
-            $this->controller->toString()
+            $this->requestHandler::class
         );
     }
 }

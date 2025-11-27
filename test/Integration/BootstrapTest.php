@@ -21,7 +21,6 @@ use Labrador\Test\BootstrapAwareTestTrait;
 use Labrador\Test\Helper\VfsDirectoryResolver;
 use Labrador\Web\Application\Bootstrap;
 use Labrador\Web\Application\ErrorHandlerFactory;
-use Labrador\Web\Autowire\RegisterControllerListener;
 use Labrador\Web\Router\LoggingRouter;
 use Labrador\Web\Router\Router;
 use Monolog\Handler\TestHandler;
@@ -36,8 +35,6 @@ use Psr\Log\LoggerInterface;
  * being available in the container.
  */
 class BootstrapTest extends TestCase {
-
-    private const EXPECTED_CONTROLLER_COUNT = 3;
 
     use BootstrapAwareTestTrait;
 
@@ -63,7 +60,6 @@ class BootstrapTest extends TestCase {
         $this->stdout = StreamBuffer::intercept(STDOUT);
         $this->stderr = StreamBuffer::intercept(STDERR);
         $emitter = new AnnotatedContainerEmitter();
-        $emitter->addListener(new RegisterControllerListener());
         $this->containerBootstrap = AnnotatedContainerBootstrap::fromAnnotatedContainerConventions(
             new PhpDiContainerFactory($emitter),
             $emitter,
@@ -143,34 +139,10 @@ class BootstrapTest extends TestCase {
     public function testCorrectlyConfiguredAnnotatedContainerHttpServer() : void {
         $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test']);
 
-        $container = $bootstrap->bootstrapApplication();
+        $bootstrap->bootstrapApplication();
 
         $httpServer = $this->container->get(HttpServer::class);
 
         self::assertInstanceOf(SocketHttpServer::class, $httpServer);
-    }
-
-    public function testCorrectlyConfiguredAnnotatedContainerRouterRoutes() : void {
-        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test', 'web']);
-
-        $container = $bootstrap->bootstrapApplication();
-
-        /** @var Router $router */
-        $router = $this->container->get(Router::class);
-
-        self::assertCount(self::EXPECTED_CONTROLLER_COUNT, $router->getRoutes());
-    }
-
-    public function testApplicationAutowiringControllersLogged() : void {
-        $bootstrap = Bootstrap::fromProvidedContainerBootstrap($this->containerBootstrap, profiles: ['default', 'integration-test', 'web']);
-
-        $bootstrap->bootstrapApplication();
-
-        $handler = $this->container->get(DummyLoggerFactory::class)->testHandler;
-        self::assertInstanceOf(TestHandler::class, $handler);
-
-        self::assertTrue(
-            $handler->hasInfoThatContains('Autowiring route GET /hello/world to MiddlewareHandler<HelloWorld, Amp\Http\Server\Session\SessionMiddleware, Labrador\Web\Session\CsrfAwareSessionMiddleware, Labrador\Web\Session\LockAndAutoCommitSessionMiddleware> controller.')
-        );
     }
 }

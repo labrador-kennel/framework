@@ -4,7 +4,7 @@ namespace Labrador\Web\Router;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Labrador\Web\Controller\Controller;
+use Amp\Http\Server\RequestHandler;
 use Labrador\Web\Router\Mapping\RequestMapping;
 use Psr\Log\LoggerInterface;
 
@@ -16,8 +16,8 @@ final class LoggingRouter implements Router {
     ) {
     }
 
-    public function addRoute(RequestMapping $requestMapping, Controller $controller, Middleware ...$middlewares) : Route {
-        $message = 'Routing "{method} {path}" to {controller}';
+    public function addRoute(RequestMapping $requestMapping, RequestHandler $requestHandler, Middleware ...$middlewares) : Route {
+        $message = 'Routing "{method} {path}" to {request_handler}';
         $middlewareClasses = array_map(fn(Middleware $middleware) => $middleware::class, $middlewares);
         if (count($middlewares) > 0) {
             $middlewareDescription = implode(', ', $middlewareClasses);
@@ -29,11 +29,11 @@ final class LoggingRouter implements Router {
             [
                 'method' => $requestMapping->getHttpMethod()->value,
                 'path' => $requestMapping->getPath(),
-                'controller' => $controller->toString(),
+                'request_handler' => $requestHandler::class,
                 'middleware' => $middlewareClasses
             ]
         );
-        return $this->router->addRoute($requestMapping, $controller, ...$middlewares);
+        return $this->router->addRoute($requestMapping, $requestHandler, ...$middlewares);
     }
 
     public function match(Request $request) : RoutingResolution {
@@ -42,7 +42,7 @@ final class LoggingRouter implements Router {
         if ($resolution->reason === RoutingResolutionReason::NotFound || $resolution->reason === RoutingResolutionReason::MethodNotAllowed) {
             $message = $resolution->reason === RoutingResolutionReason::NotFound ? 'no route was found' : 'route does not allow requested method';
             $this->logger->notice(
-                'Failed routing "{method} {path}" to a controller because ' . $message .'.',
+                'Failed routing "{method} {path}" to a request handler because ' . $message .'.',
                 [
                     'method' => $request->getMethod(),
                     'path' => $request->getUri()->getPath()
@@ -50,11 +50,11 @@ final class LoggingRouter implements Router {
             );
         } else {
             $this->logger->info(
-                'Routed "{method} {path}" to {controller}.',
+                'Routed "{method} {path}" to {request_handler}.',
                 [
                     'method' => $request->getMethod(),
                     'path' => $request->getUri()->getPath(),
-                    'controller' => $resolution->controller?->toString()
+                    'request_handler' => $resolution->requestHandler::class
                 ]
             );
         }

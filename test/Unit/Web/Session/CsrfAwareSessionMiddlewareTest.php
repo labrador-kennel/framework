@@ -12,7 +12,7 @@ use Amp\Http\Server\Session\Session;
 use Amp\Http\Server\Session\SessionFactory;
 use Amp\Http\Server\Session\SessionMiddleware;
 use Labrador\Security\TokenGenerator;
-use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
+use Labrador\Test\Unit\Web\Stub\ResponseRequestHandlerStub;
 use Labrador\TestHelper\KnownSessionIdGenerator;
 use Labrador\Web\Session\CsrfAwareSessionMiddleware;
 use Labrador\Web\Session\Exception\SessionNotAttachedToRequest;
@@ -37,7 +37,7 @@ final class CsrfAwareSessionMiddlewareTest extends TestCase {
         $subject = new CsrfAwareSessionMiddleware($this->tokenGenerator, $this->sessionHelper);
 
         $stack = Middleware\stackMiddleware(
-            new ResponseControllerStub(new Response()),
+            new ResponseRequestHandlerStub(new Response()),
             $subject
         );
 
@@ -57,7 +57,7 @@ final class CsrfAwareSessionMiddlewareTest extends TestCase {
 
         $storage = new LocalSessionStorage();
         $stack = Middleware\stackMiddleware(
-            new ResponseControllerStub(new Response()),
+            new ResponseRequestHandlerStub(new Response()),
             new SessionMiddleware(
                 new SessionFactory(storage: $storage)
             ),
@@ -87,7 +87,7 @@ final class CsrfAwareSessionMiddlewareTest extends TestCase {
 
         $storage = new LocalSessionStorage();
         $stack = Middleware\stackMiddleware(
-            new ResponseControllerStub(new Response()),
+            new ResponseRequestHandlerStub(new Response()),
             new SessionMiddleware(
                 new SessionFactory(
                     storage: $storage,

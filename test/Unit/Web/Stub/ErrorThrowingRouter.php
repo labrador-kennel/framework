@@ -4,7 +4,7 @@ namespace Labrador\Test\Unit\Web\Stub;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Labrador\Web\Controller\Controller;
+use Amp\Http\Server\RequestHandler;
 use Labrador\Web\Router\Mapping\RequestMapping;
 use Labrador\Web\Router\Route;
 use Labrador\Web\Router\Router;
@@ -18,8 +18,8 @@ final class ErrorThrowingRouter implements Router {
     ) {
     }
 
-    public function addRoute(RequestMapping $requestMapping, Controller $controller, Middleware ...$middlewares) : Route {
-        return new Route($requestMapping, $controller);
+    public function addRoute(RequestMapping $requestMapping, RequestHandler $requestHandler, Middleware ...$middlewares) : Route {
+        return new Route($requestMapping, $requestHandler, []);
     }
 
     public function match(Request $request) : RoutingResolution {

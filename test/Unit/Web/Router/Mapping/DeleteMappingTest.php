@@ -1,0 +1,17 @@
+<?php
+
+namespace Labrador\Test\Unit\Web\Router\Mapping;
+
+use Labrador\Web\HttpMethod;
+use Labrador\Web\Router\Mapping\DeleteMapping;
+
+final class DeleteMappingTest extends RequestMappingTestCase {
+
+    protected function getExpectedHttpMethod() : HttpMethod {
+        return HttpMethod::Delete;
+    }
+
+    protected function getSubjectClass() : string {
+        return DeleteMapping::class;
+    }
+}

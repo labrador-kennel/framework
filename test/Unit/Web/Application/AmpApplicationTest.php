@@ -16,25 +16,25 @@ use FastRoute\RouteParser\Std as StdRouteParser;
 use Labrador\DummyApp\Middleware\BarMiddleware;
 use Labrador\DummyApp\MiddlewareCallRegistry;
 use Labrador\Test\Unit\Web\Stub\ErrorHandlerFactoryStub;
-use Labrador\Test\Unit\Web\Stub\ErrorThrowingController;
+use Labrador\Test\Unit\Web\Stub\ErrorThrowingRequestHandler;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingMiddleware;
 use Labrador\Test\Unit\Web\Stub\ErrorThrowingRouter;
 use Labrador\Test\Unit\Web\Stub\EventEmitterStub;
 use Labrador\Test\Unit\Web\Stub\HttpServerStub;
 use Labrador\Test\Unit\Web\Stub\KnownIncrementPreciseTime;
 use Labrador\Test\Unit\Web\Stub\RequestAnalyticsQueueStub;
-use Labrador\Test\Unit\Web\Stub\ResponseControllerStub;
-use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
+use Labrador\Test\Unit\Web\Stub\ResponseRequestHandlerStub;
 use Labrador\Web\Application\AmpApplication;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalytics;
+use Labrador\Web\Application\Event\AddGlobalMiddleware;
 use Labrador\Web\Application\Event\AddRoutes;
 use Labrador\Web\Application\Event\ApplicationStarted;
 use Labrador\Web\Application\Event\ApplicationStopped;
 use Labrador\Web\Application\Event\ReceivingConnections;
 use Labrador\Web\Application\Event\RequestReceived;
 use Labrador\Web\Application\Event\ResponseSent;
-use Labrador\Web\Application\Event\WillInvokeController;
+use Labrador\Web\Application\Event\WillInvokeRequestHandler;
 use Labrador\Web\HttpMethod;
 use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\RequestAttribute;
@@ -93,10 +93,11 @@ final class AmpApplicationTest extends TestCase {
 
         $events = $this->emitter->getEmittedEvents();
 
-        self::assertCount(3, $events);
+        self::assertCount(4, $events);
         self::assertInstanceOf(ApplicationStarted::class, $events[0]);
-        self::assertInstanceOf(AddRoutes::class, $events[1]);
-        self::assertInstanceOf(ReceivingConnections::class, $events[2]);
+        self::assertInstanceOf(AddGlobalMiddleware::class, $events[1]);
+        self::assertInstanceOf(AddRoutes::class, $events[2]);
+        self::assertInstanceOf(ReceivingConnections::class, $events[3]);
     }
 
     public function testHttpServerStartedWhenReceivingConnectionsEventSent() : void {
@@ -104,9 +105,9 @@ final class AmpApplicationTest extends TestCase {
 
         $events = $this->emitter->getEmittedEvents();
 
-        self::assertCount(3, $events);
-        self::assertInstanceOf(ReceivingConnections::class, $events[2]);
-        self::assertSame(HttpServerStatus::Started, $events[2]->payload()->getStatus());
+        self::assertCount(4, $events);
+        self::assertInstanceOf(ReceivingConnections::class, $events[3]);
+        self::assertSame(HttpServerStatus::Started, $events[3]->payload()->getStatus());
     }
 
     public function testHttpServerReceivesRequestTriggersEvents() : void {
@@ -115,13 +116,13 @@ final class AmpApplicationTest extends TestCase {
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
             new GetMapping('/'),
-            new ResponseControllerStub($response = new Response())
+            new ResponseRequestHandlerStub($response = new Response())
         );
 
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
-            Http::createFromString('http://example.com'),
+            Http::new('http://example.com'),
         );
 
         $actual = $this->httpServer->receiveRequest($request);
@@ -130,7 +131,7 @@ final class AmpApplicationTest extends TestCase {
         self::assertSame($response, $actual);
         self::assertCount(3, $events);
         self::assertInstanceOf(RequestReceived::class, $events[0]);
-        self::assertInstanceOf(WillInvokeController::class, $events[1]);
+        self::assertInstanceOf(WillInvokeRequestHandler::class, $events[1]);
         self::assertInstanceOf(ResponseSent::class, $events[2]);
     }
 
@@ -140,7 +141,7 @@ final class AmpApplicationTest extends TestCase {
         $this->emitter->clearEmittedEvents();
         $this->router->addRoute(
             new GetMapping('/'),
-            new ResponseControllerStub($response = new Response())
+            new ResponseRequestHandlerStub($response = new Response())
         );
 
         $request = new Request(
@@ -169,6 +170,12 @@ final class AmpApplicationTest extends TestCase {
         self::assertTrue($this->testHandler->hasDebugThatContains('Allowing routes to be added through event system.'));
     }
 
+    public function testApplicationStartedHasAddingGlobalMiddlewareLogs() : void {
+        $this->subject->start();
+
+        self::assertTrue($this->testHandler->hasDebugThatContains('Allowing global middleware to be added through event system.'));
+    }
+
     public function testApplicationStartedHasReceivingConnectionsLogs() : void {
         $this->subject->start();
 
@@ -187,7 +194,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->router->addRoute(
             new GetMapping('/'),
-            $controller = new ResponseControllerStub(new Response())
+            $requestHandler = new ResponseRequestHandlerStub(new Response())
         );
 
         $request = new Request(
@@ -204,7 +211,7 @@ final class AmpApplicationTest extends TestCase {
 
         $expected = [
             'labrador.http.requestId' => $request->getAttribute(RequestAttribute::RequestId->value),
-            'labrador.http.controller' => $controller,
+            'labrador.http.requestHandler' => $requestHandler,
             'labrador.http-dummy-app.middleware.bar' => 'low',
         ];
 
@@ -243,7 +250,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->router->addRoute(
             new GetMapping('/'),
-            new ToStringControllerStub('KnownController')
+            new ResponseRequestHandlerStub(new Response())
         );
 
         $this->subject->start();
@@ -258,11 +265,11 @@ final class AmpApplicationTest extends TestCase {
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
         self::assertSame($request, $analytics->request());
         self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->routingResolutionReason());
-        self::assertSame('KnownController', $analytics->controllerName());
+        self::assertSame(ResponseRequestHandlerStub::class, $analytics->requestHandlerName());
         self::assertSame(6, $analytics->totalTimeSpentInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(1, $analytics->timeSpentProcessingControllerInNanoseconds());
+        self::assertSame(1, $analytics->timeSpentProcessingRequestHandlerInNanoseconds());
         self::assertSame(200, $analytics->responseStatusCode());
     }
 
@@ -275,7 +282,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->router->addRoute(
             new GetMapping('/'),
-            new ToStringControllerStub('KnownController')
+            new ResponseRequestHandlerStub(new Response())
         );
 
         $subject = new AmpApplication(
@@ -300,13 +307,13 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
         self::assertSame($request, $analytics->request());
-        self::assertNull($analytics->controllerName());
+        self::assertNull($analytics->requestHandlerName());
         self::assertNull($analytics->routingResolutionReason());
         self::assertSame($exception, $analytics->thrownException());
         self::assertSame(2, $analytics->totalTimeSpentInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
         self::assertSame(0, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(0, $analytics->timeSpentProcessingControllerInNanoseconds());
+        self::assertSame(0, $analytics->timeSpentProcessingRequestHandlerInNanoseconds());
     }
 
     public function testExceptionThrownInMiddlewareHasCorrectRequestAnalytics() : void {
@@ -320,7 +327,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->router->addRoute(
             new GetMapping('/'),
-            new ToStringControllerStub('KnownController'),
+            new ResponseRequestHandlerStub(new Response()),
         );
 
         $this->globalMiddlewareCollection->add(new ErrorThrowingMiddleware($exception));
@@ -335,16 +342,16 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
         self::assertSame($request, $analytics->request());
-        self::assertNull($analytics->controllerName());
+        self::assertNull($analytics->requestHandlerName());
         self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->routingResolutionReason());
         self::assertSame($exception, $analytics->thrownException());
         self::assertSame(4, $analytics->totalTimeSpentInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(0, $analytics->timeSpentProcessingControllerInNanoseconds());
+        self::assertSame(0, $analytics->timeSpentProcessingRequestHandlerInNanoseconds());
     }
 
-    public function testExceptionThrownInControllerHasCorrectRequestAnalytics() : void {
+    public function testExceptionThrownInRequestHandlerHasCorrectRequestAnalytics() : void {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
@@ -355,7 +362,7 @@ final class AmpApplicationTest extends TestCase {
 
         $this->router->addRoute(
             new GetMapping('/'),
-            new ErrorThrowingController($exception)
+            new ErrorThrowingRequestHandler($exception)
         );
 
         $this->subject->start();
@@ -369,16 +376,16 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
         self::assertSame($request, $analytics->request());
-        self::assertSame(ErrorThrowingController::class, $analytics->controllerName());
+        self::assertSame(ErrorThrowingRequestHandler::class, $analytics->requestHandlerName());
         self::assertSame(RoutingResolutionReason::RequestMatched, $analytics->routingResolutionReason());
         self::assertSame($exception, $analytics->thrownException());
         self::assertSame(6, $analytics->totalTimeSpentInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(1, $analytics->timeSpentProcessingControllerInNanoseconds());
+        self::assertSame(1, $analytics->timeSpentProcessingRequestHandlerInNanoseconds());
     }
 
-    public function testRouterResolutionNotFoundHasControllerProcessingTime() : void {
+    public function testRouterResolutionNotFoundHasRequestHandlerProcessingTime() : void {
         $request = new Request(
             $this->getMockBuilder(Client::class)->getMock(),
             HttpMethod::Get->value,
@@ -396,21 +403,21 @@ final class AmpApplicationTest extends TestCase {
 
         self::assertInstanceOf(RequestAnalytics::class, $analytics);
         self::assertSame($request, $analytics->request());
-        self::assertNull($analytics->controllerName());
+        self::assertNull($analytics->requestHandlerName());
         self::assertSame(RoutingResolutionReason::NotFound, $analytics->routingResolutionReason());
         self::assertNull($analytics->thrownException());
         self::assertSame(3, $analytics->totalTimeSpentInNanoSeconds());
         self::assertSame(1, $analytics->timeSpentRoutingInNanoSeconds());
         self::assertSame(0, $analytics->timeSpentProcessingMiddlewareInNanoseconds());
-        self::assertSame(0, $analytics->timeSpentProcessingControllerInNanoseconds());
+        self::assertSame(0, $analytics->timeSpentProcessingRequestHandlerInNanoseconds());
     }
 
-    public function testControllerAddedToRequestAttribute() : void {
+    public function testRequestHandlerAddedToRequestAttribute() : void {
         $this->subject->start();
 
         $this->router->addRoute(
             new GetMapping('/'),
-            $controller = new ResponseControllerStub(new Response())
+            $requestHandler = new ResponseRequestHandlerStub(new Response())
         );
 
         $request = new Request(
@@ -422,8 +429,8 @@ final class AmpApplicationTest extends TestCase {
         $this->subject->handleRequest($request);
 
         self::assertSame(
-            $controller,
-            $request->getAttribute(RequestAttribute::Controller->value)
+            $requestHandler,
+            $request->getAttribute(RequestAttribute::RequestHandler->value)
         );
     }
 }

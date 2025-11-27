@@ -4,10 +4,9 @@ namespace Labrador\Web\Router;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Labrador\Web\Controller\Controller;
-use Labrador\Web\Controller\MiddlewareController;
 use Labrador\Web\Exception\InvalidType;
 use Labrador\Web\Router\Mapping\RequestMapping;
 
@@ -40,13 +39,10 @@ final class FastRouteRouter implements Router {
 
     public function addRoute(
         RequestMapping $requestMapping,
-        Controller                  $controller,
+        RequestHandler $requestHandler,
         Middleware ...$middlewares
     ) : Route {
-        if (count($middlewares) > 0) {
-            $controller = new MiddlewareController($controller, ...$middlewares);
-        }
-        $route = new Route($requestMapping, $controller);
+        $route = new Route($requestMapping, $requestHandler, array_values($middlewares));
         $path = $requestMapping->getPath();
         $this->routes[] = $route;
         $this->collector->addRoute(
@@ -67,7 +63,8 @@ final class FastRouteRouter implements Router {
         $routeData = $this->getDispatcher()->dispatch($request->getMethod(), $path);
         $status = (int) array_shift($routeData);
 
-        $controller = null;
+        $requestHandler = null;
+        $middleware = [];
 
         if ($notOkResolved = $this->guardNotOkMatch($status, $routeData)) {
             $reason = $notOkResolved;
@@ -78,7 +75,8 @@ final class FastRouteRouter implements Router {
             assert($route instanceof Route);
             assert(is_array($params));
 
-            $controller = $route->controller;
+            $requestHandler = $route->requestHandler;
+            $middleware = $route->middleware;
             foreach ($params as $k => $v) {
                 assert(is_string($k));
                 assert($k !== '');
@@ -87,7 +85,7 @@ final class FastRouteRouter implements Router {
             }
         }
 
-        return new RoutingResolution($controller, $reason);
+        return new RoutingResolution($requestHandler, $middleware, $reason);
     }
 
     private function guardNotOkMatch(int $status, array $route) : ?RoutingResolutionReason {
