@@ -148,9 +148,9 @@ TEXT;
         self::assertInstanceOf(TestHandler::class, $handler);
 
         self::assertTrue($handler->hasErrorThatPasses(static function (LogRecord $record) {
-            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":47,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
+            $expectedContext = '{"client_address":"127.0.0.1:%d","method":"GET","path":"/exception","exception_class":"RuntimeException","file":"%a/RouterListener.php","line_number":49,"exception_message":"A message detailing what went wrong that should show up in logs.","stack_trace":%a}';
             $expected = <<<TEXT
-%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L47 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
+%a labrador.app.ERROR: RuntimeException thrown in %a/RouterListener.php#L49 handling client 127.0.0.1:%d with request "GET /exception". Message: A message detailing what went wrong that should show up in logs. $expectedContext []
 TEXT;
             return (new StringMatchesFormatDescription($expected))->evaluate(
                 other: $record->formatted,

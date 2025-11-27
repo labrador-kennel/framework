@@ -19,11 +19,11 @@ final class LoggingRequestAnalyticsQueue implements RequestAnalyticsQueue {
                 [
                     'request' => sprintf("%s %s", $analytics->request()->getMethod(), $analytics->request()->getUri()->getPath()),
                     'resolution_reason' => $analytics->routingResolutionReason(),
-                    'controller' => $analytics->controllerName(),
+                    'request_handler' => $analytics->requestHandlerName(),
                     'total_time_spent' => $analytics->totalTimeSpentInNanoSeconds(),
                     'time_spent_routing' => $analytics->timeSpentRoutingInNanoSeconds(),
                     'time_spent_middleware' => $analytics->timeSpentProcessingMiddlewareInNanoseconds(),
-                    'time_spent_controller' => $analytics->timeSpentProcessingControllerInNanoseconds(),
+                    'time_spent_request_handler' => $analytics->timeSpentProcessingRequestHandlerInNanoseconds(),
                     'response_code' => $analytics->responseStatusCode()
                 ]
             );
@@ -33,11 +33,11 @@ final class LoggingRequestAnalyticsQueue implements RequestAnalyticsQueue {
                 [
                     'request' => sprintf("%s %s", $analytics->request()->getMethod(), $analytics->request()->getUri()->getPath()),
                     'resolution_reason' => $analytics->routingResolutionReason(),
-                    'controller' => $analytics->controllerName(),
+                    'request_handler' => $analytics->requestHandlerName(),
                     'total_time_spent' => $analytics->totalTimeSpentInNanoSeconds(),
                     'time_spent_routing' => $analytics->timeSpentRoutingInNanoSeconds(),
                     'time_spent_middleware' => $analytics->timeSpentProcessingMiddlewareInNanoseconds(),
-                    'time_spent_controller' => $analytics->timeSpentProcessingControllerInNanoseconds(),
+                    'time_spent_request_handler' => $analytics->timeSpentProcessingRequestHandlerInNanoseconds(),
                     'response_code' => $analytics->responseStatusCode(),
                     'exception_message' => $exception->getMessage(),
                     'exception_class' => $exception::class,

@@ -4,7 +4,7 @@ namespace Labrador\Web\Router;
 
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
-use Labrador\Web\Controller\Controller;
+use Amp\Http\Server\RequestHandler;
 use Labrador\Web\Router\Mapping\DeleteMapping;
 use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Mapping\PostMapping;
@@ -34,12 +34,12 @@ final class FriendlyRouter implements Router {
      * Define a Route that should respond to a GET request.
      *
      * @param string $pattern
-     * @param Controller $controller
+     * @param RequestHandler $requestHandler
      * @param Middleware[] $middlewares
      * @return $this
      */
-    public function get(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(new GetMapping($pattern), $controller, ...$middlewares);
+    public function get(string $pattern, RequestHandler $requestHandler, Middleware ...$middlewares) : self {
+        $this->addRoute(new GetMapping($pattern), $requestHandler, ...$middlewares);
         return $this;
     }
 
@@ -47,12 +47,12 @@ final class FriendlyRouter implements Router {
      * Define a Route that should respond to a POST request.
      *
      * @param string $pattern
-     * @param Controller $controller
+     * @param RequestHandler $requestHandler
      * @param Middleware[] $middlewares
      * @return $this
      */
-    public function post(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(new PostMapping($pattern), $controller, ...$middlewares);
+    public function post(string $pattern, RequestHandler $requestHandler, Middleware ...$middlewares) : self {
+        $this->addRoute(new PostMapping($pattern), $requestHandler, ...$middlewares);
         return $this;
     }
 
@@ -60,12 +60,12 @@ final class FriendlyRouter implements Router {
      * Define a Route that should respond to a PUT request.
      *
      * @param string $pattern
-     * @param Controller $controller
+     * @param RequestHandler $requestHandler
      * @param Middleware[] $middlewares
      * @return $this
      */
-    public function put(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(new PutMapping($pattern), $controller, ...$middlewares);
+    public function put(string $pattern, RequestHandler $requestHandler, Middleware ...$middlewares) : self {
+        $this->addRoute(new PutMapping($pattern), $requestHandler, ...$middlewares);
         return $this;
     }
 
@@ -73,12 +73,12 @@ final class FriendlyRouter implements Router {
      * Define a Route that should respond to a DELETE request.
      *
      * @param string $pattern
-     * @param Controller $controller
+     * @param RequestHandler $requestHandler
      * @param Middleware[] $middlewares
      * @return $this
      */
-    public function delete(string $pattern, Controller $controller, Middleware ...$middlewares) : self {
-        $this->addRoute(new DeleteMapping($pattern), $controller, ...$middlewares);
+    public function delete(string $pattern, RequestHandler $requestHandler, Middleware ...$middlewares) : self {
+        $this->addRoute(new DeleteMapping($pattern), $requestHandler, ...$middlewares);
         return $this;
     }
 
@@ -114,7 +114,7 @@ final class FriendlyRouter implements Router {
 
     public function addRoute(
         RequestMapping $requestMapping,
-        Controller                  $controller,
+        RequestHandler $requestHandler,
         Middleware ...$middlewares
     ) : Route {
         if ($this->isMounted()) {
@@ -123,7 +123,7 @@ final class FriendlyRouter implements Router {
             $middlewares = array_merge([], $this->mounts['middleware'], $middlewares);
         }
 
-        return $this->router->addRoute($requestMapping, $controller, ...$middlewares);
+        return $this->router->addRoute($requestMapping, $requestHandler, ...$middlewares);
     }
 
     public function match(Request $request): RoutingResolution {

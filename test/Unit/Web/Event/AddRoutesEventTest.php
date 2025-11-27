@@ -18,8 +18,7 @@ class AddRoutesEventTest extends TestCase {
     protected function setUp() : void {
         parent::setUp();
         $this->router = $this->getMockBuilder(Router::class)->getMock();
-        $this->globalMiddlewareCollection = new GlobalMiddlewareCollection();
-        $this->subject = new AddRoutes($this->router, $this->globalMiddlewareCollection);
+        $this->subject = new AddRoutes($this->router);
     }
 
     public function testGetName() : void {
@@ -27,8 +26,7 @@ class AddRoutesEventTest extends TestCase {
     }
 
     public function testGetTarget() : void {
-        self::assertSame($this->router, $this->subject->payload()->router());
-        self::assertSame($this->globalMiddlewareCollection, $this->subject->payload()->globalMiddleware());
+        self::assertSame($this->router, $this->subject->payload());
     }
 
     public function testGetCreatedAt() : void {

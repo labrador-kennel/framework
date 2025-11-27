@@ -45,8 +45,8 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 return RoutingResolutionReason::RequestMatched;
             }
 
-            public function controllerName() : ?string {
-                return 'RoutedController';
+            public function requestHandlerName() : ?string {
+                return 'RoutedRequestHandler';
             }
 
             public function thrownException() : ?\Throwable {
@@ -65,7 +65,7 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 return 2;
             }
 
-            public function timeSpentProcessingControllerInNanoseconds() : int|float {
+            public function timeSpentProcessingRequestHandlerInNanoseconds() : int|float {
                 return 3;
             }
 
@@ -80,11 +80,11 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
             'context' => [
                 'request' => 'GET /success',
                 'resolution_reason' => RoutingResolutionReason::RequestMatched,
-                'controller' => 'RoutedController',
+                'request_handler' => 'RoutedRequestHandler',
                 'total_time_spent' => 10,
                 'time_spent_routing' => 1,
                 'time_spent_middleware' => 2,
-                'time_spent_controller' => 3,
+                'time_spent_request_handler' => 3,
                 'response_code' => HttpStatus::OK
             ]
         ]));
@@ -106,8 +106,8 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 return RoutingResolutionReason::RequestMatched;
             }
 
-            public function controllerName() : ?string {
-                return 'RoutedController';
+            public function requestHandlerName() : ?string {
+                return 'RoutedRequestHandler';
             }
 
             public function thrownException() : ?\Throwable {
@@ -126,7 +126,7 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
                 return 2;
             }
 
-            public function timeSpentProcessingControllerInNanoseconds() : int|float {
+            public function timeSpentProcessingRequestHandlerInNanoseconds() : int|float {
                 return 3;
             }
 
@@ -141,11 +141,11 @@ final class LoggingRequestAnalyticsQueueTest extends TestCase {
             'context' => [
                 'request' => 'GET /failure',
                 'resolution_reason' => RoutingResolutionReason::RequestMatched,
-                'controller' => 'RoutedController',
+                'request_handler' => 'RoutedRequestHandler',
                 'total_time_spent' => 10,
                 'time_spent_routing' => 1,
                 'time_spent_middleware' => 2,
-                'time_spent_controller' => 3,
+                'time_spent_request_handler' => 3,
                 'response_code' => HttpStatus::INTERNAL_SERVER_ERROR,
                 'exception_message' => 'Known message',
                 'exception_class' => RuntimeException::class,

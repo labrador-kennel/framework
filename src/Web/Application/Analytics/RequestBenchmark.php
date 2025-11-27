@@ -4,8 +4,8 @@ namespace Labrador\Web\Application\Analytics;
 
 use Amp\Http\HttpStatus;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\RequestHandler;
 use Amp\Http\Server\Response;
-use Labrador\Web\Controller\Controller;
 use Labrador\Web\Router\RoutingResolutionReason;
 use Throwable;
 
@@ -23,9 +23,9 @@ final class RequestBenchmark {
 
     private int|float|null $middlewareCompleted = null;
 
-    private int|float|null $controllerStarted = null;
+    private int|float|null $requestHandlerStarted = null;
 
-    private ?string $controllerName = null;
+    private ?string $requestHandlerName = null;
 
     private function __construct(
         private readonly Request $request,
@@ -55,9 +55,9 @@ final class RequestBenchmark {
         $this->middlewareCompleted = $this->preciseTime->now();
     }
 
-    public function controllerProcessingStarted(Controller $controller) : void {
-        $this->controllerStarted = $this->preciseTime->now();
-        $this->controllerName = $controller->toString();
+    public function requestHandlerProcessingStarted(RequestHandler $requestHandler) : void {
+        $this->requestHandlerStarted = $this->preciseTime->now();
+        $this->requestHandlerName = $requestHandler::class;
     }
 
     public function exceptionThrown(Throwable $throwable) : RequestAnalytics {
@@ -75,32 +75,32 @@ final class RequestBenchmark {
         } else {
             $timeSpentMiddleware = 0;
         }
-        if (isset($this->controllerStarted)) {
-            $timeSpentController = $finishTime - $this->controllerStarted;
+        if (isset($this->requestHandlerStarted)) {
+            $timeSpentRequestHandler = $finishTime - $this->requestHandlerStarted;
         } else {
-            $timeSpentController = 0;
+            $timeSpentRequestHandler = 0;
         }
 
         return new class(
             $this->request,
             $throwable,
             $this->routingResolutionReason ?? null,
-            $this->controllerName ?? null,
+            $this->requestHandlerName ?? null,
             $totalTimeSpent,
             $timeSpentRouting,
             $timeSpentMiddleware,
-            $timeSpentController
+            $timeSpentRequestHandler
         ) implements RequestAnalytics {
 
             public function __construct(
                 private readonly Request $request,
                 private readonly Throwable $throwable,
                 private readonly ?RoutingResolutionReason $resolutionReason,
-                private readonly ?string $controllerName,
+                private readonly ?string $requestHandlerName,
                 private readonly int|float $totalTimeSpent,
                 private readonly int|float $totalTimeRouting,
                 private readonly int|float $totalTimeMiddleware,
-                private readonly int|float $totalTimeController
+                private readonly int|float $totalTimeRequestHandler
             ) {
             }
 
@@ -112,8 +112,8 @@ final class RequestBenchmark {
                 return $this->resolutionReason;
             }
 
-            public function controllerName() : ?string {
-                return $this->controllerName;
+            public function requestHandlerName() : ?string {
+                return $this->requestHandlerName;
             }
 
             public function thrownException() : Throwable {
@@ -132,8 +132,8 @@ final class RequestBenchmark {
                 return $this->totalTimeMiddleware;
             }
 
-            public function timeSpentProcessingControllerInNanoseconds() : int|float {
-                return $this->totalTimeController;
+            public function timeSpentProcessingRequestHandlerInNanoseconds() : int|float {
+                return $this->totalTimeRequestHandler;
             }
 
             public function responseStatusCode() : int {
@@ -147,30 +147,30 @@ final class RequestBenchmark {
         $totalTimeSpent = $finishTime - $this->startTime;
         $timeSpentRouting = $this->routingCompleted - $this->routingStarted;
         $timeSpentProcessingMiddleware = $this->middlewareCompleted - $this->middlewareStarted;
-        if (isset($this->controllerStarted)) {
-            $timeSpentProcessingController = $finishTime - $this->controllerStarted;
+        if (isset($this->requestHandlerStarted)) {
+            $timeSpentProcessingRequestHandler = $finishTime - $this->requestHandlerStarted;
         } else {
-            $timeSpentProcessingController = 0;
+            $timeSpentProcessingRequestHandler = 0;
         }
         return new class(
             $this->request,
-            $this->controllerName,
+            $this->requestHandlerName,
             $totalTimeSpent,
             $timeSpentRouting,
             $this->routingResolutionReason,
             $timeSpentProcessingMiddleware,
-            $timeSpentProcessingController,
+            $timeSpentProcessingRequestHandler,
             $response->getStatus(),
         ) implements RequestAnalytics {
 
             public function __construct(
                 private readonly Request $request,
-                private readonly ?string $controllerName,
+                private readonly ?string $requestHandlerName,
                 private readonly int|float $totalTimeSpent,
                 private readonly int|float $timeSpentRouting,
                 private readonly ?RoutingResolutionReason $resolutionReason,
                 private readonly int|float $timeSpentProcessingMiddleware,
-                private readonly int|float $timeSpentProcessingController,
+                private readonly int|float $timeSpentProcessingRequestHandler,
                 private readonly int $responseStatusCode,
             ) {
             }
@@ -183,8 +183,8 @@ final class RequestBenchmark {
                 return $this->resolutionReason;
             }
 
-            public function controllerName() : ?string {
-                return $this->controllerName;
+            public function requestHandlerName() : ?string {
+                return $this->requestHandlerName;
             }
 
             public function thrownException() : ?Throwable {
@@ -203,8 +203,8 @@ final class RequestBenchmark {
                 return $this->timeSpentProcessingMiddleware;
             }
 
-            public function timeSpentProcessingControllerInNanoseconds() : int|float {
-                return $this->timeSpentProcessingController;
+            public function timeSpentProcessingRequestHandlerInNanoseconds() : int|float {
+                return $this->timeSpentProcessingRequestHandler;
             }
 
             public function responseStatusCode() : int {

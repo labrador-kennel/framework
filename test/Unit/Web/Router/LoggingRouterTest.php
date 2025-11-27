@@ -5,14 +5,14 @@ namespace Labrador\Test\Unit\Web\Router;
 use Amp\Http\Server\Driver\Client;
 use Amp\Http\Server\Middleware;
 use Amp\Http\Server\Request;
+use Amp\Http\Server\Response;
 use FastRoute\DataGenerator\GroupCountBased as GcbDataGenerator;
 use FastRoute\Dispatcher\GroupCountBased as GcbDispatcher;
 use FastRoute\RouteCollector;
 use FastRoute\RouteParser\Std as StdRouteParser;
 use Labrador\Test\Unit\Web\Stub\BarMiddleware;
 use Labrador\Test\Unit\Web\Stub\FooMiddleware;
-use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
-use Labrador\Web\Controller\Controller;
+use Labrador\Test\Unit\Web\Stub\ResponseRequestHandlerStub;
 use Labrador\Web\HttpMethod;
 use Labrador\Web\Router\FastRouteRouter;
 use Labrador\Web\Router\LoggingRouter;
@@ -59,7 +59,7 @@ class LoggingRouterTest extends TestCase {
     }
 
     public function testAddRouteDelegatedToPassedRouter() : void {
-        $controller = new ToStringControllerStub('Tricks');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
         $mapping = new GetMapping('/');
         $this->mockRouter->expects($this->once())
             ->method('addRoute')
@@ -67,18 +67,18 @@ class LoggingRouterTest extends TestCase {
                 $this->callback(function (RequestMapping $mapping) : bool {
                     return $mapping instanceof GetMapping && $mapping->getPath() === '/';
                 }),
-                $this->isInstanceOf(Controller::class),
+                $this->isInstanceOf(ResponseRequestHandlerStub::class),
             )->willReturn(
-                new Route($mapping, $controller)
+                new Route($mapping, $requestHandler, [])
             );
 
         $subject = new LoggingRouter($this->mockRouter, $this->logger);
-        $subject->addRoute($mapping, $controller);
+        $subject->addRoute($mapping, $requestHandler);
     }
 
     public function testAddRouteWithMiddlewareDelegatedToPassedRouter() : void {
         $middleware = $this->getMockBuilder(Middleware::class)->getMock();
-        $controller = new ToStringControllerStub('Tricks');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
         $mapping = new GetMapping('/');
         $this->mockRouter->expects($this->once())
             ->method('addRoute')
@@ -86,29 +86,29 @@ class LoggingRouterTest extends TestCase {
                 $this->callback(function (RequestMapping $mapping) : bool {
                     return $mapping instanceof GetMapping && $mapping->getPath() === '/';
                 }),
-                $this->isInstanceOf(Controller::class),
+                $this->isInstanceOf(ResponseRequestHandlerStub::class),
                 $middleware
             )->willReturn(
-                new Route($mapping, $controller)
+                new Route($mapping, $requestHandler, [])
             );
 
         $subject = new LoggingRouter($this->mockRouter, $this->logger);
-        $subject->addRoute($mapping, $controller, $middleware);
+        $subject->addRoute($mapping, $requestHandler, $middleware);
     }
 
     public function testMatchDelegatedToPassedRouter() : void {
-        $controller = new ToStringControllerStub('Plane');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
         $request = new Request(
             $this->client,
             HttpMethod::Post->value,
-            Http::createFromString('https://example.com/router')
+            Http::new('https://example.com/router')
         );
 
         $this->mockRouter->expects($this->once())
             ->method('match')
             ->with($request)
             ->willReturn(
-                $reason = new RoutingResolution($controller, RoutingResolutionReason::NotFound)
+                $reason = new RoutingResolution($requestHandler, [], RoutingResolutionReason::NotFound)
             );
 
         $subject = new LoggingRouter($this->mockRouter, $this->logger);
@@ -128,46 +128,47 @@ class LoggingRouterTest extends TestCase {
     }
 
     public function testAddingRouteWithNoMiddlewareLogsPertinentInformation() : void {
-        $controller = new ToStringControllerStub('Controller Description');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
 
         $subject = new LoggingRouter($this->router, $this->logger);
         $subject->addRoute(
             new GetMapping('/'),
-            $controller
+            $requestHandler
         );
 
         self::assertTrue($this->handler->hasInfo([
-            'message' => 'Routing "GET /" to Controller Description.',
+            'message' => 'Routing "GET /" to ' . ResponseRequestHandlerStub::class . '.',
             'context' => [
                 'method' => 'GET',
                 'path' => '/',
-                'controller' => 'Controller Description',
+                'request_handler' => ResponseRequestHandlerStub::class,
                 'middleware' => []
             ]
         ]));
     }
 
     public function testAddingRouteWithMiddlewareLogsPertinentInformation() : void {
-        $controller = new ToStringControllerStub('ControllerWithMiddleware');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
         $middlewares = [new FooMiddleware(), new BarMiddleware()];
 
         $subject = new LoggingRouter($this->router, $this->logger);
         $subject->addRoute(
             new GetMapping('/hello/world'),
-            $controller,
+            $requestHandler,
             ...$middlewares
         );
 
         self::assertTrue($this->handler->hasInfo([
             'message' => sprintf(
-                'Routing "GET /hello/world" to ControllerWithMiddleware with middleware %s, %s.',
+                'Routing "GET /hello/world" to %s with middleware %s, %s.',
+                ResponseRequestHandlerStub::class,
                 FooMiddleware::class,
                 BarMiddleware::class
             ),
             'context' => [
                 'method' => 'GET',
                 'path' => '/hello/world',
-                'controller' => 'ControllerWithMiddleware',
+                'request_handler' => ResponseRequestHandlerStub::class,
                 'middleware' => [
                     FooMiddleware::class,
                     BarMiddleware::class
@@ -177,15 +178,15 @@ class LoggingRouterTest extends TestCase {
     }
 
     public function testMatchReturnsRoutingResolutionRequestMatchedLogsPertinentOutput() : void {
-        $controller = new ToStringControllerStub('MatchedController');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
 
         $subject = new LoggingRouter($this->router, $this->logger);
-        $subject->addRoute(new GetMapping('/foo/bar'), $controller);
+        $subject->addRoute(new GetMapping('/foo/bar'), $requestHandler);
 
         $request = new Request(
             $this->client,
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com/foo/bar')
+            Http::new('https://example.com/foo/bar')
         );
 
         $resolution = $subject->match($request);
@@ -193,11 +194,11 @@ class LoggingRouterTest extends TestCase {
         self::assertSame(RoutingResolutionReason::RequestMatched, $resolution->reason);
 
         self::assertTrue($this->handler->hasInfo([
-            'message' => 'Routed "GET /foo/bar" to MatchedController.',
+            'message' => 'Routed "GET /foo/bar" to ' . ResponseRequestHandlerStub::class . '.',
             [
                 'method' => 'GET',
                 'path' => '/foo/bar',
-                'controller' => 'MatchedController'
+                'request_handler' => ResponseRequestHandlerStub::class
             ]
         ]));
     }
@@ -208,7 +209,7 @@ class LoggingRouterTest extends TestCase {
         $request = new Request(
             $this->client,
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com/foo/bar')
+            Http::new('https://example.com/foo/bar')
         );
 
         $resolution = $subject->match($request);
@@ -216,7 +217,7 @@ class LoggingRouterTest extends TestCase {
         self::assertSame(RoutingResolutionReason::NotFound, $resolution->reason);
 
         self::assertTrue($this->handler->hasNotice([
-            'message' => 'Failed routing "GET /foo/bar" to a controller because no route was found.',
+            'message' => 'Failed routing "GET /foo/bar" to a request handler because no route was found.',
             [
                 'method' => 'GET',
                 'path' => '/foo/bar',
@@ -225,14 +226,14 @@ class LoggingRouterTest extends TestCase {
     }
 
     public function testMatchReturnsRoutingResolutionMethodNotAllowedLogsPertinentOutput() : void {
-        $controller = new ToStringControllerStub('MatchedController');
+        $requestHandler = new ResponseRequestHandlerStub(new Response());
         $subject = new LoggingRouter($this->router, $this->logger);
-        $subject->addRoute(new PostMapping('/foo/bar'), $controller);
+        $subject->addRoute(new PostMapping('/foo/bar'), $requestHandler);
 
         $request = new Request(
             $this->client,
             HttpMethod::Get->value,
-            Http::createFromString('https://example.com/foo/bar')
+            Http::new('https://example.com/foo/bar')
         );
 
         $resolution = $subject->match($request);
@@ -240,7 +241,7 @@ class LoggingRouterTest extends TestCase {
         self::assertSame(RoutingResolutionReason::MethodNotAllowed, $resolution->reason);
 
         self::assertTrue($this->handler->hasNotice([
-            'message' => 'Failed routing "GET /foo/bar" to a controller because route does not allow requested method.',
+            'message' => 'Failed routing "GET /foo/bar" to a request handler because route does not allow requested method.',
             [
                 'method' => 'GET',
                 'path' => '/foo/bar',

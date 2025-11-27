@@ -9,7 +9,8 @@
 
 namespace Labrador\Test\Unit\Web\Router;
 
-use Labrador\Test\Unit\Web\Stub\ToStringControllerStub;
+use Amp\Http\Server\Response;
+use Labrador\Test\Unit\Web\Stub\ResponseRequestHandlerStub;
 use Labrador\Web\Router\Mapping\GetMapping;
 use Labrador\Web\Router\Route;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -23,8 +24,9 @@ class RouteTest extends TestCase {
                 new GetMapping(
                     '/handler-string',
                 ),
-                new ToStringControllerStub('handler_name')
-            ), "GET\t/handler-string\t\thandler_name"],
+                new ResponseRequestHandlerStub(new Response()),
+                []
+            ), "GET\t/handler-string\t\t" . ResponseRequestHandlerStub::class],
         ];
     }
 

@@ -5,11 +5,10 @@ namespace Labrador\Web\Application\Event;
 use DateTimeImmutable;
 use Labrador\AsyncEvent\Event;
 use Labrador\Web\Application\ApplicationEvent;
-use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\Router\Router;
 
 /**
- * @implements Event<RouterAndGlobalMiddlewareCollection>
+ * @implements Event<Router>
  */
 final class AddRoutes implements Event {
 
@@ -17,7 +16,6 @@ final class AddRoutes implements Event {
 
     public function __construct(
         private readonly Router $router,
-        private readonly GlobalMiddlewareCollection $globalMiddlewareCollection,
         DateTimeImmutable $createdAt = null
     ) {
         $this->createdAt = $createdAt ?? new DateTimeImmutable();
@@ -27,22 +25,8 @@ final class AddRoutes implements Event {
         return ApplicationEvent::AddRoutes->value;
     }
 
-    public function payload() : RouterAndGlobalMiddlewareCollection {
-        return new class($this->router, $this->globalMiddlewareCollection) implements RouterAndGlobalMiddlewareCollection {
-            public function __construct(
-                private readonly Router $router,
-                private readonly GlobalMiddlewareCollection $globalMiddleware,
-            ) {
-            }
-
-            public function router() : Router {
-                return $this->router;
-            }
-
-            public function globalMiddleware() : GlobalMiddlewareCollection {
-                return $this->globalMiddleware;
-            }
-        };
+    public function payload() : Router {
+        return $this->router;
     }
 
     public function triggeredAt() : DateTimeImmutable {

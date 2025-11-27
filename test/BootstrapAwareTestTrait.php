@@ -10,7 +10,6 @@ use Cspray\AnnotatedContainer\Event\Emitter;
 use Cspray\AnnotatedContainer\Profiles;
 use Labrador\AsyncEvent\Autowire\RegisterAutowiredListener;
 use Labrador\Test\Helper\VfsDirectoryResolver;
-use Labrador\Web\Autowire\RegisterControllerListener;
 
 trait BootstrapAwareTestTrait {
 
@@ -38,7 +37,6 @@ XML;
         BootstrappingDirectoryResolver $directoryResolver = null
     ) : AnnotatedContainer {
         $emitter = new Emitter();
-        $emitter->addListener(new RegisterControllerListener());
         $emitter->addListener(new RegisterAutowiredListener());
         $containerBootstrap = AnnotatedContainerBootstrap::fromAnnotatedContainerConventions(
             new PhpDiContainerFactory($emitter),

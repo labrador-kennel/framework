@@ -13,14 +13,14 @@ use Labrador\AsyncEvent\Emitter;
 use Labrador\Web\Application\Analytics\PreciseTime;
 use Labrador\Web\Application\Analytics\RequestAnalyticsQueue;
 use Labrador\Web\Application\Analytics\RequestBenchmark;
+use Labrador\Web\Application\Event\AddGlobalMiddleware;
 use Labrador\Web\Application\Event\AddRoutes;
 use Labrador\Web\Application\Event\ApplicationStarted;
 use Labrador\Web\Application\Event\ApplicationStopped;
 use Labrador\Web\Application\Event\ReceivingConnections;
 use Labrador\Web\Application\Event\RequestReceived;
 use Labrador\Web\Application\Event\ResponseSent;
-use Labrador\Web\Application\Event\WillInvokeController;
-use Labrador\Web\Controller\Controller;
+use Labrador\Web\Application\Event\WillInvokeRequestHandler;
 use Labrador\Web\Middleware\GlobalMiddlewareCollection;
 use Labrador\Web\RequestAttribute;
 use Labrador\Web\Router\Router;
@@ -32,23 +32,30 @@ use Throwable;
 
 final class AmpApplication implements Application, RequestHandler {
 
+    private readonly Middleware\AccessLoggerMiddleware $accessLoggerMiddleware;
+
     public function __construct(
-        private readonly HttpServer            $httpServer,
-        private readonly ErrorHandler   $errorHandler,
-        private readonly Router                $router,
+        private readonly HttpServer $httpServer,
+        private readonly ErrorHandler $errorHandler,
+        private readonly Router $router,
         private readonly GlobalMiddlewareCollection $globalMiddlewareCollection,
-        private readonly Emitter          $emitter,
-        private readonly LoggerInterface       $logger,
+        private readonly Emitter $emitter,
+        private readonly LoggerInterface $logger,
         private readonly RequestAnalyticsQueue $analyticsQueue,
-        private readonly PreciseTime           $preciseTime,
+        private readonly PreciseTime $preciseTime,
     ) {
+        $this->accessLoggerMiddleware = new Middleware\AccessLoggerMiddleware($this->logger);
     }
 
     public function start() : void {
         $this->logger->info('Labrador HTTP application starting up.');
         $this->emitter->emit(new ApplicationStarted($this))->await();
+
+        $this->logger->debug('Allowing global middleware to be added through event system.');
+        $this->emitter->emit(new AddGlobalMiddleware($this->globalMiddlewareCollection))->await();
+
         $this->logger->debug('Allowing routes to be added through event system.');
-        $this->emitter->emit(new AddRoutes($this->router, $this->globalMiddlewareCollection))->await();
+        $this->emitter->emit(new AddRoutes($this->router))->await();
 
         $this->httpServer->start($this, $this->errorHandler);
 
@@ -80,15 +87,15 @@ final class AmpApplication implements Application, RequestHandler {
             } elseif ($routingResolution->reason === RoutingResolutionReason::MethodNotAllowed) {
                 $response = $this->errorHandler->handleError(HttpStatus::METHOD_NOT_ALLOWED, 'Method Not Allowed', $request);
             } else {
-                $controller = $routingResolution->controller;
+                $requestHandler = $routingResolution->requestHandler;
 
-                assert($controller instanceof Controller);
+                assert($requestHandler instanceof RequestHandler);
 
-                $request->setAttribute(RequestAttribute::Controller->value, $controller);
+                $request->setAttribute(RequestAttribute::RequestHandler->value, $requestHandler);
 
-                $this->emitter->queue(new WillInvokeController($controller, $request));
+                $this->emitter->queue(new WillInvokeRequestHandler($requestHandler, $request));
 
-                $handler = $this->getMiddlewareStack($controller, $benchmark);
+                $handler = $this->getMiddlewareStack($requestHandler, $routingResolution->middleware, $benchmark);
 
                 $response = $handler->handleRequest($request);
             }
@@ -130,18 +137,28 @@ final class AmpApplication implements Application, RequestHandler {
         return $routingResolution;
     }
 
-    private function getMiddlewareStack(Controller $controller, RequestBenchmark $benchmark) : RequestHandler {
+    /**
+     * @param RequestHandler $requestHandler
+     * @param list<Middleware> $routeMiddlewareCollection
+     * @param RequestBenchmark $benchmark
+     * @return RequestHandler
+     */
+    private function getMiddlewareStack(RequestHandler $requestHandler, array $routeMiddlewareCollection, RequestBenchmark $benchmark) : RequestHandler {
         $middlewares = [];
         $middlewares[] = $this->benchmarkMiddlewareProcessingStartedMiddleware($benchmark);
+        $middlewares[] = $this->accessLoggerMiddleware;
 
-        foreach ($this->globalMiddlewareCollection as $middleware) {
-            $middlewares[] = $middleware;
+        foreach ($this->globalMiddlewareCollection as $globalMiddleware) {
+            $middlewares[] = $globalMiddleware;
         }
 
-        $middlewares[] = new Middleware\AccessLoggerMiddleware($this->logger);
+        foreach ($routeMiddlewareCollection as $routeMiddleware) {
+            $middlewares[] = $routeMiddleware;
+        }
+
         $middlewares[] = $this->finalMiddlewareProcessingMiddleware($benchmark);
 
-        return Middleware\stackMiddleware($controller, ...$middlewares);
+        return Middleware\stackMiddleware($requestHandler, ...$middlewares);
     }
 
     private function benchmarkMiddlewareProcessingStartedMiddleware(RequestBenchmark $benchmark) : Middleware {
@@ -167,14 +184,8 @@ final class AmpApplication implements Application, RequestHandler {
             }
 
             public function handleRequest(Request $request, RequestHandler $requestHandler) : Response {
-                if (!$requestHandler instanceof Controller) {
-                    throw new \RuntimeException(
-                        'An internal error within Labrador has occurred. Please ensure the Controller Session handling Middleware is executed last.'
-                    );
-                }
-
                 $this->benchmark->middlewareProcessingCompleted();
-                $this->benchmark->controllerProcessingStarted($requestHandler);
+                $this->benchmark->requestHandlerProcessingStarted($requestHandler);
 
                 return $requestHandler->handleRequest($request);
             }

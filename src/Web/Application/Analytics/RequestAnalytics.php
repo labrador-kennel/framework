@@ -11,7 +11,7 @@ interface RequestAnalytics {
 
     public function routingResolutionReason() : ?RoutingResolutionReason;
 
-    public function controllerName() : ?string;
+    public function requestHandlerName() : ?string;
 
     public function thrownException() : ?\Throwable;
 
@@ -21,7 +21,7 @@ interface RequestAnalytics {
 
     public function timeSpentProcessingMiddlewareInNanoseconds() : int|float;
 
-    public function timeSpentProcessingControllerInNanoseconds() : int|float;
+    public function timeSpentProcessingRequestHandlerInNanoseconds() : int|float;
 
     public function responseStatusCode() : int;
 }
